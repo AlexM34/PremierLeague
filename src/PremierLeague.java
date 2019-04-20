@@ -1,6 +1,5 @@
-import com.sun.javafx.image.IntPixelGetter;
-
 import java.util.*;
+import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -9,19 +8,26 @@ public class PremierLeague {
     private static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
             "Chelsea", "Tottenham", "Everton", "Leicester", "Wolverhampton", "Watford", "West Ham", "Bournemouth",
             "Crystal Palace", "Burnley", "Newcastle", "Southampton", "Brighton", "Cardiff", "Fulham", "Huddersfield"};
+    // TODO: Add players and coaches
+    // TODO: Add subs
     private static int[] POINTS = new int[20];
     private static int[] GOALS_FOR = new int[20];
     private static int[] GOALS_AGAINST = new int[20];
+    private static int[] GAMES = new int[20];
+    private static int[] WINS = new int[20];
+    private static int[] DRAWS = new int[20];
+    private static int[] LOSES = new int[20];
     private static int[] STRENGTH = {83, 96, 93, 87, 85, 84, 71, 67, 62, 60, 57, 55, 51, 47, 46, 42, 37, 34, 29, 22};
     private static int[][] HOME = new int[38][10];
     private static int[][] AWAY = new int[38][10];
-    private static int CROWD = 30;
+    private static int FANS = 30;
 
     public static void main(String[] args) {
         prepare();
         makeDraw();
 
         for (int round = 0; round < 38; round++) {
+            // TODO: Ask to continue
             play(round);
         }
 
@@ -38,6 +44,7 @@ public class PremierLeague {
     }
 
     private static void makeDraw() {
+        // TODO: Randomise it
         for (int round = 0; round < 19; round++) {
             int[] current = new int[20];
             current[0] = 0;
@@ -70,36 +77,75 @@ public class PremierLeague {
 
         System.out.println();
         System.out.println(String.format("Standings after round %d:", round + 1));
-        printStandings();
+        if (round < 37) printStandings();
         System.out.println();
     }
 
     private static void finish() {
-        System.out.println("Final Standings:");
+        System.out.println("FINAL STANDINGS");
         printStandings();
+        // TODO: Player stats
         System.out.println();
         System.out.println("The Premier League ends!");
     }
 
     private static void simulateGame(int home, int away) {
-        int goalsHome = calculateGoals(STRENGTH[home] + CROWD, STRENGTH[away]);
-        int goalsAway = calculateGoals(STRENGTH[away] + CROWD, STRENGTH[home]);
+        int goalsHome = calculateGoals(STRENGTH[home], STRENGTH[away]);
+        int goalsAway = calculateGoals(STRENGTH[away], STRENGTH[home]);
+        // TODO: Calculate player ratings
         if (goalsHome > goalsAway) {
             POINTS[home] += 3;
+            WINS[home]++;
+            LOSES[away]++;
         }
         else if (goalsHome < goalsAway){
             POINTS[away] += 3;
+            WINS[away]++;
+            LOSES[home]++;
         }
         else {
             POINTS[home]++;
             POINTS[away]++;
+            DRAWS[home]++;
+            DRAWS[away]++;
         }
 
+        GAMES[home]++;
+        GAMES[away]++;
         GOALS_FOR[home] += goalsHome;
         GOALS_AGAINST[home] += goalsAway;
         GOALS_FOR[away] += goalsAway;
         GOALS_AGAINST[away] += goalsHome;
         System.out.println(String.format("%s - %s %d:%d", TEAMS[home], TEAMS[away], goalsHome, goalsAway));
+    }
+
+    private static int calculateGoals(int home, int away) {
+        // TODO: Consider fatigue
+        // TODO: Fix formula
+        int average = 100 * (home + FANS) / (away + FANS);
+        int goals = poisson(average);
+        System.out.println(average);
+        return goals;
+    }
+
+    private static int poisson(int average) {
+        double e = 2.74;
+        double lambda = (double) average / 100;
+        double r = random.nextDouble();
+        int goals = 0;
+        while (r > 0 && goals < 6) {
+            double current = Math.pow(e, -lambda) * Math.pow(lambda, goals) / factorial(goals);
+            //System.out.println(current);
+            r -= current;
+            goals++;
+        }
+
+        return goals-1;
+    }
+
+    private static double factorial(int n) {
+        return LongStream.rangeClosed(1, n)
+                .reduce(1, (long x, long y) -> x * y);
     }
 
     private static void printStandings() {
@@ -113,21 +159,12 @@ public class PremierLeague {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
+        System.out.println("No  Teams                G  W  D  L   GF:GA  P");
         for (int i = 0; i < 20; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
-            System.out.println(String.format("%d. %s %d:%d %d", i + 1, TEAMS[index],
+            System.out.println(String.format("%2d. %-20s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1, TEAMS[index], GAMES[index],
+                    WINS[index], DRAWS[index], LOSES[index],
                     GOALS_FOR[index], GOALS_AGAINST[index], POINTS[index]));
         }
-
-    }
-
-    private static int calculateGoals(int home, int away) {
-        int perf = 100 * home / (home + away);
-        int goals = 0;
-        while (random.nextInt(100) < perf && goals < 5) {
-            goals++;
-        }
-        System.out.println(perf);
-        return goals;
     }
 }
