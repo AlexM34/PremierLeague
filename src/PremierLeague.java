@@ -74,6 +74,7 @@ public class PremierLeague {
     };
     // TODO: Add subs
     // TODO: Add positions
+    // TODO: Add fatigue
     private static int[] POINTS = new int[20];
     private static int[] GOALS_FOR = new int[20];
     private static int[] GOALS_AGAINST = new int[20];
@@ -86,13 +87,20 @@ public class PremierLeague {
     private static int[][] AWAY = new int[38][10];
     private static int FANS = 7;
     private static int[] FORM = new int[20];
+    private static float[][] RATINGS = new float[20][11];
 
     public static void main(String[] args) {
         prepare();
         makeDraw();
 
         for (int round = 0; round < 38; round++) {
-            // TODO: Ask to continue
+//            System.out.println("Press Enter to continue");
+//            try {
+//                System.in.read();
+//            } catch(Exception e){
+//                System.out.println("Exception thrown!");
+//            }
+
             play(round);
         }
 
@@ -110,7 +118,7 @@ public class PremierLeague {
     }
 
     private static void makeDraw() {
-        // TODO: Randomise it
+        // TODO: Randomise draw
         for (int round = 0; round < 19; round++) {
             int[] current = new int[20];
             current[0] = 0;
@@ -150,7 +158,7 @@ public class PremierLeague {
     private static void finish() {
         System.out.println("FINAL STANDINGS");
         printStandings();
-        // TODO: Player stats
+        printPlayerStats();
         System.out.println();
         System.out.println("The Premier League ends!");
     }
@@ -158,11 +166,29 @@ public class PremierLeague {
     private static void simulateGame(int home, int away) {
         int goalsHome = calculateGoals(home, away, true);
         int goalsAway = calculateGoals(away, home, false);
-        // TODO: Calculate player ratings
+        int ratingHomeAttack = goalsHome;
+        int ratingHomeDefence = 3 - goalsAway;
+        int ratingAwayAttack = goalsAway;
+        int ratingAwayDefence = 3 - goalsHome;
+
         if (goalsHome > goalsAway) {
             POINTS[home] += 3;
             WINS[home]++;
             LOSES[away]++;
+            ratingHomeAttack++;
+            ratingHomeDefence++;
+            ratingAwayAttack--;
+            ratingAwayDefence--;
+
+            if (goalsHome > 2) {
+                ratingHomeAttack++;
+                ratingAwayDefence--;
+            }
+
+            if (goalsAway == 0) {
+                ratingHomeDefence++;
+                ratingAwayAttack--;
+            }
 
             if (FORM[home] < FORM[away]) {
                 form(home, 2);
@@ -183,6 +209,20 @@ public class PremierLeague {
             POINTS[away] += 3;
             WINS[away]++;
             LOSES[home]++;
+            ratingAwayAttack++;
+            ratingAwayDefence++;
+            ratingHomeAttack--;
+            ratingHomeDefence--;
+
+            if (goalsAway > 2) {
+                ratingAwayAttack++;
+                ratingHomeDefence--;
+            }
+
+            if (goalsHome == 0) {
+                ratingAwayDefence++;
+                ratingHomeAttack--;
+            }
 
             if (FORM[away] < FORM[home]) {
                 form(away, 2);
@@ -205,6 +245,20 @@ public class PremierLeague {
             DRAWS[home]++;
             DRAWS[away]++;
 
+            if (goalsHome > 2) {
+                ratingHomeAttack++;
+                ratingAwayAttack++;
+                ratingHomeDefence--;
+                ratingAwayDefence--;
+            }
+
+            if (goalsHome == 0) {
+                ratingHomeDefence++;
+                ratingAwayDefence++;
+                ratingHomeAttack--;
+                ratingAwayAttack--;
+            }
+
             if (FORM[home] < FORM[away]) {
                 form(home, 2);
                 form(away, -2);
@@ -221,6 +275,8 @@ public class PremierLeague {
         GOALS_AGAINST[home] += goalsAway;
         GOALS_FOR[away] += goalsAway;
         GOALS_AGAINST[away] += goalsHome;
+        ratePlayers(home, ratingHomeAttack, ratingHomeDefence);
+        ratePlayers(away, ratingAwayAttack, ratingAwayDefence);
         System.out.println(String.format("%s - %s %d:%d", TEAMS[home], TEAMS[away], goalsHome, goalsAway));
     }
 
@@ -233,23 +289,22 @@ public class PremierLeague {
         }
     }
 
-    private static int calculateGoals(int home, int away, boolean isAtHome) {
-        // TODO: Consider fatigue
+    private static int calculateGoals(int attacking, int defending, boolean isAtHome) {
         // TODO: Fix formula
-        int attack = isAtHome ? FANS : 0;
-        int defence = isAtHome ? 0 : FANS;
+        int attackValue = isAtHome ? FANS : 0;
+        int defenceValue = isAtHome ? 0 : FANS;
         for (int i = 0; i < 11; i++) {
             if (i < 6) {
-                defence += OVERALL[away][i];
+                defenceValue += OVERALL[defending][i];
             }
             else {
-                attack += OVERALL[home][i];
+                attackValue += OVERALL[attacking][i];
             }
         }
 
-        System.out.println(FORM[home]);
-        System.out.println(FORM[away]);
-        int average = 30 + 10 * attack - 7 * defence + (FORM[home] - FORM[away]);
+        System.out.println(FORM[attacking]);
+        System.out.println(FORM[defending]);
+        int average = 30 + 8 * attackValue - 5 * defenceValue + 2 * FORM[attacking];
         int goals = poisson(average);
         System.out.println(average);
         return goals;
@@ -274,6 +329,38 @@ public class PremierLeague {
                 .reduce(1, (long x, long y) -> x * y);
     }
 
+    private static void ratePlayers(int team, int attack, int defence) {
+        // TODO: Assign goals, assists and clean sheets
+        for (int defender = 0; defender < 6; defender++) {
+            float r = random.nextFloat();
+            float rating = 3 + (float) defence / 3 + (float) OVERALL[team][defender] / 4 + r * 3;
+            if (rating > 10) {
+                rating = 10;
+            }
+            else if (rating < 0) {
+                 rating = 0;
+            }
+
+            RATINGS[team][defender] += rating;
+            System.out.println(String.format("%s %.2f", PLAYERS[team][defender], rating));
+        }
+
+
+        for (int attacker = 6; attacker < 11; attacker++) {
+            float r = random.nextFloat();
+            float rating = 3 + (float) attack / 3 + (float) OVERALL[team][attacker] / 4 + r * 3;
+            if (rating > 10) {
+                rating = 10;
+            }
+            else if (rating < 0) {
+                 rating = 0;
+            }
+
+            RATINGS[team][attacker] += rating;
+            System.out.println(String.format("%s %.2f", PLAYERS[team][attacker], rating));
+        }
+    }
+
     private static void printStandings() {
         Map<Integer, Integer> standings = new LinkedHashMap<>();
         for (int i = 0; i < 20; i++) {
@@ -288,9 +375,34 @@ public class PremierLeague {
         System.out.println("No  Teams                G  W  D  L   GF:GA  P");
         for (int i = 0; i < 20; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
-            System.out.println(String.format("%2d. %-20s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1, TEAMS[index], GAMES[index],
-                    WINS[index], DRAWS[index], LOSES[index],
+            System.out.println(String.format("%2d. %-20s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
+                    TEAMS[index], GAMES[index], WINS[index], DRAWS[index], LOSES[index],
                     GOALS_FOR[index], GOALS_AGAINST[index], POINTS[index]));
         }
+    }
+
+    private static void printPlayerStats() {
+        Map<String, Double> ratings = new LinkedHashMap<>();
+        for (int team = 0; team < 20; team++) {
+            System.out.println();
+            System.out.println(TEAMS[team]);
+            for (int player = 0; player < 11; player++) {
+                ratings.put(PLAYERS[team][player], (double) (RATINGS[team][player] / 38));
+                System.out.println(String.format("%s %.2f", PLAYERS[team][player], RATINGS[team][player] / 38));
+            }
+        }
+
+        Map<String, Double> sorted = ratings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println();
+        System.out.println("Top Players");
+        for (int i = 0; i < 20; i++) {
+            System.out.println(String.format("%2d. %-15s %.2f", i + 1, sorted.keySet().toArray()[i],
+                    sorted.values().toArray()[i]));
+        }
+
     }
 }
