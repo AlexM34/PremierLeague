@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/PremierLeague.java" line="202" />
+    <bookmark url="file://$PROJECT_DIR$/src/PremierLeague.java" line="231" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="64bc44bd-8687-4cf7-b3e0-a5c3df20903f" name="Default Changelist" comment="">
@@ -23,8 +23,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/PremierLeague.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="67">
-              <caret line="118" column="88" lean-forward="true" selection-start-line="118" selection-start-column="88" selection-end-line="118" selection-end-column="88" />
+            <state relative-caret-position="141">
+              <caret line="78" column="23" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -61,11 +61,16 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -120,6 +125,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24973147" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -130,12 +136,12 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.6305085" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.6983051" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.48135594" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.2700565" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3039548" />
+      <window_info anchor="bottom" id="TODO" order="6" visible="true" weight="0.45649716" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.41016948" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.3299435" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.3299435" />
@@ -192,8 +198,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/PremierLeague.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="67">
-          <caret line="118" column="88" lean-forward="true" selection-start-line="118" selection-start-column="88" selection-end-line="118" selection-end-column="88" />
+        <state relative-caret-position="141">
+          <caret line="78" column="23" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

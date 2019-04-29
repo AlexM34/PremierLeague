@@ -4,8 +4,10 @@ import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toMap;
 
+// TODO: Separate into classes
 public class PremierLeague {
     private static Random random = new Random();
+    // TODO: Add logos
     private static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
             "Chelsea", "Tottenham", "Everton", "Leicester", "Wolverhampton", "Watford", "West Ham", "Bournemouth",
             "Crystal Palace", "Burnley", "Newcastle United", "Southampton", "Brighton", "Cardiff", "Fulham", "Huddersfield"};
@@ -73,10 +75,14 @@ public class PremierLeague {
             {8, 4, 6, 5, 6, 6, 6, 7, 6, 7, 7},
             {6, 6, 6, 7, 6, 6, 5, 7, 5, 6, 6},
     };
+    // TODO: Club stats
+    // TODO: Age and effect on ratings
+    // TODO: Goal and assist stats
     // TODO: Coach decisions
     // TODO: Add subs
     // TODO: Add positions
     // TODO: Add fatigue
+    private static int[] TITLES = {13, 5, 18, 20, 6, 2, 9, 1, 3, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 3};
     private static int[] POINTS = new int[20];
     private static int[] GOALS_FOR = new int[20];
     private static int[] GOALS_AGAINST = new int[20];
@@ -95,24 +101,46 @@ public class PremierLeague {
     private static int[] CLEAN_SHEETS = new int[20];
 
     public static void main(String[] args) {
-        prepare();
-        makeDraw();
+        for (int year = 0; year < 10; year++) {
+            prepare();
+            pause();
+            makeDraw();
+            for (int round = 0; round < 38; round++) {
+//                pause();
 
-        for (int round = 0; round < 38; round++) {
-//            System.out.println("Press Enter to continue");
-//            try {
-//                System.in.read();
-//            } catch(Exception e){
-//                System.out.println("Exception thrown!");
-//            }
+                play(round);
+            }
 
-            play(round);
+            finish();
+            preSeason();
         }
+    }
 
-        finish();
+    private static void pause() {
+        System.out.println("Press Enter to continue");
+        try {
+            System.in.read();
+        } catch(Exception e){
+            System.out.println("Exception thrown!");
+        }
     }
 
     private static void prepare() {
+        POINTS = new int[20];
+        GOALS_FOR = new int[20];
+        GOALS_AGAINST = new int[20];
+        GAMES = new int[20];
+        WINS = new int[20];
+        DRAWS = new int[20];
+        LOSES = new int[20];
+        HOME = new int[38][10];
+        AWAY = new int[38][10];
+        FORM = new int[20];
+        RATINGS = new float[20][11];
+        GOALS = new int[20][11];
+        ASSISTS = new int[20][11];
+        CLEAN_SHEETS = new int[20];
+
         System.out.println("The Premier League begins!");
         for (int i = 0; i < 20; i++) {
             FORM[i] = 10;
@@ -183,9 +211,10 @@ public class PremierLeague {
     }
 
     private static void finish() {
+        printPlayerStats();
         System.out.println("FINAL STANDINGS");
         printStandings();
-        printPlayerStats();
+        printAllTimeStats();
         System.out.println();
         System.out.println("The Premier League ends!");
     }
@@ -470,6 +499,22 @@ public class PremierLeague {
         }
     }
 
+    private static void preSeason() {
+        // TODO: Transfers
+        // TODO: Seasonal changes to all players based on ratings
+        for (int team = 0; team < 20; team++) {
+            for (int player = 0; player < 11; player++) {
+                int r = random.nextInt(4);
+                if (r == 0) {
+                    OVERALL[team][player] = OVERALL[team][player] < 10 ? OVERALL[team][player] + 1 : 10;
+                }
+                else if (r == 3){
+                    OVERALL[team][player] = OVERALL[team][player] > 1 ? OVERALL[team][player] - 1 : 1;
+                }
+            }
+        }
+    }
+
     private static void printStandings() {
         Map<Integer, Integer> standings = new LinkedHashMap<>();
         for (int i = 0; i < 20; i++) {
@@ -488,8 +533,34 @@ public class PremierLeague {
                     TEAMS[index], GAMES[index], WINS[index], DRAWS[index], LOSES[index],
                     GOALS_FOR[index], GOALS_AGAINST[index], POINTS[index]));
         }
+        System.out.println();
+
+        int first = (Integer) sorted.keySet().toArray()[0];
+
+        if (GAMES[first] == 38) {
+            TITLES[first]++;
+        }
 
         // TODO: Goal difference tiebreaker
+    }
+
+    private static void printAllTimeStats() {
+        Map<String, Integer> titles = new LinkedHashMap<>();
+        for (int i = 0; i < 20; i++) {
+            titles.put(TEAMS[i], TITLES[i]);
+        }
+
+        Map<String, Integer> sorted = titles.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println();
+        System.out.println("Winners");
+        for (int i = 0; i < 20; i++) {
+            System.out.println(String.format("%2d. %-20s %d", i+1, sorted.keySet().toArray()[i],
+                    sorted.values().toArray()[i]));
+        }
     }
 
     private static void printPlayerStats() {
@@ -559,5 +630,6 @@ public class PremierLeague {
                     sortedCleanSheets.values().toArray()[i]));
         }
 
+        System.out.println();
     }
 }
