@@ -3,18 +3,17 @@ import java.util.stream.IntStream;
 public class PremierLeague {
     public static void main(String[] args) {
         IntStream.range(0, 10).forEach(year -> {
-            Data.prepare();
+            Data.prepare(year);
             Draw.makeDraw();
             IntStream.range(0, 38).forEach(PremierLeague::play);
-            finish();
+            finish(year);
             PreSeason.changes();
         });
     }
 
     static void pause() {
-        System.out.println("Press Enter to continue");
+        System.out.println("Press any Key to continue");
         try {
-            // TODO: Wait for Enter
             System.in.read();
         } catch(Exception e){
             System.out.println("Exception thrown!");
@@ -36,13 +35,12 @@ public class PremierLeague {
         System.out.println();
     }
 
-    private static void finish() {
+    private static void finish(int year) {
         Printer.printPlayerStats();
         System.out.println("FINAL STANDINGS");
         Printer.printStandings();
         Printer.printAllTimeStats();
         System.out.println();
-        System.out.println("The Premier League ends!");
-        // TODO: Put year into message
+        System.out.println(String.format("The Premier League %d-%d ends!", 2018 + year, 2019 + year));
     }
 }

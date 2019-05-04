@@ -35,7 +35,7 @@ class Printer {
         // TODO: Goal difference tiebreaker
     }
 
-    protected static void printAllTimeStats() {
+    static void printAllTimeStats() {
         Map<String, Integer> titles = new LinkedHashMap<>();
         for (int i = 0; i < 20; i++) {
             titles.put(Data.TEAMS[i], Data.TITLES[i]);
@@ -54,7 +54,7 @@ class Printer {
         }
     }
 
-    protected static void printPlayerStats() {
+    static void printPlayerStats() {
         Map<String, Double> ratings = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
         Map<String, Integer> assists = new LinkedHashMap<>();
@@ -68,8 +68,8 @@ class Printer {
                 ratings.put(Data.PLAYERS[team][player], (double) (Data.RATINGS[team][player] / 38));
                 goals.put(Data.PLAYERS[team][player], Data.GOALS[team][player]);
                 assists.put(Data.PLAYERS[team][player], Data.ASSISTS[team][player]);
-//                System.out.println(String.format("%s %.2f %d %d", PLAYERS[team][player], RATINGS[team][player] / 38,
-//                        GOALS[team][player], ASSISTS[team][player]));
+                System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
+                        Data.GOALS[team][player], Data.ASSISTS[team][player]));
             }
         }
 

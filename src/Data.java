@@ -1,9 +1,10 @@
 import java.util.stream.IntStream;
 
-public class Data {
+class Data {
     static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
             "Chelsea", "Tottenham", "Everton", "Leicester", "Wolverhampton", "Watford", "West Ham", "Bournemouth",
             "Crystal Palace", "Burnley", "Newcastle United", "Southampton", "Brighton", "Cardiff", "Fulham", "Huddersfield"};
+
     static String[][] PLAYERS = {
             {"Leno", "Bellerin", "Sokratis", "Koscielny", "Kolasinac",
                     "Torreira", "Ramsey", "Xhaka", "Mkhitaryan", "Lacazette", "Aubameyang"},
@@ -69,14 +70,61 @@ public class Data {
             {6, 6, 6, 7, 6, 6, 5, 7, 5, 6, 6},
     };
 
+    static int[][] SCORING = {
+            {0, 1, 1, 1, 1, 1, 3, 3, 4, 7, 10},
+            {0, 1, 1, 1, 1, 1, 2, 4, 6, 8, 10},
+            {0, 1, 1, 2, 1, 1, 2, 2, 8, 10, 7},
+            {0, 1, 1, 1, 1, 2, 1, 7, 5, 7, 9},
+            {0, 1, 1, 2, 1, 1, 1, 3, 5, 8, 9},
+            {0, 1, 2, 1, 1, 2, 2, 4, 5, 8, 10},
+            {0, 1, 1, 1, 1, 1, 2, 6, 5, 7, 6},
+            {0, 1, 1, 1, 1, 3, 2, 3, 4, 5, 8},
+            {0, 1, 1, 1, 1, 2, 2, 4, 4, 6, 8},
+            {0, 1, 1, 1, 1, 2, 2, 3, 4, 7, 7},
+            {0, 1, 1, 1, 1, 2, 3, 3, 4, 7, 7},
+            {0, 1, 1, 1, 1, 2, 3, 4, 5, 7, 7},
+            {0, 1, 1, 1, 1, 2, 2, 3, 5, 7, 8},
+            {0, 1, 1, 1, 1, 2, 3, 4, 5, 7, 7},
+            {0, 1, 1, 1, 1, 2, 3, 4, 5, 6, 8},
+            {0, 1, 1, 1, 1, 2, 4, 4, 4, 6, 7},
+            {0, 1, 1, 1, 1, 2, 3, 5, 5, 5, 7},
+            {0, 1, 1, 1, 1, 2, 4, 4, 5, 6, 8},
+            {0, 1, 1, 1, 1, 2, 2, 4, 6, 5, 9},
+            {0, 1, 1, 1, 1, 2, 3, 4, 6, 6, 6},
+    };
+
+    static int[][] ASSISTING = {
+            {0, 3, 1, 1, 3, 3, 5, 2, 5, 9, 6},
+            {0, 3, 1, 1, 2, 3, 8, 9, 8, 8, 5},
+            {0, 2, 1, 1, 4, 3, 5, 4, 7, 6, 6},
+            {0, 2, 1, 1, 1, 3, 2, 8, 6, 6, 5},
+            {0, 2, 1, 2, 3, 2, 4, 4, 6, 10, 5},
+            {0, 2, 1, 1, 2, 2, 3, 9, 6, 7, 5},
+            {0, 2, 1, 1, 2, 2, 2, 6, 6, 8, 6},
+            {0, 2, 1, 1, 2, 2, 2, 5, 7, 7, 5},
+            {0, 2, 1, 1, 2, 2, 3, 6, 6, 6, 6},
+            {0, 2, 1, 1, 2, 2, 3, 5, 6, 8, 5},
+            {0, 2, 1, 1, 2, 2, 3, 4, 6, 8, 7},
+            {0, 3, 1, 1, 2, 2, 3, 4, 8, 6, 5},
+            {0, 1, 1, 1, 2, 3, 3, 4, 7, 6, 6},
+            {0, 2, 1, 1, 2, 2, 3, 5, 5, 6, 6},
+            {0, 2, 1, 1, 2, 2, 3, 4, 5, 6, 5},
+            {0, 2, 1, 1, 2, 2, 4, 5, 5, 7, 6},
+            {0, 2, 1, 1, 2, 2, 3, 3, 6, 5, 5},
+            {0, 2, 1, 1, 2, 2, 3, 3, 5, 6, 6},
+            {0, 2, 1, 1, 2, 2, 3, 4, 7, 6, 5},
+            {0, 2, 1, 1, 2, 2, 3, 5, 7, 6, 5},
+    };
+
     // TODO: Add logos
     // TODO: Club stats
     // TODO: Age and effect on ratings
-    // TODO: Goal and assist stats
     // TODO: Coach decisions
     // TODO: Add subs
     // TODO: Add positions
     // TODO: Add fatigue
+    static int[] SCORING_TOTAL = new int[20];
+    static int[] ASSISTING_TOTAL = new int[20];
     static int[] TITLES = {13, 5, 18, 20, 6, 2, 9, 1, 3, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 3};
     static int[] POINTS = new int[20];
     static int[] GOALS_FOR = new int[20];
@@ -94,26 +142,37 @@ public class Data {
     static int[][] ASSISTS = new int[20][11];
     static int[] CLEAN_SHEETS = new int[20];
 
-    static void prepare() {
-        Data.POINTS = new int[20];
-        Data.GOALS_FOR = new int[20];
-        Data.GOALS_AGAINST = new int[20];
-        Data.GAMES = new int[20];
-        Data.WINS = new int[20];
-        Data.DRAWS = new int[20];
-        Data.LOSES = new int[20];
-        Data.HOME = new int[38][10];
-        Data.AWAY = new int[38][10];
-        Data.FORM = new int[20];
-        Data.RATINGS = new float[20][11];
-        Data.GOALS = new int[20][11];
-        Data.ASSISTS = new int[20][11];
-        Data.CLEAN_SHEETS = new int[20];
+    static void prepare(int year) {
+        POINTS = new int[20];
+        GOALS_FOR = new int[20];
+        GOALS_AGAINST = new int[20];
+        GAMES = new int[20];
+        WINS = new int[20];
+        DRAWS = new int[20];
+        LOSES = new int[20];
+        HOME = new int[38][10];
+        AWAY = new int[38][10];
+        FORM = new int[20];
+        RATINGS = new float[20][11];
+        GOALS = new int[20][11];
+        ASSISTS = new int[20][11];
+        CLEAN_SHEETS = new int[20];
 
-        System.out.println("The Premier League begins!");
-        for (int i = 0; i < 20; i++) {
-            Data.FORM[i] = 10;
-            System.out.println(String.format("%s %d", Data.TEAMS[i], IntStream.of(Data.OVERALL[i]).sum()));
+        System.out.println(String.format("The Premier League %d-%d begins!", 2018 + year, 2019 + year));
+        for (int team = 0; team < 20; team++) {
+            FORM[team] = 10;
+            SCORING_TOTAL[team] = 10 + IntStream.of(SCORING[team]).map(Rater::scoringChance).sum();
+            ASSISTING_TOTAL[team] = 30 + IntStream.of(ASSISTING[team]).map(Rater::assistingChance).sum();
+            System.out.println(String.format("%s %d %d %d", TEAMS[team], IntStream.of(OVERALL[team]).sum(),
+                    SCORING_TOTAL[team], ASSISTING_TOTAL[team]));
+        }
+
+        System.out.println();
+        for (int team = 0; team < 20; team++) {
+            for (int player = 0; player < 11; player++) {
+                System.out.println(String.format("%s %s", PLAYERS[team][player],
+                        OVERALL[team][player]));
+            }
         }
 
         System.out.println();
