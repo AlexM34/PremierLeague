@@ -7,9 +7,11 @@ import static java.util.stream.Collectors.toMap;
 class Printer {
 
     static void printStandings() {
+        int goals = 0;
         Map<Integer, Integer> standings = new LinkedHashMap<>();
-        for (int i = 0; i < 20; i++) {
-            standings.put(i, Data.POINTS[i]);
+        for (int teams = 0; teams < 20; teams++) {
+            standings.put(teams, 10000 * Data.POINTS[teams] + 100 *
+                    (Data.GOALS_FOR[teams] - Data.GOALS_AGAINST[teams]) + Data.GOALS_FOR[teams]);
         }
 
         Map<Integer, Integer> sorted = standings.entrySet().stream().sorted(
@@ -20,10 +22,13 @@ class Printer {
         System.out.println("No  Teams                G  W  D  L   GF:GA  P");
         for (int i = 0; i < 20; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
+            goals += Data.GOALS_FOR[index];
             System.out.println(String.format("%2d. %-20s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
                     Data.TEAMS[index], Data.GAMES[index], Data.WINS[index], Data.DRAWS[index], Data.LOSES[index],
                     Data.GOALS_FOR[index], Data.GOALS_AGAINST[index], Data.POINTS[index]));
         }
+        System.out.println();
+        System.out.println("Total goals for the season: " + goals);
         System.out.println();
 
         int first = (Integer) sorted.keySet().toArray()[0];
@@ -31,8 +36,6 @@ class Printer {
         if (Data.GAMES[first] == 38) {
             Data.TITLES[first]++;
         }
-
-        // TODO: Goal difference tiebreaker
     }
 
     static void printAllTimeStats() {

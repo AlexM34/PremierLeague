@@ -1,6 +1,9 @@
 import java.util.stream.IntStream;
 
 public class PremierLeague {
+    // TODO: Add tests
+    // TODO: Make it playable by user
+
     public static void main(String[] args) {
         IntStream.range(0, 10).forEach(year -> {
             Data.prepare(year);

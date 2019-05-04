@@ -65,7 +65,7 @@ class Rater {
 
     static int scoringChance(int attribute) {
         if (attribute == 0) return 0;
-        return attribute * attribute / 2 + 5;
+        return attribute * attribute / 2 + 10;
     }
 
     static int assistingChance(int attribute) {

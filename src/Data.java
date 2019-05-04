@@ -162,7 +162,7 @@ class Data {
         for (int team = 0; team < 20; team++) {
             FORM[team] = 10;
             SCORING_TOTAL[team] = 10 + IntStream.of(SCORING[team]).map(Rater::scoringChance).sum();
-            ASSISTING_TOTAL[team] = 30 + IntStream.of(ASSISTING[team]).map(Rater::assistingChance).sum();
+            ASSISTING_TOTAL[team] = 50 + IntStream.of(ASSISTING[team]).map(Rater::assistingChance).sum();
             System.out.println(String.format("%s %d %d %d", TEAMS[team], IntStream.of(OVERALL[team]).sum(),
                     SCORING_TOTAL[team], ASSISTING_TOTAL[team]));
         }
