@@ -3,14 +3,40 @@ import java.util.stream.LongStream;
 
 class Match {
     private static Random random = new Random();
+    static int motmTeam;
+    static int motmPlayer;
+    static float motmRating;
 
     static void simulateGame(int home, int away) {
+        kickoff();
         int goalsHome = calculateGoals(home, away, true);
         int goalsAway = calculateGoals(away, home, false);
         int ratingHomeAttack = goalsHome;
         int ratingHomeDefence = 3 - goalsAway;
         int ratingAwayAttack = goalsAway;
         int ratingAwayDefence = 3 - goalsHome;
+
+        if (goalsHome > 2) {
+            ratingHomeAttack++;
+            ratingAwayDefence--;
+        }
+
+        if (goalsAway == 0) {
+            ratingHomeDefence++;
+            ratingAwayAttack--;
+            Data.CLEAN_SHEETS[home]++;
+        }
+
+        if (goalsAway > 2) {
+            ratingAwayAttack++;
+            ratingHomeDefence--;
+        }
+
+        if (goalsHome == 0) {
+            ratingAwayDefence++;
+            ratingHomeAttack--;
+            Data.CLEAN_SHEETS[away]++;
+        }
 
         if (goalsHome > goalsAway) {
             Data.POINTS[home] += 3;
@@ -21,34 +47,24 @@ class Match {
             ratingAwayAttack--;
             ratingAwayDefence--;
 
-            if (goalsHome > 2) {
-                ratingHomeAttack++;
-                ratingAwayDefence--;
-            }
-
-            if (goalsAway == 0) {
-                ratingHomeDefence++;
-                ratingAwayAttack--;
-                Data.CLEAN_SHEETS[home]++;
-            }
-
-            if (Data.FORM[home] < Data.FORM[away]) {
-                form(home, 2);
-                form(away, -2);
-            }
-
             if (goalsHome - goalsAway > 2) {
                 form(home, 1);
                 form(away, -1);
             }
 
-            if (Data.FORM[away] - Data.FORM[home] < 10) {
-                form(home, 1);
-                form(away, -1);
+            if (Data.FORM[home] < Data.FORM[away] + 10) {
+                if (Data.FORM[home] < Data.FORM[away]) {
+                    form(home, 3);
+                    form(away, -3);
+                }
+                else {
+                    form(home, 1);
+                    form(away, -1);
+                }
             }
         }
+
         else if (goalsHome < goalsAway){
-            // TODO: Improve efficiency
             Data.POINTS[away] += 3;
             Data.WINS[away]++;
             Data.LOSES[home]++;
@@ -57,30 +73,20 @@ class Match {
             ratingHomeAttack--;
             ratingHomeDefence--;
 
-            if (goalsAway > 2) {
-                ratingAwayAttack++;
-                ratingHomeDefence--;
-            }
-
-            if (goalsHome == 0) {
-                ratingAwayDefence++;
-                ratingHomeAttack--;
-                Data.CLEAN_SHEETS[away]++;
-            }
-
-            if (Data.FORM[away] < Data.FORM[home]) {
-                form(away, 2);
-                form(home, -2);
-            }
-
             if (goalsAway - goalsHome > 2) {
                 form(away, 1);
                 form(home, -1);
             }
 
-            if (Data.FORM[away] - Data.FORM[home] < 10) {
-                form(away, 1);
-                form(home, -1);
+            if (Data.FORM[away] < Data.FORM[home] + 10) {
+                if (Data.FORM[away] < Data.FORM[home]) {
+                    form(away, 3);
+                    form(home, -3);
+                }
+                else {
+                    form(away, 1);
+                    form(home, -1);
+                }
             }
         }
         else {
@@ -88,22 +94,6 @@ class Match {
             Data.POINTS[away]++;
             Data.DRAWS[home]++;
             Data.DRAWS[away]++;
-
-            if (goalsHome > 2) {
-                ratingHomeAttack++;
-                ratingAwayAttack++;
-                ratingHomeDefence--;
-                ratingAwayDefence--;
-            }
-
-            if (goalsHome == 0) {
-                ratingHomeDefence++;
-                ratingAwayDefence++;
-                ratingHomeAttack--;
-                ratingAwayAttack--;
-                Data.CLEAN_SHEETS[home]++;
-                Data.CLEAN_SHEETS[away]++;
-            }
 
             if (Data.FORM[home] < Data.FORM[away]) {
                 form(home, 2);
@@ -121,11 +111,20 @@ class Match {
         Data.GOALS_AGAINST[home] += goalsAway;
         Data.GOALS_FOR[away] += goalsAway;
         Data.GOALS_AGAINST[away] += goalsHome;
+
         Rater.ratePlayers(home, ratingHomeAttack, ratingHomeDefence, goalsHome, goalsAway == 0);
         Rater.ratePlayers(away, ratingAwayAttack, ratingAwayDefence, goalsAway, goalsHome == 0);
-        System.out.println(String.format("%s - %s %d:%d", Data.TEAMS[home], Data.TEAMS[away], goalsHome, goalsAway));
-        // TODO: Print goalscorers and assists per game
-        // TODO: Man of the Match award
+
+        Data.MOTM[motmTeam][motmPlayer]++;
+
+        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], goalsHome,
+                goalsAway, Data.PLAYERS[motmTeam][motmPlayer], motmRating));
+    }
+
+    private static void kickoff() {
+        motmTeam = 0;
+        motmPlayer = 0;
+        motmRating = 0;
     }
 
     private static void form(int team, int change) {

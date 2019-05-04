@@ -38,27 +38,9 @@ class Printer {
         }
     }
 
-    static void printAllTimeStats() {
-        Map<String, Integer> titles = new LinkedHashMap<>();
-        for (int i = 0; i < 20; i++) {
-            titles.put(Data.TEAMS[i], Data.TITLES[i]);
-        }
-
-        Map<String, Integer> sorted = titles.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        System.out.println();
-        System.out.println("Winners");
-        for (int i = 0; i < 20; i++) {
-            System.out.println(String.format("%2d. %-20s %d", i+1, sorted.keySet().toArray()[i],
-                    sorted.values().toArray()[i]));
-        }
-    }
-
     static void printPlayerStats() {
         Map<String, Double> ratings = new LinkedHashMap<>();
+        Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
         Map<String, Integer> assists = new LinkedHashMap<>();
         Map<String, Integer> cleanSheets = new LinkedHashMap<>();
@@ -69,6 +51,7 @@ class Printer {
             cleanSheets.put(Data.PLAYERS[team][0], Data.CLEAN_SHEETS[team]);
             for (int player = 0; player < 11; player++) {
                 ratings.put(Data.PLAYERS[team][player], (double) (Data.RATINGS[team][player] / 38));
+                motm.put(Data.PLAYERS[team][player], Data.MOTM[team][player]);
                 goals.put(Data.PLAYERS[team][player], Data.GOALS[team][player]);
                 assists.put(Data.PLAYERS[team][player], Data.ASSISTS[team][player]);
                 System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
@@ -77,6 +60,11 @@ class Printer {
         }
 
         Map<String, Double> sortedRatings = ratings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedMotm = motm.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
@@ -96,11 +84,19 @@ class Printer {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
+        // TODO: Sorted values don't match with integer
         System.out.println();
         System.out.println("Top Players");
         for (int i = 0; i < 20; i++) {
             System.out.println(String.format("%2d. %-15s %.2f", i + 1, sortedRatings.keySet().toArray()[i],
                     sortedRatings.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Most MOTM Awards");
+        for (int i = 0; i < 20 && i < sortedMotm.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %d", i + 1, sortedMotm.keySet().toArray()[i],
+                    sortedMotm.values().toArray()[i]));
         }
 
         System.out.println();
@@ -125,5 +121,24 @@ class Printer {
         }
 
         System.out.println();
+    }
+
+    static void printAllTimeStats() {
+        Map<String, Integer> titles = new LinkedHashMap<>();
+        for (int i = 0; i < 20; i++) {
+            titles.put(Data.TEAMS[i], Data.TITLES[i]);
+        }
+
+        Map<String, Integer> sorted = titles.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println();
+        System.out.println("Winners");
+        for (int i = 0; i < 20; i++) {
+            System.out.println(String.format("%2d. %-20s %d", i+1, sorted.keySet().toArray()[i],
+                    sorted.values().toArray()[i]));
+        }
     }
 }

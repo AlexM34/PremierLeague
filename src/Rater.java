@@ -20,6 +20,7 @@ class Rater {
                     else if (player < 8) rating += 0.25;
 
                     Data.GOALS[team][player]++;
+                    System.out.println(Data.PLAYERS[team][player] + " scores!");
                     goalsRemaining--;
                 }
             }
@@ -33,6 +34,8 @@ class Rater {
                     else if (player < 8) rating += 0.25;
 
                     Data.ASSISTS[team][player]++;
+                    System.out.println(Data.PLAYERS[team][player] + " assists!");
+                    // TODO: Cannot assist yourself
                     assistsRemaining--;
                 }
             }
@@ -56,6 +59,12 @@ class Rater {
             }
             else if (rating < 0) {
                 rating = 0;
+            }
+
+            if (Match.motmRating < rating) {
+                Match.motmTeam = team;
+                Match.motmPlayer = player;
+                Match.motmRating = rating;
             }
 
             Data.RATINGS[team][player] += rating;

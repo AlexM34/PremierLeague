@@ -138,6 +138,7 @@ class Data {
     static int FANS = 7;
     static int[] FORM = new int[20];
     static float[][] RATINGS = new float[20][11];
+    static int[][] MOTM = new int[20][11];
     static int[][] GOALS = new int[20][11];
     static int[][] ASSISTS = new int[20][11];
     static int[] CLEAN_SHEETS = new int[20];
@@ -154,6 +155,7 @@ class Data {
         AWAY = new int[38][10];
         FORM = new int[20];
         RATINGS = new float[20][11];
+        MOTM = new int[20][11];
         GOALS = new int[20][11];
         ASSISTS = new int[20][11];
         CLEAN_SHEETS = new int[20];
