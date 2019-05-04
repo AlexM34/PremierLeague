@@ -1,0 +1,126 @@
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
+
+class Printer {
+
+    static void printStandings() {
+        Map<Integer, Integer> standings = new LinkedHashMap<>();
+        for (int i = 0; i < 20; i++) {
+            standings.put(i, Data.POINTS[i]);
+        }
+
+        Map<Integer, Integer> sorted = standings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println("No  Teams                G  W  D  L   GF:GA  P");
+        for (int i = 0; i < 20; i++) {
+            Integer index = (Integer) sorted.keySet().toArray()[i];
+            System.out.println(String.format("%2d. %-20s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
+                    Data.TEAMS[index], Data.GAMES[index], Data.WINS[index], Data.DRAWS[index], Data.LOSES[index],
+                    Data.GOALS_FOR[index], Data.GOALS_AGAINST[index], Data.POINTS[index]));
+        }
+        System.out.println();
+
+        int first = (Integer) sorted.keySet().toArray()[0];
+
+        if (Data.GAMES[first] == 38) {
+            Data.TITLES[first]++;
+        }
+
+        // TODO: Goal difference tiebreaker
+    }
+
+    protected static void printAllTimeStats() {
+        Map<String, Integer> titles = new LinkedHashMap<>();
+        for (int i = 0; i < 20; i++) {
+            titles.put(Data.TEAMS[i], Data.TITLES[i]);
+        }
+
+        Map<String, Integer> sorted = titles.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println();
+        System.out.println("Winners");
+        for (int i = 0; i < 20; i++) {
+            System.out.println(String.format("%2d. %-20s %d", i+1, sorted.keySet().toArray()[i],
+                    sorted.values().toArray()[i]));
+        }
+    }
+
+    protected static void printPlayerStats() {
+        Map<String, Double> ratings = new LinkedHashMap<>();
+        Map<String, Integer> goals = new LinkedHashMap<>();
+        Map<String, Integer> assists = new LinkedHashMap<>();
+        Map<String, Integer> cleanSheets = new LinkedHashMap<>();
+
+        for (int team = 0; team < 20; team++) {
+//            System.out.println();
+//            System.out.println(TEAMS[team]);
+            cleanSheets.put(Data.PLAYERS[team][0], Data.CLEAN_SHEETS[team]);
+            for (int player = 0; player < 11; player++) {
+                ratings.put(Data.PLAYERS[team][player], (double) (Data.RATINGS[team][player] / 38));
+                goals.put(Data.PLAYERS[team][player], Data.GOALS[team][player]);
+                assists.put(Data.PLAYERS[team][player], Data.ASSISTS[team][player]);
+//                System.out.println(String.format("%s %.2f %d %d", PLAYERS[team][player], RATINGS[team][player] / 38,
+//                        GOALS[team][player], ASSISTS[team][player]));
+            }
+        }
+
+        Map<String, Double> sortedRatings = ratings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedGoals = goals.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedAssists = assists.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedCleanSheets = cleanSheets.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println();
+        System.out.println("Top Players");
+        for (int i = 0; i < 20; i++) {
+            System.out.println(String.format("%2d. %-15s %.2f", i + 1, sortedRatings.keySet().toArray()[i],
+                    sortedRatings.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Top Goalscorer");
+        for (int i = 0; i < 20 && i < sortedGoals.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %d", i + 1, sortedGoals.keySet().toArray()[i],
+                    sortedGoals.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Most Assists");
+        for (int i = 0; i < 20 && i < sortedAssists.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %d", i + 1, sortedAssists.keySet().toArray()[i],
+                    sortedAssists.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Most Clean Sheets");
+        for (int i = 0; i < 20 && i < sortedCleanSheets.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %2d", i + 1, sortedCleanSheets.keySet().toArray()[i],
+                    sortedCleanSheets.values().toArray()[i]));
+        }
+
+        System.out.println();
+    }
+}
