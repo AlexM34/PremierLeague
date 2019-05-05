@@ -54,8 +54,8 @@ class Printer {
                 motm.put(Data.PLAYERS[team][player], Data.MOTM[team][player]);
                 goals.put(Data.PLAYERS[team][player], Data.GOALS[team][player]);
                 assists.put(Data.PLAYERS[team][player], Data.ASSISTS[team][player]);
-                System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
-                        Data.GOALS[team][player], Data.ASSISTS[team][player]));
+//                System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
+//                        Data.GOALS[team][player], Data.ASSISTS[team][player]));
             }
         }
 

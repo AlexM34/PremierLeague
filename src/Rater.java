@@ -20,7 +20,7 @@ class Rater {
                     else if (player < 8) rating += 0.25;
 
                     Data.GOALS[team][player]++;
-                    System.out.println(Data.PLAYERS[team][player] + " scores!");
+//                    System.out.println(Data.PLAYERS[team][player] + " scores!");
                     goalsRemaining--;
                 }
             }
@@ -34,7 +34,7 @@ class Rater {
                     else if (player < 8) rating += 0.25;
 
                     Data.ASSISTS[team][player]++;
-                    System.out.println(Data.PLAYERS[team][player] + " assists!");
+//                    System.out.println(Data.PLAYERS[team][player] + " assists!");
                     // TODO: Cannot assist yourself
                     assistsRemaining--;
                 }
@@ -68,7 +68,7 @@ class Rater {
             }
 
             Data.RATINGS[team][player] += rating;
-            System.out.println(String.format("%s %.2f", Data.PLAYERS[team][player], rating));
+//            System.out.println(String.format("%s %.2f", Data.PLAYERS[team][player], rating));
         }
     }
 

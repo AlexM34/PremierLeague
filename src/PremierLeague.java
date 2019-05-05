@@ -1,12 +1,17 @@
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.stream.IntStream;
 
 public class PremierLeague {
+    private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
-    // TODO: Make it playable by user
+    // TODO: User selects a team
+    // TODO: User bets
 
     public static void main(String[] args) {
         IntStream.range(0, 10).forEach(year -> {
             Data.prepare(year);
+            pickTeam();
             Draw.makeDraw();
             IntStream.range(0, 38).forEach(PremierLeague::play);
             finish(year);
@@ -14,11 +19,24 @@ public class PremierLeague {
         });
     }
 
+    private static void pickTeam() {
+        System.out.println("Pick a team from 1 to 20");
+        while (true) {
+            int team = scanner.nextInt();
+            if(team < 0 || team > 20) {
+                System.out.println("Wrong team number.");
+                continue;
+            }
+            Data.USER = team - 1;
+            break;
+        }
+    }
+
     static void pause() {
         System.out.println("Press any Key to continue");
         try {
             System.in.read();
-        } catch(Exception e){
+        } catch (IOException e) {
             System.out.println("Exception thrown!");
         }
     }
@@ -27,7 +45,12 @@ public class PremierLeague {
 //        pause();
         System.out.println(String.format("Round %d", round + 1));
         for (int game = 0; game < 10; game++) {
-            Match.simulateGame(Data.HOME[round][game], Data.AWAY[round][game]);
+            int home = Data.HOME[round][game];
+            int away = Data.AWAY[round][game];
+            if (Data.USER == home) Match.userTactics(away, true);
+            else if (Data.USER == away) Match.userTactics(home, false);
+            Match.simulateGame(home, away);
+            if (Data.USER == home || Data.USER == away) pause();
         }
 
         System.out.println();

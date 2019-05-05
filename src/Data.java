@@ -123,6 +123,8 @@ class Data {
     // TODO: Add subs
     // TODO: Add positions
     // TODO: Add fatigue
+    static Integer USER;
+    static int OFFENSE;
     static int[] SCORING_TOTAL = new int[20];
     static int[] ASSISTING_TOTAL = new int[20];
     static int[] TITLES = {13, 5, 18, 20, 6, 2, 9, 1, 3, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 3};
@@ -135,6 +137,7 @@ class Data {
     static int[] LOSES = new int[20];
     static int[][] HOME = new int[38][10];
     static int[][] AWAY = new int[38][10];
+    // TODO: Explore fan factor
     static int FANS = 7;
     static int[] FORM = new int[20];
     static float[][] RATINGS = new float[20][11];
@@ -160,6 +163,7 @@ class Data {
         ASSISTS = new int[20][11];
         CLEAN_SHEETS = new int[20];
 
+        // TODO: Title odds
         System.out.println(String.format("The Premier League %d-%d begins!", 2018 + year, 2019 + year));
         for (int team = 0; team < 20; team++) {
             FORM[team] = 10;
@@ -169,13 +173,13 @@ class Data {
                     SCORING_TOTAL[team], ASSISTING_TOTAL[team]));
         }
 
-        System.out.println();
-        for (int team = 0; team < 20; team++) {
-            for (int player = 0; player < 11; player++) {
-                System.out.println(String.format("%s %s", PLAYERS[team][player],
-                        OVERALL[team][player]));
-            }
-        }
+//        System.out.println();
+//        for (int team = 0; team < 20; team++) {
+//            for (int player = 0; player < 11; player++) {
+//                System.out.println(String.format("%s %s", PLAYERS[team][player],
+//                        OVERALL[team][player]));
+//            }
+//        }
 
         System.out.println();
         PremierLeague.pause();

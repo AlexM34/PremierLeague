@@ -1,13 +1,39 @@
 import java.util.Random;
+import java.util.Scanner;
 import java.util.stream.LongStream;
 
 class Match {
+    private static Scanner scanner = new Scanner(System.in);
     private static Random random = new Random();
+
     static int motmTeam;
     static int motmPlayer;
     static float motmRating;
 
+    static void userTactics(int opponent, boolean isHome) {
+        // TODO: Add other choices
+        System.out.println("vs " + Data.TEAMS[opponent] + (isHome ? " Home" : " Away"));
+        System.out.println("Pick how offensive the team should be from 0 to 20");
+        while (true) {
+            int offense = scanner.nextInt();
+            if(offense < 0 || offense > 20) {
+                System.out.println("Wrong offense number.");
+                continue;
+            }
+            Data.OFFENSE = offense - 10;
+            break;
+        }
+//        try {
+//            int offense = System.in.read().;
+//            if (offense >= 30 && offense <= 70) Data.OFFENSE = offense;
+//        } catch(Exception e){
+//            System.out.println("Exception thrown!");
+//        }
+
+    }
+
     static void simulateGame(int home, int away) {
+        // TODO: Match odds
         kickoff();
         int goalsHome = calculateGoals(home, away, true);
         int goalsAway = calculateGoals(away, home, false);
@@ -146,6 +172,13 @@ class Match {
             else {
                 attackValue += Data.OVERALL[attacking][i];
             }
+        }
+
+        if (attacking == Data.USER) {
+            attackValue += Data.OFFENSE;
+        }
+        else if (defending == Data.USER) {
+            defenceValue -= Data.OFFENSE;
         }
 
         //System.out.println(FORM[attacking]);
