@@ -4,6 +4,7 @@ class PreSeason {
     private static Random random = new Random();
 
     static void changes() {
+        // TODO: Age updates
         // TODO: Transfers
         for (int team = 0; team < 20; team++) {
             for (int player = 0; player < 11; player++) {

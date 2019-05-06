@@ -10,7 +10,7 @@ public class PremierLeague {
 
     public static void main(String[] args) {
         Data.extractData();
-        IntStream.range(0, 0).forEach(year -> {
+        IntStream.range(0, 10).forEach(year -> {
             Data.prepare(year);
             pickTeam();
             Draw.makeDraw();

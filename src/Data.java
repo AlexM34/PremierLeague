@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 class Data {
-    // TODO: Change length for each team from 15 to 25
+    // TODO: Change length for each team from 15 to 20
     // TODO: Put space for teams and players
     static String[] TEAMS = {"Arsenal", "ManchesterCity", "Liverpool", "ManchesterUnited",
             "Chelsea", "TottenhamHotspur", "Everton", "LeicesterCity", "WolverhamptonWanderers", "Watford",
@@ -123,10 +123,8 @@ class Data {
 
     // TODO: Add logos
     // TODO: Club stats
-    // TODO: Age and effect on ratings
+    // TODO: Coaches and formations
     // TODO: Coach decisions
-    // TODO: Add subs
-    // TODO: Add positions
     // TODO: Add fatigue
     static Map<String, List<Footballer>> SQUADS = new HashMap<>();
     static Integer USER;
@@ -169,7 +167,7 @@ class Data {
                 inputStream.next();
 
                 List<Footballer> footballers = new ArrayList<>();
-                while (inputStream.hasNext()) {
+                while (inputStream.hasNext() && count < 5000) {
                     String footballer = inputStream.next();
                     String[] values = footballer.split(",");
                     if (Data.TEAMS[team].equals(values[9])) {
@@ -178,10 +176,10 @@ class Data {
                                 Integer.parseInt(values[7]), Integer.parseInt(values[8]),
                                 Double.parseDouble(values[11].substring(1, values[11].length() - 1)),
                                 Double.parseDouble(values[12].substring(1, values[12].length() - 1)),
-                                values.length > 21 && !values[21].isEmpty() ? values[21] : "0",
+                                values.length > 21 && !values[21].isEmpty() ? Position.valueOf(values[21]) : null,
                                 values.length > 22 && !values[22].isEmpty() ? Integer.parseInt(values[22]) : 0,
-                                values.length > 55 && !values[55].isEmpty() ? Integer.parseInt(values[55]) : 0,
-                                values.length > 77 && !values[77].isEmpty() ? Integer.parseInt(values[77]) : 0));
+                                values.length > 56 && !values[56].isEmpty() ? Integer.parseInt(values[56]) : 0,
+                                values.length > 78 && !values[78].isEmpty() ? Integer.parseInt(values[78]) : 0));
 //                        footballers.forEach(f -> System.out.println(f.toString()));
 //                        line.printf("%s %s %s %s %s %s %s %s %s %s %s " + "%n", values[2], values[3], values[5],
 //                                values[7], values[8], values[11], values[12],

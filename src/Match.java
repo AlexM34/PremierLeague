@@ -1,3 +1,5 @@
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.LongStream;
@@ -9,6 +11,8 @@ class Match {
     static int motmTeam;
     static int motmPlayer;
     static float motmRating;
+    static Footballer[] homeSquad;
+    static Footballer[] awaySquad;
 
     static void userTactics(int opponent, boolean isHome) {
         // TODO: Add other choices
@@ -23,20 +27,92 @@ class Match {
             Data.OFFENSE = offense - 10;
             break;
         }
-//        try {
-//            int offense = System.in.read().;
-//            if (offense >= 30 && offense <= 70) Data.OFFENSE = offense;
-//        } catch(Exception e){
-//            System.out.println("Exception thrown!");
-//        }
 
     }
 
     static void simulateGame(int home, int away) {
         // TODO: Match odds
+        // TODO: Minute-by-minute simulation
         kickoff();
-        int goalsHome = calculateGoals(home, away, true);
-        int goalsAway = calculateGoals(away, home, false);
+        homeSquad = pickSquad(home);
+        awaySquad = pickSquad(away);
+        int homePerf = 50;
+        int awayPerf = 50;
+        int homeAttack = 50;
+        int homeDefense = 50;
+        int awayAttack = 50;
+        int awayDefense = 50;
+
+        int goalsHome = 0;//calculateGoals(home, away, true);
+        int goalsAway = 0;//calculateGoals(away, home, false);
+        for (int minute = 1; minute <= 90; minute++) {
+            // TODO: Add stoppage time
+
+        }
+
+        finalWhistle(home, away, goalsHome, goalsAway);
+    }
+
+    private static Footballer[] pickSquad(int team) {
+        // TODO: Pick formation
+        int goalkeeper = 1;
+        int defenders = 4;
+        int midfielders = 3;
+        int forwards = 3;
+        Footballer[] selected = new Footballer[11];
+        List<Footballer> squad = Data.SQUADS.get(Data.TEAMS[team]);
+
+        for (Footballer footballer : squad) {
+            if (footballer.getPosition() == null) {
+                continue;
+            }
+
+            switch (footballer.getPosition().getRole()) {
+                case Goalkeeper:
+                    if (goalkeeper > 0) {
+                        goalkeeper--;
+                        selected[goalkeeper] = footballer;
+                    }
+                    break;
+
+                case Defender:
+                    if (defenders > 0) {
+                        defenders--;
+                        selected[1 + defenders] = footballer;
+                    }
+                    break;
+
+                case Midfielder:
+                    if (midfielders > 0) {
+                        midfielders--;
+                        selected[5 + midfielders] = footballer;
+                    }
+                    break;
+
+                case Forward:
+                    if (forwards > 0) {
+                        forwards--;
+                        selected[8 + forwards] = footballer;
+                    }
+                    break;
+
+                default:
+                    System.out.println("Unknown position for footballer " + footballer);
+                    break;
+            }
+        }
+
+        Arrays.stream(selected).forEach(System.out::println);
+        return selected;
+    }
+
+    private static void kickoff() {
+        motmTeam = 0;
+        motmPlayer = 0;
+        motmRating = 0;
+    }
+
+    private static void finalWhistle(int home, int away, int goalsHome, int goalsAway) {
         int ratingHomeAttack = goalsHome;
         int ratingHomeDefence = 3 - goalsAway;
         int ratingAwayAttack = goalsAway;
@@ -145,12 +221,6 @@ class Match {
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], goalsHome,
                 goalsAway, Data.PLAYERS[motmTeam][motmPlayer], motmRating));
-    }
-
-    private static void kickoff() {
-        motmTeam = 0;
-        motmPlayer = 0;
-        motmRating = 0;
     }
 
     private static void form(int team, int change) {

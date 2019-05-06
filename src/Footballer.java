@@ -8,13 +8,13 @@ public class Footballer {
     private int potential;
     private double value;
     private double wage;
-    private String position;
+    private Position position;
     private int number;
     private int finishing;
     private int vision;
 
     Footballer(String name, int age, String nationality, int overall,
-               int potential, double value, double wage, String position,
+               int potential, double value, double wage, Position position,
                int number, int finishing, int vision) {
         this.name = name;
         this.age = age;
@@ -77,11 +77,11 @@ public class Footballer {
         this.wage = wage;
     }
 
-    public String getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(String position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 
