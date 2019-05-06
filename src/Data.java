@@ -1,9 +1,14 @@
+import java.io.*;
+import java.util.Scanner;
 import java.util.stream.IntStream;
 
 class Data {
-    static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
-            "Chelsea", "Tottenham", "Everton", "Leicester", "Wolverhampton", "Watford", "West Ham", "Bournemouth",
-            "Crystal Palace", "Burnley", "Newcastle United", "Southampton", "Brighton", "Cardiff", "Fulham", "Huddersfield"};
+    // TODO: Change length for each team from 15 to 25
+    // TODO: Put space for teams and players
+    static String[] TEAMS = {"Arsenal", "ManchesterCity", "Liverpool", "ManchesterUnited",
+            "Chelsea", "TottenhamHotspur", "Everton", "LeicesterCity", "WolverhamptonWanderers", "Watford",
+            "WestHamUnited", "Bournemouth", "CrystalPalace", "Burnley", "NewcastleUnited", "Southampton",
+            "Brighton&HoveAlbion", "CardiffCity", "Fulham", "HuddersfieldTown"};
 
     static String[][] PLAYERS = {
             {"Leno", "Bellerin", "Sokratis", "Koscielny", "Kolasinac",
@@ -145,6 +150,42 @@ class Data {
     static int[][] GOALS = new int[20][11];
     static int[][] ASSISTS = new int[20][11];
     static int[] CLEAN_SHEETS = new int[20];
+
+    static void extractData() {
+        String fileName = "data/data.csv";
+        File data = new File(fileName);
+        try {
+            for (int team = 0; team < 20; team++) {
+                File file = new File("data/" + Data.TEAMS[team] + ".txt");
+                file.delete();
+                file.createNewFile();
+                FileWriter write = new FileWriter(file, true);
+                PrintWriter line = new PrintWriter(write);
+
+                int count = 0;
+                Scanner inputStream = new Scanner(data);
+                inputStream.next();
+                while (inputStream.hasNext()) {
+                    String footballer = inputStream.next();
+                    String[] values = footballer.split(",");
+                    if (Data.TEAMS[team].equals(values[9])) {
+                        line.printf("%s %s %s %s %s %s %s %s %s %s %s " + "%n", values[2], values[3], values[5],
+                                values[7], values[8], values[11], values[12],
+                                values.length > 21 && !values[21].isEmpty() ? values[21] : "0",
+                                values.length > 22 && !values[22].isEmpty() ? values[22] : "0",
+                                values.length > 55 && !values[55].isEmpty() ? values[55] : "0",
+                                values.length > 77 && !values[77].isEmpty() ? values[77] : "0");
+//                        System.out.println(values.length);
+                    }
+                    count++;
+                }
+                inputStream.close();
+                line.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     static void prepare(int year) {
         POINTS = new int[20];

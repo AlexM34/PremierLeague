@@ -9,10 +9,13 @@ public class PremierLeague {
     // TODO: User bets
 
     public static void main(String[] args) {
-        IntStream.range(0, 10).forEach(year -> {
+        Data.extractData();
+        IntStream.range(0, 0).forEach(year -> {
             Data.prepare(year);
             pickTeam();
             Draw.makeDraw();
+            // TODO: FA Cup
+            // TODO: Carling Cup
             IntStream.range(0, 38).forEach(PremierLeague::play);
             finish(year);
             PreSeason.changes();

@@ -178,7 +178,7 @@ class Match {
             attackValue += Data.OFFENSE;
         }
         else if (defending == Data.USER) {
-            defenceValue -= Data.OFFENSE;
+            defenceValue -= Data.OFFENSE * 3 / 2;
         }
 
         //System.out.println(FORM[attacking]);
