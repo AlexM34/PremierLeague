@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.IntStream;
 
 class Data {
@@ -128,6 +128,7 @@ class Data {
     // TODO: Add subs
     // TODO: Add positions
     // TODO: Add fatigue
+    static Map<String, List<Footballer>> SQUADS = new HashMap<>();
     static Integer USER;
     static int OFFENSE;
     static int[] SCORING_TOTAL = new int[20];
@@ -156,34 +157,49 @@ class Data {
         File data = new File(fileName);
         try {
             for (int team = 0; team < 20; team++) {
-                File file = new File("data/" + Data.TEAMS[team] + ".txt");
-                file.delete();
-                file.createNewFile();
-                FileWriter write = new FileWriter(file, true);
-                PrintWriter line = new PrintWriter(write);
+                // TODO: Make just one pass through the data
+//                File file = new File("data/" + Data.TEAMS[team] + ".txt");
+//                file.delete();
+//                file.createNewFile();
+//                FileWriter write = new FileWriter(file, true);
+//                PrintWriter line = new PrintWriter(write);
 
                 int count = 0;
                 Scanner inputStream = new Scanner(data);
                 inputStream.next();
+
+                List<Footballer> footballers = new ArrayList<>();
                 while (inputStream.hasNext()) {
                     String footballer = inputStream.next();
                     String[] values = footballer.split(",");
                     if (Data.TEAMS[team].equals(values[9])) {
-                        line.printf("%s %s %s %s %s %s %s %s %s %s %s " + "%n", values[2], values[3], values[5],
-                                values[7], values[8], values[11], values[12],
+                        // TODO: Handle nulls
+                        footballers.add(new Footballer(values[2], Integer.parseInt(values[3]), values[5],
+                                Integer.parseInt(values[7]), Integer.parseInt(values[8]),
+                                Double.parseDouble(values[11].substring(1, values[11].length() - 1)),
+                                Double.parseDouble(values[12].substring(1, values[12].length() - 1)),
                                 values.length > 21 && !values[21].isEmpty() ? values[21] : "0",
-                                values.length > 22 && !values[22].isEmpty() ? values[22] : "0",
-                                values.length > 55 && !values[55].isEmpty() ? values[55] : "0",
-                                values.length > 77 && !values[77].isEmpty() ? values[77] : "0");
+                                values.length > 22 && !values[22].isEmpty() ? Integer.parseInt(values[22]) : 0,
+                                values.length > 55 && !values[55].isEmpty() ? Integer.parseInt(values[55]) : 0,
+                                values.length > 77 && !values[77].isEmpty() ? Integer.parseInt(values[77]) : 0));
+//                        footballers.forEach(f -> System.out.println(f.toString()));
+//                        line.printf("%s %s %s %s %s %s %s %s %s %s %s " + "%n", values[2], values[3], values[5],
+//                                values[7], values[8], values[11], values[12],
+//                                values.length > 21 && !values[21].isEmpty() ? values[21] : "0",
+//                                values.length > 22 && !values[22].isEmpty() ? values[22] : "0",
+//                                values.length > 55 && !values[55].isEmpty() ? values[55] : "0",
+//                                values.length > 77 && !values[77].isEmpty() ? values[77] : "0");
 //                        System.out.println(values.length);
                     }
                     count++;
                 }
+
+                SQUADS.put(TEAMS[team], footballers);
                 inputStream.close();
-                line.close();
+//                line.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Exception thrown!");
         }
     }
 
