@@ -9,10 +9,11 @@ public class PremierLeague {
     // TODO: User bets
 
     public static void main(String[] args) {
-        Data.extractData();
+//        Data.extractData();
+        Data.buildSquads();
         IntStream.range(0, 10).forEach(year -> {
             Data.prepare(year);
-            pickTeam();
+//            pickTeam();
             Draw.makeDraw();
             // TODO: FA Cup
             // TODO: Carling Cup
@@ -50,10 +51,10 @@ public class PremierLeague {
         for (int game = 0; game < 10; game++) {
             int home = Data.HOME[round][game];
             int away = Data.AWAY[round][game];
-            if (Data.USER == home) Match.userTactics(away, true);
-            else if (Data.USER == away) Match.userTactics(home, false);
+            if (home == Data.USER) Match.userTactics(away, true);
+            else if (away == Data.USER) Match.userTactics(home, false);
             Match.simulateGame(home, away);
-            if (Data.USER == home || Data.USER == away) pause();
+            if (home == Data.USER || away == Data.USER) pause();
         }
 
         System.out.println();

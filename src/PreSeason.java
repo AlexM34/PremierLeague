@@ -28,12 +28,12 @@ class PreSeason {
     }
 
     private static void increase(int team, int player) {
-        Data.OVERALL[team][player] = Data.OVERALL[team][player] < 10 ? Data.OVERALL[team][player] + 1 : 10;
+//        Data.OVERALL[team][player] = Data.OVERALL[team][player] < 10 ? Data.OVERALL[team][player] + 1 : 10;
 //        System.out.println(String.format("%s improves", Data.PLAYERS[team][player]));
     }
 
     private static void decrease(int team, int player) {
-        Data.OVERALL[team][player] = Data.OVERALL[team][player] > 1 ? Data.OVERALL[team][player] - 1 : 1;
+//        Data.OVERALL[team][player] = Data.OVERALL[team][player] > 1 ? Data.OVERALL[team][player] - 1 : 1;
 //        System.out.println(String.format("%s worsens", Data.PLAYERS[team][player]));
     }
 }

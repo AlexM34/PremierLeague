@@ -1,6 +1,7 @@
 import java.util.Objects;
 
 public class Footballer {
+    // TODO: Add id
     private String name;
     private int age;
     private String nationality;

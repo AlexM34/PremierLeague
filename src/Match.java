@@ -36,21 +36,80 @@ class Match {
         kickoff();
         homeSquad = pickSquad(home);
         awaySquad = pickSquad(away);
-        int homePerf = 50;
-        int awayPerf = 50;
-        int homeAttack = 50;
-        int homeDefense = 50;
-        int awayAttack = 50;
-        int awayDefense = 50;
+        int balance = Data.FANS + 100 *
+                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() - 500) /
+                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() - 500) - 50;
+        System.out.println(balance);
 
         int goalsHome = 0;//calculateGoals(home, away, true);
         int goalsAway = 0;//calculateGoals(away, home, false);
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
+            // TODO: Real-time ratings
+            int r = random.nextInt(100);
 
+            if (r < balance) {
+                if (r < balance / 20) {
+                    goal(minute, homeSquad);
+                    goalsHome++;
+                    balance -= 10;
+                } else if (r < balance / 2) {
+                    balance++;
+                }
+            } else {
+                if (r > 100 - balance / 20) {
+                    goal(minute, awaySquad);
+                    goalsAway++;
+                    balance += 10;
+                } else if (r > 100 - balance / 2) {
+                    balance--;
+                }
+            }
+
+            System.out.println(balance);
         }
 
         finalWhistle(home, away, goalsHome, goalsAway);
+    }
+
+    private static void goal(int minute, Footballer[] squad) {
+        int scoring = 20;
+        int assisting = 150;
+        Footballer goalscorer = null;
+        Footballer assistmaker = null;
+        for (int player = 1; player < 11; player++) {
+            // TODO: Own goals and goalkeeper assists
+            // TODO: Proper algorithm
+            scoring += player * squad[player].getFinishing();
+            assisting += player * squad[player].getVision();
+        }
+
+        int r = random.nextInt(scoring);
+        for (int player = 1; player < 11; player++) {
+            int value = player * squad[player].getFinishing();
+            if (r < value) {
+                goalscorer = squad[player];
+                break;
+            }
+
+            r -= value;
+        }
+
+        r = random.nextInt(assisting);
+        for (int player = 1; player < 11; player++) {
+            int value = player * squad[player].getVision();
+            if (r < value) {
+                assistmaker = squad[player];
+                if (assistmaker.equals(goalscorer)) assistmaker = null;
+                break;
+            }
+
+            r -= value;
+        }
+
+        // TODO: Fix message
+        System.out.println(minute + "' " + (goalscorer != null ? goalscorer.getName() : "no one") +
+                " scores after a pass from " + (assistmaker != null ? assistmaker.getName() : "none"));
     }
 
     private static Footballer[] pickSquad(int team) {
@@ -102,7 +161,7 @@ class Match {
             }
         }
 
-        Arrays.stream(selected).forEach(System.out::println);
+//        Arrays.stream(selected).forEach(System.out::println);
         return selected;
     }
 
@@ -220,7 +279,7 @@ class Match {
         Data.MOTM[motmTeam][motmPlayer]++;
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], goalsHome,
-                goalsAway, Data.PLAYERS[motmTeam][motmPlayer], motmRating));
+                goalsAway, Data.SQUADS.get(Data.TEAMS[motmTeam]).get(motmPlayer), motmRating));
     }
 
     private static void form(int team, int change) {
@@ -235,14 +294,14 @@ class Match {
     private static int calculateGoals(int attacking, int defending, boolean isAtHome) {
         int attackValue = isAtHome ? Data.FANS : 0;
         int defenceValue = isAtHome ? 0 : Data.FANS;
-        for (int i = 0; i < 11; i++) {
-            if (i < 6) {
-                defenceValue += Data.OVERALL[defending][i];
-            }
-            else {
-                attackValue += Data.OVERALL[attacking][i];
-            }
-        }
+//        for (int i = 0; i < 11; i++) {
+//            if (i < 6) {
+//                defenceValue += Data.OVERALL[defending][i];
+//            }
+//            else {
+//                attackValue += Data.OVERALL[attacking][i];
+//            }
+//        }
 
         if (attacking == Data.USER) {
             attackValue += Data.OFFENSE;
@@ -269,7 +328,7 @@ class Match {
             goals++;
         }
 
-        return goals-1;
+        return goals - 1;
     }
 
     private static double factorial(int n) {

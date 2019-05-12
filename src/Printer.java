@@ -19,11 +19,11 @@ class Printer {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
-        System.out.println("No  Teams                G  W  D  L   GF:GA  P");
+        System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
         for (int i = 0; i < 20; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
             goals += Data.GOALS_FOR[index];
-            System.out.println(String.format("%2d. %-20s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
+            System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
                     Data.TEAMS[index], Data.GAMES[index], Data.WINS[index], Data.DRAWS[index], Data.LOSES[index],
                     Data.GOALS_FOR[index], Data.GOALS_AGAINST[index], Data.POINTS[index]));
         }
@@ -48,12 +48,14 @@ class Printer {
         for (int team = 0; team < 20; team++) {
 //            System.out.println();
 //            System.out.println(TEAMS[team]);
-            cleanSheets.put(Data.PLAYERS[team][0], Data.CLEAN_SHEETS[team]);
+            cleanSheets.put(Data.SQUADS.get(Data.TEAMS[team]).stream().filter(x -> x.getPosition().getRole()
+                    .equals(Position.Role.Goalkeeper)).findFirst().get().getName(), Data.CLEAN_SHEETS[team]);
             for (int player = 0; player < 11; player++) {
-                ratings.put(Data.PLAYERS[team][player], (double) (Data.RATINGS[team][player] / 38));
-                motm.put(Data.PLAYERS[team][player], Data.MOTM[team][player]);
-                goals.put(Data.PLAYERS[team][player], Data.GOALS[team][player]);
-                assists.put(Data.PLAYERS[team][player], Data.ASSISTS[team][player]);
+                String name = Data.SQUADS.get(Data.TEAMS[team]).get(player).getName();
+                ratings.put(name, (double) (Data.RATINGS[team][player] / 38));
+                motm.put(name, Data.MOTM[team][player]);
+                goals.put(name, Data.GOALS[team][player]);
+                assists.put(name, Data.ASSISTS[team][player]);
 //                System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
 //                        Data.GOALS[team][player], Data.ASSISTS[team][player]));
             }
@@ -137,7 +139,7 @@ class Printer {
         System.out.println();
         System.out.println("Winners");
         for (int i = 0; i < 20; i++) {
-            System.out.println(String.format("%2d. %-20s %d", i+1, sorted.keySet().toArray()[i],
+            System.out.println(String.format("%2d. %-25s %d", i+1, sorted.keySet().toArray()[i],
                     sorted.values().toArray()[i]));
         }
     }
