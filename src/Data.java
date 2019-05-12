@@ -11,8 +11,7 @@ class Data {
 
     // TODO: Add logos
     // TODO: Club stats
-    // TODO: Coaches and formations
-    // TODO: Coach decisions
+    // TODO: Coaches
     // TODO: Add fatigue
     static Map<String, List<Footballer>> SQUADS = new HashMap<>();
     static Integer USER = -1;
@@ -27,8 +26,8 @@ class Data {
     static int[] LOSES = new int[20];
     static int[][] HOME = new int[38][10];
     static int[][] AWAY = new int[38][10];
-    // TODO: Explore fan factor
-    // TODO: Home and away records
+    static int HOME_WINS;
+    static int AWAY_WINS;
     static int FANS = 5;
     static int[] FORM = new int[20];
     static float[][] RATINGS = new float[20][11];
@@ -48,8 +47,6 @@ class Data {
                 file.createNewFile();
                 FileWriter write = new FileWriter(file, true);
                 PrintWriter line = new PrintWriter(write);
-
-//                int count = 0;
                 Scanner inputStream = new Scanner(data);
                 inputStream.next();
 
@@ -65,7 +62,7 @@ class Data {
                 line.close();
             }
         } catch (IOException e) {
-            System.out.println("Exception thrown with extracting!");
+            System.out.println("Exception thrown while extracting data!");
         }
     }
 
@@ -108,6 +105,8 @@ class Data {
         WINS = new int[20];
         DRAWS = new int[20];
         LOSES = new int[20];
+        HOME_WINS = 0;
+        AWAY_WINS = 0;
         HOME = new int[38][10];
         AWAY = new int[38][10];
         FORM = new int[20];

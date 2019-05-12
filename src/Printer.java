@@ -28,7 +28,9 @@ class Printer {
                     Data.GOALS_FOR[index], Data.GOALS_AGAINST[index], Data.POINTS[index]));
         }
         System.out.println();
-        System.out.println("Total goals for the season: " + goals);
+        System.out.println("Total goals for the season: " + goals + " // 1072");
+        System.out.println(Data.HOME_WINS + " - " + (380 - Data.HOME_WINS - Data.AWAY_WINS) +
+                " - " + Data.AWAY_WINS + " // 181 - 71 - 128");
         System.out.println();
 
         int first = (Integer) sorted.keySet().toArray()[0];

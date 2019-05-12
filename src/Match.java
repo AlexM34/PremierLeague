@@ -35,6 +35,8 @@ class Match {
         kickoff();
         homeSquad = pickSquad(home);
         awaySquad = pickSquad(away);
+
+        // TODO: Use form and tactics dynamics
         int balance = Data.FANS + 100 *
                 (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() - 500) /
                 (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() - 500) - 50;
@@ -48,7 +50,7 @@ class Match {
             int r = random.nextInt(100);
 
             if (r < balance) {
-                if (r < balance / 20) {
+                if (r < balance / 10 - 3) {
                     goal(minute, homeSquad);
                     goalsHome++;
                     balance -= 10;
@@ -56,7 +58,7 @@ class Match {
                     balance++;
                 }
             } else {
-                if (r > 100 - balance / 20) {
+                if (r > 93 + balance / 10) {
                     goal(minute, awaySquad);
                     goalsAway++;
                     balance += 10;
@@ -262,6 +264,7 @@ class Match {
         }
 
         if (goalsHome > goalsAway) {
+            Data.HOME_WINS++;
             Data.POINTS[home] += 3;
             Data.WINS[home]++;
             Data.LOSES[away]++;
@@ -288,6 +291,7 @@ class Match {
         }
 
         else if (goalsHome < goalsAway){
+            Data.AWAY_WINS++;
             Data.POINTS[away] += 3;
             Data.WINS[away]++;
             Data.LOSES[home]++;
