@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 enum Position {
     GK(Role.Goalkeeper),
     LWB(Role.Defender),

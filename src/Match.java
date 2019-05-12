@@ -32,7 +32,6 @@ class Match {
 
     static void simulateGame(int home, int away) {
         // TODO: Match odds
-        // TODO: Minute-by-minute simulation
         kickoff();
         homeSquad = pickSquad(home);
         awaySquad = pickSquad(away);
@@ -41,8 +40,8 @@ class Match {
                 (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() - 500) - 50;
         System.out.println(balance);
 
-        int goalsHome = 0;//calculateGoals(home, away, true);
-        int goalsAway = 0;//calculateGoals(away, home, false);
+        int goalsHome = 0;
+        int goalsAway = 0;
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
             // TODO: Real-time ratings
@@ -77,34 +76,29 @@ class Match {
         int assisting = 150;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
-        for (int player = 1; player < 11; player++) {
-            // TODO: Own goals and goalkeeper assists
-            // TODO: Proper algorithm
-            scoring += player * squad[player].getFinishing();
-            assisting += player * squad[player].getVision();
+        for (int player = 0; player < 11; player++) {
+            // TODO: Own goals
+            scoring += scoringChance(squad[player]);
+            assisting += assistingChance(squad[player]);
         }
 
         int r = random.nextInt(scoring);
-        for (int player = 1; player < 11; player++) {
-            int value = player * squad[player].getFinishing();
-            if (r < value) {
+        for (int player = 0; player < 11; player++) {
+            r -= scoringChance(squad[player]);
+            if (r < 0) {
                 goalscorer = squad[player];
                 break;
             }
-
-            r -= value;
         }
 
         r = random.nextInt(assisting);
-        for (int player = 1; player < 11; player++) {
-            int value = player * squad[player].getVision();
-            if (r < value) {
+        for (int player = 0; player < 11; player++) {
+            r -= assistingChance(squad[player]);
+            if (r < 0) {
                 assistmaker = squad[player];
                 if (assistmaker.equals(goalscorer)) assistmaker = null;
                 break;
             }
-
-            r -= value;
         }
 
         // TODO: Fix message
@@ -112,15 +106,48 @@ class Match {
                 " scores after a pass from " + (assistmaker != null ? assistmaker.getName() : "none"));
     }
 
+    private static int scoringChance(Footballer footballer) {
+        switch (footballer.getPosition().getRole()) {
+            case Goalkeeper:
+                return 0;
+            case Defender:
+                return footballer.getFinishing() * 2;
+            case Midfielder:
+                return footballer.getFinishing() * 5;
+            case Forward:
+                return footballer.getFinishing() * 10;
+        }
+
+        return 0;
+    }
+
+    private static int assistingChance(Footballer footballer) {
+        switch (footballer.getPosition().getRole()) {
+            case Goalkeeper:
+                return footballer.getVision();
+            case Defender:
+                return footballer.getVision() * 2;
+            case Midfielder:
+                return footballer.getVision() * 5;
+            case Forward:
+                return footballer.getVision() * 10;
+        }
+
+        return 0;
+    }
+
     private static Footballer[] pickSquad(int team) {
-        // TODO: Pick formation
-        int goalkeeper = 1;
-        int defenders = 4;
-        int midfielders = 3;
-        int forwards = 3;
+        Formation formation = pickFormation(Data.SQUADS.get(Data.TEAMS[team]));
+        int defenders = formation.getDefenders();
+        int midfielders = formation.getMidfielders();
+        int forwards = formation.getForwards();
         Footballer[] selected = new Footballer[11];
         List<Footballer> squad = Data.SQUADS.get(Data.TEAMS[team]);
 
+        int g = 1;
+        int d = defenders;
+        int m = midfielders;
+        int f = forwards;
         for (Footballer footballer : squad) {
             if (footballer.getPosition() == null) {
                 continue;
@@ -128,30 +155,30 @@ class Match {
 
             switch (footballer.getPosition().getRole()) {
                 case Goalkeeper:
-                    if (goalkeeper > 0) {
-                        goalkeeper--;
-                        selected[goalkeeper] = footballer;
+                    if (g > 0) {
+                        g--;
+                        selected[g] = footballer;
                     }
                     break;
 
                 case Defender:
-                    if (defenders > 0) {
-                        defenders--;
-                        selected[1 + defenders] = footballer;
+                    if (d > 0) {
+                        d--;
+                        selected[1 + d] = footballer;
                     }
                     break;
 
                 case Midfielder:
-                    if (midfielders > 0) {
-                        midfielders--;
-                        selected[5 + midfielders] = footballer;
+                    if (m > 0) {
+                        m--;
+                        selected[1 + defenders + m] = footballer;
                     }
                     break;
 
                 case Forward:
-                    if (forwards > 0) {
-                        forwards--;
-                        selected[8 + forwards] = footballer;
+                    if (f > 0) {
+                        f--;
+                        selected[1 + defenders + midfielders + f] = footballer;
                     }
                     break;
 
@@ -163,6 +190,41 @@ class Match {
 
 //        Arrays.stream(selected).forEach(System.out::println);
         return selected;
+    }
+
+    private static Formation pickFormation(List<Footballer> footballers) {
+        // TODO: Smart formation pick - opponent, fatigue, form
+        int defenders = 0;
+        int midfielders = 0;
+        int forwards = 0;
+
+        for (Footballer f : footballers) {
+            switch (f.getPosition().getRole()) {
+                case Defender:
+                    defenders++;
+                    break;
+                case Midfielder:
+                    midfielders++;
+                    break;
+                case Forward:
+                    forwards++;
+                    break;
+            }
+
+            if (defenders + midfielders + forwards > 9 &&
+                defenders > 2 && midfielders > 1 && forwards > 0) {
+                for (Formation formation : Formation.values()) {
+                    if (formation.getDefenders() <= defenders &&
+                        formation.getMidfielders() <= midfielders &&
+                        formation.getForwards() <= forwards) {
+                        return formation;
+                    }
+                }
+            }
+        }
+
+        System.out.println("Could not pick an appropriate formation");
+        return Formation.F5;
     }
 
     private static void kickoff() {
@@ -289,50 +351,5 @@ class Match {
         else {
             Data.FORM[team] = Data.FORM[team] > 1 - change ? Data.FORM[team] + change : 0;
         }
-    }
-
-    private static int calculateGoals(int attacking, int defending, boolean isAtHome) {
-        int attackValue = isAtHome ? Data.FANS : 0;
-        int defenceValue = isAtHome ? 0 : Data.FANS;
-//        for (int i = 0; i < 11; i++) {
-//            if (i < 6) {
-//                defenceValue += Data.OVERALL[defending][i];
-//            }
-//            else {
-//                attackValue += Data.OVERALL[attacking][i];
-//            }
-//        }
-
-        if (attacking == Data.USER) {
-            attackValue += Data.OFFENSE;
-        }
-        else if (defending == Data.USER) {
-            defenceValue -= Data.OFFENSE * 3 / 2;
-        }
-
-        //System.out.println(FORM[attacking]);
-        //System.out.println(FORM[defending]);
-        int average = 30 + 8 * attackValue - 5 * defenceValue + 2 * Data.FORM[attacking];
-        //System.out.println(average);
-        return poisson(average);
-    }
-
-    private static int poisson(int average) {
-        double e = 2.74;
-        double lambda = (double) average / 100;
-        double r = random.nextDouble();
-        int goals = 0;
-        while (r > 0 && goals < 6) {
-            double current = Math.pow(e, -lambda) * Math.pow(lambda, goals) / factorial(goals);
-            r -= current;
-            goals++;
-        }
-
-        return goals - 1;
-    }
-
-    private static double factorial(int n) {
-        return LongStream.rangeClosed(1, n)
-                .reduce(1, (long x, long y) -> x * y);
     }
 }

@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 class Data {
-    // TODO: Put space for teams and players
+    // TODO: Put spaces for teams and players
     static String[] TEAMS = {"Arsenal", "ManchesterCity", "Liverpool", "ManchesterUnited",
             "Chelsea", "TottenhamHotspur", "Everton", "LeicesterCity", "WolverhamptonWanderers", "Watford",
             "WestHamUnited", "Bournemouth", "CrystalPalace", "Burnley", "NewcastleUnited", "Southampton",
@@ -17,8 +17,6 @@ class Data {
     static Map<String, List<Footballer>> SQUADS = new HashMap<>();
     static Integer USER = -1;
     static int OFFENSE;
-    static int[] SCORING_TOTAL = new int[20];
-    static int[] ASSISTING_TOTAL = new int[20];
     static int[] TITLES = {13, 5, 18, 20, 6, 2, 9, 1, 3, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 3};
     static int[] POINTS = new int[20];
     static int[] GOALS_FOR = new int[20];

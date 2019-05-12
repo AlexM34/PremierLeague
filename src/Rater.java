@@ -71,14 +71,4 @@ class Rater {
 ////            System.out.println(String.format("%s %.2f", Data.PLAYERS[team][player], rating));
 //        }
     }
-
-    static int scoringChance(int attribute) {
-        if (attribute == 0) return 0;
-        return attribute * attribute / 2 + 10;
-    }
-
-    static int assistingChance(int attribute) {
-        if (attribute == 0) return 0;
-        return attribute * attribute / 2 + 5;
-    }
 }

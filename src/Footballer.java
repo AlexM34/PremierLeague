@@ -30,7 +30,7 @@ public class Footballer {
         this.vision = vision;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
@@ -46,7 +46,7 @@ public class Footballer {
         return nationality;
     }
 
-    public int getOverall() {
+    int getOverall() {
         return overall;
     }
 
@@ -78,7 +78,7 @@ public class Footballer {
         this.wage = wage;
     }
 
-    public Position getPosition() {
+    Position getPosition() {
         return position;
     }
 
@@ -94,7 +94,7 @@ public class Footballer {
         this.number = number;
     }
 
-    public int getFinishing() {
+    int getFinishing() {
         return finishing;
     }
 
@@ -102,7 +102,7 @@ public class Footballer {
         this.finishing = finishing;
     }
 
-    public int getVision() {
+    int getVision() {
         return vision;
     }
 
