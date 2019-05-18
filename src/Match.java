@@ -2,7 +2,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.LongStream;
 
 class Match {
     private static Scanner scanner = new Scanner(System.in);
@@ -21,13 +20,12 @@ class Match {
         while (true) {
             int offense = scanner.nextInt();
             if(offense < 0 || offense > 20) {
-                System.out.println("Wrong offense number.");
+                System.out.println("Wrong offense value.");
                 continue;
             }
             Data.OFFENSE = offense - 10;
             break;
         }
-
     }
 
     static void simulateGame(int home, int away) {
@@ -47,6 +45,7 @@ class Match {
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
             // TODO: Real-time ratings
+            // TODO: Ratings
             int r = random.nextInt(100);
 
             if (r < balance) {
@@ -103,9 +102,9 @@ class Match {
             }
         }
 
-        // TODO: Fix message
-        System.out.println(minute + "' " + (goalscorer != null ? goalscorer.getName() : "no one") +
-                " scores after a pass from " + (assistmaker != null ? assistmaker.getName() : "none"));
+        System.out.println(minute + "' " + (goalscorer != null ? (goalscorer.getName() +
+                 (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
+                         : " scores after a solo run")) : "own goal"));
     }
 
     private static int scoringChance(Footballer footballer) {

@@ -5,7 +5,6 @@ import java.util.stream.IntStream;
 public class PremierLeague {
     private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
-    // TODO: User selects a team
     // TODO: User bets
 
     public static void main(String[] args) {
@@ -15,8 +14,7 @@ public class PremierLeague {
             Data.prepare(year);
 //            pickTeam();
             Draw.makeDraw();
-            // TODO: FA Cup
-            // TODO: Carling Cup
+            // TODO: Cup competitions
             IntStream.range(0, 38).forEach(PremierLeague::play);
             finish(year);
             PreSeason.changes();

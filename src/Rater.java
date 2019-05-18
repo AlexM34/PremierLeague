@@ -3,7 +3,6 @@ import java.util.Random;
 class Rater {
     private static Random random = new Random();
 
-    // TODO: Fix goals, assists and ratings
     static void ratePlayers(int team, int attack, int defence, int goals, boolean isCleanSheet) {
 //        int goalsRemaining = goals;
 //        int assistsRemaining = goals;
@@ -35,7 +34,6 @@ class Rater {
 //
 //                    Data.ASSISTS[team][player]++;
 ////                    System.out.println(Data.PLAYERS[team][player] + " assists!");
-                    // TODO: Cannot assist yourself
 //                    assistsRemaining--;
 //                }
 //            }

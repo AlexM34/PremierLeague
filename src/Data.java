@@ -3,11 +3,11 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 class Data {
-    // TODO: Put spaces for teams and players
-    static String[] TEAMS = {"Arsenal", "ManchesterCity", "Liverpool", "ManchesterUnited",
-            "Chelsea", "TottenhamHotspur", "Everton", "LeicesterCity", "WolverhamptonWanderers", "Watford",
-            "WestHamUnited", "Bournemouth", "CrystalPalace", "Burnley", "NewcastleUnited", "Southampton",
-            "Brighton&HoveAlbion", "CardiffCity", "Fulham", "HuddersfieldTown"};
+    // TODO: Put spaces for players
+    static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
+            "Chelsea", "Tottenham Hotspur", "Everton", "Leicester City", "Wolverhampton Wanderers", "Watford",
+            "West Ham United", "Bournemouth", "Crystal Palace", "Burnley", "Newcastle United", "Southampton",
+            "Brighton & Hove Albion", "Cardiff City", "Fulham", "Huddersfield Town"};
 
     // TODO: Add logos
     // TODO: Club stats
@@ -48,13 +48,12 @@ class Data {
                 FileWriter write = new FileWriter(file, true);
                 PrintWriter line = new PrintWriter(write);
                 Scanner inputStream = new Scanner(data);
-                inputStream.next();
+                inputStream.nextLine();
 
-                List<Footballer> footballers = new ArrayList<>();
                 while (inputStream.hasNext()) {
-                    String footballer = inputStream.next();
-                    String[] values = footballer.split(",");
-                    if (Data.TEAMS[team].equals(values[9])) {
+                    String footballer = inputStream.nextLine();
+                    String[] values = footballer.replaceAll("\\s","").split(",");
+                    if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9])) {
                         line.printf(footballer + "\n");
                     }
                 }
@@ -74,11 +73,12 @@ class Data {
                 Scanner inputStream = new Scanner(data);
 
                 List<Footballer> footballers = new ArrayList<>();
-                while (inputStream.hasNext()) {
+                while (inputStream.hasNextLine()) {
                     // TODO: Handle nulls
-                    String footballer = inputStream.next();
-                    String[] values = footballer.split(",");
-                    if (Data.TEAMS[team].equals(values[9])) {
+                    String footballer = inputStream.nextLine();
+                    String[] values = footballer.replaceAll("\\s","").split(",");
+
+                    if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9])) {
                         footballers.add(new Footballer(values[2], Integer.parseInt(values[3]), values[5],
                                 Integer.parseInt(values[7]), Integer.parseInt(values[8]),
                                 Double.parseDouble(values[11].substring(1, values[11].length() - 1)),
@@ -98,6 +98,7 @@ class Data {
     }
 
     static void prepare(int year) {
+        // TODO: All-time player stats
         POINTS = new int[20];
         GOALS_FOR = new int[20];
         GOALS_AGAINST = new int[20];
