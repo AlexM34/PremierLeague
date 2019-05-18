@@ -1,22 +1,23 @@
 import java.util.Objects;
 
-public class Footballer {
-    // TODO: Add id
+class Footballer {
+    private int id;
     private String name;
     private int age;
     private String nationality;
     private int overall;
     private int potential;
-    private double value;
-    private double wage;
+    private float value;
+    private float wage;
     private Position position;
     private int number;
     private int finishing;
     private int vision;
 
-    Footballer(String name, int age, String nationality, int overall,
-               int potential, double value, double wage, Position position,
+    Footballer(int id, String name, int age, String nationality, int overall,
+               int potential, float value, float wage, Position position,
                int number, int finishing, int vision) {
+        this.id = id;
         this.name = name;
         this.age = age;
         this.nationality = nationality;
@@ -30,19 +31,23 @@ public class Footballer {
         this.vision = vision;
     }
 
+    int getId() {
+        return id;
+    }
+
     String getName() {
         return name;
     }
 
-    public int getAge() {
+    int getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    void setAge(int age) {
         this.age = age;
     }
 
-    public String getNationality() {
+    String getNationality() {
         return nationality;
     }
 
@@ -50,31 +55,31 @@ public class Footballer {
         return overall;
     }
 
-    public void setOverall(int overall) {
+    void setOverall(int overall) {
         this.overall = overall;
     }
 
-    public int getPotential() {
+    int getPotential() {
         return potential;
     }
 
-    public void setPotential(int potential) {
+    void setPotential(int potential) {
         this.potential = potential;
     }
 
-    public double getValue() {
+    float getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    void setValue(float value) {
         this.value = value;
     }
 
-    public double getWage() {
+    float getWage() {
         return wage;
     }
 
-    public void setWage(double wage) {
+    void setWage(float wage) {
         this.wage = wage;
     }
 
@@ -82,15 +87,15 @@ public class Footballer {
         return position;
     }
 
-    public void setPosition(Position position) {
+    void setPosition(Position position) {
         this.position = position;
     }
 
-    public int getNumber() {
+    int getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    void setNumber(int number) {
         this.number = number;
     }
 
@@ -98,7 +103,7 @@ public class Footballer {
         return finishing;
     }
 
-    public void setFinishing(int finishing) {
+    void setFinishing(int finishing) {
         this.finishing = finishing;
     }
 
@@ -106,7 +111,7 @@ public class Footballer {
         return vision;
     }
 
-    public void setVision(int vision) {
+    void setVision(int vision) {
         this.vision = vision;
     }
 
@@ -115,11 +120,12 @@ public class Footballer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Footballer that = (Footballer) o;
-        return age == that.age &&
+        return id == that.id &&
+                age == that.age &&
                 overall == that.overall &&
                 potential == that.potential &&
-                Double.compare(that.value, value) == 0 &&
-                Double.compare(that.wage, wage) == 0 &&
+                Float.compare(that.value, value) == 0 &&
+                Float.compare(that.wage, wage) == 0 &&
                 number == that.number &&
                 finishing == that.finishing &&
                 vision == that.vision &&
@@ -130,13 +136,14 @@ public class Footballer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, nationality, overall, potential, value, wage, position, number, finishing, vision);
+        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number, finishing, vision);
     }
 
     @Override
     public String toString() {
         return "Footballer{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", age=" + age +
                 ", nationality='" + nationality + '\'' +
                 ", overall=" + overall +

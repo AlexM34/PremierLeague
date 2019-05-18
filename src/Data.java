@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.util.stream.IntStream;
 
 class Data {
     // TODO: Put spaces for players
@@ -30,11 +29,12 @@ class Data {
     static int AWAY_WINS;
     static int FANS = 5;
     static int[] FORM = new int[20];
-    static float[][] RATINGS = new float[20][11];
-    static int[][] MOTM = new int[20][11];
-    static int[][] GOALS = new int[20][11];
-    static int[][] ASSISTS = new int[20][11];
+    static float[][] RATINGS = new float[20][30];
+    static int[][] MOTM = new int[20][30];
+    static int[][] GOALS = new int[20][30];
+    static int[][] ASSISTS = new int[20][30];
     static int[] CLEAN_SHEETS = new int[20];
+    static Map<Integer, Map<String, Integer>> STATS = new HashMap<>();
 
     static void extractData() {
         String fileName = "data/data.csv";
@@ -79,10 +79,10 @@ class Data {
                     String[] values = footballer.replaceAll("\\s","").split(",");
 
                     if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9])) {
-                        footballers.add(new Footballer(values[2], Integer.parseInt(values[3]), values[5],
+                        footballers.add(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
                                 Integer.parseInt(values[7]), Integer.parseInt(values[8]),
-                                Double.parseDouble(values[11].substring(1, values[11].length() - 1)),
-                                Double.parseDouble(values[12].substring(1, values[12].length() - 1)),
+                                Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
+                                Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
                                 values.length > 21 && !values[21].isEmpty() ? Position.valueOf(values[21]) : null,
                                 values.length > 22 && !values[22].isEmpty() ? Integer.parseInt(values[22]) : 0,
                                 values.length > 56 && !values[56].isEmpty() ? Integer.parseInt(values[56]) : 0,
@@ -98,6 +98,8 @@ class Data {
     }
 
     static void prepare(int year) {
+        PremierLeague.pause();
+
         // TODO: All-time player stats
         POINTS = new int[20];
         GOALS_FOR = new int[20];
@@ -111,15 +113,30 @@ class Data {
         HOME = new int[38][10];
         AWAY = new int[38][10];
         FORM = new int[20];
-        RATINGS = new float[20][11];
-        MOTM = new int[20][11];
-        GOALS = new int[20][11];
-        ASSISTS = new int[20][11];
+        RATINGS = new float[20][30];
+        MOTM = new int[20][30];
+        GOALS = new int[20][30];
+        ASSISTS = new int[20][30];
         CLEAN_SHEETS = new int[20];
 
         // TODO: Title odds
         System.out.println(String.format("The Premier League %d-%d begins!", 2018 + year, 2019 + year));
-        IntStream.range(0, 20).forEach(team -> FORM[team] = 10);
+        for (int team = 0; team < 20; team++) {
+            FORM[team] = 10;
+
+            for (Footballer f : SQUADS.get(TEAMS[team])) {
+                Map<String, Integer> info = new HashMap<>();
+                info.put("Team", team);
+                info.put("Games", 0);
+                info.put("Ratings", 0);
+                info.put("MOTM", 0);
+                info.put("Goals", 0);
+                info.put("Assists", 0);
+                info.put("Clean Sheets", 0);
+
+                STATS.put(f.getId(), info);
+            }
+        }
 
 //        System.out.println();
 //        for (int team = 0; team < 20; team++) {
@@ -130,6 +147,5 @@ class Data {
 //        }
 
         System.out.println();
-        PremierLeague.pause();
     }
 }

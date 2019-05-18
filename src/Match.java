@@ -1,17 +1,13 @@
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 class Match {
     private static Scanner scanner = new Scanner(System.in);
     private static Random random = new Random();
 
-    static int motmTeam;
-    static int motmPlayer;
-    static float motmRating;
     static Footballer[] homeSquad;
     static Footballer[] awaySquad;
+    static float[] homeRatings = new float[11];
+    static float[] awayRatings = new float[11];
 
     static void userTactics(int opponent, boolean isHome) {
         // TODO: Add other choices
@@ -40,43 +36,105 @@ class Match {
                 (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() - 500) - 50;
         System.out.println(balance);
 
-        int goalsHome = 0;
-        int goalsAway = 0;
+        int homeGoals = 0;
+        int awayGoals = 0;
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
-            // TODO: Real-time ratings
-            // TODO: Ratings
+            // TODO: Negative ratings
             int r = random.nextInt(100);
 
             if (r < balance) {
                 if (r < balance / 10 - 3) {
-                    goal(minute, homeSquad);
-                    goalsHome++;
+                    goal(minute, true);
+                    homeGoals++;
                     balance -= 10;
+                    updateRatings(3);
                 } else if (r < balance / 2) {
                     balance++;
+                    updateRatings(1);
                 }
             } else {
                 if (r > 93 + balance / 10) {
-                    goal(minute, awaySquad);
-                    goalsAway++;
+                    goal(minute, false);
+                    awayGoals++;
                     balance += 10;
+                    updateRatings(-3);
                 } else if (r > 100 - balance / 2) {
                     balance--;
+                    updateRatings(-1);
                 }
             }
 
             System.out.println(balance);
         }
 
-        finalWhistle(home, away, goalsHome, goalsAway);
+        finalWhistle(awayGoals == 0, homeGoals == 0);
+        // TODO: Form plus match result
+//        finalWhistleOld(home, away, homeGoals, awayGoals);
     }
 
-    private static void goal(int minute, Footballer[] squad) {
+    private static void finalWhistle(boolean homeCleanSheet, boolean awayCleanSheet) {
+        boolean motmHomeTeam = true;
+        int motmPlayer = -1;
+        float motmRating = 0;
+
+        Map<String, Integer> stat = Data.STATS.get(homeSquad[0].getId());
+        stat.merge("Clean Sheets", homeCleanSheet ? 1 : 0, Integer::sum);
+
+        stat = Data.STATS.get(awaySquad[0].getId());
+        stat.merge("Clean Sheets", awayCleanSheet ? 1 : 0, Integer::sum);
+
+        for (int player = 0; player < 11; player++) {
+            stat = Data.STATS.get(homeSquad[player].getId());
+            homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
+            homeRatings[player] = homeRatings[player] > 4 ? homeRatings[player] : 4;
+            if (homeRatings[player] > motmRating) {
+                motmHomeTeam = true;
+                motmPlayer = player;
+                motmRating = homeRatings[player];
+            }
+
+            stat.merge("Games", 1, Integer::sum);
+            stat.merge("Ratings", (int) homeRatings[player] * 100, Integer::sum);
+
+            stat = Data.STATS.get(awaySquad[player].getId());
+            awayRatings[player] = awayRatings[player] < 10 ? awayRatings[player] : 10;
+            awayRatings[player] = awayRatings[player] > 4 ? awayRatings[player] : 4;
+            if (awayRatings[player] > motmRating) {
+                motmHomeTeam = false;
+                motmPlayer = player;
+                motmRating = awayRatings[player];
+            }
+            stat.merge("Games", 1, Integer::sum);
+            stat.merge("Ratings", (int) awayRatings[player] * 100, Integer::sum);
+        }
+
+        stat = Data.STATS.get((motmHomeTeam ? homeSquad : awaySquad) [motmPlayer].getId());
+        stat.merge("MOTM", 1, Integer::sum);
+    }
+
+    private static void updateRatings(int scale) {
+        int home = random.nextInt(7) + scale * 2 + 1;
+        int away = random.nextInt(7) - scale * 2 + 1;
+
+        for (int i = 0; i < home; i++) {
+            int player = random.nextInt(11);
+            homeRatings[player] += 0.1;
+        }
+
+        for (int i = 0; i < away; i++) {
+            int player = random.nextInt(11);
+            awayRatings[player] += 0.1;
+        }
+    }
+
+    private static void goal(int minute, boolean isHome) {
         int scoring = 20;
         int assisting = 150;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
+        Footballer[] squad = isHome ? homeSquad : awaySquad;
+
         for (int player = 0; player < 11; player++) {
             // TODO: Own goals
             scoring += scoringChance(squad[player]);
@@ -88,6 +146,20 @@ class Match {
             r -= scoringChance(squad[player]);
             if (r < 0) {
                 goalscorer = squad[player];
+                Map<String, Integer> stat = Data.STATS.get(squad[player].getId());
+
+                if (isHome) {
+                    homeRatings[player] += 1.25;
+                    if (player < 5) homeRatings[player] += 0.5;
+                    else if (player < 8) homeRatings[player] += 0.25;
+                }
+                else {
+                    awayRatings[player] += 1.25;
+                    if (player < 5) awayRatings[player] += 0.5;
+                    else if (player < 8) awayRatings[player] += 0.25;
+                }
+
+                stat.merge("Goals", 1, Integer::sum);
                 break;
             }
         }
@@ -97,7 +169,25 @@ class Match {
             r -= assistingChance(squad[player]);
             if (r < 0) {
                 assistmaker = squad[player];
-                if (assistmaker.equals(goalscorer)) assistmaker = null;
+                if (assistmaker.equals(goalscorer)) {
+                    assistmaker = null;
+                }
+                else {
+                    Map<String, Integer> stat = Data.STATS.get(squad[player].getId());
+                    if (isHome) {
+                        homeRatings[player] += 1;
+                        if (player < 5) homeRatings[player] += 0.5;
+                        else if (player < 8) homeRatings[player] += 0.25;
+                    }
+                    else {
+                        awayRatings[player] += 1;
+                        if (player < 5) awayRatings[player] += 0.5;
+                        else if (player < 8) awayRatings[player] += 0.25;
+                    }
+
+                    stat.merge("Assists", 1, Integer::sum);
+                }
+
                 break;
             }
         }
@@ -229,12 +319,13 @@ class Match {
     }
 
     private static void kickoff() {
-        motmTeam = 0;
-        motmPlayer = 0;
-        motmRating = 0;
+        for (int player = 0; player < 11; player++) {
+            homeRatings[player] = 6;
+            awayRatings[player] = 6;
+        }
     }
 
-    private static void finalWhistle(int home, int away, int goalsHome, int goalsAway) {
+    private static void finalWhistleOld(int home, int away, int goalsHome, int goalsAway) {
         int ratingHomeAttack = goalsHome;
         int ratingHomeDefence = 3 - goalsAway;
         int ratingAwayAttack = goalsAway;
@@ -341,10 +432,10 @@ class Match {
         Rater.ratePlayers(home, ratingHomeAttack, ratingHomeDefence, goalsHome, goalsAway == 0);
         Rater.ratePlayers(away, ratingAwayAttack, ratingAwayDefence, goalsAway, goalsHome == 0);
 
-        Data.MOTM[motmTeam][motmPlayer]++;
+//        Data.MOTM[motmTeam][motmPlayer]++;
 
-        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], goalsHome,
-                goalsAway, Data.SQUADS.get(Data.TEAMS[motmTeam]).get(motmPlayer), motmRating));
+//        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], goalsHome,
+//                goalsAway, Data.SQUADS.get(Data.TEAMS[motmTeam]).get(motmPlayer), motmRating));
     }
 
     private static void form(int team, int change) {

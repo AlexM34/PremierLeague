@@ -41,29 +41,32 @@ class Printer {
     }
 
     static void printPlayerStats() {
-        Map<String, Double> ratings = new LinkedHashMap<>();
+        Map<String, Float> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
         Map<String, Integer> assists = new LinkedHashMap<>();
         Map<String, Integer> cleanSheets = new LinkedHashMap<>();
 
         for (int team = 0; team < 20; team++) {
-//            System.out.println();
-//            System.out.println(TEAMS[team]);
-            cleanSheets.put(Data.SQUADS.get(Data.TEAMS[team]).stream().filter(x -> x.getPosition().getRole()
-                    .equals(Position.Role.Goalkeeper)).findFirst().get().getName(), Data.CLEAN_SHEETS[team]);
-            for (int player = 0; player < 11; player++) {
+            for (int player = 0; player < Data.SQUADS.get(Data.TEAMS[team]).size(); player++) {
+                Integer id = Data.SQUADS.get(Data.TEAMS[team]).get(player).getId();
                 String name = Data.SQUADS.get(Data.TEAMS[team]).get(player).getName();
-                ratings.put(name, (double) (Data.RATINGS[team][player] / 38));
-                motm.put(name, Data.MOTM[team][player]);
-                goals.put(name, Data.GOALS[team][player]);
-                assists.put(name, Data.ASSISTS[team][player]);
+                Map<String, Integer> stat = Data.STATS.get(id);
+
+                ratings.put(name, stat.get("Games") > 0 ? (float) stat.get("Ratings") / stat.get("Games") / 100 : 0);
+                motm.put(name, stat.get("MOTM"));
+                goals.put(name, stat.get("Goals"));
+                assists.put(name, stat.get("Assists"));
+
+                if (stat.get("Clean Sheets") > 0) {
+                    cleanSheets.put(name, stat.get("Clean Sheets"));
+                }
 //                System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
 //                        Data.GOALS[team][player], Data.ASSISTS[team][player]));
             }
         }
 
-        Map<String, Double> sortedRatings = ratings.entrySet().stream().sorted(
+        Map<String, Float> sortedRatings = ratings.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
@@ -91,7 +94,7 @@ class Printer {
         // TODO: Sorted values don't match with integer
         System.out.println();
         System.out.println("Top Players");
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 20 && i < sortedRatings.size(); i++) {
             System.out.println(String.format("%2d. %-15s %.2f", i + 1, sortedRatings.keySet().toArray()[i],
                     sortedRatings.values().toArray()[i]));
         }

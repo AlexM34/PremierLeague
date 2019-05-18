@@ -2,6 +2,7 @@ import java.util.Random;
 
 class Rater {
     private static Random random = new Random();
+    // TODO: Move logic from Match
 
     static void ratePlayers(int team, int attack, int defence, int goals, boolean isCleanSheet) {
 //        int goalsRemaining = goals;
