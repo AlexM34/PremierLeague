@@ -48,9 +48,9 @@ class Printer {
         Map<String, Integer> cleanSheets = new LinkedHashMap<>();
 
         for (int team = 0; team < 20; team++) {
-            for (int player = 0; player < Data.SQUADS.get(Data.TEAMS[team]).size(); player++) {
-                Integer id = Data.SQUADS.get(Data.TEAMS[team]).get(player).getId();
-                String name = Data.SQUADS.get(Data.TEAMS[team]).get(player).getName();
+            for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
+                Integer id = f.getId();
+                String name = f.getName();
                 Map<String, Integer> stat = Data.STATS.get(id);
 
                 ratings.put(name, stat.get("Games") > 0 ? (float) stat.get("Ratings") / stat.get("Games") / 100 : 0);

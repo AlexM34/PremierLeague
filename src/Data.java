@@ -12,7 +12,7 @@ class Data {
     // TODO: Club stats
     // TODO: Coaches
     // TODO: Add fatigue
-    static Map<String, List<Footballer>> SQUADS = new HashMap<>();
+    static Map<String, Set<Footballer>> SQUADS = new HashMap<>();
     static Integer USER = -1;
     static int OFFENSE;
     static int[] TITLES = {13, 5, 18, 20, 6, 2, 9, 1, 3, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 3};
@@ -72,7 +72,7 @@ class Data {
 
                 Scanner inputStream = new Scanner(data);
 
-                List<Footballer> footballers = new ArrayList<>();
+                Set<Footballer> footballers = new HashSet<>();
                 while (inputStream.hasNextLine()) {
                     // TODO: Handle nulls
                     String footballer = inputStream.nextLine();
@@ -127,6 +127,7 @@ class Data {
             for (Footballer f : SQUADS.get(TEAMS[team])) {
                 Map<String, Integer> info = new HashMap<>();
                 info.put("Team", team);
+                info.put("Id", f.getId());
                 info.put("Games", 0);
                 info.put("Ratings", 0);
                 info.put("MOTM", 0);
