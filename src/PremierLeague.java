@@ -69,6 +69,7 @@ public class PremierLeague {
         Printer.printStandings();
         Printer.printAllTimeStats();
         System.out.println();
+        // TODO: Rate simulation with review
         System.out.println(String.format("The Premier League %d-%d ends!", 2018 + year, 2019 + year));
     }
 }

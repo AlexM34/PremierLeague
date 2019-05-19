@@ -11,11 +11,21 @@ enum Formation {
     F10(334, Type.AllOutAttack);
 
     enum Type {
-        ParkTheBus,
-        Defensive,
-        Balanced,
-        Offensive,
-        AllOutAttack
+        ParkTheBus(-3),
+        Defensive(-1),
+        Balanced(0),
+        Offensive(1),
+        AllOutAttack(3);
+
+        private int style;
+
+        Type(int style) {
+            this.style = style;
+        }
+
+        public int getStyle() {
+            return this.style;
+        }
     }
 
     private int scheme;

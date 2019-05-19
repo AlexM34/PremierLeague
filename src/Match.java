@@ -7,6 +7,8 @@ class Match {
 
     static Footballer[] homeSquad;
     static Footballer[] awaySquad;
+    static Formation homeFormation;
+    static Formation awayFormation;
 
     static void userTactics(int opponent, boolean isHome) {
         // TODO: Add other choices
@@ -26,39 +28,42 @@ class Match {
     static void simulateGame(int home, int away) {
         // TODO: Match odds
         Rater.kickoff();
-        homeSquad = pickSquad(home);
-        awaySquad = pickSquad(away);
+        homeSquad = pickSquad(home, true);
+        awaySquad = pickSquad(away, false);
 
-        // TODO: Use form and tactics dynamics
         int balance = Data.FANS + 100 *
                 (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[home] - 300) /
                 (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[away] - 300) - 50;
+
+        int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
+                + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 56;
         System.out.println(balance);
+        System.out.println(style);
 
         int homeGoals = 0;
         int awayGoals = 0;
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
             // TODO: Negative ratings
-            int r = random.nextInt(100);
+            int r = random.nextInt(1000);
 
-            if (r < balance) {
-                if (r < balance / 10 - 3) {
+            if (r < 10 * balance) {
+                if (r < balance + style - 38) {
                     Rater.goal(minute, true);
                     homeGoals++;
                     balance -= 10;
                     Rater.updateRatings(3);
-                } else if (r < balance / 2) {
+                } else if (r < 5 * balance) {
                     balance++;
                     Rater.updateRatings(1);
                 }
             } else {
-                if (r > 93 + balance / 10) {
+                if (r > 937 + balance - style) {
                     Rater.goal(minute, false);
                     awayGoals++;
                     balance += 10;
                     Rater.updateRatings(-3);
-                } else if (r > 100 - balance / 2) {
+                } else if (r > 999 - 5 * balance) {
                     balance--;
                     Rater.updateRatings(-1);
                 }
@@ -70,12 +75,14 @@ class Match {
         Rater.finalWhistle(home, away, homeGoals, awayGoals);
     }
 
-    private static Footballer[] pickSquad(int team) {
+    private static Footballer[] pickSquad(int team, boolean isHome) {
         List<Footballer> squad = Data.SQUADS.get(Data.TEAMS[team]).stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 
         Formation formation = pickFormation(squad);
+        if (isHome) homeFormation = formation;
+        else awayFormation = formation;
         int defenders = formation.getDefenders();
         int midfielders = formation.getMidfielders();
         int forwards = formation.getForwards();
