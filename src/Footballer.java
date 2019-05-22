@@ -13,10 +13,11 @@ class Footballer {
     private int number;
     private int finishing;
     private int vision;
+    private Resume resume;
 
     Footballer(int id, String name, int age, String nationality, int overall,
                int potential, float value, float wage, Position position,
-               int number, int finishing, int vision) {
+               int number, int finishing, int vision, Resume resume) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -29,6 +30,7 @@ class Footballer {
         this.number = number;
         this.finishing = finishing;
         this.vision = vision;
+        this.resume = resume;
     }
 
     int getId() {
@@ -115,6 +117,14 @@ class Footballer {
         this.vision = vision;
     }
 
+    public Resume getResume() {
+        return resume;
+    }
+
+    public void setResume(Resume resume) {
+        this.resume = resume;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -131,12 +141,13 @@ class Footballer {
                 vision == that.vision &&
                 name.equals(that.name) &&
                 nationality.equals(that.nationality) &&
-                position.equals(that.position);
+                position.equals(that.position) &&
+                resume.equals(that.resume);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number, finishing, vision);
+        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number, finishing, vision, resume);
     }
 
     @Override
@@ -150,10 +161,11 @@ class Footballer {
                 ", potential=" + potential +
                 ", value=" + value +
                 ", wage=" + wage +
-                ", position='" + position + '\'' +
+                ", position=" + position +
                 ", number=" + number +
                 ", finishing=" + finishing +
                 ", vision=" + vision +
+                ", resume=" + resume +
                 '}';
     }
 }

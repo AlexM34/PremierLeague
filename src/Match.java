@@ -32,6 +32,7 @@ class Match {
         awaySquad = pickSquad(away, false);
 
         // TODO: Separate variables for scoring
+        // TODO: Add cards
         int balance = Data.FANS + 100 *
                 (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[home] - 300) /
                 (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[away] - 300) - 50;
