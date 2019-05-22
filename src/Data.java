@@ -8,9 +8,15 @@ class Data {
             "West Ham United", "Bournemouth", "Crystal Palace", "Burnley", "Newcastle United", "Southampton",
             "Brighton & Hove Albion", "Cardiff City", "Fulham", "Huddersfield Town"};
 
+    static Coach ATTACK = new Coach(1, "Attack", 80, Formation.F6, 80, 80, 50);
+    static Coach BALANCE = new Coach(2, "Balance", 80, Formation.F5, 50, 65, 65);
+    static Coach DEFENCE = new Coach(3, "Defence", 80, Formation.F4, 20, 50, 80);
+    static Coach[] COACHES = {ATTACK, ATTACK, BALANCE, DEFENCE, BALANCE, BALANCE, BALANCE,
+    DEFENCE, ATTACK, BALANCE, DEFENCE, BALANCE, DEFENCE, DEFENCE, ATTACK, DEFENCE, DEFENCE, DEFENCE,
+    BALANCE, DEFENCE};
+
     // TODO: Add logos
     // TODO: Club stats
-    // TODO: Coaches
     // TODO: Add fatigue
     static Map<String, Set<Footballer>> SQUADS = new HashMap<>();
     static Integer USER = -1;

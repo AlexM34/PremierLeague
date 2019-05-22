@@ -31,12 +31,16 @@ class Match {
         homeSquad = pickSquad(home, true);
         awaySquad = pickSquad(away, false);
 
+        // TODO: Separate variables for scoring
         int balance = Data.FANS + 100 *
                 (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[home] - 300) /
                 (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[away] - 300) - 50;
 
         int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
                 + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 56;
+
+        if (home == Data.USER || away == Data.USER) style += Data.OFFENSE;
+        style += (Data.COACHES[home].getStyle() + Data.COACHES[away].getStyle() - 100)  / 20;
         System.out.println(balance);
         System.out.println(style);
 
