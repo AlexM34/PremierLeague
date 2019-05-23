@@ -49,20 +49,17 @@ class Printer {
 
         for (int team = 0; team < 20; team++) {
             for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
-                Integer id = f.getId();
                 String name = f.getName();
-                Map<String, Integer> stat = Data.STATS.get(id);
 
-                ratings.put(name, stat.get("Games") > 0 ? (float) stat.get("Ratings") / stat.get("Games") / 100 : 0);
-                motm.put(name, stat.get("MOTM"));
-                goals.put(name, stat.get("Goals"));
-                assists.put(name, stat.get("Assists"));
+                ratings.put(name, f.getResume().getSeason().getMatches() > 0 ? (float) f.getResume().getSeason().getRating() / 100 : 0);
+                motm.put(name, f.getResume().getSeason().getMotmAwards());
+                goals.put(name, f.getResume().getSeason().getGoals());
+                assists.put(name, f.getResume().getSeason().getAssists());
 
-                if (stat.get("Clean Sheets") > 0) {
-                    cleanSheets.put(name, stat.get("Clean Sheets"));
+                if (f.getResume().getSeason().getCleanSheets() > 0) {
+                    cleanSheets.put(name, f.getResume().getSeason().getCleanSheets());
                 }
-//                System.out.println(String.format("%s %.2f %d %d", Data.PLAYERS[team][player], Data.RATINGS[team][player] / 38,
-//                        Data.GOALS[team][player], Data.ASSISTS[team][player]));
+                System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
             }
         }
 

@@ -7,82 +7,116 @@ class Statistics {
     private int cleanSheets;
     private int rating;
     private int motmAwards;
-    private int yellows;
-    private int reds;
+    private int yellowCards;
+    private int redCards;
 
-    public Statistics(int matches, int goals, int assists, int cleanSheets, int rating, int motmAwards, int yellows, int reds) {
+    Statistics(int matches, int goals, int assists, int cleanSheets, int rating, int motmAwards, int yellowCards, int redCards) {
         this.matches = matches;
         this.goals = goals;
         this.assists = assists;
         this.cleanSheets = cleanSheets;
         this.rating = rating;
         this.motmAwards = motmAwards;
-        this.yellows = yellows;
-        this.reds = reds;
+        this.yellowCards = yellowCards;
+        this.redCards = redCards;
     }
 
-    public int getMatches() {
+    int getMatches() {
         return matches;
     }
 
-    public void setMatches(int matches) {
+    void setMatches(int matches) {
         this.matches = matches;
     }
 
-    public int getGoals() {
+    void addMatches(int matches) {
+        this.matches += matches;
+    }
+
+    int getGoals() {
         return goals;
     }
 
-    public void setGoals(int goals) {
+    void setGoals(int goals) {
         this.goals = goals;
     }
 
-    public int getAssists() {
+    void addGoals(int goals) {
+        this.goals += goals;
+    }
+
+    int getAssists() {
         return assists;
     }
 
-    public void setAssists(int assists) {
+    void setAssists(int assists) {
         this.assists = assists;
     }
 
-    public int getCleanSheets() {
+    void addAssists(int assists) {
+        this.assists += assists;
+    }
+
+    int getCleanSheets() {
         return cleanSheets;
     }
 
-    public void setCleanSheets(int cleanSheets) {
+    void setCleanSheets(int cleanSheets) {
         this.cleanSheets = cleanSheets;
     }
 
-    public int getRating() {
+    void addCleanSheets(int cleanSheets) {
+        this.cleanSheets += cleanSheets;
+    }
+
+    int getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    void setRating(int rating) {
         this.rating = rating;
     }
 
-    public int getMotmAwards() {
+    void addRating(int rating, int matches) {
+        if (matches > 0) {
+            this.rating = (this.rating * this.matches + rating * matches) / (this.matches + matches);
+        }
+    }
+
+    int getMotmAwards() {
         return motmAwards;
     }
 
-    public void setMotmAwards(int motmAwards) {
+    void setMotmAwards(int motmAwards) {
         this.motmAwards = motmAwards;
     }
 
-    public int getYellows() {
-        return yellows;
+    void addMotmAwards(int motmAwards) {
+        this.motmAwards += motmAwards;
     }
 
-    public void setYellows(int yellows) {
-        this.yellows = yellows;
+    int getYellowCards() {
+        return yellowCards;
     }
 
-    public int getReds() {
-        return reds;
+    void setYellowCards(int yellowCards) {
+        this.yellowCards = yellowCards;
     }
 
-    public void setReds(int reds) {
-        this.reds = reds;
+    void addYellowCards(int yellows) {
+        this.yellowCards += yellows;
+    }
+
+    int getRedCards() {
+        return redCards;
+    }
+
+    void setRedCards(int redCards) {
+        this.redCards = redCards;
+    }
+
+    void addRedCards(int reds) {
+        this.redCards += reds;
     }
 
     @Override
@@ -96,13 +130,13 @@ class Statistics {
                 cleanSheets == statistics.cleanSheets &&
                 rating == statistics.rating &&
                 motmAwards == statistics.motmAwards &&
-                yellows == statistics.yellows &&
-                reds == statistics.reds;
+                yellowCards == statistics.yellowCards &&
+                redCards == statistics.redCards;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(matches, goals, assists, cleanSheets, rating, motmAwards, yellows, reds);
+        return Objects.hash(matches, goals, assists, cleanSheets, rating, motmAwards, yellowCards, redCards);
     }
 
     @Override
@@ -114,8 +148,8 @@ class Statistics {
                 ", cleanSheets=" + cleanSheets +
                 ", rating=" + rating +
                 ", motmAwards=" + motmAwards +
-                ", yellows=" + yellows +
-                ", reds=" + reds +
+                ", yellowCards=" + yellowCards +
+                ", redCards=" + redCards +
                 '}';
     }
 }

@@ -8,9 +8,9 @@ class Data {
             "West Ham United", "Bournemouth", "Crystal Palace", "Burnley", "Newcastle United", "Southampton",
             "Brighton & Hove Albion", "Cardiff City", "Fulham", "Huddersfield Town"};
 
-    static Coach ATTACK = new Coach(1, "Attack", 80, Formation.F6, 80, 80, 50);
-    static Coach BALANCE = new Coach(2, "Balance", 80, Formation.F5, 50, 65, 65);
-    static Coach DEFENCE = new Coach(3, "Defence", 80, Formation.F4, 20, 50, 80);
+    private static Coach ATTACK = new Coach(1, "Attack", 80, Formation.F6, 80, 80, 50);
+    private static Coach BALANCE = new Coach(2, "Balance", 80, Formation.F5, 50, 65, 65);
+    private static Coach DEFENCE = new Coach(3, "Defence", 80, Formation.F4, 20, 50, 80);
     static Coach[] COACHES = {ATTACK, ATTACK, BALANCE, DEFENCE, BALANCE, BALANCE, BALANCE,
     DEFENCE, ATTACK, BALANCE, DEFENCE, BALANCE, DEFENCE, DEFENCE, ATTACK, DEFENCE, DEFENCE, DEFENCE,
     BALANCE, DEFENCE};
@@ -35,12 +35,7 @@ class Data {
     static int AWAY_WINS;
     static int FANS = 5;
     static int[] FORM = new int[20];
-    static float[][] RATINGS = new float[20][30];
-    static int[][] MOTM = new int[20][30];
-    static int[][] GOALS = new int[20][30];
-    static int[][] ASSISTS = new int[20][30];
     static int[] CLEAN_SHEETS = new int[20];
-    static Map<Integer, Map<String, Integer>> STATS = new HashMap<>();
 
     static void extractData() {
         String fileName = "data/data.csv";
@@ -92,7 +87,10 @@ class Data {
                                 values.length > 21 && !values[21].isEmpty() ? Position.valueOf(values[21]) : null,
                                 values.length > 22 && !values[22].isEmpty() ? Integer.parseInt(values[22]) : 0,
                                 values.length > 56 && !values[56].isEmpty() ? Integer.parseInt(values[56]) : 0,
-                                values.length > 78 && !values[78].isEmpty() ? Integer.parseInt(values[78]) : 0));
+                                values.length > 78 && !values[78].isEmpty() ? Integer.parseInt(values[78]) : 0,
+                                new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+                                        new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+                                        new Statistics(0, 0, 0, 0, 0, 0, 0, 0))));
                     }
                 }
 
@@ -106,7 +104,6 @@ class Data {
     static void prepare(int year) {
         PremierLeague.pause();
 
-        // TODO: All-time player stats
         POINTS = new int[20];
         GOALS_FOR = new int[20];
         GOALS_AGAINST = new int[20];
@@ -119,10 +116,6 @@ class Data {
         HOME = new int[38][10];
         AWAY = new int[38][10];
         FORM = new int[20];
-        RATINGS = new float[20][30];
-        MOTM = new int[20][30];
-        GOALS = new int[20][30];
-        ASSISTS = new int[20][30];
         CLEAN_SHEETS = new int[20];
 
         // TODO: Title odds
@@ -131,17 +124,23 @@ class Data {
             FORM[team] = 10;
 
             for (Footballer f : SQUADS.get(TEAMS[team])) {
-                Map<String, Integer> info = new HashMap<>();
-                info.put("Team", team);
-                info.put("Id", f.getId());
-                info.put("Games", 0);
-                info.put("Ratings", 0);
-                info.put("MOTM", 0);
-                info.put("Goals", 0);
-                info.put("Assists", 0);
-                info.put("Clean Sheets", 0);
+                f.getResume().getTotal().addGoals(f.getResume().getSeason().getGoals());
+                f.getResume().getTotal().addAssists(f.getResume().getSeason().getAssists());
+                f.getResume().getTotal().addCleanSheets(f.getResume().getSeason().getCleanSheets());
+                f.getResume().getTotal().addRating(f.getResume().getSeason().getRating(), f.getResume().getSeason().getMatches());
+                f.getResume().getTotal().addMatches(f.getResume().getSeason().getMatches());
+                f.getResume().getTotal().addMotmAwards(f.getResume().getSeason().getMotmAwards());
+                f.getResume().getTotal().addYellowCards(f.getResume().getSeason().getYellowCards());
+                f.getResume().getTotal().addRedCards(f.getResume().getSeason().getRedCards());
 
-                STATS.put(f.getId(), info);
+                f.getResume().getSeason().setMatches(0);
+                f.getResume().getSeason().setGoals(0);
+                f.getResume().getSeason().setAssists(0);
+                f.getResume().getSeason().setCleanSheets(0);
+                f.getResume().getSeason().setRating(0);
+                f.getResume().getSeason().setMotmAwards(0);
+                f.getResume().getSeason().setYellowCards(0);
+                f.getResume().getSeason().setRedCards(0);
             }
         }
 

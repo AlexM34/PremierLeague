@@ -46,7 +46,6 @@ class Rater {
             r -= scoringChance(squad[player]);
             if (r < 0) {
                 goalscorer = squad[player];
-                Map<String, Integer> stat = Data.STATS.get(squad[player].getId());
 
                 if (isHome) {
                     homeRatings[player] += 1.25;
@@ -59,7 +58,7 @@ class Rater {
                     else if (player < 8) awayRatings[player] += 0.25;
                 }
 
-                stat.merge("Goals", 1, Integer::sum);
+                squad[player].getResume().getSeason().addGoals(1);
                 break;
             }
         }
@@ -73,7 +72,6 @@ class Rater {
                     assistmaker = null;
                 }
                 else {
-                    Map<String, Integer> stat = Data.STATS.get(squad[player].getId());
                     if (isHome) {
                         homeRatings[player] += 1;
                         if (player < 5) homeRatings[player] += 0.5;
@@ -85,7 +83,7 @@ class Rater {
                         else if (player < 8) awayRatings[player] += 0.25;
                     }
 
-                    stat.merge("Assists", 1, Integer::sum);
+                    squad[player].getResume().getSeason().addAssists(1);
                 }
 
                 break;
@@ -127,19 +125,14 @@ class Rater {
         return 0;
     }
 
-    static void finalWhistle(int home, int away, int goalsHome, int goalsAway) {
+    static void finalWhistle(int home, int away, int homeGoals, int awayGoals) {
         boolean motmHomeTeam = true;
         int motmPlayer = -1;
         float motmRating = 0;
-
-        Map<String, Integer> stat = Data.STATS.get(Match.homeSquad[0].getId());
-        stat.merge("Clean Sheets", goalsAway == 0 ? 1 : 0, Integer::sum);
-
-        stat = Data.STATS.get(Match.awaySquad[0].getId());
-        stat.merge("Clean Sheets", goalsHome == 0 ? 1 : 0, Integer::sum);
+        Match.homeSquad[0].getResume().getSeason().addCleanSheets(awayGoals == 0 ? 1 : 0);
+        Match.awaySquad[0].getResume().getSeason().addCleanSheets(homeGoals == 0 ? 1 : 0);
 
         for (int player = 0; player < 11; player++) {
-            stat = Data.STATS.get(Match.homeSquad[player].getId());
             homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
             homeRatings[player] = homeRatings[player] > 4 ? homeRatings[player] : 4;
             if (homeRatings[player] > motmRating) {
@@ -147,11 +140,9 @@ class Rater {
                 motmPlayer = player;
                 motmRating = homeRatings[player];
             }
+            Match.homeSquad[player].getResume().getSeason().addRating((int) homeRatings[player] * 100, 1);
+            Match.homeSquad[player].getResume().getSeason().addMatches(1);
 
-            stat.merge("Games", 1, Integer::sum);
-            stat.merge("Ratings", (int) homeRatings[player] * 100, Integer::sum);
-
-            stat = Data.STATS.get(Match.awaySquad[player].getId());
             awayRatings[player] = awayRatings[player] < 10 ? awayRatings[player] : 10;
             awayRatings[player] = awayRatings[player] > 4 ? awayRatings[player] : 4;
             if (awayRatings[player] > motmRating) {
@@ -159,29 +150,28 @@ class Rater {
                 motmPlayer = player;
                 motmRating = awayRatings[player];
             }
-            stat.merge("Games", 1, Integer::sum);
-            stat.merge("Ratings", (int) awayRatings[player] * 100, Integer::sum);
+            Match.awaySquad[player].getResume().getSeason().addRating((int) awayRatings[player] * 100, 1);
+            Match.awaySquad[player].getResume().getSeason().addMatches(1);
         }
 
-        stat = Data.STATS.get((motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId());
-        stat.merge("MOTM", 1, Integer::sum);
+        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);
 
 
-        if (goalsAway == 0) {
+        if (awayGoals == 0) {
             Data.CLEAN_SHEETS[home]++;
         }
 
-        if (goalsHome == 0) {
+        if (homeGoals == 0) {
             Data.CLEAN_SHEETS[away]++;
         }
 
-        if (goalsHome > goalsAway) {
+        if (homeGoals > awayGoals) {
             Data.HOME_WINS++;
             Data.POINTS[home] += 3;
             Data.WINS[home]++;
             Data.LOSES[away]++;
 
-            if (goalsHome - goalsAway > 2) {
+            if (homeGoals - awayGoals > 2) {
                 form(home, 1);
                 form(away, -1);
             }
@@ -198,13 +188,13 @@ class Rater {
             }
         }
 
-        else if (goalsHome < goalsAway){
+        else if (homeGoals < awayGoals){
             Data.AWAY_WINS++;
             Data.POINTS[away] += 3;
             Data.WINS[away]++;
             Data.LOSES[home]++;
 
-            if (goalsAway - goalsHome > 2) {
+            if (awayGoals - homeGoals > 2) {
                 form(away, 1);
                 form(home, -1);
             }
@@ -238,15 +228,15 @@ class Rater {
 
         Data.GAMES[home]++;
         Data.GAMES[away]++;
-        Data.GOALS_FOR[home] += goalsHome;
-        Data.GOALS_AGAINST[home] += goalsAway;
-        Data.GOALS_FOR[away] += goalsAway;
-        Data.GOALS_AGAINST[away] += goalsHome;
+        Data.GOALS_FOR[home] += homeGoals;
+        Data.GOALS_AGAINST[home] += awayGoals;
+        Data.GOALS_FOR[away] += awayGoals;
+        Data.GOALS_AGAINST[away] += homeGoals;
 
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
 
-        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], goalsHome,
-                goalsAway, Data.SQUADS.get(Data.TEAMS[motmHomeTeam ? home : away]).stream().filter(
+        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], homeGoals,
+                awayGoals, Data.SQUADS.get(Data.TEAMS[motmHomeTeam ? home : away]).stream().filter(
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
     }
 

@@ -7,32 +7,32 @@ class PreSeason {
         // TODO: Age updates
         // TODO: Transfers
         for (int team = 0; team < 20; team++) {
-            for (int player = 0; player < 11; player++) {
+            for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
                 int r = random.nextInt(5);
                 if (r == 0) {
-                    if (Data.RATINGS[team][player] > 300) {
-                        increase(team, player);
-                    } else if (Data.RATINGS[team][player] < 250) {
-                        decrease(team, player);
+                    if (f.getResume().getSeason().getRating() > 700) {
+                        increase(team, f);
+                    } else if (f.getResume().getSeason().getRating() < 600) {
+                        decrease(team, f);
                     }
                 }
                 r = random.nextInt(6);
                 if (r == 0) {
-                    increase(team, player);
+                    increase(team, f);
                 }
                 else if (r == 1){
-                    decrease(team, player);
+                    decrease(team, f);
                 }
             }
         }
     }
 
-    private static void increase(int team, int player) {
+    private static void increase(int team, Footballer footballer) {
 //        Data.OVERALL[team][player] = Data.OVERALL[team][player] < 10 ? Data.OVERALL[team][player] + 1 : 10;
 //        System.out.println(String.format("%s improves", Data.PLAYERS[team][player]));
     }
 
-    private static void decrease(int team, int player) {
+    private static void decrease(int team, Footballer footballer) {
 //        Data.OVERALL[team][player] = Data.OVERALL[team][player] > 1 ? Data.OVERALL[team][player] - 1 : 1;
 //        System.out.println(String.format("%s worsens", Data.PLAYERS[team][player]));
     }
