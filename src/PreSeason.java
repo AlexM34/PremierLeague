@@ -77,7 +77,7 @@ class PreSeason {
             if (footballer.getAge() < 30 && random.nextInt(3) == 0) {
                 footballer.changePotential(1);
             }
-            System.out.println(String.format("%s improves to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
+//            System.out.println(String.format("%s improves to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
         }
     }
 
@@ -87,7 +87,7 @@ class PreSeason {
             if (footballer.getAge() >= 30 || random.nextInt(3) == 0) {
                 footballer.changePotential(-1);
             }
-            System.out.println(String.format("%s declines to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
+//            System.out.println(String.format("%s declines to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
         }
     }
 }

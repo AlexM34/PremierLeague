@@ -9,7 +9,7 @@ class Match {
     static Footballer[] awaySquad;
     private static Formation homeFormation;
     private static Formation awayFormation;
-    private static int[][] bookings;
+    static int[][] bookings;
 
     static void userTactics(int opponent, boolean isHome) {
         // TODO: Add other choices
@@ -55,7 +55,6 @@ class Match {
         int awayGoals = 0;
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
-            // TODO: Negative ratings
             int r = random.nextInt(1000);
 
             if (r < 10 * balance) {
@@ -80,7 +79,7 @@ class Match {
                 }
             }
 
-            // TODO: Booking consequences
+            // TODO: Use attributes for bookings
             if (random.nextInt(20) == 0) {
                 int t = random.nextInt(2);
                 int p = random.nextInt(11);
@@ -94,12 +93,16 @@ class Match {
                 }
             }
 
-            else if (random.nextInt(300) == 0) {
+            else if (random.nextInt(200) == 0) {
                 int t = random.nextInt(2);
                 int p = random.nextInt(10) + 1;
+
+                if (bookings[t][p] == 2) break;
+                bookings[t][p] = 2;
                 balance += 30 * t - 15;
                 (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
                 (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().addRedCards(1);
+                (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-30);
                 System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }
 
