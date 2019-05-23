@@ -17,7 +17,6 @@ class Data {
 
     // TODO: Add logos
     // TODO: Club stats
-    // TODO: Add fatigue
     static Map<String, Set<Footballer>> SQUADS = new HashMap<>();
     static Integer USER = -1;
     static int OFFENSE;
@@ -54,7 +53,9 @@ class Data {
                 while (inputStream.hasNext()) {
                     String footballer = inputStream.nextLine();
                     String[] values = footballer.replaceAll("\\s","").split(",");
-                    if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9])) {
+                    if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9]) &&
+                            values.length > 78 && !values[21].isEmpty() && !values[22].isEmpty() &&
+                            !values[56].isEmpty() && !values[78].isEmpty() ) {
                         line.printf(footballer + "\n");
                     }
                 }
@@ -84,10 +85,8 @@ class Data {
                                 Integer.parseInt(values[7]), Integer.parseInt(values[8]),
                                 Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
                                 Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
-                                values.length > 21 && !values[21].isEmpty() ? Position.valueOf(values[21]) : null,
-                                values.length > 22 && !values[22].isEmpty() ? Integer.parseInt(values[22]) : 0,
-                                values.length > 56 && !values[56].isEmpty() ? Integer.parseInt(values[56]) : 0,
-                                values.length > 78 && !values[78].isEmpty() ? Integer.parseInt(values[78]) : 0,
+                                Position.valueOf(values[21]), Integer.parseInt(values[22]),
+                                Integer.parseInt(values[56]), Integer.parseInt(values[78]),
                                 new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
                                         new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
                                         new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));

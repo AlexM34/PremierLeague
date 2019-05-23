@@ -53,7 +53,7 @@ class Printer {
             for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
                 String name = f.getName();
 
-                ratings.put(name, f.getResume().getSeason().getMatches() > 0 ? (float) f.getResume().getSeason().getRating() / 100 : 0);
+                if (f.getResume().getSeason().getMatches() > 20) ratings.put(name,  (float) f.getResume().getSeason().getRating() / 100);
                 motm.put(name, f.getResume().getSeason().getMotmAwards());
                 goals.put(name, f.getResume().getSeason().getGoals());
                 assists.put(name, f.getResume().getSeason().getAssists());
@@ -61,7 +61,7 @@ class Printer {
                 if (f.getResume().getSeason().getCleanSheets() > 0) {
                     cleanSheets.put(name, f.getResume().getSeason().getCleanSheets());
                 }
-//                System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+                if (team < 6 && f.getResume().getSeason().getMatches() > 0) System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
             }
         }
 
@@ -159,7 +159,7 @@ class Printer {
             for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
                 String name = f.getName();
 
-                ratings.put(name, (float) f.getResume().getTotal().getRating() / 100);
+                if (f.getResume().getTotal().getMatches() > 100) ratings.put(name, (float) f.getResume().getTotal().getRating() / 100);
                 motm.put(name, f.getResume().getTotal().getMotmAwards());
                 goals.put(name, f.getResume().getTotal().getGoals());
                 assists.put(name, f.getResume().getTotal().getAssists());
@@ -167,7 +167,7 @@ class Printer {
                 if (f.getPosition() == Position.GK) {
                     cleanSheets.put(name, f.getResume().getTotal().getCleanSheets());
                 }
-//                System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+                if (team < 6) System.out.println(String.format("%s %s", name, f.getResume().getTotal().toString()));
             }
         }
 
@@ -196,7 +196,6 @@ class Printer {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
-        // TODO: Sorted values don't match with integer
         System.out.println();
         System.out.println("Top Players");
         for (int i = 0; i < 20 && i < sortedRatings.size(); i++) {

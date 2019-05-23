@@ -6,7 +6,21 @@ class Rater {
     static float[] homeRatings = new float[11];
     static float[] awayRatings = new float[11];
 
-    static void kickoff() {
+    static void kickoff(int home, int away) {
+        for (Footballer f : Data.SQUADS.get(Data.TEAMS[home])) {
+            if (f.getPosition() == Position.GK) {
+                f.changeCondition(14);
+            }
+            else f.changeCondition(10 + random.nextInt(3));
+        }
+
+        for (Footballer f : Data.SQUADS.get(Data.TEAMS[away])) {
+            if (f.getPosition() == Position.GK) {
+                f.changeCondition(14);
+            }
+            else f.changeCondition(10);
+        }
+
         for (int player = 0; player < 11; player++) {
             Rater.homeRatings[player] = 6;
             Rater.awayRatings[player] = 6;
@@ -141,7 +155,7 @@ class Rater {
             }
             Match.homeSquad[player].getResume().getSeason().addRating((int) homeRatings[player] * 100, 1);
             Match.homeSquad[player].getResume().getSeason().addMatches(1);
-            Match.homeSquad[player].changeCondition(-5);
+            Match.homeSquad[player].changeCondition(-15);
 
             awayRatings[player] = awayRatings[player] < 10 ? awayRatings[player] : 10;
             awayRatings[player] = awayRatings[player] > 4 ? awayRatings[player] : 4;
@@ -152,7 +166,7 @@ class Rater {
             }
             Match.awaySquad[player].getResume().getSeason().addRating((int) awayRatings[player] * 100, 1);
             Match.awaySquad[player].getResume().getSeason().addMatches(1);
-            Match.awaySquad[player].changeCondition(-5);
+            Match.awaySquad[player].changeCondition(-15);
         }
 
         (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);

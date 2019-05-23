@@ -6,6 +6,7 @@ class PreSeason {
     static void changes() {
         // TODO: Age updates
         // TODO: Transfers
+        // TODO: Youth academy
         for (int team = 0; team < 20; team++) {
             for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
                 int r = random.nextInt(5);

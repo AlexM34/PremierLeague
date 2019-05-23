@@ -29,21 +29,23 @@ class Match {
         // TODO: Match odds
         // TODO: Bench
         // TODO: Subs
-        Rater.kickoff();
+        Rater.kickoff(home, away);
         homeSquad = pickSquad(home, true);
         awaySquad = pickSquad(away, false);
 
         // TODO: Separate variables for scoring
         // TODO: Add bookings
         int balance = Data.FANS + 100 *
-                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[home] - 300) /
-                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[away] - 300) - 50;
+                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[home] +
+                 Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) /
+                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[away] +
+                 Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) - 50;
 
         int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
                 + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 56;
 
         if (home == Data.USER || away == Data.USER) style += Data.OFFENSE;
-        style += (Data.COACHES[home].getStyle() + Data.COACHES[away].getStyle() - 100)  / 20;
+        style += (Data.COACHES[home].getStyle() + Data.COACHES[away].getStyle() - 100)  / 10;
         System.out.println(balance);
         System.out.println(style);
 
@@ -100,7 +102,7 @@ class Match {
         int m = midfielders;
         int f = forwards;
         for (Footballer footballer : squad) {
-            if (footballer.getPosition() == null) {
+            if (footballer.getPosition() == null || footballer.getCondition() < 70) {
                 continue;
             }
 
@@ -132,10 +134,6 @@ class Match {
                         selected[1 + defenders + midfielders + f] = footballer;
                     }
                     break;
-
-                default:
-                    System.out.println("Unknown position for footballer " + footballer);
-                    break;
             }
         }
 
@@ -151,7 +149,7 @@ class Match {
 
         for (Footballer f : footballers) {
 //            System.out.println(f);
-            if (f.getPosition() == null) {
+            if (f.getPosition() == null || f.getCondition() < 70) {
                 continue;
             }
 
