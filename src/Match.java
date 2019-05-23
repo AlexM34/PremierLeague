@@ -27,6 +27,8 @@ class Match {
 
     static void simulateGame(int home, int away) {
         // TODO: Match odds
+        // TODO: Bench
+        // TODO: Subs
         Rater.kickoff();
         homeSquad = pickSquad(home, true);
         awaySquad = pickSquad(away, false);

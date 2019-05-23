@@ -14,10 +14,11 @@ class Footballer {
     private int finishing;
     private int vision;
     private Resume resume;
+    private int condition;
 
     Footballer(int id, String name, int age, String nationality, int overall,
                int potential, float value, float wage, Position position,
-               int number, int finishing, int vision, Resume resume) {
+               int number, int finishing, int vision, Resume resume, int condition) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -31,6 +32,7 @@ class Footballer {
         this.finishing = finishing;
         this.vision = vision;
         this.resume = resume;
+        this.condition = condition;
     }
 
     int getId() {
@@ -117,12 +119,22 @@ class Footballer {
         this.vision = vision;
     }
 
-    public Resume getResume() {
+    Resume getResume() {
         return resume;
     }
 
-    public void setResume(Resume resume) {
+    void setResume(Resume resume) {
         this.resume = resume;
+    }
+
+    int getCondition() {
+        return condition;
+    }
+
+    void changeCondition(int condition) {
+        this.condition += condition;
+        if (this.condition > 100) this.condition = 100;
+        else if (this.condition < 0) this.condition = 0;
     }
 
     @Override
@@ -139,15 +151,16 @@ class Footballer {
                 number == that.number &&
                 finishing == that.finishing &&
                 vision == that.vision &&
+                condition == that.condition &&
                 name.equals(that.name) &&
                 nationality.equals(that.nationality) &&
-                position.equals(that.position) &&
+                position == that.position &&
                 resume.equals(that.resume);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number, finishing, vision, resume);
+        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number, finishing, vision, resume, condition);
     }
 
     @Override
@@ -166,6 +179,7 @@ class Footballer {
                 ", finishing=" + finishing +
                 ", vision=" + vision +
                 ", resume=" + resume +
+                ", condition=" + condition +
                 '}';
     }
 }

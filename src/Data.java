@@ -90,7 +90,7 @@ class Data {
                                 values.length > 78 && !values[78].isEmpty() ? Integer.parseInt(values[78]) : 0,
                                 new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
                                         new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
-                                        new Statistics(0, 0, 0, 0, 0, 0, 0, 0))));
+                                        new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));
                     }
                 }
 

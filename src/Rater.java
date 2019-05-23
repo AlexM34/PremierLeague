@@ -1,4 +1,3 @@
-import java.util.Map;
 import java.util.Random;
 
 class Rater {
@@ -142,6 +141,7 @@ class Rater {
             }
             Match.homeSquad[player].getResume().getSeason().addRating((int) homeRatings[player] * 100, 1);
             Match.homeSquad[player].getResume().getSeason().addMatches(1);
+            Match.homeSquad[player].changeCondition(-5);
 
             awayRatings[player] = awayRatings[player] < 10 ? awayRatings[player] : 10;
             awayRatings[player] = awayRatings[player] > 4 ? awayRatings[player] : 4;
@@ -152,18 +152,13 @@ class Rater {
             }
             Match.awaySquad[player].getResume().getSeason().addRating((int) awayRatings[player] * 100, 1);
             Match.awaySquad[player].getResume().getSeason().addMatches(1);
+            Match.awaySquad[player].changeCondition(-5);
         }
 
         (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);
 
-
-        if (awayGoals == 0) {
-            Data.CLEAN_SHEETS[home]++;
-        }
-
-        if (homeGoals == 0) {
-            Data.CLEAN_SHEETS[away]++;
-        }
+        if (awayGoals == 0) Data.CLEAN_SHEETS[home]++;
+        if (homeGoals == 0) Data.CLEAN_SHEETS[away]++;
 
         if (homeGoals > awayGoals) {
             Data.HOME_WINS++;

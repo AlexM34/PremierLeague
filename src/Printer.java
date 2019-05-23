@@ -1,3 +1,5 @@
+import javafx.geometry.Pos;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -59,7 +61,7 @@ class Printer {
                 if (f.getResume().getSeason().getCleanSheets() > 0) {
                     cleanSheets.put(name, f.getResume().getSeason().getCleanSheets());
                 }
-                System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+//                System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
             }
         }
 
@@ -145,4 +147,90 @@ class Printer {
                     sorted.values().toArray()[i]));
         }
     }
+
+    static void printAllTimePlayerStats() {
+        Map<String, Float> ratings = new LinkedHashMap<>();
+        Map<String, Integer> motm = new LinkedHashMap<>();
+        Map<String, Integer> goals = new LinkedHashMap<>();
+        Map<String, Integer> assists = new LinkedHashMap<>();
+        Map<String, Integer> cleanSheets = new LinkedHashMap<>();
+
+        for (int team = 0; team < 20; team++) {
+            for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
+                String name = f.getName();
+
+                ratings.put(name, (float) f.getResume().getTotal().getRating() / 100);
+                motm.put(name, f.getResume().getTotal().getMotmAwards());
+                goals.put(name, f.getResume().getTotal().getGoals());
+                assists.put(name, f.getResume().getTotal().getAssists());
+
+                if (f.getPosition() == Position.GK) {
+                    cleanSheets.put(name, f.getResume().getTotal().getCleanSheets());
+                }
+//                System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+            }
+        }
+
+        Map<String, Float> sortedRatings = ratings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedMotm = motm.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedGoals = goals.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedAssists = assists.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        Map<String, Integer> sortedCleanSheets = cleanSheets.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        // TODO: Sorted values don't match with integer
+        System.out.println();
+        System.out.println("Top Players");
+        for (int i = 0; i < 20 && i < sortedRatings.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %.2f", i + 1, sortedRatings.keySet().toArray()[i],
+                    sortedRatings.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Most MOTM Awards");
+        for (int i = 0; i < 20 && i < sortedMotm.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %d", i + 1, sortedMotm.keySet().toArray()[i],
+                    sortedMotm.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Top Goalscorer");
+        for (int i = 0; i < 20 && i < sortedGoals.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %d", i + 1, sortedGoals.keySet().toArray()[i],
+                    sortedGoals.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Most Assists");
+        for (int i = 0; i < 20 && i < sortedAssists.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %d", i + 1, sortedAssists.keySet().toArray()[i],
+                    sortedAssists.values().toArray()[i]));
+        }
+
+        System.out.println();
+        System.out.println("Most Clean Sheets");
+        for (int i = 0; i < 20 && i < sortedCleanSheets.size(); i++) {
+            System.out.println(String.format("%2d. %-15s %2d", i + 1, sortedCleanSheets.keySet().toArray()[i],
+                    sortedCleanSheets.values().toArray()[i]));
+        }
+
+        System.out.println();}
 }

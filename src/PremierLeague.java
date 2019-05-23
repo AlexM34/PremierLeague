@@ -19,6 +19,8 @@ public class PremierLeague {
             finish(year);
             PreSeason.changes();
         });
+
+        finishSimulation();
     }
 
     private static void pickTeam() {
@@ -71,5 +73,10 @@ public class PremierLeague {
         System.out.println();
         // TODO: Rate simulation with review
         System.out.println(String.format("The Premier League %d-%d ends!", 2018 + year, 2019 + year));
+    }
+
+    private static void finishSimulation() {
+        Data.prepare(10);
+        Printer.printAllTimePlayerStats();
     }
 }
