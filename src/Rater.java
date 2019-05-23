@@ -18,7 +18,7 @@ class Rater {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
-            else f.changeCondition(10);
+            else f.changeCondition(11 + random.nextInt(3));
         }
 
         for (int player = 0; player < 11; player++) {
@@ -167,6 +167,8 @@ class Rater {
             Match.awaySquad[player].getResume().getSeason().addRating((int) awayRatings[player] * 100, 1);
             Match.awaySquad[player].getResume().getSeason().addMatches(1);
             Match.awaySquad[player].changeCondition(-15);
+
+            Data.RATINGS += homeRatings[player] + awayRatings[player];
         }
 
         (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);

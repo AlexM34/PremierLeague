@@ -9,6 +9,7 @@ class Match {
     static Footballer[] awaySquad;
     private static Formation homeFormation;
     private static Formation awayFormation;
+    private static int[][] bookings;
 
     static void userTactics(int opponent, boolean isHome) {
         // TODO: Add other choices
@@ -32,6 +33,7 @@ class Match {
         Rater.kickoff(home, away);
         homeSquad = pickSquad(home, true);
         awaySquad = pickSquad(away, false);
+        bookings = new int[2][11];
 
         // TODO: Separate variables for scoring
         // TODO: Add bookings
@@ -76,6 +78,29 @@ class Match {
                     balance--;
                     Rater.updateRatings(-1);
                 }
+            }
+
+            // TODO: Booking consequences
+            if (random.nextInt(20) == 0) {
+                int t = random.nextInt(2);
+                int p = random.nextInt(11);
+
+                if (bookings[t][p] == 0) {
+                    bookings[t][p]++;
+                    balance += 10 * t - 5;
+                    (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 0.5;
+                    (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().addYellowCards(1);
+                    System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
+                }
+            }
+
+            else if (random.nextInt(300) == 0) {
+                int t = random.nextInt(2);
+                int p = random.nextInt(10) + 1;
+                balance += 30 * t - 15;
+                (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
+                (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().addRedCards(1);
+                System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }
 
 //            System.out.println(balance);

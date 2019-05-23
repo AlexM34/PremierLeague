@@ -59,16 +59,16 @@ class Footballer {
         return overall;
     }
 
-    void setOverall(int overall) {
-        this.overall = overall;
+    void changeOverall(int change) {
+        this.overall += change;
     }
 
     int getPotential() {
         return potential;
     }
 
-    void setPotential(int potential) {
-        this.potential = potential;
+    void changePotential(int change) {
+        this.potential += change;
     }
 
     float getValue() {
@@ -131,8 +131,8 @@ class Footballer {
         return condition;
     }
 
-    void changeCondition(int condition) {
-        this.condition += condition;
+    void changeCondition(int change) {
+        this.condition += change;
         if (this.condition > 100) this.condition = 100;
         else if (this.condition < 0) this.condition = 0;
     }

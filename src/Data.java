@@ -35,6 +35,7 @@ class Data {
     static int FANS = 5;
     static int[] FORM = new int[20];
     static int[] CLEAN_SHEETS = new int[20];
+    static float RATINGS;
 
     static void extractData() {
         String fileName = "data/data.csv";
@@ -116,6 +117,7 @@ class Data {
         AWAY = new int[38][10];
         FORM = new int[20];
         CLEAN_SHEETS = new int[20];
+        RATINGS = 0;
 
         // TODO: Title odds
         System.out.println(String.format("The Premier League %d-%d begins!", 2018 + year, 2019 + year));
@@ -142,14 +144,6 @@ class Data {
                 f.getResume().getSeason().setRedCards(0);
             }
         }
-
-//        System.out.println();
-//        for (int team = 0; team < 20; team++) {
-//            for (int player = 0; player < 11; player++) {
-//                System.out.println(String.format("%s %s", PLAYERS[team][player],
-//                        OVERALL[team][player]));
-//            }
-//        }
 
         System.out.println();
     }
