@@ -3,7 +3,8 @@ import java.util.*;
 
 class Data {
     // TODO: Put spaces for players
-    private static Club[][] LEAGUES = {England.CLUBS};
+    // TODO: Remove fields
+    static Club[][] LEAGUES = {England.CLUBS};
     static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
             "Chelsea", "Tottenham Hotspur", "Everton", "Leicester City", "Wolverhampton Wanderers", "Watford",
             "West Ham United", "Bournemouth", "Crystal Palace", "Burnley", "Newcastle United", "Southampton",
@@ -18,10 +19,8 @@ class Data {
 
     // TODO: Add logos
     // TODO: Club stats
-    static Map<String, Set<Footballer>> SQUADS = new HashMap<>();
     static Integer USER = -1;
     static int OFFENSE;
-    static int[] TITLES = {13, 5, 18, 20, 6, 2, 9, 1, 3, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 3};
     static int[] POINTS = new int[20];
     static int[] GOALS_FOR = new int[20];
     static int[] GOALS_AGAINST = new int[20];
@@ -37,6 +36,7 @@ class Data {
     static int[] FORM = new int[20];
     static int[] CLEAN_SHEETS = new int[20];
     static float RATINGS;
+    static Map<Integer, Club> DRAW = new HashMap<>();
 
     static void extractData() {
         String fileName = "data/data.csv";
@@ -95,21 +95,8 @@ class Data {
                                     new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
                                             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
                                             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));
-
-                            // TODO: Remove when not needed
-                            footballers.add(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
-                                    Integer.parseInt(values[7]), Integer.parseInt(values[8]),
-                                    Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
-                                    Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
-                                    Position.valueOf(values[21]), Integer.parseInt(values[22]),
-                                    Integer.parseInt(values[56]), Integer.parseInt(values[78]),
-                                    new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
-                                            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
-                                            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));
                         }
                     }
-
-                    SQUADS.put(club.getName(), footballers);
                 }
             }
         } catch (IOException e) {
@@ -137,27 +124,32 @@ class Data {
 
         // TODO: Title odds
         System.out.println(String.format("The Premier League %d-%d begins!", 2018 + year, 2019 + year));
-        for (int team = 0; team < 20; team++) {
-            FORM[team] = 10;
+        int team = 0;
+        for (Club[] league : LEAGUES) {
+            for (Club club : league) {
+                DRAW.put(team++, club);
+                club.getSeason().setForm(10);
+                club.getSeason().setMorale(100);
 
-            for (Footballer f : SQUADS.get(TEAMS[team])) {
-                f.getResume().getTotal().addGoals(f.getResume().getSeason().getGoals());
-                f.getResume().getTotal().addAssists(f.getResume().getSeason().getAssists());
-                f.getResume().getTotal().addCleanSheets(f.getResume().getSeason().getCleanSheets());
-                f.getResume().getTotal().addRating(f.getResume().getSeason().getRating(), f.getResume().getSeason().getMatches());
-                f.getResume().getTotal().addMatches(f.getResume().getSeason().getMatches());
-                f.getResume().getTotal().addMotmAwards(f.getResume().getSeason().getMotmAwards());
-                f.getResume().getTotal().addYellowCards(f.getResume().getSeason().getYellowCards());
-                f.getResume().getTotal().addRedCards(f.getResume().getSeason().getRedCards());
+                for (Footballer f : club.getFootballers()) {
+                    f.getResume().getTotal().addGoals(f.getResume().getSeason().getGoals());
+                    f.getResume().getTotal().addAssists(f.getResume().getSeason().getAssists());
+                    f.getResume().getTotal().addCleanSheets(f.getResume().getSeason().getCleanSheets());
+                    f.getResume().getTotal().addRating(f.getResume().getSeason().getRating(), f.getResume().getSeason().getMatches());
+                    f.getResume().getTotal().addMatches(f.getResume().getSeason().getMatches());
+                    f.getResume().getTotal().addMotmAwards(f.getResume().getSeason().getMotmAwards());
+                    f.getResume().getTotal().addYellowCards(f.getResume().getSeason().getYellowCards());
+                    f.getResume().getTotal().addRedCards(f.getResume().getSeason().getRedCards());
 
-                f.getResume().getSeason().setMatches(0);
-                f.getResume().getSeason().setGoals(0);
-                f.getResume().getSeason().setAssists(0);
-                f.getResume().getSeason().setCleanSheets(0);
-                f.getResume().getSeason().setRating(0);
-                f.getResume().getSeason().setMotmAwards(0);
-                f.getResume().getSeason().setYellowCards(0);
-                f.getResume().getSeason().setRedCards(0);
+                    f.getResume().getSeason().setMatches(0);
+                    f.getResume().getSeason().setGoals(0);
+                    f.getResume().getSeason().setAssists(0);
+                    f.getResume().getSeason().setCleanSheets(0);
+                    f.getResume().getSeason().setRating(0);
+                    f.getResume().getSeason().setMotmAwards(0);
+                    f.getResume().getSeason().setYellowCards(0);
+                    f.getResume().getSeason().setRedCards(0);
+                }
             }
         }
 

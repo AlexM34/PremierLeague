@@ -10,7 +10,7 @@ class League {
     private int conceded;
     private int cleanSheets;
 
-    public League(int matches, int points, int wins, int draws, int losses, int scored, int conceded, int cleanSheets) {
+    League(int matches, int points, int wins, int draws, int losses, int scored, int conceded, int cleanSheets) {
         this.matches = matches;
         this.points = points;
         this.wins = wins;

@@ -7,14 +7,14 @@ class Rater {
     static float[] awayRatings = new float[11];
 
     static void kickoff(int home, int away) {
-        for (Footballer f : Data.SQUADS.get(Data.TEAMS[home])) {
+        for (Footballer f : Data.DRAW.get(home).getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
             else f.changeCondition(10 + random.nextInt(3));
         }
 
-        for (Footballer f : Data.SQUADS.get(Data.TEAMS[away])) {
+        for (Footballer f : Data.DRAW.get(away).getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
@@ -252,7 +252,7 @@ class Rater {
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], homeGoals,
-                awayGoals, Data.SQUADS.get(Data.TEAMS[motmHomeTeam ? home : away]).stream().filter(
+                awayGoals, Data.DRAW.get(motmHomeTeam ? home : away).getFootballers().stream().filter(
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
     }
 

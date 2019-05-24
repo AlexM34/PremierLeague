@@ -38,7 +38,7 @@ class Printer {
         int first = (Integer) sorted.keySet().toArray()[0];
 
         if (Data.GAMES[first] == 38) {
-            Data.TITLES[first]++;
+            Data.DRAW.get(first).getGlory().addLeague(1);
         }
     }
 
@@ -52,7 +52,7 @@ class Printer {
         Map<String, Integer> redCards = new LinkedHashMap<>();
 
         for (int team = 0; team < 20; team++) {
-            for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
+            for (Footballer f : Data.DRAW.get(team).getFootballers()) {
                 String name = f.getName();
 
                 if (f.getResume().getSeason().getMatches() > 20) ratings.put(name, f.getResume().getSeason().getRating());
@@ -83,8 +83,8 @@ class Printer {
 
     static void printAllTimeStats() {
         Map<String, Integer> titles = new LinkedHashMap<>();
-        for (int i = 0; i < 20; i++) {
-            titles.put(Data.TEAMS[i], Data.TITLES[i]);
+        for (int team = 0; team < 20; team++) {
+            titles.put(Data.TEAMS[team], Data.DRAW.get(team).getGlory().getLeague());
         }
 
         Map<String, Integer> sorted = titles.entrySet().stream().sorted(
@@ -110,7 +110,7 @@ class Printer {
         Map<String, Integer> redCards = new LinkedHashMap<>();
 
         for (int team = 0; team < 20; team++) {
-            for (Footballer f : Data.SQUADS.get(Data.TEAMS[team])) {
+            for (Footballer f : Data.DRAW.get(team).getFootballers()) {
                 String name = f.getName();
 
                 if (f.getResume().getTotal().getMatches() > 100) {

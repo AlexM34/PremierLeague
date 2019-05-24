@@ -113,7 +113,7 @@ class Match {
     }
 
     private static Footballer[] pickSquad(int team, boolean isHome) {
-        List<Footballer> squad = Data.SQUADS.get(Data.TEAMS[team]).stream()
+        List<Footballer> squad =  Data.DRAW.get(team).getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 
