@@ -17,7 +17,7 @@ class Club {
     private Footballer[] footballers;
     private Season season;
 
-    public Club(int id, String name, int established, Stadium stadium, String location, String league, Glory glory,
+    Club(int id, String name, int established, Stadium stadium, String location, String league, Glory glory,
                 int reputation, int value, int budget, Owner owner, Coach coach, Footballer[] footballers, Season season) {
         this.id = id;
         this.name = name;

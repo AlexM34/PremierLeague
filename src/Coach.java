@@ -9,7 +9,7 @@ class Coach {
     private int attack;
     private int defence;
 
-    public Coach(int id, String name, int overall, Formation formation, int style, int attack, int defence) {
+    Coach(int id, String name, int overall, Formation formation, int style, int attack, int defence) {
         this.id = id;
         this.name = name;
         this.overall = overall;
@@ -19,31 +19,31 @@ class Coach {
         this.defence = defence;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public int getOverall() {
+    int getOverall() {
         return overall;
     }
 
-    public Formation getFormation() {
+    Formation getFormation() {
         return formation;
     }
 
-    public int getStyle() {
+    int getStyle() {
         return style;
     }
 
-    public int getAttack() {
+    int getAttack() {
         return attack;
     }
 
-    public int getDefence() {
+    int getDefence() {
         return defence;
     }
 

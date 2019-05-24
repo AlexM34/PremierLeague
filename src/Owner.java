@@ -7,6 +7,14 @@ class Owner {
     private int wealth;
     private int ambition;
 
+    public Owner(int id, String name, String nationality, int wealth, int ambition) {
+        this.id = id;
+        this.name = name;
+        this.nationality = nationality;
+        this.wealth = wealth;
+        this.ambition = ambition;
+    }
+
     public int getId() {
         return id;
     }

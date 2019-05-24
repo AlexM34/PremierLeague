@@ -8,7 +8,7 @@ class Stadium {
     private int capacity;
     private int reputation;
 
-    public Stadium(int id, String name, int built, String location, int capacity, int reputation) {
+    Stadium(int id, String name, int built, String location, int capacity, int reputation) {
         this.id = id;
         this.name = name;
         this.built = built;
