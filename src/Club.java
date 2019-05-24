@@ -1,5 +1,5 @@
-import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 
 class Club {
     private int id;
@@ -14,11 +14,11 @@ class Club {
     private int budget;
     private Owner owner;
     private Coach coach;
-    private Footballer[] footballers;
+    private Set<Footballer> footballers;
     private Season season;
 
     Club(int id, String name, int established, Stadium stadium, String location, String league, Glory glory,
-                int reputation, int value, int budget, Owner owner, Coach coach, Footballer[] footballers, Season season) {
+                int reputation, int value, int budget, Owner owner, Coach coach, Set<Footballer> footballers, Season season) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -111,12 +111,16 @@ class Club {
         this.coach = coach;
     }
 
-    public Footballer[] getFootballers() {
+    public Set<Footballer> getFootballers() {
         return footballers;
     }
 
-    public void setFootballers(Footballer[] footballers) {
+    public void setFootballers(Set<Footballer> footballers) {
         this.footballers = footballers;
+    }
+
+    public void addFootballer(Footballer footballer) {
+        this.footballers.add(footballer);
     }
 
     public Season getSeason() {
@@ -144,15 +148,13 @@ class Club {
                 glory.equals(club.glory) &&
                 owner.equals(club.owner) &&
                 coach.equals(club.coach) &&
-                Arrays.equals(footballers, club.footballers) &&
+                footballers.equals(club.footballers) &&
                 season.equals(club.season);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, established, stadium, location, league, glory, reputation, value, budget, owner, coach, season);
-        result = 31 * result + Arrays.hashCode(footballers);
-        return result;
+        return Objects.hash(id, name, established, stadium, location, league, glory, reputation, value, budget, owner, coach, footballers, season);
     }
 
     @Override
@@ -170,7 +172,7 @@ class Club {
                 ", budget=" + budget +
                 ", owner=" + owner +
                 ", coach=" + coach +
-                ", footballers=" + Arrays.toString(footballers) +
+                ", footballers=" + footballers +
                 ", season=" + season +
                 '}';
     }

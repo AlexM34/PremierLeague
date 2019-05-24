@@ -3,6 +3,7 @@ import java.util.*;
 
 class Data {
     // TODO: Put spaces for players
+    private static Club[][] LEAGUES = {England.CLUBS};
     static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
             "Chelsea", "Tottenham Hotspur", "Everton", "Leicester City", "Wolverhampton Wanderers", "Watford",
             "West Ham United", "Bournemouth", "Crystal Palace", "Burnley", "Newcastle United", "Southampton",
@@ -41,27 +42,29 @@ class Data {
         String fileName = "data/data.csv";
         File data = new File(fileName);
         try {
-            for (int team = 0; team < 20; team++) {
-                // TODO: Make just one pass through the data
-                File file = new File("data/" + Data.TEAMS[team] + ".csv");
-                file.delete();
-                file.createNewFile();
-                FileWriter write = new FileWriter(file, true);
-                PrintWriter line = new PrintWriter(write);
-                Scanner inputStream = new Scanner(data);
-                inputStream.nextLine();
+            for (Club[] league : LEAGUES) {
+                for (Club club : league) {
+                    // TODO: Make just one pass through the data
+                    File file = new File("data/" + club.getName() + ".csv");
+                    file.delete();
+                    file.createNewFile();
+                    FileWriter write = new FileWriter(file, true);
+                    PrintWriter line = new PrintWriter(write);
+                    Scanner inputStream = new Scanner(data);
+                    inputStream.nextLine();
 
-                while (inputStream.hasNext()) {
-                    String footballer = inputStream.nextLine();
-                    String[] values = footballer.replaceAll("\\s","").split(",");
-                    if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9]) &&
-                            values.length > 78 && !values[21].isEmpty() && !values[22].isEmpty() &&
-                            !values[56].isEmpty() && !values[78].isEmpty() ) {
-                        line.printf(footballer + "\n");
+                    while (inputStream.hasNext()) {
+                        String footballer = inputStream.nextLine();
+                        String[] values = footballer.replaceAll("\\s","").split(",");
+                        if (club.getName().replaceAll("\\s","").equals(values[9]) &&
+                                values.length > 78 && !values[21].isEmpty() && !values[22].isEmpty() &&
+                                !values[56].isEmpty() && !values[78].isEmpty() ) {
+                            line.printf(footballer + "\n");
+                        }
                     }
+                    inputStream.close();
+                    line.close();
                 }
-                inputStream.close();
-                line.close();
             }
         } catch (IOException e) {
             System.out.println("Exception thrown while extracting data!");
@@ -70,31 +73,44 @@ class Data {
 
     static void buildSquads() {
         try {
-            for (int team = 0; team < 20; team++) {
-                File data = new File("data/" + Data.TEAMS[team] + ".csv");
+            for (Club[] league : LEAGUES) {
+                for (Club club : league) {
+                    File data = new File("data/" + club.getName() + ".csv");
 
-                Scanner inputStream = new Scanner(data);
+                    Scanner inputStream = new Scanner(data);
 
-                Set<Footballer> footballers = new HashSet<>();
-                while (inputStream.hasNextLine()) {
-                    // TODO: Handle nulls
-                    String footballer = inputStream.nextLine();
-                    String[] values = footballer.replaceAll("\\s","").split(",");
+                    Set<Footballer> footballers = new HashSet<>();
+                    while (inputStream.hasNextLine()) {
+                        // TODO: Handle nulls
+                        String footballer = inputStream.nextLine();
+                        String[] values = footballer.replaceAll("\\s", "").split(",");
 
-                    if (Data.TEAMS[team].replaceAll("\\s","").equals(values[9])) {
-                        footballers.add(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
-                                Integer.parseInt(values[7]), Integer.parseInt(values[8]),
-                                Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
-                                Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
-                                Position.valueOf(values[21]), Integer.parseInt(values[22]),
-                                Integer.parseInt(values[56]), Integer.parseInt(values[78]),
-                                new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
-                                        new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
-                                        new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));
+                        if (club.getName().replaceAll("\\s", "").equals(values[9])) {
+                            club.addFootballer(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
+                                    Integer.parseInt(values[7]), Integer.parseInt(values[8]),
+                                    Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
+                                    Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
+                                    Position.valueOf(values[21]), Integer.parseInt(values[22]),
+                                    Integer.parseInt(values[56]), Integer.parseInt(values[78]),
+                                    new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+                                            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+                                            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));
+
+                            // TODO: Remove when not needed
+                            footballers.add(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
+                                    Integer.parseInt(values[7]), Integer.parseInt(values[8]),
+                                    Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
+                                    Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
+                                    Position.valueOf(values[21]), Integer.parseInt(values[22]),
+                                    Integer.parseInt(values[56]), Integer.parseInt(values[78]),
+                                    new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+                                            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+                                            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100));
+                        }
                     }
-                }
 
-                SQUADS.put(TEAMS[team], footballers);
+                    SQUADS.put(club.getName(), footballers);
+                }
             }
         } catch (IOException e) {
             System.out.println("Exception thrown while building squads!");
