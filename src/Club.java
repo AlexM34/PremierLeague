@@ -15,9 +15,10 @@ class Club {
     private Owner owner;
     private Coach coach;
     private Footballer[] footballers;
+    private Season season;
 
     public Club(int id, String name, int established, Stadium stadium, String location, String league, Glory glory,
-                int reputation, int value, int budget, Owner owner, Coach coach, Footballer[] footballers) {
+                int reputation, int value, int budget, Owner owner, Coach coach, Footballer[] footballers, Season season) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -31,6 +32,7 @@ class Club {
         this.owner = owner;
         this.coach = coach;
         this.footballers = footballers;
+        this.season = season;
     }
 
     public int getId() {
@@ -117,6 +119,14 @@ class Club {
         this.footballers = footballers;
     }
 
+    public Season getSeason() {
+        return season;
+    }
+
+    public void setSeason(Season season) {
+        this.season = season;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,12 +144,13 @@ class Club {
                 glory.equals(club.glory) &&
                 owner.equals(club.owner) &&
                 coach.equals(club.coach) &&
-                Arrays.equals(footballers, club.footballers);
+                Arrays.equals(footballers, club.footballers) &&
+                season.equals(club.season);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, established, stadium, location, league, glory, reputation, value, budget, owner, coach);
+        int result = Objects.hash(id, name, established, stadium, location, league, glory, reputation, value, budget, owner, coach, season);
         result = 31 * result + Arrays.hashCode(footballers);
         return result;
     }
@@ -160,6 +171,7 @@ class Club {
                 ", owner=" + owner +
                 ", coach=" + coach +
                 ", footballers=" + Arrays.toString(footballers) +
+                ", season=" + season +
                 '}';
     }
 }
