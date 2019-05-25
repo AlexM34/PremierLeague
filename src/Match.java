@@ -24,7 +24,17 @@ class Match {
         }
     }
 
-    static void simulateGame(int home, int away) {
+    static void leagueSimulation(int home, int away) {
+        int result = simulateGame(home, away);
+
+        Rater.finalWhistle(home, away, result / 100, result % 100);
+    }
+
+    static int cupSimulation(int home, int away) {
+        return simulateGame(home, away);
+    }
+
+    private static int simulateGame(int home, int away) {
         // TODO: Match odds
         // TODO: Bench
         // TODO: Subs
@@ -106,7 +116,7 @@ class Match {
 //            System.out.println(balance);
         }
 
-        Rater.finalWhistle(home, away, homeGoals, awayGoals);
+        return homeGoals * 100 + awayGoals;
     }
 
     private static Footballer[] pickSquad(int team, boolean isHome) {

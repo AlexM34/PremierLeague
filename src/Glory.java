@@ -24,16 +24,12 @@ class Glory {
         return continental;
     }
 
-    void setContinental(int continental) {
-        this.continental = continental;
+    void addContinental() {
+        this.continental += 1;
     }
 
     int getLeague() {
         return league;
-    }
-
-    void setLeague(int league) {
-        this.league = league;
     }
 
     void addLeague(int league) {
@@ -44,40 +40,40 @@ class Glory {
         return nationalCup;
     }
 
-    void setNationalCup(int nationalCup) {
-        this.nationalCup = nationalCup;
+    void addNationalCup() {
+        this.nationalCup += 1;
     }
 
     int getLeagueCup() {
         return leagueCup;
     }
 
-    void setLeagueCup(int leagueCup) {
-        this.leagueCup = leagueCup;
+    void addLeagueCup() {
+        this.leagueCup += 1;
     }
 
     int getNationalSuperCup() {
         return nationalSuperCup;
     }
 
-    void setNationalSuperCup(int nationalSuperCup) {
-        this.nationalSuperCup = nationalSuperCup;
+    void addNationalSupCup() {
+        this.nationalSuperCup += 1;
     }
 
     int getContinentalSuperCup() {
         return continentalSuperCup;
     }
 
-    void setContinentalSuperCup(int continentalSuperCup) {
-        this.continentalSuperCup = continentalSuperCup;
+    void addContinentalSuperCup() {
+        this.continentalSuperCup += 1;
     }
 
     int getWorldChampionship() {
         return worldChampionship;
     }
 
-    void setWorldChampionship(int worldChampionship) {
-        this.worldChampionship = worldChampionship;
+    void addWorldChampionship() {
+        this.worldChampionship += 1;
     }
 
     @Override

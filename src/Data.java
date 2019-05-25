@@ -90,7 +90,7 @@ class Data {
         RATINGS = 0;
 
         // TODO: Title odds
-        System.out.println(String.format("The Premier League %d-%d begins!", 2018 + year, 2019 + year));
+        System.out.println(String.format("The Premier League %d-%d begins!", 2019 + year, 2020 + year));
         int team = 0;
         for (Club[] league : LEAGUES) {
             for (Club club : league) {
