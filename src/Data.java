@@ -4,7 +4,7 @@ import java.util.*;
 class Data {
     // TODO: Put spaces for players
     // TODO: Add logos
-    static Club[][] LEAGUES = {England.CLUBS};
+    static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static int[][] HOME = new int[38][10];
     static int[][] AWAY = new int[38][10];
     static Map<Integer, Club> DRAW = new HashMap<>();
@@ -64,8 +64,8 @@ class Data {
                         if (club.getName().replaceAll("\\s", "").equals(values[9])) {
                             club.addFootballer(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
                                     Integer.parseInt(values[7]), Integer.parseInt(values[8]),
-                                    Float.parseFloat(values[11].substring(1, values[11].length() - 1)),
-                                    Float.parseFloat(values[12].substring(1, values[12].length() - 1)),
+                                    values[11].substring(1, values[11].length() - 1).length() > 0 ? Float.parseFloat(values[11].substring(1, values[11].length() - 1)) : 0,
+                                    values[11].substring(1, values[11].length() - 1).length() > 0 ? Float.parseFloat(values[12].substring(1, values[12].length() - 1)) : 0,
                                     Position.valueOf(values[21]), Integer.parseInt(values[22]),
                                     Integer.parseInt(values[56]), Integer.parseInt(values[78]),
                                     new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
@@ -75,8 +75,8 @@ class Data {
                     }
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Exception thrown while building squads!");
+        } catch (Exception e) {
+            System.out.println("Exception thrown while building squads! " + e);
         }
     }
 

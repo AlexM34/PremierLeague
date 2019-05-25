@@ -113,21 +113,21 @@ class Printer {
 
             System.out.println();
             System.out.println("League Winners");
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < sortedLeagues.size(); i++) {
                 System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagues.keySet().toArray()[i],
                         sortedLeagues.values().toArray()[i]));
             }
 
             System.out.println();
             System.out.println("National Cup Winners");
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < sortedLeagueCups.size(); i++) {
                 System.out.println(String.format("%2d. %-25s %d", i + 1, sortedNationalCups.keySet().toArray()[i],
                         sortedNationalCups.values().toArray()[i]));
             }
 
             System.out.println();
             System.out.println("League Cup Winners");
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < sortedLeagueCups.size(); i++) {
                 System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray()[i],
                         sortedLeagueCups.values().toArray()[i]));
             }
