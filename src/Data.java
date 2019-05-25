@@ -3,40 +3,19 @@ import java.util.*;
 
 class Data {
     // TODO: Put spaces for players
-    // TODO: Remove fields
-    static Club[][] LEAGUES = {England.CLUBS};
-    static String[] TEAMS = {"Arsenal", "Manchester City", "Liverpool", "Manchester United",
-            "Chelsea", "Tottenham Hotspur", "Everton", "Leicester City", "Wolverhampton Wanderers", "Watford",
-            "West Ham United", "Bournemouth", "Crystal Palace", "Burnley", "Newcastle United", "Southampton",
-            "Brighton & Hove Albion", "Cardiff City", "Fulham", "Huddersfield Town"};
-
-    private static Coach ATTACK = new Coach(1, "Attack", 80, Formation.F6, 80, 80, 50);
-    private static Coach BALANCE = new Coach(2, "Balance", 80, Formation.F5, 50, 65, 65);
-    private static Coach DEFENCE = new Coach(3, "Defence", 80, Formation.F4, 20, 50, 80);
-    static Coach[] COACHES = {ATTACK, ATTACK, BALANCE, DEFENCE, BALANCE, BALANCE, BALANCE,
-    DEFENCE, ATTACK, BALANCE, DEFENCE, BALANCE, DEFENCE, DEFENCE, ATTACK, DEFENCE, DEFENCE, DEFENCE,
-    BALANCE, DEFENCE};
-
     // TODO: Add logos
-    // TODO: Club stats
-    static Integer USER = -1;
-    static int OFFENSE;
-    static int[] POINTS = new int[20];
-    static int[] GOALS_FOR = new int[20];
-    static int[] GOALS_AGAINST = new int[20];
-    static int[] GAMES = new int[20];
-    static int[] WINS = new int[20];
-    static int[] DRAWS = new int[20];
-    static int[] LOSES = new int[20];
+    // TODO: Remove public tags
+    // TODO: Remove setters
+    static Club[][] LEAGUES = {England.CLUBS};
     static int[][] HOME = new int[38][10];
     static int[][] AWAY = new int[38][10];
+    static Map<Integer, Club> DRAW = new HashMap<>();
+    static int FANS = 5;
     static int HOME_WINS;
     static int AWAY_WINS;
-    static int FANS = 5;
-    static int[] FORM = new int[20];
-    static int[] CLEAN_SHEETS = new int[20];
     static float RATINGS;
-    static Map<Integer, Club> DRAW = new HashMap<>();
+    static Integer USER = -1;
+    static int USER_STYLE;
 
     static void extractData() {
         String fileName = "data/data.csv";
@@ -79,7 +58,6 @@ class Data {
 
                     Scanner inputStream = new Scanner(data);
 
-                    Set<Footballer> footballers = new HashSet<>();
                     while (inputStream.hasNextLine()) {
                         // TODO: Handle nulls
                         String footballer = inputStream.nextLine();
@@ -107,19 +85,10 @@ class Data {
     static void prepare(int year) {
         PremierLeague.pause();
 
-        POINTS = new int[20];
-        GOALS_FOR = new int[20];
-        GOALS_AGAINST = new int[20];
-        GAMES = new int[20];
-        WINS = new int[20];
-        DRAWS = new int[20];
-        LOSES = new int[20];
         HOME_WINS = 0;
         AWAY_WINS = 0;
         HOME = new int[38][10];
         AWAY = new int[38][10];
-        FORM = new int[20];
-        CLEAN_SHEETS = new int[20];
         RATINGS = 0;
 
         // TODO: Title odds

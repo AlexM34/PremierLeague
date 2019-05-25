@@ -9,9 +9,10 @@ class Printer {
     static void printStandings() {
         int goals = 0;
         Map<Integer, Integer> standings = new LinkedHashMap<>();
-        for (int teams = 0; teams < 20; teams++) {
-            standings.put(teams, 10000 * Data.POINTS[teams] + 100 *
-                    (Data.GOALS_FOR[teams] - Data.GOALS_AGAINST[teams]) + Data.GOALS_FOR[teams]);
+        for (int team = 0; team < 20; team++) {
+            standings.put(team, 10000 * Data.DRAW.get(team).getSeason().getLeague().getPoints() + 100 *
+                    (Data.DRAW.get(team).getSeason().getLeague().getScored() - Data.DRAW.get(team).getSeason().getLeague().getConceded()) +
+                    Data.DRAW.get(team).getSeason().getLeague().getScored());
         }
 
         Map<Integer, Integer> sorted = standings.entrySet().stream().sorted(
@@ -22,10 +23,12 @@ class Printer {
         System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
         for (int i = 0; i < 20; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
-            goals += Data.GOALS_FOR[index];
+            goals += Data.DRAW.get(index).getSeason().getLeague().getScored();
             System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
-                    Data.TEAMS[index], Data.GAMES[index], Data.WINS[index], Data.DRAWS[index], Data.LOSES[index],
-                    Data.GOALS_FOR[index], Data.GOALS_AGAINST[index], Data.POINTS[index]));
+                    Data.DRAW.get(index).getName(), Data.DRAW.get(index).getSeason().getLeague().getMatches(), Data.DRAW.get(index).getSeason().getLeague().getWins(),
+                    Data.DRAW.get(index).getSeason().getLeague().getDraws(), Data.DRAW.get(index).getSeason().getLeague().getLosses(),
+                    Data.DRAW.get(index).getSeason().getLeague().getScored(), Data.DRAW.get(index).getSeason().getLeague().getConceded(),
+                    Data.DRAW.get(index).getSeason().getLeague().getPoints()));
         }
         System.out.println();
         System.out.println("Total goals for the season: " + goals + " // 1072");
@@ -37,7 +40,7 @@ class Printer {
 
         int first = (Integer) sorted.keySet().toArray()[0];
 
-        if (Data.GAMES[first] == 38) {
+        if (Data.DRAW.get(first).getSeason().getLeague().getMatches() == 38) {
             Data.DRAW.get(first).getGlory().addLeague(1);
         }
     }
@@ -84,7 +87,7 @@ class Printer {
     static void printAllTimeStats() {
         Map<String, Integer> titles = new LinkedHashMap<>();
         for (int team = 0; team < 20; team++) {
-            titles.put(Data.TEAMS[team], Data.DRAW.get(team).getGlory().getLeague());
+            titles.put(Data.DRAW.get(team).getName(), Data.DRAW.get(team).getGlory().getLeague());
         }
 
         Map<String, Integer> sorted = titles.entrySet().stream().sorted(

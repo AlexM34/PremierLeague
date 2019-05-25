@@ -13,7 +13,7 @@ class Match {
 
     static void userTactics(int opponent, boolean isHome) {
         // TODO: Add other choices
-        System.out.println("vs " + Data.TEAMS[opponent] + (isHome ? " Home" : " Away"));
+        System.out.println("vs " + Data.DRAW.get(opponent).getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
             int offense = scanner.nextInt();
@@ -21,7 +21,7 @@ class Match {
                 System.out.println("Wrong offense value.");
                 continue;
             }
-            Data.OFFENSE = offense - 10;
+            Data.USER_STYLE = offense - 10;
             break;
         }
     }
@@ -38,16 +38,16 @@ class Match {
         // TODO: Separate variables for scoring
         // TODO: Add bookings
         int balance = Data.FANS + 100 *
-                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[home] +
+                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.DRAW.get(home).getSeason().getForm() +
                  Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) /
-                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.FORM[away] +
+                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.DRAW.get(away).getSeason().getForm() +
                  Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) - 50;
 
         int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
                 + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 56;
 
-        if (home == Data.USER || away == Data.USER) style += Data.OFFENSE;
-        style += (Data.COACHES[home].getStyle() + Data.COACHES[away].getStyle() - 100)  / 10;
+        if (home == Data.USER || away == Data.USER) style += Data.USER_STYLE;
+        style += (Data.DRAW.get(home).getCoach().getStyle() + Data.DRAW.get(away).getCoach().getStyle() - 100)  / 10;
         System.out.println(balance);
         System.out.println(style);
 

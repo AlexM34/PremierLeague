@@ -57,6 +57,12 @@ class Season {
         this.form = form;
     }
 
+    void changeForm(int change) {
+        this.form += change;
+        if (this.form > 20) this.form = 20;
+        else if (this.form < 0) this.form = 0;
+    }
+
     public int getMorale() {
         return morale;
     }

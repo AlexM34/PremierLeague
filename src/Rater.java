@@ -178,22 +178,22 @@ class Rater {
 
         (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);
 
-        if (awayGoals == 0) Data.CLEAN_SHEETS[home]++;
-        if (homeGoals == 0) Data.CLEAN_SHEETS[away]++;
+        if (awayGoals == 0) Data.DRAW.get(home).getSeason().getLeague().addCleanSheet();
+        if (homeGoals == 0) Data.DRAW.get(away).getSeason().getLeague().addCleanSheet();
 
         if (homeGoals > awayGoals) {
             Data.HOME_WINS++;
-            Data.POINTS[home] += 3;
-            Data.WINS[home]++;
-            Data.LOSES[away]++;
+            Data.DRAW.get(home).getSeason().getLeague().addPoints(3);
+            Data.DRAW.get(home).getSeason().getLeague().addWin();
+            Data.DRAW.get(away).getSeason().getLeague().addLoss();
 
             if (homeGoals - awayGoals > 2) {
                 form(home, 1);
                 form(away, -1);
             }
 
-            if (Data.FORM[home] < Data.FORM[away] + 10) {
-                if (Data.FORM[home] < Data.FORM[away]) {
+            if (Data.DRAW.get(home).getSeason().getForm() < Data.DRAW.get(away).getSeason().getForm() + 10) {
+                if (Data.DRAW.get(home).getSeason().getForm() < Data.DRAW.get(away).getSeason().getForm()) {
                     form(home, 3);
                     form(away, -3);
                 }
@@ -206,17 +206,17 @@ class Rater {
 
         else if (homeGoals < awayGoals){
             Data.AWAY_WINS++;
-            Data.POINTS[away] += 3;
-            Data.WINS[away]++;
-            Data.LOSES[home]++;
+            Data.DRAW.get(away).getSeason().getLeague().addPoints(3);
+            Data.DRAW.get(away).getSeason().getLeague().addWin();
+            Data.DRAW.get(home).getSeason().getLeague().addLoss();
 
             if (awayGoals - homeGoals > 2) {
                 form(away, 1);
                 form(home, -1);
             }
 
-            if (Data.FORM[away] < Data.FORM[home] + 10) {
-                if (Data.FORM[away] < Data.FORM[home]) {
+            if (Data.DRAW.get(away).getSeason().getForm() < Data.DRAW.get(home).getSeason().getForm() + 10) {
+                if (Data.DRAW.get(away).getSeason().getForm() < Data.DRAW.get(home).getSeason().getForm()) {
                     form(away, 3);
                     form(home, -3);
                 }
@@ -227,41 +227,37 @@ class Rater {
             }
         }
         else {
-            Data.POINTS[home]++;
-            Data.POINTS[away]++;
-            Data.DRAWS[home]++;
-            Data.DRAWS[away]++;
+            Data.DRAW.get(home).getSeason().getLeague().addPoints(1);
+            Data.DRAW.get(away).getSeason().getLeague().addPoints(1);
+            Data.DRAW.get(home).getSeason().getLeague().addDraw();
+            Data.DRAW.get(away).getSeason().getLeague().addDraw();
 
-            if (Data.FORM[home] < Data.FORM[away]) {
+            if (Data.DRAW.get(home).getSeason().getForm() < Data.DRAW.get(away).getSeason().getForm()) {
                 form(home, 2);
                 form(away, -2);
             }
-            else if (Data.FORM[away] < Data.FORM[home]) {
+            else if (Data.DRAW.get(away).getSeason().getForm() < Data.DRAW.get(home).getSeason().getForm()) {
                 form(away, 2);
                 form(home, -2);
             }
         }
 
-        Data.GAMES[home]++;
-        Data.GAMES[away]++;
-        Data.GOALS_FOR[home] += homeGoals;
-        Data.GOALS_AGAINST[home] += awayGoals;
-        Data.GOALS_FOR[away] += awayGoals;
-        Data.GOALS_AGAINST[away] += homeGoals;
+        Data.DRAW.get(home).getSeason().getLeague().addMatch();
+        Data.DRAW.get(away).getSeason().getLeague().addMatch();
+        Data.DRAW.get(home).getSeason().getLeague().addScored(homeGoals);
+        Data.DRAW.get(away).getSeason().getLeague().addScored(awayGoals);
+        Data.DRAW.get(home).getSeason().getLeague().addConceded(awayGoals);
+        Data.DRAW.get(away).getSeason().getLeague().addConceded(homeGoals);
 
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
 
-        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.TEAMS[home], Data.TEAMS[away], homeGoals,
+        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.DRAW.get(home).getName(),
+                Data.DRAW.get(away).getName(), homeGoals,
                 awayGoals, Data.DRAW.get(motmHomeTeam ? home : away).getFootballers().stream().filter(
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
     }
 
     private static void form(int team, int change) {
-        if (change > 0) {
-            Data.FORM[team] = Data.FORM[team] < 21 - change ? Data.FORM[team] + change : 20;
-        }
-        else {
-            Data.FORM[team] = Data.FORM[team] > 1 - change ? Data.FORM[team] + change : 0;
-        }
+        Data.DRAW.get(team).getSeason().changeForm(change);
     }
 }
