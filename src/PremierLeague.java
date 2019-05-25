@@ -17,7 +17,7 @@ class PremierLeague {
 //            pickTeam();
             Draw.makeDraw();
 
-            //IntStream.range(0, 38).forEach(PremierLeague::play);
+            IntStream.range(0, 38).forEach(PremierLeague::play);
 
             Club nationalCupWinner = cup(Data.LEAGUES[0], 16);
             System.out.println(nationalCupWinner.getName() + " win the National Cup!");
