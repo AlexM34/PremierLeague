@@ -8,37 +8,37 @@ class England {
     private static Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
     
     private static Club ARSENAL = new Club(1, "Arsenal", 1886, STADIUM, "London", PREMIER_LEAGUE,
-            new Glory(0, 13, 13, 0, 0, 0, 0),
+            new Glory(0, 13, 13, 2, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club MANCHESTER_CITY = new Club(2, "Manchester City", 1886, STADIUM, "Manchester", PREMIER_LEAGUE,
-            new Glory(0, 6, 6, 0, 0, 0, 0),
+            new Glory(0, 6, 6, 6, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club LIVERPOOL = new Club(3, "Liverpool", 1892, STADIUM, "Liverpool", PREMIER_LEAGUE,
-            new Glory(0, 18, 7, 0, 0, 0, 0),
+            new Glory(0, 18, 7, 8, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club MANCHESTER_UNITED = new Club(4, "Manchester United", 1878, STADIUM, "Manchester", PREMIER_LEAGUE,
-            new Glory(0, 20, 12, 0, 0, 0, 0),
+            new Glory(0, 20, 12, 5, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club CHELSEA = new Club(5, "Chelsea", 1886, STADIUM, "London", PREMIER_LEAGUE,
-            new Glory(0, 6, 8, 0, 0, 0, 0),
+            new Glory(0, 6, 8, 5, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club TOTTENHAM = new Club(6, "Tottenham Hotspur", 1886, STADIUM, "London", PREMIER_LEAGUE,
-            new Glory(0, 2, 8, 0, 0, 0, 0),
+            new Glory(0, 2, 8, 4, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
@@ -50,13 +50,13 @@ class England {
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club LEICESTER = new Club(8, "Leicester City", 1886, STADIUM, "Leicester", PREMIER_LEAGUE,
-            new Glory(0, 1, 0, 0, 0, 0, 0),
+            new Glory(0, 1, 0, 3, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club WOLVERHAMPTON = new Club(9, "Wolverhampton Wanderers", 1886, STADIUM, "Wolverhampton", PREMIER_LEAGUE,
-            new Glory(0, 3, 4, 0, 0, 0, 0),
+            new Glory(0, 3, 4, 2, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));

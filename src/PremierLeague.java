@@ -16,10 +16,18 @@ class PremierLeague {
             Data.prepare(year);
 //            pickTeam();
             Draw.makeDraw();
-            // TODO: Cup competitions
+
             //IntStream.range(0, 38).forEach(PremierLeague::play);
-            cup();
+
+            Club nationalCupWinner = cup(Data.LEAGUES[0], 16);
+            System.out.println(nationalCupWinner.getName() + " win the National Cup!");
+            nationalCupWinner.getGlory().addNationalCup();
+
+            Club leagueCupWinner = cup(Data.LEAGUES[0], 16);
+            System.out.println(leagueCupWinner.getName() + " win the League Cup!");
+            leagueCupWinner.getGlory().addLeagueCup();
             finish(year);
+
             PreSeason.changes();
         });
 
@@ -68,49 +76,51 @@ class PremierLeague {
         System.out.println();
     }
 
-    private static void cup() {
-        for (Club[] league : Data.LEAGUES) {
-            int count = 0;
-            Club[] selected = new Club[16];
-            boolean[] playing = new boolean[league.length];
-            while (count < 16) {
-                while (true) {
-                    int r = random.nextInt(league.length);
-                    if (!playing[r]) {
-                        selected[count++] = league[r];
-                        System.out.println(selected[count - 1]);
-                        playing[r] = true;
-                        break;
-                    }
+    private static Club cup(Club[] league, int teams) {
+        int count = 0;
+        Club[] selected = new Club[teams];
+        boolean[] playing = new boolean[league.length];
+        while (count < teams) {
+            while (true) {
+                int r = random.nextInt(league.length);
+                if (!playing[r]) {
+                    selected[count++] = league[r];
+                    System.out.println(selected[count - 1]);
+                    playing[r] = true;
+                    break;
                 }
             }
-
-            for (int round = 0; round < 4; round++) {
-                System.out.println();
-                if (count == 4) System.out.println("Semi-finals");
-                else if (count == 2) System.out.println("Final");
-                else System.out.println("Round " + (round + 1));
-                System.out.println();
-
-                for (int team = 0; team < count / 2; team++) {
-                    // TODO: Cup stats should be separate
-                    // TODO: Indexing
-                    int result = Match.cupSimulation(selected[team].getId() - 1, selected[count - team - 1].getId() - 1);
-                    System.out.println(String.format("%s - %s %d:%d", Data.DRAW.get(selected[team].getId() - 1).getName(),
-                            Data.DRAW.get(selected[count - team - 1].getId() - 1).getName(), result / 100,
-                            result % 100));
-                    if (result / 100 <= result % 100) {
-                        selected[team] = selected[count - team - 1];
-                    }
-                }
-
-                count /= 2;
-            }
-
-            System.out.println(selected[0].getName() + " win the Cup!");
-            selected[0].getGlory().addNationalCup();
-
         }
+
+        return knockout(selected);
+    }
+
+    private static Club knockout(Club[] selected) {
+        int count = selected.length;
+
+        for (int round = 1; round <= Math.sqrt(selected.length); round++) {
+            System.out.println();
+            if (count == 4) System.out.println("Semi-finals");
+            else if (count == 2) System.out.println("Final");
+            else System.out.println("Round " + round);
+            System.out.println();
+
+            for (int team = 0; team < count / 2; team++) {
+                // TODO: Cup stats should be separate
+                // TODO: Indexing
+                int result = Match.cupSimulation(selected[team].getId() - 1, selected[count - team - 1].getId() - 1);
+                System.out.println(String.format("%s - %s %d:%d", Data.DRAW.get(selected[team].getId() - 1).getName(),
+                        Data.DRAW.get(selected[count - team - 1].getId() - 1).getName(), result / 100,
+                        result % 100));
+                if (result / 100 <= result % 100) {
+                    selected[team] = selected[count - team - 1];
+                }
+            }
+
+            count /= 2;
+        }
+
+        return selected[0];
     }
 
     private static void finish(int year) {
