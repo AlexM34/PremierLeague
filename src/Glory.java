@@ -9,7 +9,7 @@ class Glory {
     private int continentalSuperCup;
     private int worldChampionship;
 
-    public Glory(int continental, int league, int nationalCup, int leagueCup,
+    Glory(int continental, int league, int nationalCup, int leagueCup,
                  int nationalSuperCup, int continentalSuperCup, int worldChampionship) {
         this.continental = continental;
         this.league = league;
@@ -20,63 +20,63 @@ class Glory {
         this.worldChampionship = worldChampionship;
     }
 
-    public int getContinental() {
+    int getContinental() {
         return continental;
     }
 
-    public void setContinental(int continental) {
+    void setContinental(int continental) {
         this.continental = continental;
     }
 
-    public int getLeague() {
+    int getLeague() {
         return league;
     }
 
-    public void setLeague(int league) {
+    void setLeague(int league) {
         this.league = league;
     }
 
-    public void addLeague(int league) {
+    void addLeague(int league) {
         this.league += league;
     }
 
-    public int getNationalCup() {
+    int getNationalCup() {
         return nationalCup;
     }
 
-    public void setNationalCup(int nationalCup) {
+    void setNationalCup(int nationalCup) {
         this.nationalCup = nationalCup;
     }
 
-    public int getLeagueCup() {
+    int getLeagueCup() {
         return leagueCup;
     }
 
-    public void setLeagueCup(int leagueCup) {
+    void setLeagueCup(int leagueCup) {
         this.leagueCup = leagueCup;
     }
 
-    public int getNationalSuperCup() {
+    int getNationalSuperCup() {
         return nationalSuperCup;
     }
 
-    public void setNationalSuperCup(int nationalSuperCup) {
+    void setNationalSuperCup(int nationalSuperCup) {
         this.nationalSuperCup = nationalSuperCup;
     }
 
-    public int getContinentalSuperCup() {
+    int getContinentalSuperCup() {
         return continentalSuperCup;
     }
 
-    public void setContinentalSuperCup(int continentalSuperCup) {
+    void setContinentalSuperCup(int continentalSuperCup) {
         this.continentalSuperCup = continentalSuperCup;
     }
 
-    public int getWorldChampionship() {
+    int getWorldChampionship() {
         return worldChampionship;
     }
 
-    public void setWorldChampionship(int worldChampionship) {
+    void setWorldChampionship(int worldChampionship) {
         this.worldChampionship = worldChampionship;
     }
 

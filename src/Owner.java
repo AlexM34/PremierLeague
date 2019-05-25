@@ -7,7 +7,7 @@ class Owner {
     private int wealth;
     private int ambition;
 
-    public Owner(int id, String name, String nationality, int wealth, int ambition) {
+    Owner(int id, String name, String nationality, int wealth, int ambition) {
         this.id = id;
         this.name = name;
         this.nationality = nationality;
@@ -15,23 +15,23 @@ class Owner {
         this.ambition = ambition;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getNationality() {
+    String getNationality() {
         return nationality;
     }
 
-    public int getWealth() {
+    int getWealth() {
         return wealth;
     }
 
-    public int getAmbition() {
+    int getAmbition() {
         return ambition;
     }
 

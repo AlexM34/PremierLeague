@@ -35,99 +35,99 @@ class Club {
         this.season = season;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public int getEstablished() {
+    int getEstablished() {
         return established;
     }
 
-    public Stadium getStadium() {
+    Stadium getStadium() {
         return stadium;
     }
 
-    public String getLocation() {
+    String getLocation() {
         return location;
     }
 
-    public String getLeague() {
+    String getLeague() {
         return league;
     }
 
-    public void setLeague(String league) {
+    void setLeague(String league) {
         this.league = league;
     }
 
-    public Glory getGlory() {
+    Glory getGlory() {
         return glory;
     }
 
-    public void setGlory(Glory glory) {
+    void setGlory(Glory glory) {
         this.glory = glory;
     }
 
-    public int getReputation() {
+    int getReputation() {
         return reputation;
     }
 
-    public void setReputation(int reputation) {
+    void setReputation(int reputation) {
         this.reputation = reputation;
     }
 
-    public int getValue() {
+    int getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    void setValue(int value) {
         this.value = value;
     }
 
-    public int getBudget() {
+    int getBudget() {
         return budget;
     }
 
-    public void setBudget(int budget) {
+    void setBudget(int budget) {
         this.budget = budget;
     }
 
-    public Owner getOwner() {
+    Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    void setOwner(Owner owner) {
         this.owner = owner;
     }
 
-    public Coach getCoach() {
+    Coach getCoach() {
         return coach;
     }
 
-    public void setCoach(Coach coach) {
+    void setCoach(Coach coach) {
         this.coach = coach;
     }
 
-    public Set<Footballer> getFootballers() {
+    Set<Footballer> getFootballers() {
         return footballers;
     }
 
-    public void setFootballers(Set<Footballer> footballers) {
+    void setFootballers(Set<Footballer> footballers) {
         this.footballers = footballers;
     }
 
-    public void addFootballer(Footballer footballer) {
+    void addFootballer(Footballer footballer) {
         this.footballers.add(footballer);
     }
 
-    public Season getSeason() {
+    Season getSeason() {
         return season;
     }
 
-    public void setSeason(Season season) {
+    void setSeason(Season season) {
         this.season = season;
     }
 

@@ -8,7 +8,7 @@ class Season {
     private int form;
     private int morale;
 
-    public Season(League league, Cup nationalCup, Cup leagueCup, ChampionsLeague championsLeague, int form, int morale) {
+    Season(League league, Cup nationalCup, Cup leagueCup, ChampionsLeague championsLeague, int form, int morale) {
         this.league = league;
         this.nationalCup = nationalCup;
         this.leagueCup = leagueCup;
@@ -17,43 +17,43 @@ class Season {
         this.morale = morale;
     }
 
-    public League getLeague() {
+    League getLeague() {
         return league;
     }
 
-    public void setLeague(League league) {
+    void setLeague(League league) {
         this.league = league;
     }
 
-    public Cup getNationalCup() {
+    Cup getNationalCup() {
         return nationalCup;
     }
 
-    public void setNationalCup(Cup nationalCup) {
+    void setNationalCup(Cup nationalCup) {
         this.nationalCup = nationalCup;
     }
 
-    public Cup getLeagueCup() {
+    Cup getLeagueCup() {
         return leagueCup;
     }
 
-    public void setLeagueCup(Cup leagueCup) {
+    void setLeagueCup(Cup leagueCup) {
         this.leagueCup = leagueCup;
     }
 
-    public ChampionsLeague getChampionsLeague() {
+    ChampionsLeague getChampionsLeague() {
         return championsLeague;
     }
 
-    public void setChampionsLeague(ChampionsLeague championsLeague) {
+    void setChampionsLeague(ChampionsLeague championsLeague) {
         this.championsLeague = championsLeague;
     }
 
-    public int getForm() {
+    int getForm() {
         return form;
     }
 
-    public void setForm(int form) {
+    void setForm(int form) {
         this.form = form;
     }
 
@@ -63,11 +63,11 @@ class Season {
         else if (this.form < 0) this.form = 0;
     }
 
-    public int getMorale() {
+    int getMorale() {
         return morale;
     }
 
-    public void setMorale(int morale) {
+    void setMorale(int morale) {
         this.morale = morale;
     }
 

@@ -7,8 +7,6 @@ class Match {
 
     static Footballer[] homeSquad;
     static Footballer[] awaySquad;
-    private static Formation homeFormation;
-    private static Formation awayFormation;
     static int[][] bookings;
 
     static void userTactics(int opponent, boolean isHome) {
@@ -36,7 +34,6 @@ class Match {
         bookings = new int[2][11];
 
         // TODO: Separate variables for scoring
-        // TODO: Add bookings
         int balance = Data.FANS + 100 *
                 (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.DRAW.get(home).getSeason().getForm() +
                  Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) /
@@ -118,8 +115,6 @@ class Match {
                 .collect(Collectors.toList());
 
         Formation formation = pickFormation(squad);
-        if (isHome) homeFormation = formation;
-        else awayFormation = formation;
         int defenders = formation.getDefenders();
         int midfielders = formation.getMidfielders();
         int forwards = formation.getForwards();

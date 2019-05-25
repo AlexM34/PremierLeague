@@ -42,11 +42,11 @@ enum Position {
         this.attackingDuty = attackingDuty;
     }
 
-    public Role getRole() {
+    Role getRole() {
         return this.role;
     }
 
-    public int getAttackingDuty() {
+    int getAttackingDuty() {
         return this.attackingDuty;
     }
 }

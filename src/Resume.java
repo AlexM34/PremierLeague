@@ -5,33 +5,33 @@ class Resume {
     private Statistics total;
     private Statistics season;
 
-    public Resume(Glory glory, Statistics total, Statistics season) {
+    Resume(Glory glory, Statistics total, Statistics season) {
         this.glory = glory;
         this.total = total;
         this.season = season;
     }
 
-    public Glory getGlory() {
+    Glory getGlory() {
         return glory;
     }
 
-    public void setGlory(Glory glory) {
+    void setGlory(Glory glory) {
         this.glory = glory;
     }
 
-    public Statistics getTotal() {
+    Statistics getTotal() {
         return total;
     }
 
-    public void setTotal(Statistics total) {
+    void setTotal(Statistics total) {
         this.total = total;
     }
 
-    public Statistics getSeason() {
+    Statistics getSeason() {
         return season;
     }
 
-    public void setSeason(Statistics season) {
+    void setSeason(Statistics season) {
         this.season = season;
     }
 

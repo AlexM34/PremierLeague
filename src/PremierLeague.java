@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-public class PremierLeague {
+class PremierLeague {
     private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
     // TODO: User bets

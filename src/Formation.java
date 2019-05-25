@@ -23,7 +23,7 @@ enum Formation {
             this.style = style;
         }
 
-        public int getStyle() {
+        int getStyle() {
             return this.style;
         }
     }
@@ -36,19 +36,19 @@ enum Formation {
         this.type = type;
     }
 
-    public int getDefenders() {
+    int getDefenders() {
         return this.scheme / 100;
     }
 
-    public int getMidfielders() {
+    int getMidfielders() {
         return this.scheme / 10 % 10;
     }
 
-    public int getForwards() {
+    int getForwards() {
         return this.scheme % 10;
     }
 
-    public Type getType() {
+    Type getType() {
         return this.type;
     }
 }

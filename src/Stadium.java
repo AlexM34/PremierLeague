@@ -17,27 +17,27 @@ class Stadium {
         this.reputation = reputation;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public int getBuilt() {
+    int getBuilt() {
         return built;
     }
 
-    public String getLocation() {
+    String getLocation() {
         return location;
     }
 
-    public int getCapacity() {
+    int getCapacity() {
         return capacity;
     }
 
-    public int getReputation() {
+    int getReputation() {
         return reputation;
     }
 

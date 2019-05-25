@@ -4,8 +4,6 @@ import java.util.*;
 class Data {
     // TODO: Put spaces for players
     // TODO: Add logos
-    // TODO: Remove public tags
-    // TODO: Remove setters
     static Club[][] LEAGUES = {England.CLUBS};
     static int[][] HOME = new int[38][10];
     static int[][] AWAY = new int[38][10];
@@ -97,31 +95,38 @@ class Data {
         for (Club[] league : LEAGUES) {
             for (Club club : league) {
                 DRAW.put(team++, club);
-                club.getSeason().setForm(10);
-                club.getSeason().setMorale(100);
+                club.setSeason(new Season(new League(0, 0, 0, 0, 0, 0, 0,0),
+                        new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
                 for (Footballer f : club.getFootballers()) {
-                    f.getResume().getTotal().addGoals(f.getResume().getSeason().getGoals());
-                    f.getResume().getTotal().addAssists(f.getResume().getSeason().getAssists());
-                    f.getResume().getTotal().addCleanSheets(f.getResume().getSeason().getCleanSheets());
-                    f.getResume().getTotal().addRating(f.getResume().getSeason().getRating(), f.getResume().getSeason().getMatches());
-                    f.getResume().getTotal().addMatches(f.getResume().getSeason().getMatches());
-                    f.getResume().getTotal().addMotmAwards(f.getResume().getSeason().getMotmAwards());
-                    f.getResume().getTotal().addYellowCards(f.getResume().getSeason().getYellowCards());
-                    f.getResume().getTotal().addRedCards(f.getResume().getSeason().getRedCards());
-
-                    f.getResume().getSeason().setMatches(0);
-                    f.getResume().getSeason().setGoals(0);
-                    f.getResume().getSeason().setAssists(0);
-                    f.getResume().getSeason().setCleanSheets(0);
-                    f.getResume().getSeason().setRating(0);
-                    f.getResume().getSeason().setMotmAwards(0);
-                    f.getResume().getSeason().setYellowCards(0);
-                    f.getResume().getSeason().setRedCards(0);
+                    updateCareerStats(f);
+                    clearSeasonStats(f);
                 }
             }
         }
 
         System.out.println();
+    }
+
+    private static void updateCareerStats(Footballer footballer) {
+        footballer.getResume().getTotal().addGoals(footballer.getResume().getSeason().getGoals());
+        footballer.getResume().getTotal().addAssists(footballer.getResume().getSeason().getAssists());
+        footballer.getResume().getTotal().addCleanSheets(footballer.getResume().getSeason().getCleanSheets());
+        footballer.getResume().getTotal().addRating(footballer.getResume().getSeason().getRating(), footballer.getResume().getSeason().getMatches());
+        footballer.getResume().getTotal().addMatches(footballer.getResume().getSeason().getMatches());
+        footballer.getResume().getTotal().addMotmAwards(footballer.getResume().getSeason().getMotmAwards());
+        footballer.getResume().getTotal().addYellowCards(footballer.getResume().getSeason().getYellowCards());
+        footballer.getResume().getTotal().addRedCards(footballer.getResume().getSeason().getRedCards());
+    }
+
+    private static void clearSeasonStats(Footballer footballer) {
+        footballer.getResume().getSeason().setMatches(0);
+        footballer.getResume().getSeason().setGoals(0);
+        footballer.getResume().getSeason().setAssists(0);
+        footballer.getResume().getSeason().setCleanSheets(0);
+        footballer.getResume().getSeason().setRating(0);
+        footballer.getResume().getSeason().setMotmAwards(0);
+        footballer.getResume().getSeason().setYellowCards(0);
+        footballer.getResume().getSeason().setRedCards(0);
     }
 }

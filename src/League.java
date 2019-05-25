@@ -21,96 +21,64 @@ class League {
         this.cleanSheets = cleanSheets;
     }
 
-    public int getMatches() {
+    int getMatches() {
         return matches;
-    }
-
-    public void setMatches(int matches) {
-        this.matches = matches;
     }
 
     void addMatch() {
         this.matches += 1;
     }
 
-    public int getPoints() {
+    int getPoints() {
         return points;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
     }
 
     void addPoints(int points) {
         this.points += points;
     }
 
-    public int getWins() {
+    int getWins() {
         return wins;
-    }
-
-    public void setWins(int wins) {
-        this.wins = wins;
     }
 
     void addWin() {
         this.wins += 1;
     }
 
-    public int getDraws() {
+    int getDraws() {
         return draws;
-    }
-
-    public void setDraws(int draws) {
-        this.draws = draws;
     }
 
     void addDraw() {
         this.draws += 1;
     }
 
-    public int getLosses() {
+    int getLosses() {
         return losses;
-    }
-
-    public void setLosses(int losses) {
-        this.losses = losses;
     }
 
     void addLoss() {
         this.losses += 1;
     }
 
-    public int getScored() {
+    int getScored() {
         return scored;
-    }
-
-    public void setScored(int scored) {
-        this.scored = scored;
     }
 
     void addScored(int goals) {
         this.scored += goals;
     }
 
-    public int getConceded() {
+    int getConceded() {
         return conceded;
-    }
-
-    public void setConceded(int conceded) {
-        this.conceded = conceded;
     }
 
     void addConceded(int goals) {
         this.conceded += goals;
     }
 
-    public int getCleanSheets() {
+    int getCleanSheets() {
         return cleanSheets;
-    }
-
-    public void setCleanSheets(int cleanSheets) {
-        this.cleanSheets = cleanSheets;
     }
 
     void addCleanSheet() {
