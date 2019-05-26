@@ -3,11 +3,12 @@ import java.util.Random;
 class Draw {
     private static Random random = new Random();
 
-    static void makeDraw() {
-        int[] draw = new int[20];
-        boolean[] drawn = new boolean[20];
-        for (int team = 0; team < 20; team++) {
-            int r = random.nextInt(20 - team);
+    static int[][][] makeDraw(int teams) {
+        int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
+        int[] draw = new int[teams];
+        boolean[] drawn = new boolean[teams];
+        for (int team = 0; team < teams; team++) {
+            int r = random.nextInt(teams - team);
             int current = 0;
 
             while (true) {
@@ -25,27 +26,29 @@ class Draw {
             }
         }
 
-        for (int round = 0; round < 19; round++) {
-            int[] current = new int[20];
+        for (int round = 0; round < teams - 1; round++) {
+            int[] current = new int[teams];
             current[0] = 0;
-            for (int i = 1; i < 20; i++) {
-                current[i] = (i + round - 1) % 19 + 1;
+            for (int i = 1; i < teams; i++) {
+                current[i] = (i + round - 1) % (teams - 1) + 1;
             }
 
-            for (int game = 0; game < 10; game++) {
+            for (int game = 0; game < teams / 2; game++) {
                 if (round % 2 == 0) {
-                    Data.HOME[round][game] = draw[current[game]];
-                    Data.AWAY[round][game] = draw[current[19 - game]];
-                    Data.HOME[19 + round][game] = draw[current[19 - game]];
-                    Data.AWAY[19 + round][game] = draw[current[game]];
+                    schedule[round][game][0] = draw[current[game]];
+                    schedule[round][game][1] = draw[current[teams - 1 - game]];
+                    schedule[teams - 1 + round][game][0] = draw[current[teams - 1 - game]];
+                    schedule[teams - 1 + round][game][1] = draw[current[game]];
                 }
                 else{
-                    Data.HOME[round][game] = draw[current[19 - game]];
-                    Data.AWAY[round][game] = draw[current[game]];
-                    Data.HOME[19 + round][game] = draw[current[game]];
-                    Data.AWAY[19 + round][game] = draw[current[19 - game]];
+                    schedule[round][game][0] = draw[current[teams - 1 - game]];
+                    schedule[round][game][1] = draw[current[game]];
+                    schedule[teams - 1 + round][game][0] = draw[current[game]];
+                    schedule[teams - 1 + round][game][1] = draw[current[teams - 1 - game]];
                 }
             }
         }
+
+        return schedule;
     }
 }

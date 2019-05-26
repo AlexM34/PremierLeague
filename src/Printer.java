@@ -6,13 +6,13 @@ import static java.util.stream.Collectors.toMap;
 
 class Printer {
 
-    static void printStandings() {
+    static void printStandings(Club[] league) {
         int goals = 0;
         Map<Integer, Integer> standings = new LinkedHashMap<>();
-        for (int team = 0; team < 20; team++) {
-            standings.put(team, 10000 * Data.DRAW.get(team).getSeason().getLeague().getPoints() + 100 *
-                    (Data.DRAW.get(team).getSeason().getLeague().getScored() - Data.DRAW.get(team).getSeason().getLeague().getConceded()) +
-                    Data.DRAW.get(team).getSeason().getLeague().getScored());
+        for (int team = 0; team < league.length; team++) {
+            standings.put(team, 10000 * league[team].getSeason().getLeague().getPoints() + 100 *
+                    (league[team].getSeason().getLeague().getScored() - league[team].getSeason().getLeague().getConceded()) +
+                    league[team].getSeason().getLeague().getScored());
         }
 
         Map<Integer, Integer> sorted = standings.entrySet().stream().sorted(
@@ -21,14 +21,14 @@ class Printer {
                         LinkedHashMap::new));
 
         System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < league.length; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
-            goals += Data.DRAW.get(index).getSeason().getLeague().getScored();
+            goals += league[index].getSeason().getLeague().getScored();
             System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
-                    Data.DRAW.get(index).getName(), Data.DRAW.get(index).getSeason().getLeague().getMatches(), Data.DRAW.get(index).getSeason().getLeague().getWins(),
-                    Data.DRAW.get(index).getSeason().getLeague().getDraws(), Data.DRAW.get(index).getSeason().getLeague().getLosses(),
-                    Data.DRAW.get(index).getSeason().getLeague().getScored(), Data.DRAW.get(index).getSeason().getLeague().getConceded(),
-                    Data.DRAW.get(index).getSeason().getLeague().getPoints()));
+                    league[index].getName(), league[index].getSeason().getLeague().getMatches(), league[index].getSeason().getLeague().getWins(),
+                    league[index].getSeason().getLeague().getDraws(), league[index].getSeason().getLeague().getLosses(),
+                    league[index].getSeason().getLeague().getScored(), league[index].getSeason().getLeague().getConceded(),
+                    league[index].getSeason().getLeague().getPoints()));
         }
         System.out.println();
         System.out.println("Total goals for the season: " + goals + " // 1072");
@@ -40,12 +40,12 @@ class Printer {
 
         int first = (Integer) sorted.keySet().toArray()[0];
 
-        if (Data.DRAW.get(first).getSeason().getLeague().getMatches() == 38) {
-            Data.DRAW.get(first).getGlory().addLeague(1);
+        if (league[first].getSeason().getLeague().getMatches() == 38) {
+            league[first].getGlory().addLeague(1);
         }
     }
 
-    static void printPlayerStats() {
+    static void printPlayerStats(Club[] league) {
         Map<String, Integer> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
@@ -54,8 +54,8 @@ class Printer {
         Map<String, Integer> yellowCards = new LinkedHashMap<>();
         Map<String, Integer> redCards = new LinkedHashMap<>();
 
-        for (int team = 0; team < 20; team++) {
-            for (Footballer f : Data.DRAW.get(team).getFootballers()) {
+        for (int team = 0; team < league.length; team++) {
+            for (Footballer f : league[team].getFootballers()) {
                 String name = f.getName();
 
                 if (f.getResume().getSeason().getMatches() > 20) ratings.put(name, f.getResume().getSeason().getRating());
@@ -84,57 +84,55 @@ class Printer {
         topPlayers(redCards, "Most Red Cards");
     }
 
-    static void printAllTimeStats() {
-        for (Club[] league : Data.LEAGUES) {
-            Map<String, Integer> leagues = new LinkedHashMap<>();
-            Map<String, Integer> nationalCups = new LinkedHashMap<>();
-            Map<String, Integer> leagueCups = new LinkedHashMap<>();
+    static void printAllTimeStats(Club[] league) {
+        Map<String, Integer> leagues = new LinkedHashMap<>();
+        Map<String, Integer> nationalCups = new LinkedHashMap<>();
+        Map<String, Integer> leagueCups = new LinkedHashMap<>();
 
-            for (Club club : league) {
-                leagues.put(club.getName(), club.getGlory().getLeague());
-                nationalCups.put(club.getName(), club.getGlory().getNationalCup());
-                leagueCups.put(club.getName(), club.getGlory().getLeagueCup());
-            }
+        for (Club club : league) {
+            leagues.put(club.getName(), club.getGlory().getLeague());
+            nationalCups.put(club.getName(), club.getGlory().getNationalCup());
+            leagueCups.put(club.getName(), club.getGlory().getLeagueCup());
+        }
 
-            Map<String, Integer> sortedLeagues = leagues.entrySet().stream().sorted(
-                    Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                            LinkedHashMap::new));
+        Map<String, Integer> sortedLeagues = leagues.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
 
-            Map<String, Integer> sortedNationalCups = nationalCups.entrySet().stream().sorted(
-                    Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                            LinkedHashMap::new));
+        Map<String, Integer> sortedNationalCups = nationalCups.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
 
-            Map<String, Integer> sortedLeagueCups = leagueCups.entrySet().stream().sorted(
-                    Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                            LinkedHashMap::new));
+        Map<String, Integer> sortedLeagueCups = leagueCups.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
 
-            System.out.println();
-            System.out.println("League Winners");
-            for (int i = 0; i < sortedLeagues.size(); i++) {
-                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagues.keySet().toArray()[i],
-                        sortedLeagues.values().toArray()[i]));
-            }
+        System.out.println();
+        System.out.println("League Winners");
+        for (int i = 0; i < sortedLeagues.size(); i++) {
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagues.keySet().toArray()[i],
+                    sortedLeagues.values().toArray()[i]));
+        }
 
-            System.out.println();
-            System.out.println("National Cup Winners");
-            for (int i = 0; i < sortedLeagueCups.size(); i++) {
-                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedNationalCups.keySet().toArray()[i],
-                        sortedNationalCups.values().toArray()[i]));
-            }
+        System.out.println();
+        System.out.println("National Cup Winners");
+        for (int i = 0; i < sortedLeagueCups.size(); i++) {
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedNationalCups.keySet().toArray()[i],
+                    sortedNationalCups.values().toArray()[i]));
+        }
 
-            System.out.println();
-            System.out.println("League Cup Winners");
-            for (int i = 0; i < sortedLeagueCups.size(); i++) {
-                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray()[i],
-                        sortedLeagueCups.values().toArray()[i]));
-            }
+        System.out.println();
+        System.out.println("League Cup Winners");
+        for (int i = 0; i < sortedLeagueCups.size(); i++) {
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray()[i],
+                    sortedLeagueCups.values().toArray()[i]));
         }
     }
 
-    static void printAllTimePlayerStats() {
+    static void printAllTimePlayerStats(Club[] league) {
         Map<String, Integer> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
@@ -143,8 +141,8 @@ class Printer {
         Map<String, Integer> yellowCards = new LinkedHashMap<>();
         Map<String, Integer> redCards = new LinkedHashMap<>();
 
-        for (int team = 0; team < 20; team++) {
-            for (Footballer f : Data.DRAW.get(team).getFootballers()) {
+        for (int team = 0; team < league.length; team++) {
+            for (Footballer f : league[team].getFootballers()) {
                 String name = f.getName();
 
                 if (f.getResume().getTotal().getMatches() > 100) {

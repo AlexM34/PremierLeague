@@ -6,19 +6,20 @@ class Rater {
     static float[] homeRatings = new float[11];
     static float[] awayRatings = new float[11];
 
-    static void kickoff(int home, int away) {
-        for (Footballer f : Data.DRAW.get(home).getFootballers()) {
+    static void kickoff(Club home, Club away) {
+        for (Footballer f : home.getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
-            else f.changeCondition(10 + random.nextInt(3));
+            else f.changeCondition(13 + random.nextInt(3));
+            // TODO: Short bench solution with fatigue
         }
 
-        for (Footballer f : Data.DRAW.get(away).getFootballers()) {
+        for (Footballer f : away.getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
-            else f.changeCondition(11 + random.nextInt(3));
+            else f.changeCondition(13 + random.nextInt(3));
         }
 
         for (int player = 0; player < 11; player++) {
@@ -143,7 +144,7 @@ class Rater {
         return 0;
     }
 
-    static void finalWhistle(int home, int away, int homeGoals, int awayGoals) {
+    static void finalWhistle(Club home, Club away, int homeGoals, int awayGoals) {
         boolean motmHomeTeam = true;
         int motmPlayer = -1;
         float motmRating = 0;
@@ -178,22 +179,22 @@ class Rater {
 
         (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);
 
-        if (awayGoals == 0) Data.DRAW.get(home).getSeason().getLeague().addCleanSheet();
-        if (homeGoals == 0) Data.DRAW.get(away).getSeason().getLeague().addCleanSheet();
+        if (awayGoals == 0) home.getSeason().getLeague().addCleanSheet();
+        if (homeGoals == 0) away.getSeason().getLeague().addCleanSheet();
 
         if (homeGoals > awayGoals) {
             Data.HOME_WINS++;
-            Data.DRAW.get(home).getSeason().getLeague().addPoints(3);
-            Data.DRAW.get(home).getSeason().getLeague().addWin();
-            Data.DRAW.get(away).getSeason().getLeague().addLoss();
+            home.getSeason().getLeague().addPoints(3);
+            home.getSeason().getLeague().addWin();
+            away.getSeason().getLeague().addLoss();
 
             if (homeGoals - awayGoals > 2) {
                 form(home, 1);
                 form(away, -1);
             }
 
-            if (Data.DRAW.get(home).getSeason().getForm() < Data.DRAW.get(away).getSeason().getForm() + 10) {
-                if (Data.DRAW.get(home).getSeason().getForm() < Data.DRAW.get(away).getSeason().getForm()) {
+            if (home.getSeason().getForm() < away.getSeason().getForm() + 10) {
+                if (home.getSeason().getForm() < away.getSeason().getForm()) {
                     form(home, 3);
                     form(away, -3);
                 }
@@ -206,17 +207,17 @@ class Rater {
 
         else if (homeGoals < awayGoals){
             Data.AWAY_WINS++;
-            Data.DRAW.get(away).getSeason().getLeague().addPoints(3);
-            Data.DRAW.get(away).getSeason().getLeague().addWin();
-            Data.DRAW.get(home).getSeason().getLeague().addLoss();
+            away.getSeason().getLeague().addPoints(3);
+            away.getSeason().getLeague().addWin();
+            home.getSeason().getLeague().addLoss();
 
             if (awayGoals - homeGoals > 2) {
                 form(away, 1);
                 form(home, -1);
             }
 
-            if (Data.DRAW.get(away).getSeason().getForm() < Data.DRAW.get(home).getSeason().getForm() + 10) {
-                if (Data.DRAW.get(away).getSeason().getForm() < Data.DRAW.get(home).getSeason().getForm()) {
+            if (away.getSeason().getForm() < home.getSeason().getForm() + 10) {
+                if (away.getSeason().getForm() < home.getSeason().getForm()) {
                     form(away, 3);
                     form(home, -3);
                 }
@@ -227,37 +228,37 @@ class Rater {
             }
         }
         else {
-            Data.DRAW.get(home).getSeason().getLeague().addPoints(1);
-            Data.DRAW.get(away).getSeason().getLeague().addPoints(1);
-            Data.DRAW.get(home).getSeason().getLeague().addDraw();
-            Data.DRAW.get(away).getSeason().getLeague().addDraw();
+            home.getSeason().getLeague().addPoints(1);
+            away.getSeason().getLeague().addPoints(1);
+            home.getSeason().getLeague().addDraw();
+            away.getSeason().getLeague().addDraw();
 
-            if (Data.DRAW.get(home).getSeason().getForm() < Data.DRAW.get(away).getSeason().getForm()) {
+            if (home.getSeason().getForm() < away.getSeason().getForm()) {
                 form(home, 2);
                 form(away, -2);
             }
-            else if (Data.DRAW.get(away).getSeason().getForm() < Data.DRAW.get(home).getSeason().getForm()) {
+            else if (away.getSeason().getForm() < home.getSeason().getForm()) {
                 form(away, 2);
                 form(home, -2);
             }
         }
 
-        Data.DRAW.get(home).getSeason().getLeague().addMatch();
-        Data.DRAW.get(away).getSeason().getLeague().addMatch();
-        Data.DRAW.get(home).getSeason().getLeague().addScored(homeGoals);
-        Data.DRAW.get(away).getSeason().getLeague().addScored(awayGoals);
-        Data.DRAW.get(home).getSeason().getLeague().addConceded(awayGoals);
-        Data.DRAW.get(away).getSeason().getLeague().addConceded(homeGoals);
+        home.getSeason().getLeague().addMatch();
+        away.getSeason().getLeague().addMatch();
+        home.getSeason().getLeague().addScored(homeGoals);
+        away.getSeason().getLeague().addScored(awayGoals);
+        home.getSeason().getLeague().addConceded(awayGoals);
+        away.getSeason().getLeague().addConceded(homeGoals);
 
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
 
-        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", Data.DRAW.get(home).getName(),
-                Data.DRAW.get(away).getName(), homeGoals,
-                awayGoals, Data.DRAW.get(motmHomeTeam ? home : away).getFootballers().stream().filter(
+        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
+                away.getName(), homeGoals,
+                awayGoals, motmHomeTeam ? home : away.getFootballers().stream().filter(
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
     }
 
-    private static void form(int team, int change) {
-        Data.DRAW.get(team).getSeason().changeForm(change);
+    private static void form(Club team, int change) {
+        team.getSeason().changeForm(change);
     }
 }

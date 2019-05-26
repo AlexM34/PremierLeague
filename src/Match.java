@@ -9,9 +9,9 @@ class Match {
     static Footballer[] awaySquad;
     static int[][] bookings;
 
-    static void userTactics(int opponent, boolean isHome) {
+    static void userTactics(Club opponent, boolean isHome) {
         // TODO: Add other choices
-        System.out.println("vs " + Data.DRAW.get(opponent).getName() + (isHome ? " Home" : " Away"));
+        System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
             int offense = scanner.nextInt();
@@ -24,17 +24,17 @@ class Match {
         }
     }
 
-    static void leagueSimulation(int home, int away) {
+    static void leagueSimulation(Club home, Club away) {
         int result = simulateGame(home, away);
 
         Rater.finalWhistle(home, away, result / 100, result % 100);
     }
 
-    static int cupSimulation(int home, int away) {
+    static int cupSimulation(Club home, Club away) {
         return simulateGame(home, away);
     }
 
-    private static int simulateGame(int home, int away) {
+    private static int simulateGame(Club home, Club away) {
         // TODO: Match odds
         // TODO: Bench
         // TODO: Subs
@@ -45,16 +45,16 @@ class Match {
 
         // TODO: Separate variables for scoring
         int balance = Data.FANS + 100 *
-                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + Data.DRAW.get(home).getSeason().getForm() +
+                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() +
                  Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) /
-                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + Data.DRAW.get(away).getSeason().getForm() +
+                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + away.getSeason().getForm() +
                  Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) - 50;
 
         int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
                 + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 56;
 
-        if (home == Data.USER || away == Data.USER) style += Data.USER_STYLE;
-        style += (Data.DRAW.get(home).getCoach().getStyle() + Data.DRAW.get(away).getCoach().getStyle() - 100)  / 10;
+        if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE;
+        style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100)  / 10;
         System.out.println(balance);
         System.out.println(style);
 
@@ -119,8 +119,8 @@ class Match {
         return homeGoals * 100 + awayGoals;
     }
 
-    private static Footballer[] pickSquad(int team, boolean isHome) {
-        List<Footballer> squad =  Data.DRAW.get(team).getFootballers().stream()
+    private static Footballer[] pickSquad(Club team, boolean isHome) {
+        List<Footballer> squad = team.getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 

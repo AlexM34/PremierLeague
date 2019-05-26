@@ -5,9 +5,6 @@ class Data {
     // TODO: Put spaces for players
     // TODO: Add logos
     static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
-    static int[][] HOME = new int[38][10];
-    static int[][] AWAY = new int[38][10];
-    static Map<Integer, Club> DRAW = new HashMap<>();
     static int FANS = 5;
     static int HOME_WINS;
     static int AWAY_WINS;
@@ -85,16 +82,13 @@ class Data {
 
         HOME_WINS = 0;
         AWAY_WINS = 0;
-        HOME = new int[38][10];
-        AWAY = new int[38][10];
         RATINGS = 0;
 
         // TODO: Title odds
-        System.out.println(String.format("The Premier League %d-%d begins!", 2019 + year, 2020 + year));
+        if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         int team = 0;
         for (Club[] league : LEAGUES) {
             for (Club club : league) {
-                DRAW.put(team++, club);
                 club.setSeason(new Season(new League(0, 0, 0, 0, 0, 0, 0,0),
                         new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 

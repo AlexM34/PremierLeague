@@ -27,7 +27,7 @@ class Spain {
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club VALENCIA = new Club(4, "Valencia CF", 1878, STADIUM, "Valencia", LA_LIGA,
-            new Glory(0, 6, 7, 0, 0, 0, 0),
+            new Glory(0, 6, 8, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
