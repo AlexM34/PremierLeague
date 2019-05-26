@@ -12,6 +12,36 @@ class Data {
     static Integer USER = -1;
     static int USER_STYLE;
 
+    static Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
+            0, 0, Position.CB, 97, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
+
+    static Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
+            0, 0, Position.CM, 98, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
+
+    static Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
+            0, 0, Position.ST, 99, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
+
+    static Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
+            0, 0, Position.CB, 97, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
+
+    static Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
+            0, 0, Position.CM, 98, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
+
+    static Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
+            0, 0, Position.ST, 99, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
+            new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
+
     static void extractData() {
         String fileName = "data/data.csv";
         File data = new File(fileName);
@@ -77,6 +107,19 @@ class Data {
         }
     }
 
+    static void addDummies() {
+        for (Club[] league : LEAGUES) {
+            for (Club club : league) {
+                club.addFootballer(DEFENDER_1);
+                club.addFootballer(MIDFIELDER_1);
+                club.addFootballer(FORWARD_1);
+                club.addFootballer(DEFENDER_2);
+                club.addFootballer(MIDFIELDER_2);
+                club.addFootballer(FORWARD_2);
+            }
+        }
+    }
+
     static void prepare(int year) {
         PremierLeague.pause();
 
@@ -86,7 +129,6 @@ class Data {
 
         // TODO: Title odds
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
-        int team = 0;
         for (Club[] league : LEAGUES) {
             for (Club club : league) {
                 club.setSeason(new Season(new League(0, 0, 0, 0, 0, 0, 0,0),

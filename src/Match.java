@@ -109,7 +109,7 @@ class Match {
                 balance += 30 * t - 15;
                 (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
                 (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().addRedCards(1);
-                (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-30);
+                (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-35);
                 System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }
 
@@ -134,6 +134,9 @@ class Match {
         int d = defenders;
         int m = midfielders;
         int f = forwards;
+        Data.DEFENDER_1.changeCondition(100);
+        Data.MIDFIELDER_1.changeCondition(100);
+        Data.FORWARD_1.changeCondition(100);
         for (Footballer footballer : squad) {
             if (footballer.getPosition() == null || footballer.getCondition() < 70) {
                 continue;
@@ -211,6 +214,9 @@ class Match {
         }
 
         System.out.println("Could not pick an appropriate formation");
+        for (Footballer f : footballers) {
+            System.out.println(f.getName() + " " + f.getPosition().getRole() + " " + f.getCondition());
+        }
         return Formation.F5;
     }
 }

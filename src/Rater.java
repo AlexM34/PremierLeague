@@ -11,7 +11,7 @@ class Rater {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
-            else f.changeCondition(13 + random.nextInt(3));
+            else f.changeCondition(10 + random.nextInt(3));
             // TODO: Short bench solution with fatigue
         }
 
@@ -19,7 +19,7 @@ class Rater {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(14);
             }
-            else f.changeCondition(13 + random.nextInt(3));
+            else f.changeCondition(10 + random.nextInt(3));
         }
 
         for (int player = 0; player < 11; player++) {

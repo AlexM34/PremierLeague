@@ -14,6 +14,7 @@ class PremierLeague {
     public static void main(String[] args) {
 //        Data.extractData();
         Data.buildSquads();
+        Data.addDummies();
         IntStream.range(0, 10).forEach(year -> {
             Data.prepare(year);
 //            pickTeam();
@@ -31,7 +32,7 @@ class PremierLeague {
                 System.out.println(nationalCupWinner.getName() + " win the National Cup!");
                 nationalCupWinner.getGlory().addNationalCup();
 
-                if (league[0].getLeague().equals("England") || league[0].getLeague().equals("France")) {
+                if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
                     Club leagueCupWinner = cup(league, 16);
                     System.out.println(leagueCupWinner.getName() + " win the League Cup!");
                     leagueCupWinner.getGlory().addLeagueCup();
@@ -144,6 +145,14 @@ class PremierLeague {
             // TODO: Rate simulation with review
             System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
         }
+
+        System.out.println("DUMMIES");
+        System.out.println(Data.DEFENDER_1.getResume().getSeason());
+        System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
+        System.out.println(Data.FORWARD_1.getResume().getSeason());
+        System.out.println(Data.DEFENDER_2.getResume().getSeason());
+        System.out.println(Data.MIDFIELDER_2.getResume().getSeason());
+        System.out.println(Data.FORWARD_2.getResume().getSeason());
     }
 
     private static void finishSimulation() {

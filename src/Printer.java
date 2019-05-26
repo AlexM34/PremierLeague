@@ -124,11 +124,13 @@ class Printer {
                     sortedNationalCups.values().toArray()[i]));
         }
 
-        System.out.println();
-        System.out.println("League Cup Winners");
-        for (int i = 0; i < sortedLeagueCups.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray()[i],
-                    sortedLeagueCups.values().toArray()[i]));
+        if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
+            System.out.println();
+            System.out.println("League Cup Winners");
+            for (int i = 0; i < sortedLeagueCups.size(); i++) {
+                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray()[i],
+                        sortedLeagueCups.values().toArray()[i]));
+            }
         }
     }
 
