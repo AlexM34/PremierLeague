@@ -4,7 +4,7 @@ import java.util.*;
 class Data {
     // TODO: Put spaces for players
     // TODO: Add logos
-    static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
+    static Club[][] LEAGUES = {England.CLUBS};//{England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static int FANS = 5;
     static int HOME_WINS;
     static int AWAY_WINS;
@@ -13,32 +13,32 @@ class Data {
     static int USER_STYLE;
 
     static Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
-            0, 0, Position.CB, 97, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            0, 0, Position.CB, 101, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
 
     static Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
-            0, 0, Position.CM, 98, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            0, 0, Position.CM, 102, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
 
     static Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
-            0, 0, Position.ST, 99, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            0, 0, Position.ST, 103, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
 
     static Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
-            0, 0, Position.CB, 97, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            0, 0, Position.CB, 104, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
 
     static Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
-            0, 0, Position.CM, 98, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            0, 0, Position.CM, 105, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
 
     static Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
-            0, 0, Position.ST, 99, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
+            0, 0, Position.ST, 106, 20, 20, new Resume(new Glory(0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0),
             new Statistics(0, 0, 0, 0, 0, 0, 0, 0)), 100);
 

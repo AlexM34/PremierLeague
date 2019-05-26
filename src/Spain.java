@@ -2,7 +2,6 @@ import java.util.HashSet;
 
 class Spain {
     // TODO: Enter details
-    // TODO: Copa update
     static String LEAGUE = "La Liga";
     private static Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static Owner OWNER = new Owner(1, "", "", 100, 100);

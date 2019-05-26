@@ -41,7 +41,10 @@ class Printer {
         int first = (Integer) sorted.keySet().toArray()[0];
 
         if (league[first].getSeason().getLeague().getMatches() == 38) {
-            league[first].getGlory().addLeague(1);
+            league[first].getGlory().addLeague();
+            for (Footballer footballer : league[first].getFootballers()) {
+                footballer.getResume().getGlory().addLeague();
+            }
         }
     }
 
@@ -70,7 +73,7 @@ class Printer {
                 }
 
                 if (team < 6 && f.getResume().getSeason().getMatches() > 0) {
-//                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
                 }
             }
         }

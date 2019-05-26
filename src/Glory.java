@@ -32,8 +32,8 @@ class Glory {
         return league;
     }
 
-    void addLeague(int league) {
-        this.league += league;
+    void addLeague() {
+        this.league += 1;
     }
 
     int getNationalCup() {

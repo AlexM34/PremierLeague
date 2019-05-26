@@ -9,17 +9,17 @@ class Rater {
     static void kickoff(Club home, Club away) {
         for (Footballer f : home.getFootballers()) {
             if (f.getPosition() == Position.GK) {
-                f.changeCondition(14);
+                f.changeCondition(13 + random.nextInt(2));
             }
-            else f.changeCondition(10 + random.nextInt(3));
+            else f.changeCondition(11 + random.nextInt(3));
             // TODO: Short bench solution with fatigue
         }
 
         for (Footballer f : away.getFootballers()) {
             if (f.getPosition() == Position.GK) {
-                f.changeCondition(14);
+                f.changeCondition(13 + random.nextInt(2));
             }
-            else f.changeCondition(10 + random.nextInt(3));
+            else f.changeCondition(11 + random.nextInt(3));
         }
 
         for (int player = 0; player < 11; player++) {
@@ -119,11 +119,11 @@ class Rater {
             case Goalkeeper:
                 return 0;
             case Defender:
-                return footballer.getFinishing() * 2;
+                return footballer.getFinishing() + footballer.getOverall() * 2;
             case Midfielder:
-                return footballer.getFinishing() * 5;
+                return footballer.getFinishing() * 3 + footballer.getOverall() * 4;
             case Forward:
-                return footballer.getFinishing() * 10;
+                return footballer.getFinishing() * 7 + footballer.getOverall() * 10;
         }
 
         return 0;
@@ -134,11 +134,11 @@ class Rater {
             case Goalkeeper:
                 return footballer.getVision();
             case Defender:
-                return footballer.getVision() * 2;
+                return footballer.getVision() + footballer.getOverall() * 3;
             case Midfielder:
-                return footballer.getVision() * 5;
+                return footballer.getVision() * 5 + footballer.getOverall() * 8;
             case Forward:
-                return footballer.getVision() * 10;
+                return footballer.getVision() * 3 + footballer.getOverall() * 5;
         }
 
         return 0;
@@ -254,7 +254,7 @@ class Rater {
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
                 away.getName(), homeGoals,
-                awayGoals, motmHomeTeam ? home : away.getFootballers().stream().filter(
+                awayGoals, (motmHomeTeam ? home : away).getFootballers().stream().filter(
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
     }
 

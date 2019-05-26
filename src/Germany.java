@@ -2,7 +2,6 @@ import java.util.HashSet;
 
 class Germany {
     // TODO: Enter details
-    // TODO: NPE for 18 teams
     // TODO: Update with promoted teams
     static String LEAGUE = "Bundesliga";
     private static Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);

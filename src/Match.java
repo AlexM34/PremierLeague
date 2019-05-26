@@ -45,13 +45,13 @@ class Match {
 
         // TODO: Separate variables for scoring
         int balance = Data.FANS + 100 *
-                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() +
-                 Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) /
-                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + away.getSeason().getForm() +
-                 Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 300) - 50;
+                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() * 2 +
+                 Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) /
+                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + away.getSeason().getForm() * 2 +
+                 Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) - 50;
 
         int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
-                + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 56;
+                + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 53;
 
         if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE;
         style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100)  / 10;
@@ -62,6 +62,7 @@ class Match {
         int awayGoals = 0;
         for (int minute = 1; minute <= 90; minute++) {
             // TODO: Add stoppage time
+            // TODO: Too many draws
             int r = random.nextInt(1000);
 
             if (r < 10 * balance) {

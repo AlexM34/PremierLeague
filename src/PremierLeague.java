@@ -31,11 +31,17 @@ class PremierLeague {
                 Club nationalCupWinner = cup(league, 16);
                 System.out.println(nationalCupWinner.getName() + " win the National Cup!");
                 nationalCupWinner.getGlory().addNationalCup();
+                for (Footballer footballer : nationalCupWinner.getFootballers()) {
+                    footballer.getResume().getGlory().addNationalCup();
+                }
 
                 if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
                     Club leagueCupWinner = cup(league, 16);
                     System.out.println(leagueCupWinner.getName() + " win the League Cup!");
                     leagueCupWinner.getGlory().addLeagueCup();
+                    for (Footballer footballer : leagueCupWinner.getFootballers()) {
+                        footballer.getResume().getGlory().addLeagueCup();
+                    }
                 }
             }
 
@@ -119,7 +125,6 @@ class PremierLeague {
 
             for (int team = 0; team < count / 2; team++) {
                 // TODO: Cup stats should be separate
-                // TODO: Indexing
                 int result = Match.cupSimulation(selected[team], selected[count - team - 1]);
                 System.out.println(String.format("%s - %s %d:%d", selected[team].getName(),
                         selected[count - team - 1].getName(), result / 100, result % 100));

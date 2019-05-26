@@ -9,6 +9,7 @@ class PreSeason {
         for (Club[] league : Data.LEAGUES) {
             for (Club club : league) {
                 for (Footballer f : club.getFootballers()) {
+                    if (f.getNumber() > 100) continue;
                     int r = random.nextInt(2);
                     if (r == 0) {
                         if (f.getResume().getSeason().getRating() > 750) {
