@@ -137,6 +137,28 @@ class Printer {
         }
     }
 
+    static void printChampionsLeagueStats() {
+        Map<String, Integer> titles = new LinkedHashMap<>();
+
+        for (Club[] league : Data.LEAGUES) {
+            for (Club club : league) {
+                if (club.getGlory().getContinental() > 0) titles.put(club.getName(), club.getGlory().getContinental());
+            }
+        }
+
+        Map<String, Integer> sortedTitles = titles.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println();
+        System.out.println("Champions League Winners");
+        for (int i = 0; i < sortedTitles.size(); i++) {
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedTitles.keySet().toArray()[i],
+                    sortedTitles.values().toArray()[i]));
+        }
+    }
+
     static void printAllTimePlayerStats(Club[] league) {
         Map<String, Integer> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();

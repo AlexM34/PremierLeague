@@ -20,7 +20,7 @@ class France {
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club MARSEILLE = new Club(3, "Olympique de Marseille", 1892, STADIUM, "Marseille", LEAGUE,
-            new Glory(0, 9, 10, 3, 0, 0, 0),
+            new Glory(1, 9, 10, 3, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));

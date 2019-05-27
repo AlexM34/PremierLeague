@@ -4,7 +4,7 @@ import java.util.*;
 class Data {
     // TODO: Put spaces for players
     // TODO: Add logos
-    static Club[][] LEAGUES = {England.CLUBS};//{England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
+    static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static int FANS = 5;
     static int HOME_WINS;
     static int AWAY_WINS;

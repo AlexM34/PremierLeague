@@ -8,19 +8,19 @@ class Italy {
     private static Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
     
     private static Club MILAN = new Club(1, "Milan", 1899, STADIUM, "Milan", SERIE_A,
-            new Glory(0, 18, 5, 0, 0, 0, 0),
+            new Glory(7, 18, 5, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club JUVENTUS = new Club(2, "Juventus", 1902, STADIUM, "Turin", SERIE_A,
-            new Glory(0, 35, 13, 0, 0, 0, 0),
+            new Glory(2, 35, 13, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club INTER = new Club(3, "Inter", 1892, STADIUM, "Milan", SERIE_A,
-            new Glory(0, 18, 7, 0, 0, 0, 0),
+            new Glory(3, 18, 7, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));

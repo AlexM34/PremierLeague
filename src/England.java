@@ -2,6 +2,7 @@ import java.util.HashSet;
 
 class England {
     // TODO: Enter details
+    // TODO: Update with CL final
     static String LEAGUE = "Premier League";
     private static Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static Owner OWNER = new Owner(1, "", "", 100, 100);
@@ -20,19 +21,19 @@ class England {
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club LIVERPOOL = new Club(3, "Liverpool", 1892, STADIUM, "Liverpool", LEAGUE,
-            new Glory(0, 18, 7, 8, 0, 0, 0),
+            new Glory(5, 18, 7, 8, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club MANCHESTER_UNITED = new Club(4, "Manchester United", 1878, STADIUM, "Manchester", LEAGUE,
-            new Glory(0, 20, 12, 5, 0, 0, 0),
+            new Glory(3, 20, 12, 5, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club CHELSEA = new Club(5, "Chelsea", 1886, STADIUM, "London", LEAGUE,
-            new Glory(0, 6, 8, 5, 0, 0, 0),
+            new Glory(1, 6, 8, 5, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));

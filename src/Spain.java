@@ -8,13 +8,13 @@ class Spain {
     private static Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
     
     private static Club BARCELONA = new Club(1, "FC Barcelona", 1899, STADIUM, "Barcelona", LEAGUE,
-            new Glory(0, 26, 30, 0, 0, 0, 0),
+            new Glory(5, 26, 30, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club REAL_MADRID = new Club(2, "Real Madrid", 1902, STADIUM, "Madrid", LEAGUE,
-            new Glory(0, 33, 19, 0, 0, 0, 0),
+            new Glory(13, 33, 19, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));

@@ -1,9 +1,8 @@
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toMap;
 
 class PremierLeague {
     private static Random random = new Random();
@@ -45,11 +44,107 @@ class PremierLeague {
                 }
             }
 
+            // TODO: Pick teams by standings
+            Club[] championsLeague = new Club[32];
+            int count = 0;
+            for (int team = 0; team < 6; team++) {
+                for (Club[] league : Data.LEAGUES) {
+                    championsLeague[count++] = league[team];
+                }
+            }
+            championsLeague[30] = England.CLUBS[6];
+            championsLeague[31] = Spain.CLUBS[6];
+            Club[] advanced = groups(championsLeague, 4, 2);
+            Club championsLeagueWinner = knockout(advanced);
+            System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
+            championsLeagueWinner.getGlory().addContinental();
+            for (Footballer footballer : championsLeagueWinner.getFootballers()) {
+                footballer.getResume().getGlory().addContinental();
+            }
+
             finish(year);
             PreSeason.changes();
         });
 
         finishSimulation();
+    }
+
+    private static Club[] groups(Club[] teams, int groupSize, int games) {
+        // TODO: Teams progressing
+        Club[] advancing = new Club[2 * teams.length / groupSize];
+        int count = 0;
+
+        for (int group = 0; group < teams.length / groupSize; group++) {
+            System.out.println();
+            System.out.println("GROUP " + (char)('A' + group));
+            System.out.println();
+
+            Club[] clubs = new Club[groupSize];
+            int[] points = new int[groupSize];
+            for (int team = 0; team < groupSize; team++) clubs[team] = teams[group * groupSize + team];
+
+            // TODO: Make it right
+            for (int first = 0; first < groupSize; first++) {
+                for (int second = first + 1; second < groupSize; second++) {
+                    for (int game = 0; game < games; game++) {
+                        if (game % 2 == 0) {
+                            int result = Match.cupSimulation(clubs[first], clubs[second]);
+                            System.out.println(String.format("%s - %s %d:%d", clubs[first].getName(),
+                                    clubs[second].getName(), result / 100, result % 100));
+
+                            if (result / 100 > result % 100) {
+                                points[first] += 3;
+                            }
+                            else if (result / 100 < result % 100) {
+                                points[second] += 3;
+                            }
+                            else {
+                                points[first]++;
+                                points[second]++;
+                            }
+                        }
+                        else {
+                            int result = Match.cupSimulation(clubs[second], clubs[first]);
+                            System.out.println(String.format("%s - %s %d:%d", clubs[second].getName(),
+                                    clubs[first].getName(), result / 100, result % 100));
+
+                            if (result / 100 > result % 100) {
+                                points[second] += 3;
+                            }
+                            else if (result / 100 < result % 100) {
+                                points[first] += 3;
+                            }
+                            else {
+                                points[second]++;
+                                points[first]++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Map<Club, Integer> standing = new LinkedHashMap<>();
+            for (int team = 0; team < groupSize; team++) standing.put(clubs[team], points[team]);
+
+            Map<Club, Integer> sorted = standing.entrySet().stream().sorted(
+                    Collections.reverseOrder(Map.Entry.comparingByValue()))
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                            LinkedHashMap::new));
+
+            System.out.println();
+            System.out.println("Standings for group " + (char)('A' + group));
+            for (int team = 0; team < sorted.size(); team++) {
+                Club club = (Club) sorted.keySet().toArray()[team];
+
+                System.out.println(String.format("%2d. %-25s %d", team + 1, club.getName(),
+                        sorted.values().toArray()[team]));
+                System.out.println();
+
+                if (team < 2) advancing[count++] = clubs[team];
+            }
+        }
+
+        return advancing;
     }
 
     private static void pickTeam() {
@@ -95,6 +190,9 @@ class PremierLeague {
     }
 
     private static Club cup(Club[] league, int teams) {
+        // TODO: Double-legger
+        // TODO: Replay
+        // TODO: Extra time and penalties
         int count = 0;
         Club[] selected = new Club[teams];
         boolean[] playing = new boolean[league.length];
@@ -146,6 +244,7 @@ class PremierLeague {
             System.out.println("FINAL STANDINGS");
             Printer.printStandings(league);
             Printer.printAllTimeStats(league);
+            Printer.printChampionsLeagueStats();
             System.out.println();
             // TODO: Rate simulation with review
             System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));

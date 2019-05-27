@@ -9,13 +9,13 @@ class Germany {
     private static Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
     
     private static Club BAYERN_MUNICH = new Club(1, "FC Bayern München", 1899, STADIUM, "Munich", LEAGUE,
-            new Glory(0, 29, 19, 0, 0, 0, 0),
+            new Glory(5, 29, 19, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
     private static Club BORUSSIA_DORTMUND = new Club(2, "Borussia Dortmund", 1902, STADIUM, "Dortmund", LEAGUE,
-            new Glory(0, 8, 4, 0, 0, 0, 0),
+            new Glory(1, 8, 4, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH, new HashSet<>(), new Season(
             new League(0, 0, 0, 0, 0, 0, 0, 0),
             new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
