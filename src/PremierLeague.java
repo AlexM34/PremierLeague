@@ -44,17 +44,7 @@ class PremierLeague {
                 }
             }
 
-            // TODO: Pick teams by standings
-            Club[] championsLeague = new Club[32];
-            int count = 0;
-            for (int team = 0; team < 6; team++) {
-                for (Club[] league : Data.LEAGUES) {
-                    championsLeague[count++] = league[team];
-                }
-            }
-            championsLeague[30] = England.CLUBS[6];
-            championsLeague[31] = Spain.CLUBS[6];
-            Club[] advanced = groups(championsLeague, 4, 2);
+            Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2);
             Club championsLeagueWinner = knockout(advanced);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addContinental();
@@ -71,6 +61,7 @@ class PremierLeague {
 
     private static Club[] groups(Club[] teams, int groupSize, int games) {
         // TODO: Teams progressing
+        // TODO: Draw
         Club[] advancing = new Club[2 * teams.length / groupSize];
         int count = 0;
 
@@ -138,10 +129,11 @@ class PremierLeague {
 
                 System.out.println(String.format("%2d. %-25s %d", team + 1, club.getName(),
                         sorted.values().toArray()[team]));
-                System.out.println();
 
                 if (team < 2) advancing[count++] = clubs[team];
             }
+
+            System.out.println();
         }
 
         return advancing;
@@ -182,10 +174,8 @@ class PremierLeague {
         }
 
         System.out.println();
-        if (round < 37) {
-            System.out.println(String.format("Standings after round %d:", round + 1));
-            Printer.printStandings(league);
-        }
+        System.out.println(String.format("Standings after round %d:", round + 1));
+        Printer.printStandings(league);
         System.out.println();
     }
 
@@ -244,12 +234,12 @@ class PremierLeague {
             System.out.println("FINAL STANDINGS");
             Printer.printStandings(league);
             Printer.printAllTimeStats(league);
-            Printer.printChampionsLeagueStats();
             System.out.println();
             // TODO: Rate simulation with review
             System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
         }
 
+        Printer.printChampionsLeagueStats();
         System.out.println("DUMMIES");
         System.out.println(Data.DEFENDER_1.getResume().getSeason());
         System.out.println(Data.MIDFIELDER_1.getResume().getSeason());

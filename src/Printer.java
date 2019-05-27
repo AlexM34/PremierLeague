@@ -6,8 +6,7 @@ import static java.util.stream.Collectors.toMap;
 
 class Printer {
 
-    static void printStandings(Club[] league) {
-        int goals = 0;
+    private static Map<Integer, Integer> sortLeague(Club[] league) {
         Map<Integer, Integer> standings = new LinkedHashMap<>();
         for (int team = 0; team < league.length; team++) {
             standings.put(team, 10000 * league[team].getSeason().getLeague().getPoints() + 100 *
@@ -15,15 +14,41 @@ class Printer {
                     league[team].getSeason().getLeague().getScored());
         }
 
-        Map<Integer, Integer> sorted = standings.entrySet().stream().sorted(
+        return standings.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
+    }
+
+    static Club[] pickChampionsLeagueTeams() {
+        int count = 0;
+        Club[] teams = new Club[32];
+        for (Club[] league : Data.LEAGUES) {
+            Map<Integer, Integer> sorted = sortLeague(league);
+            for (int team = 0; team < 6; team++) {
+                int index = (Integer) sorted.keySet().toArray()[team];
+                teams[count++] = league[index];
+            }
+
+            if (league[0].getLeague().equals(England.LEAGUE) ||
+                league[0].getLeague().equals(Spain.LEAGUE)) {
+                int index = (Integer) sorted.keySet().toArray()[6];
+                teams[count++] = league[index];
+            }
+        }
+
+        return teams;
+    }
+
+    static void printStandings(Club[] league) {
+        int goals = 0;
+        Map<Integer, Integer> sorted = sortLeague(league);
 
         System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
         for (int i = 0; i < league.length; i++) {
             Integer index = (Integer) sorted.keySet().toArray()[i];
             goals += league[index].getSeason().getLeague().getScored();
+            // TODO: Space adjustments
             System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
                     league[index].getName(), league[index].getSeason().getLeague().getMatches(), league[index].getSeason().getLeague().getWins(),
                     league[index].getSeason().getLeague().getDraws(), league[index].getSeason().getLeague().getLosses(),
@@ -40,7 +65,7 @@ class Printer {
 
         int first = (Integer) sorted.keySet().toArray()[0];
 
-        if (league[first].getSeason().getLeague().getMatches() == 38) {
+        if (league[first].getSeason().getLeague().getMatches() == 2 * league.length - 2) {
             league[first].getGlory().addLeague();
             for (Footballer footballer : league[first].getFootballers()) {
                 footballer.getResume().getGlory().addLeague();
