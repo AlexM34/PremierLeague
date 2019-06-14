@@ -65,6 +65,7 @@ class PremierLeague {
         Club[] advancing = new Club[2 * teams.length / groupSize];
         int count = 0;
 
+        int[][][] draw = Draw.makeDraw(groupSize);
         for (int group = 0; group < teams.length / groupSize; group++) {
             System.out.println();
             System.out.println("GROUP " + (char)('A' + group));
@@ -74,42 +75,28 @@ class PremierLeague {
             int[] points = new int[groupSize];
             for (int team = 0; team < groupSize; team++) clubs[team] = teams[group * groupSize + team];
 
-            // TODO: Make it right
-            for (int first = 0; first < groupSize; first++) {
-                for (int second = first + 1; second < groupSize; second++) {
-                    for (int game = 0; game < games; game++) {
-                        if (game % 2 == 0) {
-                            int result = Match.cupSimulation(clubs[first], clubs[second]);
-                            System.out.println(String.format("%s - %s %d:%d", clubs[first].getName(),
-                                    clubs[second].getName(), result / 100, result % 100));
+            for (int round = 0; round < draw.length; round++) {
+                System.out.println();
+                System.out.println("Matchday " + (round + 1));
+                System.out.println();
 
-                            if (result / 100 > result % 100) {
-                                points[first] += 3;
-                            }
-                            else if (result / 100 < result % 100) {
-                                points[second] += 3;
-                            }
-                            else {
-                                points[first]++;
-                                points[second]++;
-                            }
-                        }
-                        else {
-                            int result = Match.cupSimulation(clubs[second], clubs[first]);
-                            System.out.println(String.format("%s - %s %d:%d", clubs[second].getName(),
-                                    clubs[first].getName(), result / 100, result % 100));
+                for (int game = 0; game < groupSize / 2; game++) {
+                    int home = draw[round][game][0];
+                    int away = draw[round][game][1];
+                    int result = Match.cupSimulation(clubs[home], clubs[away]);
 
-                            if (result / 100 > result % 100) {
-                                points[second] += 3;
-                            }
-                            else if (result / 100 < result % 100) {
-                                points[first] += 3;
-                            }
-                            else {
-                                points[second]++;
-                                points[first]++;
-                            }
-                        }
+                    System.out.println(String.format("%s - %s %d:%d", clubs[home].getName(),
+                            clubs[away].getName(), result / 100, result % 100));
+
+                    if (result / 100 > result % 100) {
+                        points[home] += 3;
+                    }
+                    else if (result / 100 < result % 100) {
+                        points[away] += 3;
+                    }
+                    else {
+                        points[home]++;
+                        points[away]++;
                     }
                 }
             }
