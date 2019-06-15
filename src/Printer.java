@@ -23,7 +23,7 @@ class Printer {
         for (Club[] league : Data.LEAGUES) {
             Map<Integer, Integer> sorted = sortLeague(league);
             for (int team = 0; team < 7; team++) {
-                int index = (Integer) sorted.keySet().toArray()[team];
+                int index = sorted.keySet().toArray(new Integer[0])[team];
                 teams.put(league[index], league[index].getSeason().getLeague().getPoints());
             }
         }
@@ -46,7 +46,7 @@ class Printer {
 
         System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
         for (int i = 0; i < league.length; i++) {
-            Integer index = (Integer) sorted.keySet().toArray()[i];
+            Integer index = sorted.keySet().toArray(new Integer[0])[i];
             goals += league[index].getSeason().getLeague().getScored();
             // TODO: Space adjustments
             System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
@@ -63,7 +63,7 @@ class Printer {
         System.out.println("Average rating for the season: " + Data.RATINGS / (22 * 380));
         System.out.println();
 
-        int first = (Integer) sorted.keySet().toArray()[0];
+        int first = sorted.keySet().toArray(new Integer[0])[0];
 
         if (league[first].getSeason().getLeague().getMatches() == 2 * league.length - 2) {
             league[first].getGlory().addLeague();
@@ -141,23 +141,23 @@ class Printer {
         System.out.println();
         System.out.println("League Winners");
         for (int i = 0; i < sortedLeagues.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagues.keySet().toArray()[i],
-                    sortedLeagues.values().toArray()[i]));
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagues.keySet().toArray(new String[0])[i],
+                    sortedLeagues.values().toArray(new Integer[0])[i]));
         }
 
         System.out.println();
         System.out.println("National Cup Winners");
         for (int i = 0; i < sortedLeagueCups.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedNationalCups.keySet().toArray()[i],
-                    sortedNationalCups.values().toArray()[i]));
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedNationalCups.keySet().toArray(new String[0])[i],
+                    sortedNationalCups.values().toArray(new Integer[0])[i]));
         }
 
         if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
             System.out.println();
             System.out.println("League Cup Winners");
             for (int i = 0; i < sortedLeagueCups.size(); i++) {
-                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray()[i],
-                        sortedLeagueCups.values().toArray()[i]));
+                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray(new String[0])[i],
+                        sortedLeagueCups.values().toArray(new Integer[0])[i]));
             }
         }
     }
@@ -179,8 +179,8 @@ class Printer {
         System.out.println();
         System.out.println("Champions League Winners");
         for (int i = 0; i < sortedTitles.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedTitles.keySet().toArray()[i],
-                    sortedTitles.values().toArray()[i]));
+            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedTitles.keySet().toArray(new String[0])[i],
+                    sortedTitles.values().toArray(new Integer[0])[i]));
         }
     }
 
@@ -231,10 +231,9 @@ class Printer {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
-        // TODO: Sorted values don't match with integer
         for (int i = 0; i < 20 && i < sorted.size(); i++) {
-            System.out.println(String.format("%2d. %-15s %2d", i + 1, sorted.keySet().toArray()[i],
-                    sorted.values().toArray()[i]));
+            System.out.println(String.format("%2d. %-15s %2d", i + 1, sorted.keySet().toArray(new String[0])[i],
+                    sorted.values().toArray(new Integer[0])[i]));
         }
 
         System.out.println();

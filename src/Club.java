@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ class Club {
     private Season season;
 
     Club(int id, String name, int established, Stadium stadium, String location, String league, Glory glory,
-                int reputation, int value, int budget, Owner owner, Coach coach, Set<Footballer> footballers, Season season) {
+                int reputation, int value, int budget, Owner owner, Coach coach) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -31,8 +32,10 @@ class Club {
         this.budget = budget;
         this.owner = owner;
         this.coach = coach;
-        this.footballers = footballers;
-        this.season = season;
+        this.footballers = new HashSet<>();
+        this.season = new Season(
+                new League(0, 0, 0, 0, 0, 0, 0, 0),
+                new Cup(), new Cup(), new ChampionsLeague(), 100, 100);
     }
 
     int getId() {

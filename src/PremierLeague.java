@@ -111,13 +111,15 @@ class PremierLeague {
 
             System.out.println();
             System.out.println("Standings for group " + (char)('A' + group));
+            Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
+            Integer[] rankedPoints = sorted.values().toArray(new Integer[0]);
             for (int team = 0; team < sorted.size(); team++) {
-                Club club = (Club) sorted.keySet().toArray()[team];
+                Club club = rankedTeams[team];
 
                 System.out.println(String.format("%2d. %-25s %d", team + 1, club.getName(),
-                        sorted.values().toArray()[team]));
+                        rankedPoints[team]));
 
-                if (team < advancingPerGroup) advancing[count++] = clubs[team];
+                if (team < advancingPerGroup) advancing[count++] = club;
             }
 
             System.out.println();
