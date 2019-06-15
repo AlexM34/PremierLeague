@@ -9,6 +9,7 @@ class PremierLeague {
     private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
     // TODO: User bets
+    // TODO: Put finals
 
     public static void main(String[] args) {
 //        Data.extractData();
@@ -44,8 +45,8 @@ class PremierLeague {
                 }
             }
 
-            Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2);
-            Club championsLeagueWinner = knockout(advanced);
+            Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2, 2);
+            Club championsLeagueWinner = knockout(advanced, 2);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addContinental();
             for (Footballer footballer : championsLeagueWinner.getFootballers()) {
@@ -59,21 +60,20 @@ class PremierLeague {
         finishSimulation();
     }
 
-    private static Club[] groups(Club[] teams, int groupSize, int games) {
-        // TODO: Teams progressing
-        // TODO: Draw
+    private static Club[] groups(Club[] teams, int groupSize, int advancingPerGroup, int games) {
         Club[] advancing = new Club[2 * teams.length / groupSize];
+        int groups = teams.length / groupSize;
         int count = 0;
 
         int[][][] draw = Draw.makeDraw(groupSize);
-        for (int group = 0; group < teams.length / groupSize; group++) {
+        for (int group = 0; group < groups; group++) {
             System.out.println();
             System.out.println("GROUP " + (char)('A' + group));
             System.out.println();
 
             Club[] clubs = new Club[groupSize];
             int[] points = new int[groupSize];
-            for (int team = 0; team < groupSize; team++) clubs[team] = teams[group * groupSize + team];
+            for (int team = 0; team < groupSize; team++) clubs[team] = teams[groups * team + group];
 
             for (int round = 0; round < draw.length; round++) {
                 System.out.println();
@@ -117,7 +117,7 @@ class PremierLeague {
                 System.out.println(String.format("%2d. %-25s %d", team + 1, club.getName(),
                         sorted.values().toArray()[team]));
 
-                if (team < 2) advancing[count++] = clubs[team];
+                if (team < advancingPerGroup) advancing[count++] = clubs[team];
             }
 
             System.out.println();
@@ -167,9 +167,6 @@ class PremierLeague {
     }
 
     private static Club cup(Club[] league, int teams) {
-        // TODO: Double-legger
-        // TODO: Replay
-        // TODO: Extra time and penalties
         int count = 0;
         Club[] selected = new Club[teams];
         boolean[] playing = new boolean[league.length];
@@ -185,27 +182,29 @@ class PremierLeague {
             }
         }
 
-        return knockout(selected);
+        return knockout(selected, 1);
     }
 
-    private static Club knockout(Club[] selected) {
+    private static Club knockout(Club[] selected, int games) {
         int count = selected.length;
 
         for (int round = 1; round <= Math.sqrt(selected.length); round++) {
             System.out.println();
-            if (count == 4) System.out.println("Semi-finals");
-            else if (count == 2) System.out.println("Final");
-            else System.out.println("Round " + round);
+            switch (count) {
+                case 2: System.out.println("FINAL"); break;
+                case 4: System.out.println("SEMI-FINALS"); break;
+                case 8: System.out.println("QUARTER-FINALS"); break;
+                default: System.out.println("ROUND OF " + count); break;
+            }
+
             System.out.println();
 
             for (int team = 0; team < count / 2; team++) {
                 // TODO: Cup stats should be separate
-                int result = Match.cupSimulation(selected[team], selected[count - team - 1]);
-                System.out.println(String.format("%s - %s %d:%d", selected[team].getName(),
-                        selected[count - team - 1].getName(), result / 100, result % 100));
-
-                if (result / 100 <= result % 100) {
+                if (knockoutFixture(selected[team], selected[count - team - 1], round < Math.sqrt(selected.length)
+                        ? games : 1)) {
                     selected[team] = selected[count - team - 1];
+                    selected[count - team - 1] = null;
                 }
             }
 
@@ -213,6 +212,31 @@ class PremierLeague {
         }
 
         return selected[0];
+    }
+
+    private static boolean knockoutFixture(Club first, Club second, int games) {
+        // TODO: Replay
+        // TODO: Extra time and penalties
+        int firstGoals = 0;
+        int secondGoals = 0;
+        for (int game = 0; game < games; game++) {
+            if (game % 2 == 0) {
+                int result = Match.cupSimulation(first, second);
+                firstGoals += result / 100;
+                secondGoals += result % 100;
+                System.out.println(String.format("%s - %s %d:%d", first.getName(),
+                        second.getName(), result / 100, result % 100));
+            }
+            else {
+                int result = Match.cupSimulation(second, first);
+                secondGoals += result / 100;
+                firstGoals += result % 100;
+                System.out.println(String.format("%s - %s %d:%d", second.getName(),
+                        first.getName(), result / 100, result % 100));
+            }
+        }
+
+        return secondGoals >= firstGoals;
     }
 
     private static void finish(int year) {

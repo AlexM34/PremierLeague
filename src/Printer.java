@@ -1,6 +1,4 @@
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -21,23 +19,25 @@ class Printer {
     }
 
     static Club[] pickChampionsLeagueTeams() {
-        int count = 0;
-        Club[] teams = new Club[32];
+        Map<Club, Integer> teams = new LinkedHashMap<>();
         for (Club[] league : Data.LEAGUES) {
             Map<Integer, Integer> sorted = sortLeague(league);
-            for (int team = 0; team < 6; team++) {
+            for (int team = 0; team < 7; team++) {
                 int index = (Integer) sorted.keySet().toArray()[team];
-                teams[count++] = league[index];
-            }
-
-            if (league[0].getLeague().equals(England.LEAGUE) ||
-                league[0].getLeague().equals(Spain.LEAGUE)) {
-                int index = (Integer) sorted.keySet().toArray()[6];
-                teams[count++] = league[index];
+                teams.put(league[index], league[index].getSeason().getLeague().getPoints());
             }
         }
 
-        return teams;
+        List<Map.Entry<Club, Integer>> toSort = new ArrayList<>(teams.entrySet());
+        toSort.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+        Club[] selected = new Club[32];
+        int limit = 0;
+        for (Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
+            selected[limit] = clubIntegerEntry.getKey();
+            if (limit++ == 31) break;
+        }
+
+        return selected;
     }
 
     static void printStandings(Club[] league) {
