@@ -25,16 +25,16 @@ class Match {
     }
 
     static void leagueSimulation(Club home, Club away) {
-        int result = simulateGame(home, away);
+        int result = simulateGame(home, away, false, -1, -1);
 
         Rater.finalWhistle(home, away, result / 100, result % 100);
     }
 
-    static int cupSimulation(Club home, Club away) {
-        return simulateGame(home, away);
+    static int cupSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
+        return simulateGame(home, away, last, homeGoals, awayGoals);
     }
 
-    private static int simulateGame(Club home, Club away) {
+    private static int simulateGame(Club home, Club away, boolean last, int aggregateHomeGoals, int aggregateAwayGoals) {
         // TODO: Match odds
         // TODO: Bench
         // TODO: Subs
@@ -60,7 +60,8 @@ class Match {
 
         int homeGoals = 0;
         int awayGoals = 0;
-        for (int minute = 1; minute <= 90; minute++) {
+        int extra = 0;
+        for (int minute = 1; minute <= 90 + extra; minute++) {
             // TODO: Add stoppage time
             // TODO: Too many draws
             int r = random.nextInt(1000);
@@ -114,10 +115,60 @@ class Match {
                 System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }
 
+            // TODO: Cup extra time
+            if (minute == 90 && last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
+                    homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
+                System.out.println("Extra time begins!");
+                extra = 30;
+            }
+
 //            System.out.println(balance);
         }
 
+        if (last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
+                homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
+            System.out.println("It's time for the penalty shootout!");
+            boolean homeWin = penaltyShootout(homeSquad, awaySquad);
+            if (homeWin) homeGoals++;
+            else awayGoals++;
+        }
+
         return homeGoals * 100 + awayGoals;
+    }
+
+    private static boolean penaltyShootout(Footballer[] homeSquad, Footballer[] awaySquad) {
+        int homeGoals = 0;
+        int awayGoals = 0;
+        int current = 10;
+        int taken = 0;
+        while(true) {
+            homeGoals += penalty(homeSquad[current], awaySquad[0]);
+            System.out.println(homeGoals + "-" + awayGoals);
+            if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
+
+            awayGoals += penalty(awaySquad[current], homeSquad[0]);
+            System.out.println(homeGoals + "-" + awayGoals);
+            if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
+                    || taken >= 4 && homeGoals != awayGoals) break;
+
+            taken++;
+            current = (current + 10) % 11;
+        }
+
+        return homeGoals > awayGoals;
+    }
+
+    private static int penalty(Footballer taker, Footballer keeper) {
+        // TODO: Use stats
+        System.out.println(taker.getName() + " steps up to take the penalty vs " + keeper.getName());
+        if (random.nextInt(100) < 70) {
+            System.out.println("He scores with a great shot!");
+            return 1;
+        }
+        else {
+            System.out.println("The goalkeeper makes a wonderful save!");
+            return 0;
+        }
     }
 
     private static Footballer[] pickSquad(Club team, boolean isHome) {

@@ -9,7 +9,7 @@ class PremierLeague {
     private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
     // TODO: User bets
-    // TODO: Put finals
+    // TODO: Put final fields
 
     public static void main(String[] args) {
 //        Data.extractData();
@@ -83,7 +83,7 @@ class PremierLeague {
                 for (int game = 0; game < groupSize / 2; game++) {
                     int home = draw[round][game][0];
                     int away = draw[round][game][1];
-                    int result = Match.cupSimulation(clubs[home], clubs[away]);
+                    int result = Match.cupSimulation(clubs[home], clubs[away], false, -1, -1);
 
                     System.out.println(String.format("%s - %s %d:%d", clubs[home].getName(),
                             clubs[away].getName(), result / 100, result % 100));
@@ -216,19 +216,24 @@ class PremierLeague {
 
     private static boolean knockoutFixture(Club first, Club second, int games) {
         // TODO: Replay
-        // TODO: Extra time and penalties
         int firstGoals = 0;
         int secondGoals = 0;
         for (int game = 0; game < games; game++) {
+            boolean last = game + 1 == games;
             if (game % 2 == 0) {
-                int result = Match.cupSimulation(first, second);
+                int result = Match.cupSimulation(first, second, last, -1, -1);
                 firstGoals += result / 100;
                 secondGoals += result % 100;
                 System.out.println(String.format("%s - %s %d:%d", first.getName(),
                         second.getName(), result / 100, result % 100));
             }
             else {
-                int result = Match.cupSimulation(second, first);
+                int result = Match.cupSimulation(second, first, last, secondGoals, firstGoals);
+                if (game == 1 && games == 2) {
+                    if (secondGoals > result % 100) secondGoals++;
+                    else firstGoals++;
+                }
+
                 secondGoals += result / 100;
                 firstGoals += result % 100;
                 System.out.println(String.format("%s - %s %d:%d", second.getName(),
@@ -236,7 +241,7 @@ class PremierLeague {
             }
         }
 
-        return secondGoals >= firstGoals;
+        return secondGoals > firstGoals;
     }
 
     private static void finish(int year) {
