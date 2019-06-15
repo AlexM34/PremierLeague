@@ -52,9 +52,9 @@ class Rater {
         }
     }
 
-    static void goal(int minute, boolean isHome) {
+    static void goal(int minute, int homeGoals, int awayGoals, boolean isHome) {
         int scoring = 30;
-        int assisting = 150;
+        int assisting = 200;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
         Footballer[] squad = isHome ? Match.homeSquad : Match.awaySquad;
@@ -83,7 +83,7 @@ class Rater {
 
         if (goalscorer == null) {
             // TODO: Own goal scorer
-            System.out.println(minute + "' " + "Own goal scored");
+            System.out.println(minute + "' " + "Own goal scored. " + homeGoals + "-" + awayGoals);
         }
         else {
             r = random.nextInt(assisting);
@@ -110,7 +110,7 @@ class Rater {
 
             System.out.println(minute + "' " + goalscorer.getName() +
                     (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
-                            : " scores after a solo run"));
+                            : " scores after a solo run") + ". " + homeGoals + "-" + awayGoals);
         }
     }
 

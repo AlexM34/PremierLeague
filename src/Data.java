@@ -127,7 +127,6 @@ class Data {
         AWAY_WINS = 0;
         RATINGS = 0;
 
-        // TODO: Title odds
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (Club[] league : LEAGUES) {
             for (Club club : league) {

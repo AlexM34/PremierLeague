@@ -35,7 +35,6 @@ class Match {
     }
 
     private static int simulateGame(Club home, Club away, boolean last, int aggregateHomeGoals, int aggregateAwayGoals) {
-        // TODO: Match odds
         // TODO: Bench
         // TODO: Subs
         Rater.kickoff(home, away);
@@ -68,8 +67,8 @@ class Match {
 
             if (r < 10 * balance) {
                 if (r < balance + style - 38) {
-                    Rater.goal(minute, true);
                     homeGoals++;
+                    Rater.goal(minute, homeGoals, awayGoals, true);
                     balance -= 10;
                     Rater.updateRatings(3);
                 } else if (r < 5 * balance) {
@@ -78,8 +77,8 @@ class Match {
                 }
             } else {
                 if (r > 937 + balance - style) {
-                    Rater.goal(minute, false);
                     awayGoals++;
+                    Rater.goal(minute, homeGoals, awayGoals, false);
                     balance += 10;
                     Rater.updateRatings(-3);
                 } else if (r > 999 - 5 * balance) {
@@ -115,7 +114,6 @@ class Match {
                 System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }
 
-            // TODO: Cup extra time
             if (minute == 90 && last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
                     homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
                 System.out.println("Extra time begins!");
@@ -159,7 +157,7 @@ class Match {
     }
 
     private static int penalty(Footballer taker, Footballer keeper) {
-        // TODO: Use stats
+        // TODO: Use stats for penalties
         System.out.println(taker.getName() + " steps up to take the penalty vs " + keeper.getName());
         if (random.nextInt(100) < 70) {
             System.out.println("He scores with a great shot!");

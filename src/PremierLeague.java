@@ -8,7 +8,7 @@ class PremierLeague {
     private static Random random = new Random();
     private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
-    // TODO: User bets
+    // TODO: Betting
     // TODO: Put final fields
 
     public static void main(String[] args) {
@@ -46,6 +46,7 @@ class PremierLeague {
             }
 
             Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2, 2);
+            // TODO: Seeding
             Club championsLeagueWinner = knockout(advanced, 2);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addContinental();
@@ -110,6 +111,7 @@ class PremierLeague {
                             LinkedHashMap::new));
 
             System.out.println();
+            // TODO: More stats
             System.out.println("Standings for group " + (char)('A' + group));
             Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
             Integer[] rankedPoints = sorted.values().toArray(new Integer[0]);
@@ -217,7 +219,7 @@ class PremierLeague {
     }
 
     private static boolean knockoutFixture(Club first, Club second, int games) {
-        // TODO: Replay
+        // TODO: Replay for FA Cup
         int firstGoals = 0;
         int secondGoals = 0;
         for (int game = 0; game < games; game++) {

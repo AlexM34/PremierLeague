@@ -4,7 +4,6 @@ class Draw {
     private static Random random = new Random();
 
     static int[][][] makeDraw(int teams) {
-        // TODO: Games
         int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
         int[] draw = new int[teams];
         boolean[] drawn = new boolean[teams];
