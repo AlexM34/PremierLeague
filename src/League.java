@@ -10,15 +10,15 @@ class League {
     private int conceded;
     private int cleanSheets;
 
-    League(int matches, int points, int wins, int draws, int losses, int scored, int conceded, int cleanSheets) {
-        this.matches = matches;
-        this.points = points;
-        this.wins = wins;
-        this.draws = draws;
-        this.losses = losses;
-        this.scored = scored;
-        this.conceded = conceded;
-        this.cleanSheets = cleanSheets;
+    League() {
+        this.matches = 0;
+        this.points = 0;
+        this.wins = 0;
+        this.draws = 0;
+        this.losses = 0;
+        this.scored = 0;
+        this.conceded = 0;
+        this.cleanSheets = 0;
     }
 
     int getMatches() {

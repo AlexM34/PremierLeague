@@ -3,7 +3,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
-
+    // TODO: Print CL stats
     private static Map<Integer, Integer> sortLeague(Club[] league) {
         Map<Integer, Integer> standings = new LinkedHashMap<>();
         for (int team = 0; team < league.length; team++) {
@@ -45,11 +45,12 @@ class Printer {
         Map<Integer, Integer> sorted = sortLeague(league);
 
         System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
-        for (int i = 0; i < league.length; i++) {
-            Integer index = sorted.keySet().toArray(new Integer[0])[i];
+        for (int team = 0; team < league.length; team++) {
+            Integer index = sorted.keySet().toArray(new Integer[0])[team];
             goals += league[index].getSeason().getLeague().getScored();
             // TODO: Space adjustments
-            System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", i + 1,
+            // TODO: Refactor
+            System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", team + 1,
                     league[index].getName(), league[index].getSeason().getLeague().getMatches(), league[index].getSeason().getLeague().getWins(),
                     league[index].getSeason().getLeague().getDraws(), league[index].getSeason().getLeague().getLosses(),
                     league[index].getSeason().getLeague().getScored(), league[index].getSeason().getLeague().getConceded(),
@@ -97,6 +98,7 @@ class Printer {
                     cleanSheets.put(name, f.getResume().getSeason().getLeague().getCleanSheets());
                 }
 
+                // TODO: Remove printing
                 if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
                     System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
                 }

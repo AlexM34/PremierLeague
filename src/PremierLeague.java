@@ -45,7 +45,11 @@ class PremierLeague {
                 }
             }
 
-            Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2);
+            Data.CHAMPIONS_LEAGUE = Printer.pickChampionsLeagueTeams();
+            for (Club team : Data.CHAMPIONS_LEAGUE) {
+                team.getSeason().getChampionsLeague().setAlive(true);
+            }
+            Club[] advanced = groups(Data.CHAMPIONS_LEAGUE, 4, 2);
             Club[] drawn = Draw.championsLeague(advanced);
             Club championsLeagueWinner = knockout(drawn, 2);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
@@ -73,7 +77,6 @@ class PremierLeague {
             System.out.println();
 
             Club[] clubs = new Club[groupSize];
-            int[] points = new int[groupSize];
             for (int team = 0; team < groupSize; team++) clubs[team] = teams[groups * team + group];
 
             for (int round = 0; round < draw.length; round++) {
@@ -85,25 +88,47 @@ class PremierLeague {
                     int home = draw[round][game][0];
                     int away = draw[round][game][1];
                     int result = Match.cupSimulation(clubs[home], clubs[away], false, -1, -1);
+                    int homeGoals = result / 100;
+                    int awayGoals = result % 100;
 
                     System.out.println(String.format("%s - %s %d:%d", clubs[home].getName(),
-                            clubs[away].getName(), result / 100, result % 100));
+                            clubs[away].getName(), homeGoals, awayGoals));
 
                     if (result / 100 > result % 100) {
-                        points[home] += 3;
+                        clubs[home].getSeason().getChampionsLeague().getGroup().addPoints(3);
+                        clubs[home].getSeason().getChampionsLeague().getGroup().addWin();
+                        clubs[away].getSeason().getChampionsLeague().getGroup().addLoss();
                     }
                     else if (result / 100 < result % 100) {
-                        points[away] += 3;
+                        clubs[away].getSeason().getChampionsLeague().getGroup().addPoints(3);
+                        clubs[away].getSeason().getChampionsLeague().getGroup().addWin();
+                        clubs[home].getSeason().getChampionsLeague().getGroup().addLoss();
                     }
                     else {
-                        points[home]++;
-                        points[away]++;
+                        clubs[home].getSeason().getChampionsLeague().getGroup().addPoints(1);
+                        clubs[away].getSeason().getChampionsLeague().getGroup().addPoints(1);
+                        clubs[home].getSeason().getChampionsLeague().getGroup().addDraw();
+                        clubs[away].getSeason().getChampionsLeague().getGroup().addDraw();
                     }
+
+                    if (awayGoals == 0) clubs[home].getSeason().getChampionsLeague().getGroup().addCleanSheet();
+                    if (homeGoals == 0) clubs[away].getSeason().getChampionsLeague().getGroup().addCleanSheet();
+
+                    clubs[home].getSeason().getChampionsLeague().getGroup().addMatch();
+                    clubs[away].getSeason().getChampionsLeague().getGroup().addMatch();
+                    clubs[home].getSeason().getChampionsLeague().getGroup().addScored(homeGoals);
+                    clubs[away].getSeason().getChampionsLeague().getGroup().addScored(awayGoals);
+                    clubs[home].getSeason().getChampionsLeague().getGroup().addConceded(awayGoals);
+                    clubs[away].getSeason().getChampionsLeague().getGroup().addConceded(homeGoals);
                 }
             }
 
             Map<Club, Integer> standing = new LinkedHashMap<>();
-            for (int team = 0; team < groupSize; team++) standing.put(clubs[team], points[team]);
+            for (int team = 0; team < groupSize; team++) standing.put(clubs[team],
+                    10000 * clubs[team].getSeason().getChampionsLeague().getGroup().getPoints() +
+                    100 * (clubs[team].getSeason().getChampionsLeague().getGroup().getScored() -
+                           clubs[team].getSeason().getChampionsLeague().getGroup().getConceded()) +
+                    clubs[team].getSeason().getChampionsLeague().getGroup().getScored());
 
             Map<Club, Integer> sorted = standing.entrySet().stream().sorted(
                     Collections.reverseOrder(Map.Entry.comparingByValue()))
@@ -111,15 +136,16 @@ class PremierLeague {
                             LinkedHashMap::new));
 
             System.out.println();
-            // TODO: More stats
             System.out.println("Standings for group " + (char)('A' + group));
+            System.out.println("No  Teams                     G  W  D  L  GF:GA  P");
             Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
-            Integer[] rankedPoints = sorted.values().toArray(new Integer[0]);
             for (int team = 0; team < sorted.size(); team++) {
                 Club club = rankedTeams[team];
+                League groupStats = club.getSeason().getChampionsLeague().getGroup();
 
-                System.out.println(String.format("%2d. %-25s %d", team + 1, club.getName(),
-                        rankedPoints[team]));
+                System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %2d:%-2d %2d", team + 1, club.getName(),
+                        groupStats.getMatches(), groupStats.getWins(), groupStats.getDraws(), groupStats.getLosses(),
+                        groupStats.getScored(), groupStats.getConceded(), groupStats.getPoints()));
 
                 if (team < advancingPerGroup) advancing[count++] = club;
             }
@@ -204,7 +230,6 @@ class PremierLeague {
             System.out.println();
 
             for (int team = 0; team < count / 2; team++) {
-                // TODO: Cup stats should be separate
                 if (knockoutFixture(selected[team], selected[count - team - 1], round < Math.sqrt(selected.length)
                         ? games : 1)) {
                     selected[team] = selected[count - team - 1];
@@ -233,13 +258,14 @@ class PremierLeague {
             }
             else {
                 int result = Match.cupSimulation(second, first, last, secondGoals, firstGoals);
-                if (game == 1 && games == 2) {
-                    if (secondGoals > result % 100) secondGoals++;
-                    else firstGoals++;
-                }
-
                 secondGoals += result / 100;
                 firstGoals += result % 100;
+
+                if (game == 1 && games == 2 && firstGoals == secondGoals) {
+                    if (result % 11 > firstGoals) firstGoals++;
+                    else secondGoals++;
+                }
+
                 System.out.println(String.format("%s - %s %d:%d", second.getName(),
                         first.getName(), result / 100, result % 100));
             }

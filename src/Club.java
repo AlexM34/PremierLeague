@@ -33,9 +33,7 @@ class Club {
         this.owner = owner;
         this.coach = coach;
         this.footballers = new HashSet<>();
-        this.season = new Season(
-                new League(0, 0, 0, 0, 0, 0, 0, 0),
-                new Cup(), new Cup(), new ChampionsLeague(), 100, 100);
+        this.season = new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100);
     }
 
     int getId() {

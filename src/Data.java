@@ -5,6 +5,7 @@ class Data {
     // TODO: Put spaces for players
     // TODO: Add logos
     static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
+    static Club[] CHAMPIONS_LEAGUE = new Club[32];
     static int FANS = 5;
     static int HOME_WINS;
     static int AWAY_WINS;
@@ -116,8 +117,7 @@ class Data {
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (Club[] league : LEAGUES) {
             for (Club club : league) {
-                club.setSeason(new Season(new League(0, 0, 0, 0, 0, 0, 0,0),
-                        new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
+                club.setSeason(new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
                 for (Footballer f : club.getFootballers()) {
                     updateCareerStats(f);

@@ -1,6 +1,7 @@
 import java.util.Objects;
 
 class Glory {
+    // TODO: Player stats
     private int continental;
     private int league;
     private int nationalCup;
