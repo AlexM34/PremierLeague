@@ -86,18 +86,18 @@ class Printer {
             for (Footballer f : league[team].getFootballers()) {
                 String name = f.getName();
 
-                if (f.getResume().getSeason().getMatches() > 20) ratings.put(name, f.getResume().getSeason().getRating());
-                motm.put(name, f.getResume().getSeason().getMotmAwards());
-                goals.put(name, f.getResume().getSeason().getGoals());
-                assists.put(name, f.getResume().getSeason().getAssists());
-                yellowCards.put(name, f.getResume().getSeason().getYellowCards());
-                redCards.put(name, f.getResume().getSeason().getRedCards());
+                if (f.getResume().getSeason().getLeague().getMatches() > 20) ratings.put(name, f.getResume().getSeason().getLeague().getRating());
+                motm.put(name, f.getResume().getSeason().getLeague().getMotmAwards());
+                goals.put(name, f.getResume().getSeason().getLeague().getGoals());
+                assists.put(name, f.getResume().getSeason().getLeague().getAssists());
+                yellowCards.put(name, f.getResume().getSeason().getLeague().getYellowCards());
+                redCards.put(name, f.getResume().getSeason().getLeague().getRedCards());
 
                 if (f.getPosition() == Position.GK) {
-                    cleanSheets.put(name, f.getResume().getSeason().getCleanSheets());
+                    cleanSheets.put(name, f.getResume().getSeason().getLeague().getCleanSheets());
                 }
 
-                if (team < 6 && f.getResume().getSeason().getMatches() > 0) {
+                if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
                     System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
                 }
             }
@@ -197,18 +197,18 @@ class Printer {
             for (Footballer f : league[team].getFootballers()) {
                 String name = f.getName();
 
-                if (f.getResume().getTotal().getMatches() > 100) {
-                    ratings.put(name, f.getResume().getTotal().getRating());
+                if (f.getResume().getTotal().getLeague().getMatches() > 100) {
+                    ratings.put(name, f.getResume().getTotal().getLeague().getRating());
                 }
 
-                motm.put(name, f.getResume().getTotal().getMotmAwards());
-                goals.put(name, f.getResume().getTotal().getGoals());
-                assists.put(name, f.getResume().getTotal().getAssists());
-                yellowCards.put(name, f.getResume().getTotal().getYellowCards());
-                redCards.put(name, f.getResume().getTotal().getRedCards());
+                motm.put(name, f.getResume().getTotal().getLeague().getMotmAwards());
+                goals.put(name, f.getResume().getTotal().getLeague().getGoals());
+                assists.put(name, f.getResume().getTotal().getLeague().getAssists());
+                yellowCards.put(name, f.getResume().getTotal().getLeague().getYellowCards());
+                redCards.put(name, f.getResume().getTotal().getLeague().getRedCards());
 
                 if (f.getPosition() == Position.GK) {
-                    cleanSheets.put(name, f.getResume().getTotal().getCleanSheets());
+                    cleanSheets.put(name, f.getResume().getTotal().getLeague().getCleanSheets());
                 }
 
                 if (team < 6) System.out.println(String.format("%s %s", name, f.toString()));

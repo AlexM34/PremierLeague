@@ -12,9 +12,9 @@ class PreSeason {
                     if (f.getNumber() > 100) continue;
                     int r = random.nextInt(2);
                     if (r == 0) {
-                        if (f.getResume().getSeason().getRating() > 750) {
+                        if (f.getResume().getSeason().getLeague().getRating() > 750) {
                             improve(f);
-                        } else if (f.getResume().getSeason().getRating() < 650) {
+                        } else if (f.getResume().getSeason().getLeague().getRating() < 650) {
                             decline(f);
                         }
                     }

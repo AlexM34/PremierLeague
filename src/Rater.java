@@ -76,7 +76,7 @@ class Rater {
 
                 (isHome ? homeRatings : awayRatings)[player] += rating;
 
-                squad[player].getResume().getSeason().addGoals(1);
+                squad[player].getResume().getSeason().getLeague().addGoals(1);
                 break;
             }
         }
@@ -101,7 +101,7 @@ class Rater {
 
                         (isHome ? homeRatings : awayRatings)[player] += rating;
 
-                        squad[player].getResume().getSeason().addAssists(1);
+                        squad[player].getResume().getSeason().getLeague().addAssists(1);
                     }
 
                     break;
@@ -148,8 +148,8 @@ class Rater {
         boolean motmHomeTeam = true;
         int motmPlayer = -1;
         float motmRating = 0;
-        Match.homeSquad[0].getResume().getSeason().addCleanSheets(awayGoals == 0 ? 1 : 0);
-        Match.awaySquad[0].getResume().getSeason().addCleanSheets(homeGoals == 0 ? 1 : 0);
+        Match.homeSquad[0].getResume().getSeason().getLeague().addCleanSheets(awayGoals == 0 ? 1 : 0);
+        Match.awaySquad[0].getResume().getSeason().getLeague().addCleanSheets(homeGoals == 0 ? 1 : 0);
 
         for (int player = 0; player < 11; player++) {
             homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
@@ -159,8 +159,8 @@ class Rater {
                 motmPlayer = player;
                 motmRating = homeRatings[player];
             }
-            Match.homeSquad[player].getResume().getSeason().addRating((int) homeRatings[player] * 100, 1);
-            Match.homeSquad[player].getResume().getSeason().addMatches(1);
+            Match.homeSquad[player].getResume().getSeason().getLeague().addRating((int) homeRatings[player] * 100, 1);
+            Match.homeSquad[player].getResume().getSeason().getLeague().addMatches(1);
             Match.homeSquad[player].changeCondition(-15);
 
             awayRatings[player] = awayRatings[player] < 10 ? awayRatings[player] : 10;
@@ -170,14 +170,14 @@ class Rater {
                 motmPlayer = player;
                 motmRating = awayRatings[player];
             }
-            Match.awaySquad[player].getResume().getSeason().addRating((int) awayRatings[player] * 100, 1);
-            Match.awaySquad[player].getResume().getSeason().addMatches(1);
+            Match.awaySquad[player].getResume().getSeason().getLeague().addRating((int) awayRatings[player] * 100, 1);
+            Match.awaySquad[player].getResume().getSeason().getLeague().addMatches(1);
             Match.awaySquad[player].changeCondition(-15);
 
             Data.RATINGS += homeRatings[player] + awayRatings[player];
         }
 
-        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().addMotmAwards(1);
+        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getLeague().addMotmAwards(1);
 
         if (awayGoals == 0) home.getSeason().getLeague().addCleanSheet();
         if (homeGoals == 0) away.getSeason().getLeague().addCleanSheet();

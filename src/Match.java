@@ -54,8 +54,9 @@ class Match {
 
         if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE;
         style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100)  / 10;
+        System.out.println();
         System.out.println(balance);
-        System.out.println(style);
+//        System.out.println(style);
 
         int homeGoals = 0;
         int awayGoals = 0;
@@ -96,7 +97,7 @@ class Match {
                     bookings[t][p]++;
                     balance += 10 * t - 5;
                     (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 0.5;
-                    (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().addYellowCards(1);
+                    (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().getLeague().addYellowCards(1);
                     System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
                 }
             }
@@ -109,7 +110,7 @@ class Match {
                 bookings[t][p] = 2;
                 balance += 30 * t - 15;
                 (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
-                (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().addRedCards(1);
+                (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().getLeague().addRedCards(1);
                 (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-35);
                 System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }

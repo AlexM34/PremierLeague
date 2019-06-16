@@ -3,7 +3,7 @@ import java.util.Random;
 class Draw {
     private static Random random = new Random();
 
-    static int[][][] makeDraw(int teams) {
+    static int[][][] league(int teams) {
         int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
         int[] draw = new int[teams];
         boolean[] drawn = new boolean[teams];
@@ -50,5 +50,33 @@ class Draw {
         }
 
         return schedule;
+    }
+
+    static Club[] championsLeague(Club[] advanced) {
+        int teams = advanced.length;
+        Club[] draw = new Club[teams];
+        boolean[] drawn = new boolean[teams];
+        for (int team = 0; team < teams; team++) {
+//            System.out.println(team + advanced[team].getName());
+            int r = random.nextInt(teams / 2 - team / 2);
+            int current = team % 2 == 0 ? 8 : 0;
+
+            while (true) {
+                if (!drawn[current]) {
+                    if (r == 0) {
+                        drawn[current] = true;
+                        draw[current] = advanced[team];
+//                        System.out.println("Draws " + current);
+                        break;
+                    }
+
+                    r--;
+                }
+
+                current++;
+            }
+        }
+
+        return draw;
     }
 }

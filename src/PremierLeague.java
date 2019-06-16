@@ -19,7 +19,7 @@ class PremierLeague {
             Data.prepare(year);
 //            pickTeam();
             Map<Club[], int[][][]> draw = new HashMap<>();
-            for (Club[] league : Data.LEAGUES) draw.put(league, Draw.makeDraw(league.length));
+            for (Club[] league : Data.LEAGUES) draw.put(league, Draw.league(league.length));
 
             for (int round = 0; round < 38; round ++) {
                 for (Club[] league : Data.LEAGUES) {
@@ -45,9 +45,9 @@ class PremierLeague {
                 }
             }
 
-            Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2, 2);
-            // TODO: Seeding
-            Club championsLeagueWinner = knockout(advanced, 2);
+            Club[] advanced = groups(Printer.pickChampionsLeagueTeams(), 4, 2);
+            Club[] drawn = Draw.championsLeague(advanced);
+            Club championsLeagueWinner = knockout(drawn, 2);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addContinental();
             for (Footballer footballer : championsLeagueWinner.getFootballers()) {
@@ -61,12 +61,12 @@ class PremierLeague {
         finishSimulation();
     }
 
-    private static Club[] groups(Club[] teams, int groupSize, int advancingPerGroup, int games) {
+    private static Club[] groups(Club[] teams, int groupSize, int advancingPerGroup) {
         Club[] advancing = new Club[2 * teams.length / groupSize];
         int groups = teams.length / groupSize;
         int count = 0;
 
-        int[][][] draw = Draw.makeDraw(groupSize);
+        int[][][] draw = Draw.league(groupSize);
         for (int group = 0; group < groups; group++) {
             System.out.println();
             System.out.println("GROUP " + (char)('A' + group));
