@@ -31,6 +31,7 @@ class Match {
     }
 
     static int cupSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
+        // TODO: Record stats
         return simulateGame(home, away, last, homeGoals, awayGoals);
     }
 

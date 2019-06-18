@@ -8,7 +8,6 @@ class PremierLeague {
     private static Random random = new Random();
     private static Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
-    // TODO: Betting
     // TODO: Put final fields
 
     public static void main(String[] args) {
@@ -57,6 +56,7 @@ class PremierLeague {
             for (Footballer footballer : championsLeagueWinner.getFootballers()) {
                 footballer.getResume().getGlory().addContinental();
             }
+            Printer.continentalPlayerStats(Data.CHAMPIONS_LEAGUE);
 
             finish(year);
             PreSeason.changes();
@@ -90,36 +90,38 @@ class PremierLeague {
                     int result = Match.cupSimulation(clubs[home], clubs[away], false, -1, -1);
                     int homeGoals = result / 100;
                     int awayGoals = result % 100;
+                    League homeStats = clubs[home].getSeason().getChampionsLeague().getGroup();
+                    League awayStats = clubs[home].getSeason().getChampionsLeague().getGroup();
 
                     System.out.println(String.format("%s - %s %d:%d", clubs[home].getName(),
                             clubs[away].getName(), homeGoals, awayGoals));
 
                     if (result / 100 > result % 100) {
-                        clubs[home].getSeason().getChampionsLeague().getGroup().addPoints(3);
-                        clubs[home].getSeason().getChampionsLeague().getGroup().addWin();
-                        clubs[away].getSeason().getChampionsLeague().getGroup().addLoss();
+                        homeStats.addPoints(3);
+                        homeStats.addWin();
+                        awayStats.addLoss();
                     }
                     else if (result / 100 < result % 100) {
-                        clubs[away].getSeason().getChampionsLeague().getGroup().addPoints(3);
-                        clubs[away].getSeason().getChampionsLeague().getGroup().addWin();
-                        clubs[home].getSeason().getChampionsLeague().getGroup().addLoss();
+                        awayStats.addPoints(3);
+                        awayStats.addWin();
+                        homeStats.addLoss();
                     }
                     else {
-                        clubs[home].getSeason().getChampionsLeague().getGroup().addPoints(1);
-                        clubs[away].getSeason().getChampionsLeague().getGroup().addPoints(1);
-                        clubs[home].getSeason().getChampionsLeague().getGroup().addDraw();
-                        clubs[away].getSeason().getChampionsLeague().getGroup().addDraw();
+                        homeStats.addPoints(1);
+                        awayStats.addPoints(1);
+                        homeStats.addDraw();
+                        awayStats.addDraw();
                     }
 
-                    if (awayGoals == 0) clubs[home].getSeason().getChampionsLeague().getGroup().addCleanSheet();
-                    if (homeGoals == 0) clubs[away].getSeason().getChampionsLeague().getGroup().addCleanSheet();
+                    if (awayGoals == 0) homeStats.addCleanSheet();
+                    if (homeGoals == 0) awayStats.addCleanSheet();
 
-                    clubs[home].getSeason().getChampionsLeague().getGroup().addMatch();
-                    clubs[away].getSeason().getChampionsLeague().getGroup().addMatch();
-                    clubs[home].getSeason().getChampionsLeague().getGroup().addScored(homeGoals);
-                    clubs[away].getSeason().getChampionsLeague().getGroup().addScored(awayGoals);
-                    clubs[home].getSeason().getChampionsLeague().getGroup().addConceded(awayGoals);
-                    clubs[away].getSeason().getChampionsLeague().getGroup().addConceded(homeGoals);
+                    homeStats.addMatch();
+                    awayStats.addMatch();
+                    homeStats.addScored(homeGoals);
+                    awayStats.addScored(awayGoals);
+                    homeStats.addConceded(awayGoals);
+                    awayStats.addConceded(homeGoals);
                 }
             }
 
@@ -192,7 +194,7 @@ class PremierLeague {
 
         System.out.println();
         System.out.println(String.format("Standings after round %d:", round + 1));
-        Printer.printStandings(league);
+        Printer.standings(league);
         System.out.println();
     }
 
@@ -276,16 +278,16 @@ class PremierLeague {
 
     private static void finish(int year) {
         for (Club[] league : Data.LEAGUES) {
-            Printer.printPlayerStats(league);
+            Printer.playerStats(league);
             System.out.println("FINAL STANDINGS");
-            Printer.printStandings(league);
-            Printer.printAllTimeStats(league);
+            Printer.standings(league);
+            Printer.allTimeStats(league);
             System.out.println();
             // TODO: Rate simulation with review
             System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
         }
 
-        Printer.printChampionsLeagueStats();
+        Printer.continentalStats();
         System.out.println("DUMMIES");
         System.out.println(Data.DEFENDER_1.getResume().getSeason());
         System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
@@ -297,6 +299,6 @@ class PremierLeague {
 
     private static void finishSimulation() {
         Data.prepare(10);
-        for (Club[] league : Data.LEAGUES) Printer.printAllTimePlayerStats(league);
+        for (Club[] league : Data.LEAGUES) Printer.allTimePlayerStats(league);
     }
 }

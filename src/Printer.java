@@ -3,7 +3,6 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
-    // TODO: Print CL stats
     private static Map<Integer, Integer> sortLeague(Club[] league) {
         Map<Integer, Integer> standings = new LinkedHashMap<>();
         for (int team = 0; team < league.length; team++) {
@@ -40,21 +39,19 @@ class Printer {
         return selected;
     }
 
-    static void printStandings(Club[] league) {
+    static void standings(Club[] league) {
         int goals = 0;
         Map<Integer, Integer> sorted = sortLeague(league);
 
         System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
         for (int team = 0; team < league.length; team++) {
             Integer index = sorted.keySet().toArray(new Integer[0])[team];
-            goals += league[index].getSeason().getLeague().getScored();
+            League stats = league[index].getSeason().getLeague();
+            goals += stats.getScored();
             // TODO: Space adjustments
-            // TODO: Refactor
             System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", team + 1,
-                    league[index].getName(), league[index].getSeason().getLeague().getMatches(), league[index].getSeason().getLeague().getWins(),
-                    league[index].getSeason().getLeague().getDraws(), league[index].getSeason().getLeague().getLosses(),
-                    league[index].getSeason().getLeague().getScored(), league[index].getSeason().getLeague().getConceded(),
-                    league[index].getSeason().getLeague().getPoints()));
+                    league[index].getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
+                    stats.getScored(), stats.getConceded(), stats.getPoints()));
         }
         System.out.println();
         System.out.println("Total goals for the season: " + goals + " // 1072");
@@ -74,7 +71,7 @@ class Printer {
         }
     }
 
-    static void printPlayerStats(Club[] league) {
+    static void playerStats(Club[] league) {
         Map<String, Integer> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
@@ -83,25 +80,25 @@ class Printer {
         Map<String, Integer> yellowCards = new LinkedHashMap<>();
         Map<String, Integer> redCards = new LinkedHashMap<>();
 
-        for (int team = 0; team < league.length; team++) {
-            for (Footballer f : league[team].getFootballers()) {
+        for (Club club : league) {
+            for (Footballer f : club.getFootballers()) {
                 String name = f.getName();
+                Competition stats = f.getResume().getSeason().getLeague();
 
-                if (f.getResume().getSeason().getLeague().getMatches() > 20) ratings.put(name, f.getResume().getSeason().getLeague().getRating());
-                motm.put(name, f.getResume().getSeason().getLeague().getMotmAwards());
-                goals.put(name, f.getResume().getSeason().getLeague().getGoals());
-                assists.put(name, f.getResume().getSeason().getLeague().getAssists());
-                yellowCards.put(name, f.getResume().getSeason().getLeague().getYellowCards());
-                redCards.put(name, f.getResume().getSeason().getLeague().getRedCards());
+                if (stats.getMatches() > 20) ratings.put(name, stats.getRating());
+                motm.put(name, stats.getMotmAwards());
+                goals.put(name, stats.getGoals());
+                assists.put(name, stats.getAssists());
+                yellowCards.put(name, stats.getYellowCards());
+                redCards.put(name, stats.getRedCards());
 
                 if (f.getPosition() == Position.GK) {
                     cleanSheets.put(name, f.getResume().getSeason().getLeague().getCleanSheets());
                 }
 
-                // TODO: Remove printing
-                if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
-                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
-                }
+//                if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
+//                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+//                }
             }
         }
 
@@ -114,7 +111,48 @@ class Printer {
         topPlayers(redCards, "Most Red Cards");
     }
 
-    static void printAllTimeStats(Club[] league) {
+    static void continentalPlayerStats(Club[] league) {
+        // TODO: Refactor duplicate code
+        Map<String, Integer> ratings = new LinkedHashMap<>();
+        Map<String, Integer> motm = new LinkedHashMap<>();
+        Map<String, Integer> goals = new LinkedHashMap<>();
+        Map<String, Integer> assists = new LinkedHashMap<>();
+        Map<String, Integer> cleanSheets = new LinkedHashMap<>();
+        Map<String, Integer> yellowCards = new LinkedHashMap<>();
+        Map<String, Integer> redCards = new LinkedHashMap<>();
+
+        for (Club club : league) {
+            for (Footballer f : club.getFootballers()) {
+                String name = f.getName();
+                Competition stats = f.getResume().getSeason().getContinental();
+
+                if (stats.getMatches() > 20) ratings.put(name, stats.getRating());
+                motm.put(name, stats.getMotmAwards());
+                goals.put(name, stats.getGoals());
+                assists.put(name, stats.getAssists());
+                yellowCards.put(name, stats.getYellowCards());
+                redCards.put(name, stats.getRedCards());
+
+                if (f.getPosition() == Position.GK) {
+                    cleanSheets.put(name, f.getResume().getSeason().getLeague().getCleanSheets());
+                }
+
+//                if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
+//                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
+//                }
+            }
+        }
+
+        topPlayers(ratings, "Top Players");
+        topPlayers(motm, "Most MOTM Awards");
+        topPlayers(goals, "Top Goalscorer");
+        topPlayers(assists, "Most Assists");
+        topPlayers(cleanSheets, "Most Clean Sheets");
+        topPlayers(yellowCards, "Most Yellow Cards");
+        topPlayers(redCards, "Most Red Cards");
+    }
+
+    static void allTimeStats(Club[] league) {
         Map<String, Integer> leagues = new LinkedHashMap<>();
         Map<String, Integer> nationalCups = new LinkedHashMap<>();
         Map<String, Integer> leagueCups = new LinkedHashMap<>();
@@ -164,7 +202,7 @@ class Printer {
         }
     }
 
-    static void printChampionsLeagueStats() {
+    static void continentalStats() {
         Map<String, Integer> titles = new LinkedHashMap<>();
 
         for (Club[] league : Data.LEAGUES) {
@@ -186,7 +224,7 @@ class Printer {
         }
     }
 
-    static void printAllTimePlayerStats(Club[] league) {
+    static void allTimePlayerStats(Club[] league) {
         Map<String, Integer> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
@@ -198,19 +236,20 @@ class Printer {
         for (int team = 0; team < league.length; team++) {
             for (Footballer f : league[team].getFootballers()) {
                 String name = f.getName();
+                Competition stats = f.getResume().getSeason().getLeague();
 
                 if (f.getResume().getTotal().getLeague().getMatches() > 100) {
                     ratings.put(name, f.getResume().getTotal().getLeague().getRating());
                 }
 
-                motm.put(name, f.getResume().getTotal().getLeague().getMotmAwards());
-                goals.put(name, f.getResume().getTotal().getLeague().getGoals());
-                assists.put(name, f.getResume().getTotal().getLeague().getAssists());
-                yellowCards.put(name, f.getResume().getTotal().getLeague().getYellowCards());
-                redCards.put(name, f.getResume().getTotal().getLeague().getRedCards());
+                motm.put(name, stats.getMotmAwards());
+                goals.put(name, stats.getGoals());
+                assists.put(name, stats.getAssists());
+                yellowCards.put(name, stats.getYellowCards());
+                redCards.put(name, stats.getRedCards());
 
                 if (f.getPosition() == Position.GK) {
-                    cleanSheets.put(name, f.getResume().getTotal().getLeague().getCleanSheets());
+                    cleanSheets.put(name, stats.getCleanSheets());
                 }
 
                 if (team < 6) System.out.println(String.format("%s %s", name, f.toString()));

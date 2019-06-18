@@ -1,5 +1,4 @@
 class Spain {
-    // TODO: Enter details
     static String LEAGUE = "La Liga";
     private static Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static Owner OWNER = new Owner(1, "", "", 100, 100);
