@@ -41,6 +41,7 @@ class Competition {
         this.goals = 0;
     }
 
+    // TODO: Remove parameter for goals and assists
     void addGoals(int goals) {
         this.goals += goals;
     }

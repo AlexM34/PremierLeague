@@ -27,12 +27,21 @@ class Match {
     static void leagueSimulation(Club home, Club away) {
         int result = simulateGame(home, away, false, -1, -1);
 
-        Rater.finalWhistle(home, away, result / 100, result % 100);
+        Rater.leagueFinalWhistle(home, away, result / 100, result % 100);
     }
 
     static int cupSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
-        // TODO: Record stats
-        return simulateGame(home, away, last, homeGoals, awayGoals);
+        int result = simulateGame(home, away, last, homeGoals, awayGoals);
+
+        Rater.cupFinalWhistle(home, away, result / 100, result % 100);
+        return result;
+    }
+
+    static int continentalSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
+        int result = simulateGame(home, away, last, homeGoals, awayGoals);
+
+        Rater.continentalFinalWhistle(home, away, result / 100, result % 100);
+        return result;
     }
 
     private static int simulateGame(Club home, Club away, boolean last, int aggregateHomeGoals, int aggregateAwayGoals) {
@@ -44,6 +53,8 @@ class Match {
         bookings = new int[2][11];
 
         // TODO: Separate variables for scoring
+        // TODO: Red card effect
+        // TODO: Finals are played on neutral stadium
         int balance = Data.FANS + 100 *
                 (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() * 2 +
                  Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) /
@@ -137,6 +148,7 @@ class Match {
     }
 
     private static boolean penaltyShootout(Footballer[] homeSquad, Footballer[] awaySquad) {
+        // TODO: Red-carded players are off
         int homeGoals = 0;
         int awayGoals = 0;
         int current = 10;

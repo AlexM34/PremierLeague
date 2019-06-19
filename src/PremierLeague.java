@@ -87,14 +87,11 @@ class PremierLeague {
                 for (int game = 0; game < groupSize / 2; game++) {
                     int home = draw[round][game][0];
                     int away = draw[round][game][1];
-                    int result = Match.cupSimulation(clubs[home], clubs[away], false, -1, -1);
+                    int result = Match.continentalSimulation(clubs[home], clubs[away], false, -1, -1);
                     int homeGoals = result / 100;
                     int awayGoals = result % 100;
                     League homeStats = clubs[home].getSeason().getChampionsLeague().getGroup();
                     League awayStats = clubs[home].getSeason().getChampionsLeague().getGroup();
-
-                    System.out.println(String.format("%s - %s %d:%d", clubs[home].getName(),
-                            clubs[away].getName(), homeGoals, awayGoals));
 
                     if (result / 100 > result % 100) {
                         homeStats.addPoints(3);
@@ -251,15 +248,16 @@ class PremierLeague {
         int secondGoals = 0;
         for (int game = 0; game < games; game++) {
             boolean last = game + 1 == games;
+            int result;
             if (game % 2 == 0) {
-                int result = Match.cupSimulation(first, second, last, -1, -1);
+                // TODO: Refactor simulations
+                if (games == 1) result = Match.cupSimulation(first, second, last, -1, -1);
+                else result = Match.continentalSimulation(first, second, last, -1, -1);
                 firstGoals += result / 100;
                 secondGoals += result % 100;
-                System.out.println(String.format("%s - %s %d:%d", first.getName(),
-                        second.getName(), result / 100, result % 100));
             }
             else {
-                int result = Match.cupSimulation(second, first, last, secondGoals, firstGoals);
+                result = Match.continentalSimulation(second, first, last, secondGoals, firstGoals);
                 secondGoals += result / 100;
                 firstGoals += result % 100;
 
@@ -267,9 +265,6 @@ class PremierLeague {
                     if (result % 11 > firstGoals) firstGoals++;
                     else secondGoals++;
                 }
-
-                System.out.println(String.format("%s - %s %d:%d", second.getName(),
-                        first.getName(), result / 100, result % 100));
             }
         }
 

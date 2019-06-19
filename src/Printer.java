@@ -113,6 +113,7 @@ class Printer {
 
     static void continentalPlayerStats(Club[] league) {
         // TODO: Refactor duplicate code
+        // TODO: Cup stats
         Map<String, Integer> ratings = new LinkedHashMap<>();
         Map<String, Integer> motm = new LinkedHashMap<>();
         Map<String, Integer> goals = new LinkedHashMap<>();
@@ -132,14 +133,11 @@ class Printer {
                 assists.put(name, stats.getAssists());
                 yellowCards.put(name, stats.getYellowCards());
                 redCards.put(name, stats.getRedCards());
+                // TODO: Record bookings
 
                 if (f.getPosition() == Position.GK) {
-                    cleanSheets.put(name, f.getResume().getSeason().getLeague().getCleanSheets());
+                    cleanSheets.put(name, f.getResume().getSeason().getContinental().getCleanSheets());
                 }
-
-//                if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
-//                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
-//                }
             }
         }
 
