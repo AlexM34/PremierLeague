@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -8,6 +10,8 @@ class Rater {
     static float[] awayRatings = new float[11];
     private static Footballer[] goalscorers = new Footballer[20];
     private static Footballer[] assistmakers = new Footballer[20];
+    static Queue<Footballer> yellows = new LinkedList<>();
+    static Queue<Footballer> reds = new LinkedList<>();
 
     static void kickoff(Club home, Club away) {
         for (Footballer f : home.getFootballers()) {
@@ -34,6 +38,8 @@ class Rater {
             goalscorers[player] = null;
             assistmakers[player] = null;
         });
+
+        yellows = new LinkedList<>();
     }
     static void updateRatings(int scale) {
         int home = random.nextInt(5) + scale * 3 + 1;
@@ -156,8 +162,8 @@ class Rater {
         boolean motmHomeTeam = true;
         int motmPlayer = -1;
         float motmRating = 0;
-        Match.homeSquad[0].getResume().getSeason().getLeague().addCleanSheets(awayGoals == 0 ? 1 : 0);
-        Match.awaySquad[0].getResume().getSeason().getLeague().addCleanSheets(homeGoals == 0 ? 1 : 0);
+        Match.homeSquad[0].getResume().getSeason().getLeague().addCleanSheets();
+        Match.awaySquad[0].getResume().getSeason().getLeague().addCleanSheets();
 
         for (int player = 0; player < 11; player++) {
             homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
@@ -185,7 +191,7 @@ class Rater {
             Data.RATINGS += homeRatings[player] + awayRatings[player];
         }
 
-        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getLeague().addMotmAwards(1);
+        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getLeague().addMotmAwards();
 
         if (awayGoals == 0) home.getSeason().getLeague().addCleanSheet();
         if (homeGoals == 0) away.getSeason().getLeague().addCleanSheet();
@@ -252,8 +258,8 @@ class Rater {
         }
 
         for (int goal = 0; goal < homeGoals + awayGoals; goal++) {
-            if (goalscorers[goal] != null) goalscorers[goal].getResume().getSeason().getLeague().addGoals(1);
-            if (assistmakers[goal] != null) assistmakers[goal].getResume().getSeason().getLeague().addAssists(1);
+            if (goalscorers[goal] != null) goalscorers[goal].getResume().getSeason().getLeague().addGoals();
+            if (assistmakers[goal] != null) assistmakers[goal].getResume().getSeason().getLeague().addAssists();
         }
 
         home.getSeason().getLeague().addMatch();
@@ -263,6 +269,14 @@ class Rater {
         home.getSeason().getLeague().addConceded(awayGoals);
         away.getSeason().getLeague().addConceded(homeGoals);
 
+        while (!yellows.isEmpty()) {
+            yellows.remove().getResume().getSeason().getLeague().addYellowCards();
+        }
+
+        while (!reds.isEmpty()) {
+            reds.remove().getResume().getSeason().getLeague().addRedCards();
+        }
+
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
@@ -271,16 +285,12 @@ class Rater {
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
     }
 
-    private static void form(Club team, int change) {
-        team.getSeason().changeForm(change);
-    }
-
     static void cupFinalWhistle(Club home, Club away, int homeGoals, int awayGoals) {
         boolean motmHomeTeam = true;
         int motmPlayer = -1;
         float motmRating = 0;
-        Match.homeSquad[0].getResume().getSeason().getCup().addCleanSheets(awayGoals == 0 ? 1 : 0);
-        Match.awaySquad[0].getResume().getSeason().getCup().addCleanSheets(homeGoals == 0 ? 1 : 0);
+        Match.homeSquad[0].getResume().getSeason().getCup().addCleanSheets();
+        Match.awaySquad[0].getResume().getSeason().getCup().addCleanSheets();
 
         for (int player = 0; player < 11; player++) {
             homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
@@ -308,7 +318,7 @@ class Rater {
             Data.RATINGS += homeRatings[player] + awayRatings[player];
         }
 
-        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getCup().addMotmAwards(1);
+        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getCup().addMotmAwards();
 
         if (homeGoals > awayGoals) {
 
@@ -360,8 +370,16 @@ class Rater {
         }
 
         for (int goal = 0; goal < homeGoals + awayGoals; goal++) {
-            if (goalscorers[goal] != null) goalscorers[goal].getResume().getSeason().getCup().addGoals(1);
-            if (assistmakers[goal] != null) assistmakers[goal].getResume().getSeason().getCup().addAssists(1);
+            if (goalscorers[goal] != null) goalscorers[goal].getResume().getSeason().getCup().addGoals();
+            if (assistmakers[goal] != null) assistmakers[goal].getResume().getSeason().getCup().addAssists();
+        }
+
+        while (!yellows.isEmpty()) {
+            yellows.remove().getResume().getSeason().getCup().addYellowCards();
+        }
+
+        while (!reds.isEmpty()) {
+            reds.remove().getResume().getSeason().getCup().addRedCards();
         }
 
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
@@ -376,8 +394,8 @@ class Rater {
         boolean motmHomeTeam = true;
         int motmPlayer = -1;
         float motmRating = 0;
-        Match.homeSquad[0].getResume().getSeason().getContinental().addCleanSheets(awayGoals == 0 ? 1 : 0);
-        Match.awaySquad[0].getResume().getSeason().getContinental().addCleanSheets(homeGoals == 0 ? 1 : 0);
+        Match.homeSquad[0].getResume().getSeason().getContinental().addCleanSheets();
+        Match.awaySquad[0].getResume().getSeason().getContinental().addCleanSheets();
 
         for (int player = 0; player < 11; player++) {
             homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
@@ -405,7 +423,7 @@ class Rater {
             Data.RATINGS += homeRatings[player] + awayRatings[player];
         }
 
-        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getContinental().addMotmAwards(1);
+        (motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason().getContinental().addMotmAwards();
 
         if (homeGoals > awayGoals) {
 
@@ -457,8 +475,16 @@ class Rater {
         }
 
         for (int goal = 0; goal < homeGoals + awayGoals; goal++) {
-            if (goalscorers[goal] != null) goalscorers[goal].getResume().getSeason().getContinental().addGoals(1);
-            if (assistmakers[goal] != null) assistmakers[goal].getResume().getSeason().getContinental().addAssists(1);
+            if (goalscorers[goal] != null) goalscorers[goal].getResume().getSeason().getContinental().addGoals();
+            if (assistmakers[goal] != null) assistmakers[goal].getResume().getSeason().getContinental().addAssists();
+        }
+
+        while (!yellows.isEmpty()) {
+            yellows.remove().getResume().getSeason().getContinental().addYellowCards();
+        }
+
+        while (!reds.isEmpty()) {
+            reds.remove().getResume().getSeason().getContinental().addRedCards();
         }
 
         int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
@@ -467,5 +493,9 @@ class Rater {
                 away.getName(), homeGoals,
                 awayGoals, (motmHomeTeam ? home : away).getFootballers().stream().filter(
                         f -> f.getId() == motmId).findFirst().get(), motmRating));
+    }
+
+    private static void form(Club team, int change) {
+        team.getSeason().changeForm(change);
     }
 }

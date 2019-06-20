@@ -42,6 +42,8 @@ class PremierLeague {
                         footballer.getResume().getGlory().addLeagueCup();
                     }
                 }
+
+                Printer.cupPlayerStats(league);
             }
 
             Data.CHAMPIONS_LEAGUE = Printer.pickChampionsLeagueTeams();
@@ -72,9 +74,7 @@ class PremierLeague {
 
         int[][][] draw = Draw.league(groupSize);
         for (int group = 0; group < groups; group++) {
-            System.out.println();
             System.out.println("GROUP " + (char)('A' + group));
-            System.out.println();
 
             Club[] clubs = new Club[groupSize];
             for (int team = 0; team < groupSize; team++) clubs[team] = teams[groups * team + group];
@@ -82,7 +82,6 @@ class PremierLeague {
             for (int round = 0; round < draw.length; round++) {
                 System.out.println();
                 System.out.println("Matchday " + (round + 1));
-                System.out.println();
 
                 for (int game = 0; game < groupSize / 2; game++) {
                     int home = draw[round][game][0];
@@ -273,7 +272,7 @@ class PremierLeague {
 
     private static void finish(int year) {
         for (Club[] league : Data.LEAGUES) {
-            Printer.playerStats(league);
+            Printer.leaguePlayerStats(league);
             System.out.println("FINAL STANDINGS");
             Printer.standings(league);
             Printer.allTimeStats(league);

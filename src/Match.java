@@ -109,7 +109,7 @@ class Match {
                     bookings[t][p]++;
                     balance += 10 * t - 5;
                     (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 0.5;
-                    (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().getLeague().addYellowCards(1);
+                    Rater.yellows.add((t == 0 ? homeSquad : awaySquad)[p]);
                     System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
                 }
             }
@@ -122,7 +122,7 @@ class Match {
                 bookings[t][p] = 2;
                 balance += 30 * t - 15;
                 (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
-                (t == 0 ? homeSquad : awaySquad)[p].getResume().getSeason().getLeague().addRedCards(1);
+                Rater.reds.add((t == 0 ? homeSquad : awaySquad)[p]);
                 (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-35);
                 System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }

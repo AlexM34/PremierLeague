@@ -129,14 +129,15 @@ class Data {
     }
 
     private static void updateCareerStats(Footballer footballer) {
-        footballer.getResume().getTotal().getLeague().addGoals(footballer.getResume().getSeason().getLeague().getGoals());
-        footballer.getResume().getTotal().getLeague().addAssists(footballer.getResume().getSeason().getLeague().getAssists());
-        footballer.getResume().getTotal().getLeague().addCleanSheets(footballer.getResume().getSeason().getLeague().getCleanSheets());
+        // TODO: Update and clear stats
+        footballer.getResume().getTotal().getLeague().addGoals();
+        footballer.getResume().getTotal().getLeague().addAssists();
+        footballer.getResume().getTotal().getLeague().addCleanSheets();
         footballer.getResume().getTotal().getLeague().addRating(footballer.getResume().getSeason().getLeague().getRating(), footballer.getResume().getSeason().getLeague().getMatches());
         footballer.getResume().getTotal().getLeague().addMatches(footballer.getResume().getSeason().getLeague().getMatches());
-        footballer.getResume().getTotal().getLeague().addMotmAwards(footballer.getResume().getSeason().getLeague().getMotmAwards());
-        footballer.getResume().getTotal().getLeague().addYellowCards(footballer.getResume().getSeason().getLeague().getYellowCards());
-        footballer.getResume().getTotal().getLeague().addRedCards(footballer.getResume().getSeason().getLeague().getRedCards());
+        footballer.getResume().getTotal().getLeague().addMotmAwards();
+        footballer.getResume().getTotal().getLeague().addYellowCards();
+        footballer.getResume().getTotal().getLeague().addRedCards();
     }
 
     private static void clearSeasonStats(Footballer footballer) {
