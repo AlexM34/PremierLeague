@@ -29,7 +29,7 @@ class Competition {
         this.matches = 0;
     }
 
-    void addMatches(int matches) {
+    void addMatches(final int matches) {
         this.matches += matches;
     }
 
@@ -41,7 +41,7 @@ class Competition {
         this.goals = 0;
     }
 
-    void addGoals(int goals) {
+    void addGoals(final int goals) {
         this.goals += goals;
     }
 
@@ -53,7 +53,7 @@ class Competition {
         this.assists = 0;
     }
 
-    void addAssists(int assists) {
+    void addAssists(final int assists) {
         this.assists += assists;
     }
 
@@ -65,7 +65,7 @@ class Competition {
         this.cleanSheets = 0;
     }
 
-    void addCleanSheets(int cleanSheets) {
+    void addCleanSheets(final int cleanSheets) {
         this.cleanSheets += cleanSheets;
     }
 
@@ -77,7 +77,7 @@ class Competition {
         this.rating = 0;
     }
 
-    void addRating(int rating, int matches) {
+    void addRating(final int rating, final int matches) {
         if (matches > 0) {
             this.rating = (this.rating * this.matches + rating * matches) / (this.matches + matches);
         }
@@ -91,7 +91,7 @@ class Competition {
         this.motmAwards = 0;
     }
 
-    void addMotmAwards(int motmAwards) {
+    void addMotmAwards(final int motmAwards) {
         this.motmAwards += motmAwards;
     }
 
@@ -103,7 +103,7 @@ class Competition {
         this.yellowCards = 0;
     }
 
-    void addYellowCards(int yellowCards) {
+    void addYellowCards(final int yellowCards) {
         this.yellowCards += yellowCards;
     }
 
@@ -115,15 +115,15 @@ class Competition {
         this.redCards = 0;
     }
 
-    void addRedCards(int redCards) {
+    void addRedCards(final int redCards) {
         this.redCards += redCards;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Competition statistics = (Competition) o;
+        final Competition statistics = (Competition) o;
         return matches == statistics.matches &&
                 goals == statistics.goals &&
                 assists == statistics.assists &&

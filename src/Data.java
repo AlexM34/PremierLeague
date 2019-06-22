@@ -2,50 +2,50 @@ import java.io.*;
 import java.util.*;
 
 class Data {
-    static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
+    static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static Club[] CHAMPIONS_LEAGUE = new Club[32];
-    static int FANS = 5;
+    static final int FANS = 5;
     static int HOME_WINS;
     static int AWAY_WINS;
     static float RATINGS;
     static Integer USER = -1;
     static int USER_STYLE;
 
-    static Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
+    static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
             0, 0, Position.CB, 101, 20, 20, new Resume(), 100);
 
-    static Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
+    static final Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
             0, 0, Position.CM, 102, 20, 20, new Resume(), 100);
 
-    static Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
+    static final Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
             0, 0, Position.ST, 103, 20, 20, new Resume(), 100);
 
-    static Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
+    static final Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
             0, 0, Position.CB, 104, 20, 20, new Resume(), 100);
 
-    static Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
+    static final Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
             0, 0, Position.CM, 105, 20, 20, new Resume(), 100);
 
-    static Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
+    static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
             0, 0, Position.ST, 106, 20, 20, new Resume(), 100);
 
     static void extractData() {
-        String fileName = "data/data.csv";
-        File data = new File(fileName);
+        final String fileName = "data/data.csv";
+        final File data = new File(fileName);
         try {
-            for (Club[] league : LEAGUES) {
-                for (Club club : league) {
-                    File file = new File("data/" + club.getName() + ".csv");
+            for (final Club[] league : LEAGUES) {
+                for (final Club club : league) {
+                    final File file = new File("data/" + club.getName() + ".csv");
                     file.delete();
                     file.createNewFile();
-                    FileWriter write = new FileWriter(file, true);
-                    PrintWriter line = new PrintWriter(write);
-                    Scanner inputStream = new Scanner(data);
+                    final FileWriter write = new FileWriter(file, true);
+                    final PrintWriter line = new PrintWriter(write);
+                    final Scanner inputStream = new Scanner(data);
                     inputStream.nextLine();
 
                     while (inputStream.hasNext()) {
-                        String footballer = inputStream.nextLine();
-                        String[] values = footballer.replaceAll("\\s","").split(",");
+                        final String footballer = inputStream.nextLine();
+                        final String[] values = footballer.replaceAll("\\s","").split(",");
                         if (club.getName().replaceAll("\\s","").equals(values[9]) &&
                                 values.length > 78 && !values[21].isEmpty() && !values[22].isEmpty() &&
                                 !values[56].isEmpty() && !values[78].isEmpty() ) {
@@ -56,22 +56,22 @@ class Data {
                     line.close();
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.out.println("Exception thrown while extracting data!");
         }
     }
 
     static void buildSquads() {
         try {
-            for (Club[] league : LEAGUES) {
-                for (Club club : league) {
-                    File data = new File("data/" + club.getName() + ".csv");
+            for (final Club[] league : LEAGUES) {
+                for (final Club club : league) {
+                    final File data = new File("data/" + club.getName() + ".csv");
 
-                    Scanner inputStream = new Scanner(data);
+                    final Scanner inputStream = new Scanner(data);
 
                     while (inputStream.hasNextLine()) {
-                        String footballer = inputStream.nextLine();
-                        String[] values = footballer.split(",");
+                        final String footballer = inputStream.nextLine();
+                        final String[] values = footballer.split(",");
 
                         if (club.getName().equals(values[9])) {
                             club.addFootballer(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
@@ -85,14 +85,14 @@ class Data {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.out.println("Exception thrown while building squads! " + e);
         }
     }
 
     static void addDummies() {
-        for (Club[] league : LEAGUES) {
-            for (Club club : league) {
+        for (final Club[] league : LEAGUES) {
+            for (final Club club : league) {
                 club.addFootballer(DEFENDER_1);
                 club.addFootballer(MIDFIELDER_1);
                 club.addFootballer(FORWARD_1);
@@ -103,7 +103,7 @@ class Data {
         }
     }
 
-    static void prepare(int year) {
+    static void prepare(final int year) {
         PremierLeague.pause();
 
         HOME_WINS = 0;
@@ -111,11 +111,11 @@ class Data {
         RATINGS = 0;
 
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
-        for (Club[] league : LEAGUES) {
-            for (Club club : league) {
+        for (final Club[] league : LEAGUES) {
+            for (final Club club : league) {
                 club.setSeason(new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
-                for (Footballer f : club.getFootballers()) {
+                for (final Footballer f : club.getFootballers()) {
                     updateCareerStats(f);
                     clearSeasonStats(f);
                 }
@@ -125,19 +125,19 @@ class Data {
         System.out.println();
     }
 
-    private static void updateCareerStats(Footballer footballer) {
+    private static void updateCareerStats(final Footballer footballer) {
         updateCompetition(footballer.getResume().getTotal().getLeague(), footballer.getResume().getSeason().getLeague());
         updateCompetition(footballer.getResume().getTotal().getCup(), footballer.getResume().getSeason().getCup());
         updateCompetition(footballer.getResume().getTotal().getContinental(), footballer.getResume().getSeason().getContinental());
     }
 
-    private static void clearSeasonStats(Footballer footballer) {
+    private static void clearSeasonStats(final Footballer footballer) {
         clearCompetition(footballer.getResume().getSeason().getLeague());
         clearCompetition(footballer.getResume().getSeason().getCup());
         clearCompetition(footballer.getResume().getSeason().getContinental());
     }
 
-    private static void updateCompetition(Competition total, Competition season) {
+    private static void updateCompetition(final Competition total, final Competition season) {
         total.addMatches(season.getMatches());
         total.addGoals(season.getGoals());
         total.addAssists(season.getAssists());
@@ -148,7 +148,7 @@ class Data {
         total.addRedCards(season.getRedCards());
     }
 
-    private static void clearCompetition(Competition stats) {
+    private static void clearCompetition(final Competition stats) {
         stats.clearMatches();
         stats.clearGoals();
         stats.clearAssists();

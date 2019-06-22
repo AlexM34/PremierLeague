@@ -34,10 +34,10 @@ enum Position {
         Forward
     }
 
-    private Role role;
-    private int attackingDuty;
+    private final Role role;
+    private final int attackingDuty;
 
-    Position(Role role, int attackingDuty) {
+    Position(final Role role, final int attackingDuty) {
         this.role = role;
         this.attackingDuty = attackingDuty;
     }

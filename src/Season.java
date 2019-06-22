@@ -8,7 +8,7 @@ class Season {
     private int form;
     private int morale;
 
-    Season(League league, Cup nationalCup, Cup leagueCup, ChampionsLeague championsLeague, int form, int morale) {
+    Season(final League league, final Cup nationalCup, final Cup leagueCup, final ChampionsLeague championsLeague, final int form, final int morale) {
         this.league = league;
         this.nationalCup = nationalCup;
         this.leagueCup = leagueCup;
@@ -21,7 +21,7 @@ class Season {
         return league;
     }
 
-    void setLeague(League league) {
+    void setLeague(final League league) {
         this.league = league;
     }
 
@@ -29,7 +29,7 @@ class Season {
         return nationalCup;
     }
 
-    void setNationalCup(Cup nationalCup) {
+    void setNationalCup(final Cup nationalCup) {
         this.nationalCup = nationalCup;
     }
 
@@ -37,7 +37,7 @@ class Season {
         return leagueCup;
     }
 
-    void setLeagueCup(Cup leagueCup) {
+    void setLeagueCup(final Cup leagueCup) {
         this.leagueCup = leagueCup;
     }
 
@@ -45,7 +45,7 @@ class Season {
         return championsLeague;
     }
 
-    void setChampionsLeague(ChampionsLeague championsLeague) {
+    void setChampionsLeague(final ChampionsLeague championsLeague) {
         this.championsLeague = championsLeague;
     }
 
@@ -53,11 +53,11 @@ class Season {
         return form;
     }
 
-    void setForm(int form) {
+    void setForm(final int form) {
         this.form = form;
     }
 
-    void changeForm(int change) {
+    void changeForm(final int change) {
         this.form += change;
         if (this.form > 20) this.form = 20;
         else if (this.form < 0) this.form = 0;
@@ -67,15 +67,15 @@ class Season {
         return morale;
     }
 
-    void setMorale(int morale) {
+    void setMorale(final int morale) {
         this.morale = morale;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Season season = (Season) o;
+        final Season season = (Season) o;
         return form == season.form &&
                 morale == season.morale &&
                 league.equals(season.league) &&

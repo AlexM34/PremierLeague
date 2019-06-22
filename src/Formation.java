@@ -17,9 +17,9 @@ enum Formation {
         Offensive(1),
         AllOutAttack(3);
 
-        private int style;
+        private final int style;
 
-        Type(int style) {
+        Type(final int style) {
             this.style = style;
         }
 
@@ -28,10 +28,10 @@ enum Formation {
         }
     }
 
-    private int scheme;
-    private Type type;
+    private final int scheme;
+    private final Type type;
 
-    Formation(int scheme, Type type) {
+    Formation(final int scheme, final Type type) {
         this.scheme = scheme;
         this.type = type;
     }

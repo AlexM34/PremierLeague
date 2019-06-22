@@ -5,12 +5,12 @@ import static java.util.stream.Collectors.toMap;
 class Printer {
     private static int offset;
 
-    private static Map<Club, Integer> sortLeague(Club[] league) {
-        Map<Club, Integer> standings = new LinkedHashMap<>();
+    private static Map<Club, Integer> sortLeague(final Club[] league) {
+        final Map<Club, Integer> standings = new LinkedHashMap<>();
         offset = 0;
-        for (Club team : league) {
+        for (final Club team : league) {
             if (offset < team.getName().length()) offset = team.getName().length();
-            League stats = team.getSeason().getLeague();
+            final League stats = team.getSeason().getLeague();
             standings.put(team, 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) +
                     stats.getScored());
         }
@@ -22,23 +22,23 @@ class Printer {
     }
 
     static Club[] pickChampionsLeagueTeams() {
-        Map<Club, Integer> teams = new LinkedHashMap<>();
-        for (Club[] league : Data.LEAGUES) {
-            Map<Club, Integer> sorted = sortLeague(league);
+        final Map<Club, Integer> teams = new LinkedHashMap<>();
+        for (final Club[] league : Data.LEAGUES) {
+            final Map<Club, Integer> sorted = sortLeague(league);
             int slots = 7;
-            for (Club team : sorted.keySet()) {
+            for (final Club team : sorted.keySet()) {
                 teams.put(team, team.getSeason().getLeague().getPoints());
                 slots--;
                 if (slots == 0) break;
             }
         }
 
-        List<Map.Entry<Club, Integer>> toSort = new ArrayList<>(teams.entrySet());
+        final List<Map.Entry<Club, Integer>> toSort = new ArrayList<>(teams.entrySet());
         toSort.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
-        Club[] selected = new Club[32];
+        final Club[] selected = new Club[32];
         int limit = 0;
 
-        for (Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
+        for (final Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
             selected[limit] = clubIntegerEntry.getKey();
             if (limit++ == 31) break;
         }
@@ -46,14 +46,14 @@ class Printer {
         return selected;
     }
 
-    static void standings(Club[] league) {
+    static void standings(final Club[] league) {
         int goals = 0;
-        Map<Club, Integer> sorted = sortLeague(league);
+        final Map<Club, Integer> sorted = sortLeague(league);
 
         int position = 1;
         System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
-        for (Club team : league) {
-            League stats = team.getSeason().getLeague();
+        for (final Club team : league) {
+            final League stats = team.getSeason().getLeague();
             goals += stats.getScored();
             System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", position++,
                     team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
@@ -67,30 +67,30 @@ class Printer {
         System.out.println("Average rating for the season: " + Data.RATINGS / (22 * 380));
         System.out.println();
 
-        Club first = sorted.keySet().toArray(new Club[0])[0];
+        final Club first = sorted.keySet().toArray(new Club[0])[0];
 
         if (first.getSeason().getLeague().getMatches() == 2 * league.length - 2) {
             first.getGlory().addLeague();
-            for (Footballer footballer : first.getFootballers()) {
+            for (final Footballer footballer : first.getFootballers()) {
                 footballer.getResume().getGlory().addLeague();
             }
         }
     }
 
-    static void playerStats(Club[] league, int type) {
-        Map<String, Integer> ratings = new LinkedHashMap<>();
-        Map<String, Integer> motm = new LinkedHashMap<>();
-        Map<String, Integer> goals = new LinkedHashMap<>();
-        Map<String, Integer> assists = new LinkedHashMap<>();
-        Map<String, Integer> cleanSheets = new LinkedHashMap<>();
-        Map<String, Integer> yellowCards = new LinkedHashMap<>();
-        Map<String, Integer> redCards = new LinkedHashMap<>();
+    static void playerStats(final Club[] league, final int type) {
+        final Map<String, Integer> ratings = new LinkedHashMap<>();
+        final Map<String, Integer> motm = new LinkedHashMap<>();
+        final Map<String, Integer> goals = new LinkedHashMap<>();
+        final Map<String, Integer> assists = new LinkedHashMap<>();
+        final Map<String, Integer> cleanSheets = new LinkedHashMap<>();
+        final Map<String, Integer> yellowCards = new LinkedHashMap<>();
+        final Map<String, Integer> redCards = new LinkedHashMap<>();
 
-        for (Club club : league) {
-            for (Footballer f : club.getFootballers()) {
-                String name = f.getName();
-                Competition stats;
-                int games;
+        for (final Club club : league) {
+            for (final Footballer f : club.getFootballers()) {
+                final String name = f.getName();
+                final Competition stats;
+                final int games;
 
                 switch (type) {
                     case 0:
@@ -130,28 +130,28 @@ class Printer {
         topPlayers(redCards, "Most Red Cards");
     }
 
-    static void allTimeStats(Club[] league) {
-        Map<String, Integer> leagues = new LinkedHashMap<>();
-        Map<String, Integer> nationalCups = new LinkedHashMap<>();
-        Map<String, Integer> leagueCups = new LinkedHashMap<>();
+    static void allTimeStats(final Club[] league) {
+        final Map<String, Integer> leagues = new LinkedHashMap<>();
+        final Map<String, Integer> nationalCups = new LinkedHashMap<>();
+        final Map<String, Integer> leagueCups = new LinkedHashMap<>();
 
-        for (Club club : league) {
+        for (final Club club : league) {
             leagues.put(club.getName(), club.getGlory().getLeague());
             nationalCups.put(club.getName(), club.getGlory().getNationalCup());
             leagueCups.put(club.getName(), club.getGlory().getLeagueCup());
         }
 
-        Map<String, Integer> sortedLeagues = leagues.entrySet().stream().sorted(
+        final Map<String, Integer> sortedLeagues = leagues.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
-        Map<String, Integer> sortedNationalCups = nationalCups.entrySet().stream().sorted(
+        final Map<String, Integer> sortedNationalCups = nationalCups.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
-        Map<String, Integer> sortedLeagueCups = leagueCups.entrySet().stream().sorted(
+        final Map<String, Integer> sortedLeagueCups = leagueCups.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
@@ -181,15 +181,15 @@ class Printer {
     }
 
     static void continentalStats() {
-        Map<String, Integer> titles = new LinkedHashMap<>();
+        final Map<String, Integer> titles = new LinkedHashMap<>();
 
-        for (Club[] league : Data.LEAGUES) {
-            for (Club club : league) {
+        for (final Club[] league : Data.LEAGUES) {
+            for (final Club club : league) {
                 if (club.getGlory().getContinental() > 0) titles.put(club.getName(), club.getGlory().getContinental());
             }
         }
 
-        Map<String, Integer> sortedTitles = titles.entrySet().stream().sorted(
+        final Map<String, Integer> sortedTitles = titles.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
@@ -202,19 +202,19 @@ class Printer {
         }
     }
 
-    static void allTimePlayerStats(Club[] league) {
-        Map<String, Integer> ratings = new LinkedHashMap<>();
-        Map<String, Integer> motm = new LinkedHashMap<>();
-        Map<String, Integer> goals = new LinkedHashMap<>();
-        Map<String, Integer> assists = new LinkedHashMap<>();
-        Map<String, Integer> cleanSheets = new LinkedHashMap<>();
-        Map<String, Integer> yellowCards = new LinkedHashMap<>();
-        Map<String, Integer> redCards = new LinkedHashMap<>();
+    static void allTimePlayerStats(final Club[] league) {
+        final Map<String, Integer> ratings = new LinkedHashMap<>();
+        final Map<String, Integer> motm = new LinkedHashMap<>();
+        final Map<String, Integer> goals = new LinkedHashMap<>();
+        final Map<String, Integer> assists = new LinkedHashMap<>();
+        final Map<String, Integer> cleanSheets = new LinkedHashMap<>();
+        final Map<String, Integer> yellowCards = new LinkedHashMap<>();
+        final Map<String, Integer> redCards = new LinkedHashMap<>();
 
         for (int team = 0; team < league.length; team++) {
-            for (Footballer f : league[team].getFootballers()) {
-                String name = f.getName();
-                Competition stats = f.getResume().getTotal().getLeague();
+            for (final Footballer f : league[team].getFootballers()) {
+                final String name = f.getName();
+                final Competition stats = f.getResume().getTotal().getLeague();
 
                 if (f.getResume().getTotal().getLeague().getMatches() > 100) {
                     ratings.put(name, f.getResume().getTotal().getLeague().getRating());
@@ -243,9 +243,9 @@ class Printer {
         topPlayers(redCards, "Most Red Cards");
     }
 
-    private static void topPlayers(Map<String, Integer> map, String label) {
+    private static void topPlayers(final Map<String, Integer> map, final String label) {
         System.out.println(label);
-        Map<String, Integer> sorted = map.entrySet().stream().sorted(
+        final Map<String, Integer> sorted = map.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));

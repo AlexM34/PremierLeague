@@ -1,10 +1,10 @@
 import java.util.Objects;
 
 class Footballer {
-    private int id;
-    private String name;
+    private final int id;
+    private final String name;
     private int age;
-    private String nationality;
+    private final String nationality;
     private int overall;
     private int potential;
     private float value;
@@ -16,9 +16,9 @@ class Footballer {
     private Resume resume;
     private int condition;
 
-    Footballer(int id, String name, int age, String nationality, int overall,
-               int potential, float value, float wage, Position position,
-               int number, int finishing, int vision, Resume resume, int condition) {
+    Footballer(final int id, final String name, final int age, final String nationality, final int overall,
+               final int potential, final float value, final float wage, final Position position,
+               final int number, final int finishing, final int vision, final Resume resume, final int condition) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -47,7 +47,7 @@ class Footballer {
         return age;
     }
 
-    void setAge(int age) {
+    void setAge(final int age) {
         this.age = age;
     }
 
@@ -59,7 +59,7 @@ class Footballer {
         return overall;
     }
 
-    void changeOverall(int change) {
+    void changeOverall(final int change) {
         this.overall += change;
     }
 
@@ -67,7 +67,7 @@ class Footballer {
         return potential;
     }
 
-    void changePotential(int change) {
+    void changePotential(final int change) {
         this.potential += change;
     }
 
@@ -75,7 +75,7 @@ class Footballer {
         return value;
     }
 
-    void setValue(float value) {
+    void setValue(final float value) {
         this.value = value;
     }
 
@@ -83,7 +83,7 @@ class Footballer {
         return wage;
     }
 
-    void setWage(float wage) {
+    void setWage(final float wage) {
         this.wage = wage;
     }
 
@@ -91,7 +91,7 @@ class Footballer {
         return position;
     }
 
-    void setPosition(Position position) {
+    void setPosition(final Position position) {
         this.position = position;
     }
 
@@ -99,7 +99,7 @@ class Footballer {
         return number;
     }
 
-    void setNumber(int number) {
+    void setNumber(final int number) {
         this.number = number;
     }
 
@@ -107,7 +107,7 @@ class Footballer {
         return finishing;
     }
 
-    void setFinishing(int finishing) {
+    void setFinishing(final int finishing) {
         this.finishing = finishing;
     }
 
@@ -115,7 +115,7 @@ class Footballer {
         return vision;
     }
 
-    void setVision(int vision) {
+    void setVision(final int vision) {
         this.vision = vision;
     }
 
@@ -123,7 +123,7 @@ class Footballer {
         return resume;
     }
 
-    void setResume(Resume resume) {
+    void setResume(final Resume resume) {
         this.resume = resume;
     }
 
@@ -131,17 +131,17 @@ class Footballer {
         return condition;
     }
 
-    void changeCondition(int change) {
+    void changeCondition(final int change) {
         this.condition += change;
         if (this.condition > 100) this.condition = 100;
         else if (this.condition < 0) this.condition = 0;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Footballer that = (Footballer) o;
+        final Footballer that = (Footballer) o;
         return id == that.id &&
                 age == that.age &&
                 overall == that.overall &&

@@ -1,15 +1,15 @@
 import java.util.Objects;
 
 class Coach {
-    private int id;
-    private String name;
-    private int overall;
-    private Formation formation;
-    private int style;
-    private int attack;
-    private int defence;
+    private final int id;
+    private final String name;
+    private final int overall;
+    private final Formation formation;
+    private final int style;
+    private final int attack;
+    private final int defence;
 
-    Coach(int id, String name, int overall, Formation formation, int style, int attack, int defence) {
+    Coach(final int id, final String name, final int overall, final Formation formation, final int style, final int attack, final int defence) {
         this.id = id;
         this.name = name;
         this.overall = overall;
@@ -48,10 +48,10 @@ class Coach {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Coach coach = (Coach) o;
+        final Coach coach = (Coach) o;
         return id == coach.id &&
                 overall == coach.overall &&
                 style == coach.style &&

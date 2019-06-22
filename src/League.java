@@ -33,7 +33,7 @@ class League {
         return points;
     }
 
-    void addPoints(int points) {
+    void addPoints(final int points) {
         this.points += points;
     }
 
@@ -65,7 +65,7 @@ class League {
         return scored;
     }
 
-    void addScored(int goals) {
+    void addScored(final int goals) {
         this.scored += goals;
     }
 
@@ -73,7 +73,7 @@ class League {
         return conceded;
     }
 
-    void addConceded(int goals) {
+    void addConceded(final int goals) {
         this.conceded += goals;
     }
 
@@ -86,10 +86,10 @@ class League {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        League league = (League) o;
+        final League league = (League) o;
         return matches == league.matches &&
                 points == league.points &&
                 wins == league.wins &&

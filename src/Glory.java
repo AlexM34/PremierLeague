@@ -9,8 +9,8 @@ class Glory {
     private int continentalSuperCup;
     private int worldChampionship;
 
-    Glory(int continental, int league, int nationalCup, int leagueCup,
-                 int nationalSuperCup, int continentalSuperCup, int worldChampionship) {
+    Glory(final int continental, final int league, final int nationalCup, final int leagueCup,
+          final int nationalSuperCup, final int continentalSuperCup, final int worldChampionship) {
         this.continental = continental;
         this.league = league;
         this.nationalCup = nationalCup;
@@ -77,10 +77,10 @@ class Glory {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Glory glory = (Glory) o;
+        final Glory glory = (Glory) o;
         return continental == glory.continental &&
                 league == glory.league &&
                 nationalCup == glory.nationalCup &&

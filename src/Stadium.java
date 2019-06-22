@@ -1,14 +1,14 @@
 import java.util.Objects;
 
 class Stadium {
-    private int id;
-    private String name;
-    private int built;
-    private String location;
-    private int capacity;
-    private int reputation;
+    private final int id;
+    private final String name;
+    private final int built;
+    private final String location;
+    private final int capacity;
+    private final int reputation;
 
-    Stadium(int id, String name, int built, String location, int capacity, int reputation) {
+    Stadium(final int id, final String name, final int built, final String location, final int capacity, final int reputation) {
         this.id = id;
         this.name = name;
         this.built = built;
@@ -42,10 +42,10 @@ class Stadium {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Stadium stadium = (Stadium) o;
+        final Stadium stadium = (Stadium) o;
         return id == stadium.id &&
                 built == stadium.built &&
                 capacity == stadium.capacity &&

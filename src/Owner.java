@@ -1,13 +1,13 @@
 import java.util.Objects;
 
 class Owner {
-    private int id;
-    private String name;
-    private String nationality;
-    private int wealth;
-    private int ambition;
+    private final int id;
+    private final String name;
+    private final String nationality;
+    private final int wealth;
+    private final int ambition;
 
-    Owner(int id, String name, String nationality, int wealth, int ambition) {
+    Owner(final int id, final String name, final String nationality, final int wealth, final int ambition) {
         this.id = id;
         this.name = name;
         this.nationality = nationality;
@@ -36,10 +36,10 @@ class Owner {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Owner owner = (Owner) o;
+        final Owner owner = (Owner) o;
         return id == owner.id &&
                 wealth == owner.wealth &&
                 ambition == owner.ambition &&

@@ -2,7 +2,7 @@ import java.util.Objects;
 
 class ChampionsLeague {
     private boolean alive;
-    private League group;
+    private final League group;
 
     ChampionsLeague() {
         this.alive = false;
@@ -13,7 +13,7 @@ class ChampionsLeague {
         return alive;
     }
 
-    public void setAlive(boolean alive) {
+    public void setAlive(final boolean alive) {
         this.alive = alive;
     }
 
@@ -22,10 +22,10 @@ class ChampionsLeague {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChampionsLeague that = (ChampionsLeague) o;
+        final ChampionsLeague that = (ChampionsLeague) o;
         return alive == that.alive &&
                 group.equals(that.group);
     }

@@ -1,9 +1,9 @@
 import java.util.Objects;
 
 class Resume {
-    private Glory glory;
-    private Statistics total;
-    private Statistics season;
+    private final Glory glory;
+    private final Statistics total;
+    private final Statistics season;
 
     Resume() {
         this.glory = new Glory(0, 0, 0, 0, 0, 0, 0);
@@ -24,10 +24,10 @@ class Resume {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Resume resume = (Resume) o;
+        final Resume resume = (Resume) o;
         return glory.equals(resume.glory) &&
                 total.equals(resume.total) &&
                 season.equals(resume.season);

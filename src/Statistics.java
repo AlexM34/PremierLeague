@@ -1,9 +1,9 @@
 import java.util.Objects;
 
 class Statistics {
-    private Competition league;
-    private Competition cup;
-    private Competition continental;
+    private final Competition league;
+    private final Competition cup;
+    private final Competition continental;
 
     Statistics() {
         this.league = new Competition();
@@ -24,10 +24,10 @@ class Statistics {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Statistics that = (Statistics) o;
+        final Statistics that = (Statistics) o;
         return league.equals(that.league) &&
                 cup.equals(that.cup) &&
                 continental.equals(that.continental);

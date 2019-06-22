@@ -4,17 +4,17 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 class Rater {
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
-    static float[] homeRatings = new float[11];
-    static float[] awayRatings = new float[11];
-    private static Footballer[] goalscorers = new Footballer[20];
-    private static Footballer[] assistmakers = new Footballer[20];
+    static final float[] homeRatings = new float[11];
+    static final float[] awayRatings = new float[11];
+    private static final Footballer[] goalscorers = new Footballer[20];
+    private static final Footballer[] assistmakers = new Footballer[20];
     static Queue<Footballer> yellows = new LinkedList<>();
-    static Queue<Footballer> reds = new LinkedList<>();
+    static final Queue<Footballer> reds = new LinkedList<>();
 
-    static void kickoff(Club home, Club away) {
-        for (Footballer f : home.getFootballers()) {
+    static void kickoff(final Club home, final Club away) {
+        for (final Footballer f : home.getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(13 + random.nextInt(2));
             }
@@ -22,7 +22,7 @@ class Rater {
             // TODO: Short bench solution with fatigue
         }
 
-        for (Footballer f : away.getFootballers()) {
+        for (final Footballer f : away.getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(13 + random.nextInt(2));
             }
@@ -41,37 +41,37 @@ class Rater {
 
         yellows = new LinkedList<>();
     }
-    static void updateRatings(int scale) {
-        int home = random.nextInt(5) + scale * 3 + 1;
-        int away = random.nextInt(5) - scale * 3 + 1;
+    static void updateRatings(final int scale) {
+        final int home = random.nextInt(5) + scale * 3 + 1;
+        final int away = random.nextInt(5) - scale * 3 + 1;
 
         for (int i = 0; i < home; i++) {
-            int player = random.nextInt(11);
+            final int player = random.nextInt(11);
             if (Match.bookings[0][player] < 2) homeRatings[player] += 0.1;
         }
 
         for (int i = 0; i > home; i--) {
-            int player = random.nextInt(11);
+            final int player = random.nextInt(11);
             if (Match.bookings[0][player] < 2) homeRatings[player] -= 0.1;
         }
 
         for (int i = 0; i < away; i++) {
-            int player = random.nextInt(11);
+            final int player = random.nextInt(11);
             if (Match.bookings[1][player] < 2) awayRatings[player] += 0.1;
         }
 
         for (int i = 0; i > away; i--) {
-            int player = random.nextInt(11);
+            final int player = random.nextInt(11);
             if (Match.bookings[1][player] < 2) awayRatings[player] -= 0.1;
         }
     }
 
-    static void goal(int minute, int homeGoals, int awayGoals, boolean isHome) {
+    static void goal(final int minute, final int homeGoals, final int awayGoals, final boolean isHome) {
         int scoring = 30;
         int assisting = 200;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
-        Footballer[] squad = isHome ? Match.homeSquad : Match.awaySquad;
+        final Footballer[] squad = isHome ? Match.homeSquad : Match.awaySquad;
 
         for (int player = 0; player < 11; player++) {
             scoring += scoringChance(squad[player]);
@@ -127,7 +127,7 @@ class Rater {
         assistmakers[homeGoals + awayGoals - 1] = assistmaker;
     }
 
-    private static int scoringChance(Footballer footballer) {
+    private static int scoringChance(final Footballer footballer) {
         switch (footballer.getPosition().getRole()) {
             case Goalkeeper:
                 return 0;
@@ -142,7 +142,7 @@ class Rater {
         return 0;
     }
 
-    private static int assistingChance(Footballer footballer) {
+    private static int assistingChance(final Footballer footballer) {
         switch (footballer.getPosition().getRole()) {
             case Goalkeeper:
                 return footballer.getVision();
@@ -157,7 +157,7 @@ class Rater {
         return 0;
     }
 
-    static void finalWhistle(Club home, Club away, int homeGoals, int awayGoals, int type) {
+    static void finalWhistle(final Club home, final Club away, final int homeGoals, final int awayGoals, final int type) {
         Footballer motmPlayer = Match.homeSquad[0];
         float motmRating = 0;
         if (awayGoals == 0) getCompetition(Match.homeSquad[0].getResume().getSeason(), type).addCleanSheets(1);
@@ -171,7 +171,7 @@ class Rater {
                 motmRating = homeRatings[player];
             }
 
-            Competition homeStats = getCompetition(Match.homeSquad[player].getResume().getSeason(), type);
+            final Competition homeStats = getCompetition(Match.homeSquad[player].getResume().getSeason(), type);
             homeStats.addRating((int) homeRatings[player] * 100, 1);
             homeStats.addMatches(1);
             Match.homeSquad[player].changeCondition(-15);
@@ -183,7 +183,7 @@ class Rater {
                 motmRating = awayRatings[player];
             }
 
-            Competition awayStats = getCompetition(Match.awaySquad[player].getResume().getSeason(), type);
+            final Competition awayStats = getCompetition(Match.awaySquad[player].getResume().getSeason(), type);
             awayStats.addRating((int) awayRatings[player] * 100, 1);
             awayStats.addMatches(1);
             Match.awaySquad[player].changeCondition(-15);
@@ -214,9 +214,9 @@ class Rater {
                 awayGoals, motmPlayer.getName(), motmRating));
     }
 
-    private static void updateLeague(Club home, Club away, int homeGoals, int awayGoals) {
-        League homeStats = home.getSeason().getLeague();
-        League awayStats = away.getSeason().getLeague();
+    private static void updateLeague(final Club home, final Club away, final int homeGoals, final int awayGoals) {
+        final League homeStats = home.getSeason().getLeague();
+        final League awayStats = away.getSeason().getLeague();
 
         if (awayGoals == 0) homeStats.addCleanSheet();
         if (homeGoals == 0) awayStats.addCleanSheet();
@@ -246,7 +246,7 @@ class Rater {
         awayStats.addConceded(homeGoals);
     }
 
-    private static Competition getCompetition(Statistics season, int type) {
+    private static Competition getCompetition(final Statistics season, final int type) {
         switch (type) {
             case 0: return season.getLeague();
             case 1: return season.getCup();
@@ -254,9 +254,9 @@ class Rater {
         }
     }
 
-    private static void updateForm(Club home, Club away, int homeGoals, int awayGoals) {
-        int homeForm = home.getSeason().getForm();
-        int awayForm = away.getSeason().getForm();
+    private static void updateForm(final Club home, final Club away, final int homeGoals, final int awayGoals) {
+        final int homeForm = home.getSeason().getForm();
+        final int awayForm = away.getSeason().getForm();
 
         if (homeGoals > awayGoals) {
             if (homeGoals - awayGoals > 2) {
@@ -298,7 +298,7 @@ class Rater {
             }
         }
     }
-    private static void form(Club team, int change) {
+    private static void form(final Club team, final int change) {
         team.getSeason().changeForm(change);
     }
 }

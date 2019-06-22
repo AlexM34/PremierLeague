@@ -3,11 +3,11 @@ import java.util.Objects;
 import java.util.Set;
 
 class Club {
-    private int id;
-    private String name;
-    private int established;
-    private Stadium stadium;
-    private String location;
+    private final int id;
+    private final String name;
+    private final int established;
+    private final Stadium stadium;
+    private final String location;
     private String league;
     private Glory glory;
     private int reputation;
@@ -18,8 +18,8 @@ class Club {
     private Set<Footballer> footballers;
     private Season season;
 
-    Club(int id, String name, int established, Stadium stadium, String location, String league, Glory glory,
-                int reputation, int value, int budget, Owner owner, Coach coach) {
+    Club(final int id, final String name, final int established, final Stadium stadium, final String location, final String league, final Glory glory,
+         final int reputation, final int value, final int budget, final Owner owner, final Coach coach) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -60,7 +60,7 @@ class Club {
         return league;
     }
 
-    void setLeague(String league) {
+    void setLeague(final String league) {
         this.league = league;
     }
 
@@ -68,7 +68,7 @@ class Club {
         return glory;
     }
 
-    void setGlory(Glory glory) {
+    void setGlory(final Glory glory) {
         this.glory = glory;
     }
 
@@ -76,7 +76,7 @@ class Club {
         return reputation;
     }
 
-    void setReputation(int reputation) {
+    void setReputation(final int reputation) {
         this.reputation = reputation;
     }
 
@@ -84,7 +84,7 @@ class Club {
         return value;
     }
 
-    void setValue(int value) {
+    void setValue(final int value) {
         this.value = value;
     }
 
@@ -92,7 +92,7 @@ class Club {
         return budget;
     }
 
-    void setBudget(int budget) {
+    void setBudget(final int budget) {
         this.budget = budget;
     }
 
@@ -100,7 +100,7 @@ class Club {
         return owner;
     }
 
-    void setOwner(Owner owner) {
+    void setOwner(final Owner owner) {
         this.owner = owner;
     }
 
@@ -108,7 +108,7 @@ class Club {
         return coach;
     }
 
-    void setCoach(Coach coach) {
+    void setCoach(final Coach coach) {
         this.coach = coach;
     }
 
@@ -116,11 +116,11 @@ class Club {
         return footballers;
     }
 
-    void setFootballers(Set<Footballer> footballers) {
+    void setFootballers(final Set<Footballer> footballers) {
         this.footballers = footballers;
     }
 
-    void addFootballer(Footballer footballer) {
+    void addFootballer(final Footballer footballer) {
         this.footballers.add(footballer);
     }
 
@@ -128,15 +128,15 @@ class Club {
         return season;
     }
 
-    void setSeason(Season season) {
+    void setSeason(final Season season) {
         this.season = season;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Club club = (Club) o;
+        final Club club = (Club) o;
         return id == club.id &&
                 established == club.established &&
                 reputation == club.reputation &&

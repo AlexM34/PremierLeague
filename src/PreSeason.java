@@ -1,14 +1,14 @@
 import java.util.Random;
 
 class PreSeason {
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     static void changes() {
         // TODO: Transfers
         // TODO: Youth academy
-        for (Club[] league : Data.LEAGUES) {
-            for (Club club : league) {
-                for (Footballer f : club.getFootballers()) {
+        for (final Club[] league : Data.LEAGUES) {
+            for (final Club club : league) {
+                for (final Footballer f : club.getFootballers()) {
                     if (f.getNumber() > 100) continue;
                     int r = random.nextInt(2);
                     if (r == 0) {
@@ -73,7 +73,7 @@ class PreSeason {
         }
     }
 
-    private static void improve(Footballer footballer) {
+    private static void improve(final Footballer footballer) {
         if (footballer.getOverall() < footballer.getPotential() && footballer.getOverall() < 100) {
             footballer.changeOverall(1);
             if (footballer.getAge() < 30 && random.nextInt(3) == 0) {
@@ -83,7 +83,7 @@ class PreSeason {
         }
     }
 
-    private static void decline(Footballer footballer) {
+    private static void decline(final Footballer footballer) {
         if (footballer.getOverall() > 0) {
             footballer.changeOverall(-1);
             if (footballer.getAge() >= 30 || random.nextInt(3) == 0) {

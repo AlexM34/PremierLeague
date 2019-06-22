@@ -2,19 +2,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class Match {
-    private static Scanner scanner = new Scanner(System.in);
-    private static Random random = new Random();
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final Random random = new Random();
 
     static Footballer[] homeSquad;
     static Footballer[] awaySquad;
     static int[][] bookings;
 
-    static void userTactics(Club opponent, boolean isHome) {
+    static void userTactics(final Club opponent, final boolean isHome) {
         // TODO: Add other choices
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
-            int offense = scanner.nextInt();
+            final int offense = scanner.nextInt();
             if(offense < 0 || offense > 20) {
                 System.out.println("Wrong offense value.");
                 continue;
@@ -24,27 +24,27 @@ class Match {
         }
     }
 
-    static void leagueSimulation(Club home, Club away) {
-        int result = simulateGame(home, away, false, -1, -1);
+    static void leagueSimulation(final Club home, final Club away) {
+        final int result = simulateGame(home, away, false, -1, -1);
 
         Rater.finalWhistle(home, away, result / 100, result % 100, 0);
     }
 
-    static int cupSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
-        int result = simulateGame(home, away, last, homeGoals, awayGoals);
+    static int cupSimulation(final Club home, final Club away, final boolean last, final int homeGoals, final int awayGoals) {
+        final int result = simulateGame(home, away, last, homeGoals, awayGoals);
 
         Rater.finalWhistle(home, away, result / 100, result % 100, 1);
         return result;
     }
 
-    static int continentalSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
-        int result = simulateGame(home, away, last, homeGoals, awayGoals);
+    static int continentalSimulation(final Club home, final Club away, final boolean last, final int homeGoals, final int awayGoals) {
+        final int result = simulateGame(home, away, last, homeGoals, awayGoals);
 
         Rater.finalWhistle(home, away, result / 100, result % 100, 2);
         return result;
     }
 
-    private static int simulateGame(Club home, Club away, boolean last, int aggregateHomeGoals, int aggregateAwayGoals) {
+    private static int simulateGame(final Club home, final Club away, final boolean last, final int aggregateHomeGoals, final int aggregateAwayGoals) {
         // TODO: Bench
         // TODO: Subs
         Rater.kickoff(home, away);
@@ -76,7 +76,7 @@ class Match {
         for (int minute = 1; minute <= 90 + extra; minute++) {
             // TODO: Add stoppage time
             // TODO: Too many draws
-            int r = random.nextInt(1000);
+            final int r = random.nextInt(1000);
 
             if (r < 10 * balance) {
                 if (r < balance + style - 38) {
@@ -102,8 +102,8 @@ class Match {
 
             // TODO: Use attributes for bookings
             if (random.nextInt(20) == 0) {
-                int t = random.nextInt(2);
-                int p = random.nextInt(11);
+                final int t = random.nextInt(2);
+                final int p = random.nextInt(11);
 
                 if (bookings[t][p] == 0) {
                     bookings[t][p]++;
@@ -115,8 +115,8 @@ class Match {
             }
 
             else if (random.nextInt(200) == 0) {
-                int t = random.nextInt(2);
-                int p = random.nextInt(10) + 1;
+                final int t = random.nextInt(2);
+                final int p = random.nextInt(10) + 1;
 
                 if (bookings[t][p] == 2) break;
                 bookings[t][p] = 2;
@@ -139,7 +139,7 @@ class Match {
         if (last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
                 homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
             System.out.println("It's time for the penalty shootout!");
-            boolean homeWin = penaltyShootout(homeSquad, awaySquad);
+            final boolean homeWin = penaltyShootout(homeSquad, awaySquad);
             if (homeWin) homeGoals++;
             else awayGoals++;
         }
@@ -147,7 +147,7 @@ class Match {
         return homeGoals * 100 + awayGoals;
     }
 
-    private static boolean penaltyShootout(Footballer[] homeSquad, Footballer[] awaySquad) {
+    private static boolean penaltyShootout(final Footballer[] homeSquad, final Footballer[] awaySquad) {
         // TODO: Red-carded players are off
         int homeGoals = 0;
         int awayGoals = 0;
@@ -170,7 +170,7 @@ class Match {
         return homeGoals > awayGoals;
     }
 
-    private static int penalty(Footballer taker, Footballer keeper) {
+    private static int penalty(final Footballer taker, final Footballer keeper) {
         // TODO: Use stats for penalties
         System.out.println(taker.getName() + " steps up to take the penalty vs " + keeper.getName());
         if (random.nextInt(100) < 70) {
@@ -183,16 +183,16 @@ class Match {
         }
     }
 
-    private static Footballer[] pickSquad(Club team, boolean isHome) {
-        List<Footballer> squad = team.getFootballers().stream()
+    private static Footballer[] pickSquad(final Club team, final boolean isHome) {
+        final List<Footballer> squad = team.getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 
-        Formation formation = pickFormation(squad);
-        int defenders = formation.getDefenders();
-        int midfielders = formation.getMidfielders();
-        int forwards = formation.getForwards();
-        Footballer[] selected = new Footballer[11];
+        final Formation formation = pickFormation(squad);
+        final int defenders = formation.getDefenders();
+        final int midfielders = formation.getMidfielders();
+        final int forwards = formation.getForwards();
+        final Footballer[] selected = new Footballer[11];
 
         int g = 1;
         int d = defenders;
@@ -201,7 +201,7 @@ class Match {
         Data.DEFENDER_1.changeCondition(100);
         Data.MIDFIELDER_1.changeCondition(100);
         Data.FORWARD_1.changeCondition(100);
-        for (Footballer footballer : squad) {
+        for (final Footballer footballer : squad) {
             if (footballer.getPosition() == null || footballer.getCondition() < 70) {
                 continue;
             }
@@ -241,13 +241,13 @@ class Match {
         return selected;
     }
 
-    private static Formation pickFormation(List<Footballer> footballers) {
+    private static Formation pickFormation(final List<Footballer> footballers) {
         // TODO: Smart formation pick - opponent, fatigue, form
         int defenders = 0;
         int midfielders = 0;
         int forwards = 0;
 
-        for (Footballer f : footballers) {
+        for (final Footballer f : footballers) {
 //            System.out.println(f);
             if (f.getPosition() == null || f.getCondition() < 70) {
                 continue;
@@ -267,7 +267,7 @@ class Match {
 
             if (defenders + midfielders + forwards > 9 &&
                 defenders > 2 && midfielders > 1 && forwards > 0) {
-                for (Formation formation : Formation.values()) {
+                for (final Formation formation : Formation.values()) {
                     if (formation.getDefenders() <= defenders &&
                         formation.getMidfielders() <= midfielders &&
                         formation.getForwards() <= forwards) {
@@ -278,7 +278,7 @@ class Match {
         }
 
         System.out.println("Could not pick an appropriate formation");
-        for (Footballer f : footballers) {
+        for (final Footballer f : footballers) {
             System.out.println(f.getName() + " " + f.getPosition().getRole() + " " + f.getCondition());
         }
         return Formation.F5;
