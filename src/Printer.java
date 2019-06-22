@@ -52,7 +52,7 @@ class Printer {
 
         int position = 1;
         System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
-        for (final Club team : league) {
+        for (final Club team : sorted.keySet()) {
             final League stats = team.getSeason().getLeague();
             goals += stats.getScored();
             System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", position++,

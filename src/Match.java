@@ -52,23 +52,26 @@ class Match {
         awaySquad = pickSquad(away, false);
         bookings = new int[2][11];
 
-        // TODO: Separate variables for scoring
-        // TODO: Red card effect
         // TODO: Finals are played on neutral stadium
-        int balance = Data.FANS + 100 *
-                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() * 2 +
-                 Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) /
-                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + away.getSeason().getForm() * 2 +
-                 Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) - 50;
+        final int homeAttack = getAttack(homeSquad, awaySquad);
+        final int awayAttack = getAttack(awaySquad, homeSquad);
+        int balance = Data.FANS + 5 * (homeAttack - awayAttack) / 5  +
+                (home.getSeason().getForm() - away.getSeason().getForm()) / 4 + 50;
+//                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() * 2 +
+//                 Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) /
+//                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + away.getSeason().getForm() * 2 +
+//                 Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) - 50;
 
-        int style = Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
-                + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 53;
+        int momentum = balance;
+        int style = (homeAttack + awayAttack) / 10 - 6;
+//                Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
+//                + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 53;
 
         if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE;
-        style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100)  / 10;
+        style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100) / 10;
         System.out.println();
         System.out.println(balance);
-//        System.out.println(style);
+        System.out.println(style);
 
         int homeGoals = 0;
         int awayGoals = 0;
@@ -78,24 +81,24 @@ class Match {
             // TODO: Too many draws
             final int r = random.nextInt(1000);
 
-            if (r < 10 * balance) {
-                if (r < balance + style - 38) {
+            if (r < 10 * momentum) {
+                if (r < momentum + style - 38) {
                     homeGoals++;
                     Rater.goal(minute, homeGoals, awayGoals, true);
-                    balance -= 10;
+                    momentum = balance;
                     Rater.updateRatings(3);
-                } else if (r < 5 * balance) {
-                    balance++;
+                } else if (r < 5 * momentum) {
+                    momentum++;
                     Rater.updateRatings(1);
                 }
             } else {
-                if (r > 937 + balance - style) {
+                if (r > 937 + momentum - style) {
                     awayGoals++;
                     Rater.goal(minute, homeGoals, awayGoals, false);
-                    balance += 10;
+                    momentum = balance;
                     Rater.updateRatings(-3);
-                } else if (r > 999 - 5 * balance) {
-                    balance--;
+                } else if (r > 999 - 5 * momentum) {
+                    momentum--;
                     Rater.updateRatings(-1);
                 }
             }
@@ -107,7 +110,7 @@ class Match {
 
                 if (bookings[t][p] == 0) {
                     bookings[t][p]++;
-                    balance += 10 * t - 5;
+                    balance += 2 * t - 1;
                     (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 0.5;
                     Rater.yellows.add((t == 0 ? homeSquad : awaySquad)[p]);
                     System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
@@ -120,7 +123,7 @@ class Match {
 
                 if (bookings[t][p] == 2) break;
                 bookings[t][p] = 2;
-                balance += 30 * t - 15;
+                balance += 20 * t - 10;
                 (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
                 Rater.reds.add((t == 0 ? homeSquad : awaySquad)[p]);
                 (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-35);
@@ -145,6 +148,22 @@ class Match {
         }
 
         return homeGoals * 100 + awayGoals;
+    }
+
+    private static int getAttack(final Footballer[] homeSquad, final Footballer[] awaySquad) {
+        int attack = 0;
+        int defence = 0;
+        for (Footballer footballer : homeSquad) {
+            attack += footballer.getOverall() * footballer.getPosition().getAttackingDuty();
+        }
+
+        for (Footballer footballer : awaySquad) {
+            defence += footballer.getOverall() * (5 - footballer.getPosition().getAttackingDuty());
+        }
+
+        System.out.println(attack);
+        System.out.println(defence);
+        return 50 * attack / defence;
     }
 
     private static boolean penaltyShootout(final Footballer[] homeSquad, final Footballer[] awaySquad) {

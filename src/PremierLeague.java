@@ -8,6 +8,7 @@ class PremierLeague {
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
     // TODO: Add tests
+    // TODO: Flags for debugging
 
     public static void main(final String[] args) {
 //        Data.extractData();
@@ -272,24 +273,24 @@ class PremierLeague {
 
     private static void finish(final int year) {
         for (final Club[] league : Data.LEAGUES) {
-            Printer.playerStats(league, 0);
+//            Printer.playerStats(league, 0);
             System.out.println("FINAL STANDINGS");
             Printer.standings(league);
-            Printer.allTimeStats(league);
-            System.out.println();
+//            Printer.allTimeStats(league);
+//            System.out.println();
             // TODO: Rate simulation with review
             System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
         }
 
-        Printer.continentalStats();
-        System.out.println();
-        System.out.println("DUMMIES");
-        System.out.println(Data.DEFENDER_1.getResume().getSeason());
-        System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
-        System.out.println(Data.FORWARD_1.getResume().getSeason());
-        System.out.println(Data.DEFENDER_2.getResume().getSeason());
-        System.out.println(Data.MIDFIELDER_2.getResume().getSeason());
-        System.out.println(Data.FORWARD_2.getResume().getSeason());
+//        Printer.continentalStats();
+//        System.out.println();
+//        System.out.println("DUMMIES");
+//        System.out.println(Data.DEFENDER_1.getResume().getSeason());
+//        System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
+//        System.out.println(Data.FORWARD_1.getResume().getSeason());
+//        System.out.println(Data.DEFENDER_2.getResume().getSeason());
+//        System.out.println(Data.MIDFIELDER_2.getResume().getSeason());
+//        System.out.println(Data.FORWARD_2.getResume().getSeason());
     }
 
     private static void finishSimulation() {
