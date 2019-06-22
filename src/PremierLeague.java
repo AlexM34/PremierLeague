@@ -190,7 +190,7 @@ class PremierLeague {
 
         System.out.println();
         System.out.println(String.format("Standings after round %d:", round + 1));
-        Printer.standings(league);
+        if (round < 2 * league.length - 3) Printer.standings(league);
         System.out.println();
     }
 

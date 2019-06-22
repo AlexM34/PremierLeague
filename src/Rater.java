@@ -158,19 +158,16 @@ class Rater {
     }
 
     static void finalWhistle(Club home, Club away, int homeGoals, int awayGoals, int type) {
-        // TODO: MOTM refactoring
-        boolean motmHomeTeam = true;
-        int motmPlayer = -1;
+        Footballer motmPlayer = Match.homeSquad[0];
         float motmRating = 0;
-        if (awayGoals == 0) getCompetition(Match.homeSquad[0].getResume().getSeason(), type).addCleanSheets();
-        if (homeGoals == 0) getCompetition(Match.awaySquad[0].getResume().getSeason(), type).addCleanSheets();
+        if (awayGoals == 0) getCompetition(Match.homeSquad[0].getResume().getSeason(), type).addCleanSheets(1);
+        if (homeGoals == 0) getCompetition(Match.awaySquad[0].getResume().getSeason(), type).addCleanSheets(1);
 
         for (int player = 0; player < 11; player++) {
             homeRatings[player] = homeRatings[player] < 10 ? homeRatings[player] : 10;
             homeRatings[player] = homeRatings[player] > 4 ? homeRatings[player] : 4;
             if (homeRatings[player] > motmRating) {
-                motmHomeTeam = true;
-                motmPlayer = player;
+                motmPlayer = Match.homeSquad[player];
                 motmRating = homeRatings[player];
             }
 
@@ -182,8 +179,7 @@ class Rater {
             awayRatings[player] = awayRatings[player] < 10 ? awayRatings[player] : 10;
             awayRatings[player] = awayRatings[player] > 4 ? awayRatings[player] : 4;
             if (awayRatings[player] > motmRating) {
-                motmHomeTeam = false;
-                motmPlayer = player;
+                motmPlayer = Match.awaySquad[player];
                 motmRating = awayRatings[player];
             }
 
@@ -195,98 +191,59 @@ class Rater {
             Data.RATINGS += homeRatings[player] + awayRatings[player];
         }
 
-        getCompetition((motmHomeTeam ? Match.homeSquad : Match.awaySquad)[motmPlayer].getResume().getSeason(), type).addMotmAwards();
+        getCompetition(motmPlayer.getResume().getSeason(), type).addMotmAwards(1);
 
         if (type == 0) updateLeague(home, away, homeGoals, awayGoals);
-        // TODO: Form changes in all competitions
+        updateForm(home, away, homeGoals, awayGoals);
 
         for (int goal = 0; goal < homeGoals + awayGoals; goal++) {
-            if (goalscorers[goal] != null) getCompetition(goalscorers[goal].getResume().getSeason(), type).addGoals();
-            if (assistmakers[goal] != null) getCompetition(assistmakers[goal].getResume().getSeason(), type).addAssists();
+            if (goalscorers[goal] != null) getCompetition(goalscorers[goal].getResume().getSeason(), type).addGoals(1);
+            if (assistmakers[goal] != null) getCompetition(assistmakers[goal].getResume().getSeason(), type).addAssists(1);
         }
 
         while (!yellows.isEmpty()) {
-            getCompetition(yellows.remove().getResume().getSeason(), type).addYellowCards();
+            getCompetition(yellows.remove().getResume().getSeason(), type).addYellowCards(1);
         }
 
         while (!reds.isEmpty()) {
-            getCompetition(reds.remove().getResume().getSeason(), type).addRedCards();
+            getCompetition(reds.remove().getResume().getSeason(), type).addRedCards(1);
         }
-
-        int motmId = (motmHomeTeam ? Match.homeSquad : Match.awaySquad) [motmPlayer].getId();
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
                 away.getName(), homeGoals,
-                awayGoals, (motmHomeTeam ? home : away).getFootballers().stream().filter(
-                        f -> f.getId() == motmId).findFirst().get(), motmRating));
+                awayGoals, motmPlayer.getName(), motmRating));
     }
 
     private static void updateLeague(Club home, Club away, int homeGoals, int awayGoals) {
+        League homeStats = home.getSeason().getLeague();
+        League awayStats = away.getSeason().getLeague();
 
-        if (awayGoals == 0) home.getSeason().getLeague().addCleanSheet();
-        if (homeGoals == 0) away.getSeason().getLeague().addCleanSheet();
+        if (awayGoals == 0) homeStats.addCleanSheet();
+        if (homeGoals == 0) awayStats.addCleanSheet();
 
         if (homeGoals > awayGoals) {
             Data.HOME_WINS++;
-            home.getSeason().getLeague().addPoints(3);
-            home.getSeason().getLeague().addWin();
-            away.getSeason().getLeague().addLoss();
-
-            if (homeGoals - awayGoals > 2) {
-                form(home, 1);
-                form(away, -1);
-            }
-
-            if (home.getSeason().getForm() < away.getSeason().getForm() + 10) {
-                if (home.getSeason().getForm() < away.getSeason().getForm()) {
-                    form(home, 3);
-                    form(away, -3);
-                } else {
-                    form(home, 1);
-                    form(away, -1);
-                }
-            }
+            homeStats.addPoints(3);
+            homeStats.addWin();
+            awayStats.addLoss();
         } else if (homeGoals < awayGoals) {
             Data.AWAY_WINS++;
-            away.getSeason().getLeague().addPoints(3);
-            away.getSeason().getLeague().addWin();
-            home.getSeason().getLeague().addLoss();
-
-            if (awayGoals - homeGoals > 2) {
-                form(away, 1);
-                form(home, -1);
-            }
-
-            if (away.getSeason().getForm() < home.getSeason().getForm() + 10) {
-                if (away.getSeason().getForm() < home.getSeason().getForm()) {
-                    form(away, 3);
-                    form(home, -3);
-                } else {
-                    form(away, 1);
-                    form(home, -1);
-                }
-            }
+            awayStats.addPoints(3);
+            awayStats.addWin();
+            homeStats.addLoss();
         } else {
-            home.getSeason().getLeague().addPoints(1);
-            away.getSeason().getLeague().addPoints(1);
-            home.getSeason().getLeague().addDraw();
-            away.getSeason().getLeague().addDraw();
-
-            if (home.getSeason().getForm() < away.getSeason().getForm()) {
-                form(home, 2);
-                form(away, -2);
-            } else if (away.getSeason().getForm() < home.getSeason().getForm()) {
-                form(away, 2);
-                form(home, -2);
-            }
+            homeStats.addPoints(1);
+            awayStats.addPoints(1);
+            homeStats.addDraw();
+            awayStats.addDraw();
         }
 
-        home.getSeason().getLeague().addMatch();
-        away.getSeason().getLeague().addMatch();
-        home.getSeason().getLeague().addScored(homeGoals);
-        away.getSeason().getLeague().addScored(awayGoals);
-        home.getSeason().getLeague().addConceded(awayGoals);
-        away.getSeason().getLeague().addConceded(homeGoals);
+        homeStats.addMatch();
+        awayStats.addMatch();
+        homeStats.addScored(homeGoals);
+        awayStats.addScored(awayGoals);
+        homeStats.addConceded(awayGoals);
+        awayStats.addConceded(homeGoals);
     }
 
     private static Competition getCompetition(Statistics season, int type) {
@@ -297,6 +254,50 @@ class Rater {
         }
     }
 
+    private static void updateForm(Club home, Club away, int homeGoals, int awayGoals) {
+        int homeForm = home.getSeason().getForm();
+        int awayForm = away.getSeason().getForm();
+
+        if (homeGoals > awayGoals) {
+            if (homeGoals - awayGoals > 2) {
+                form(home, 1);
+                form(away, -1);
+            }
+
+            if (homeForm < awayForm + 10) {
+                if (homeForm < awayForm) {
+                    form(home, 3);
+                    form(away, -3);
+                } else {
+                    form(home, 1);
+                    form(away, -1);
+                }
+            }
+        } else if (homeGoals < awayGoals) {
+            if (awayGoals - homeGoals > 2) {
+                form(away, 1);
+                form(home, -1);
+            }
+
+            if (awayForm < homeForm + 10) {
+                if (awayForm < homeForm) {
+                    form(away, 3);
+                    form(home, -3);
+                } else {
+                    form(away, 1);
+                    form(home, -1);
+                }
+            }
+        } else {
+            if (homeForm < awayForm) {
+                form(home, 2);
+                form(away, -2);
+            } else if (awayForm < homeForm) {
+                form(away, 2);
+                form(home, -2);
+            }
+        }
+    }
     private static void form(Club team, int change) {
         team.getSeason().changeForm(change);
     }

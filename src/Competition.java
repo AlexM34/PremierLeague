@@ -41,8 +41,8 @@ class Competition {
         this.goals = 0;
     }
 
-    void addGoals() {
-        this.goals += 1;
+    void addGoals(int goals) {
+        this.goals += goals;
     }
 
     int getAssists() {
@@ -53,8 +53,8 @@ class Competition {
         this.assists = 0;
     }
 
-    void addAssists() {
-        this.assists += 1;
+    void addAssists(int assists) {
+        this.assists += assists;
     }
 
     int getCleanSheets() {
@@ -65,8 +65,8 @@ class Competition {
         this.cleanSheets = 0;
     }
 
-    void addCleanSheets() {
-        this.cleanSheets += 1;
+    void addCleanSheets(int cleanSheets) {
+        this.cleanSheets += cleanSheets;
     }
 
     int getRating() {
@@ -91,8 +91,8 @@ class Competition {
         this.motmAwards = 0;
     }
 
-    void addMotmAwards() {
-        this.motmAwards += 1;
+    void addMotmAwards(int motmAwards) {
+        this.motmAwards += motmAwards;
     }
 
     int getYellowCards() {
@@ -103,8 +103,8 @@ class Competition {
         this.yellowCards = 0;
     }
 
-    void addYellowCards() {
-        this.yellowCards += 1;
+    void addYellowCards(int yellowCards) {
+        this.yellowCards += yellowCards;
     }
 
     int getRedCards() {
@@ -115,8 +115,8 @@ class Competition {
         this.redCards = 0;
     }
 
-    void addRedCards() {
-        this.redCards += 1;
+    void addRedCards(int redCards) {
+        this.redCards += redCards;
     }
 
     @Override

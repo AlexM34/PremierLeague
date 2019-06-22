@@ -2,7 +2,6 @@ import java.io.*;
 import java.util.*;
 
 class Data {
-    // TODO: Put spaces for players
     static Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static Club[] CHAMPIONS_LEAGUE = new Club[32];
     static int FANS = 5;
@@ -36,7 +35,6 @@ class Data {
         try {
             for (Club[] league : LEAGUES) {
                 for (Club club : league) {
-                    // TODO: Make just one pass through the data
                     File file = new File("data/" + club.getName() + ".csv");
                     file.delete();
                     file.createNewFile();
@@ -72,11 +70,10 @@ class Data {
                     Scanner inputStream = new Scanner(data);
 
                     while (inputStream.hasNextLine()) {
-                        // TODO: Handle nulls
                         String footballer = inputStream.nextLine();
-                        String[] values = footballer.replaceAll("\\s", "").split(",");
+                        String[] values = footballer.split(",");
 
-                        if (club.getName().replaceAll("\\s", "").equals(values[9])) {
+                        if (club.getName().equals(values[9])) {
                             club.addFootballer(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
                                     Integer.parseInt(values[7]), Integer.parseInt(values[8]),
                                     values[11].substring(1, values[11].length() - 1).length() > 0 ? Float.parseFloat(values[11].substring(1, values[11].length() - 1)) : 0,
@@ -129,25 +126,37 @@ class Data {
     }
 
     private static void updateCareerStats(Footballer footballer) {
-        // TODO: Update and clear stats
-        footballer.getResume().getTotal().getLeague().addGoals();
-        footballer.getResume().getTotal().getLeague().addAssists();
-        footballer.getResume().getTotal().getLeague().addCleanSheets();
-        footballer.getResume().getTotal().getLeague().addRating(footballer.getResume().getSeason().getLeague().getRating(), footballer.getResume().getSeason().getLeague().getMatches());
-        footballer.getResume().getTotal().getLeague().addMatches(footballer.getResume().getSeason().getLeague().getMatches());
-        footballer.getResume().getTotal().getLeague().addMotmAwards();
-        footballer.getResume().getTotal().getLeague().addYellowCards();
-        footballer.getResume().getTotal().getLeague().addRedCards();
+        updateCompetition(footballer.getResume().getTotal().getLeague(), footballer.getResume().getSeason().getLeague());
+        updateCompetition(footballer.getResume().getTotal().getCup(), footballer.getResume().getSeason().getCup());
+        updateCompetition(footballer.getResume().getTotal().getContinental(), footballer.getResume().getSeason().getContinental());
     }
 
     private static void clearSeasonStats(Footballer footballer) {
-        footballer.getResume().getSeason().getLeague().clearMatches();
-        footballer.getResume().getSeason().getLeague().clearGoals();
-        footballer.getResume().getSeason().getLeague().clearAssists();
-        footballer.getResume().getSeason().getLeague().clearCleanSheets();
-        footballer.getResume().getSeason().getLeague().clearRating();
-        footballer.getResume().getSeason().getLeague().clearMotmAwards();
-        footballer.getResume().getSeason().getLeague().clearYellowCards();
-        footballer.getResume().getSeason().getLeague().clearRedCards();
+        clearCompetition(footballer.getResume().getSeason().getLeague());
+        clearCompetition(footballer.getResume().getSeason().getCup());
+        clearCompetition(footballer.getResume().getSeason().getContinental());
+    }
+
+    private static void updateCompetition(Competition total, Competition season) {
+        total.addMatches(season.getMatches());
+        total.addGoals(season.getGoals());
+        total.addAssists(season.getAssists());
+        total.addCleanSheets(season.getCleanSheets());
+        total.addRating(season.getRating(), season.getMatches());
+        total.addMotmAwards(season.getMotmAwards());
+        total.addYellowCards(season.getYellowCards());
+        total.addRedCards(season.getRedCards());
+    }
+
+    private static void clearCompetition(Competition stats) {
+        stats.clearMatches();
+        stats.clearGoals();
+        stats.clearAssists();
+        stats.clearCleanSheets();
+        stats.clearRating();
+        stats.clearMotmAwards();
+        stats.clearYellowCards();
+        stats.clearRedCards();
+
     }
 }

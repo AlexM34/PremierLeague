@@ -3,12 +3,16 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
-    private static Map<Integer, Integer> sortLeague(Club[] league) {
-        Map<Integer, Integer> standings = new LinkedHashMap<>();
-        for (int team = 0; team < league.length; team++) {
-            standings.put(team, 10000 * league[team].getSeason().getLeague().getPoints() + 100 *
-                    (league[team].getSeason().getLeague().getScored() - league[team].getSeason().getLeague().getConceded()) +
-                    league[team].getSeason().getLeague().getScored());
+    private static int offset;
+
+    private static Map<Club, Integer> sortLeague(Club[] league) {
+        Map<Club, Integer> standings = new LinkedHashMap<>();
+        offset = 0;
+        for (Club team : league) {
+            if (offset < team.getName().length()) offset = team.getName().length();
+            League stats = team.getSeason().getLeague();
+            standings.put(team, 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) +
+                    stats.getScored());
         }
 
         return standings.entrySet().stream().sorted(
@@ -20,10 +24,12 @@ class Printer {
     static Club[] pickChampionsLeagueTeams() {
         Map<Club, Integer> teams = new LinkedHashMap<>();
         for (Club[] league : Data.LEAGUES) {
-            Map<Integer, Integer> sorted = sortLeague(league);
-            for (int team = 0; team < 7; team++) {
-                int index = sorted.keySet().toArray(new Integer[0])[team];
-                teams.put(league[index], league[index].getSeason().getLeague().getPoints());
+            Map<Club, Integer> sorted = sortLeague(league);
+            int slots = 7;
+            for (Club team : sorted.keySet()) {
+                teams.put(team, team.getSeason().getLeague().getPoints());
+                slots--;
+                if (slots == 0) break;
             }
         }
 
@@ -31,6 +37,7 @@ class Printer {
         toSort.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
         Club[] selected = new Club[32];
         int limit = 0;
+
         for (Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
             selected[limit] = clubIntegerEntry.getKey();
             if (limit++ == 31) break;
@@ -41,16 +48,15 @@ class Printer {
 
     static void standings(Club[] league) {
         int goals = 0;
-        Map<Integer, Integer> sorted = sortLeague(league);
+        Map<Club, Integer> sorted = sortLeague(league);
 
-        System.out.println("No  Teams                     G  W  D  L   GF:GA  P");
-        for (int team = 0; team < league.length; team++) {
-            Integer index = sorted.keySet().toArray(new Integer[0])[team];
-            League stats = league[index].getSeason().getLeague();
+        int position = 1;
+        System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
+        for (Club team : league) {
+            League stats = team.getSeason().getLeague();
             goals += stats.getScored();
-            // TODO: Space adjustments
-            System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", team + 1,
-                    league[index].getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
+            System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", position++,
+                    team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
                     stats.getScored(), stats.getConceded(), stats.getPoints()));
         }
         System.out.println();
@@ -61,11 +67,11 @@ class Printer {
         System.out.println("Average rating for the season: " + Data.RATINGS / (22 * 380));
         System.out.println();
 
-        int first = sorted.keySet().toArray(new Integer[0])[0];
+        Club first = sorted.keySet().toArray(new Club[0])[0];
 
-        if (league[first].getSeason().getLeague().getMatches() == 2 * league.length - 2) {
-            league[first].getGlory().addLeague();
-            for (Footballer footballer : league[first].getFootballers()) {
+        if (first.getSeason().getLeague().getMatches() == 2 * league.length - 2) {
+            first.getGlory().addLeague();
+            for (Footballer footballer : first.getFootballers()) {
                 footballer.getResume().getGlory().addLeague();
             }
         }
@@ -111,10 +117,6 @@ class Printer {
                 if (f.getPosition() == Position.GK) {
                     cleanSheets.put(name, stats.getCleanSheets());
                 }
-
-//                if (team < 6 && f.getResume().getSeason().getLeague().getMatches() > 0) {
-//                    System.out.println(String.format("%s %s", name, f.getResume().getSeason().toString()));
-//                }
             }
         }
 
@@ -212,7 +214,7 @@ class Printer {
         for (int team = 0; team < league.length; team++) {
             for (Footballer f : league[team].getFootballers()) {
                 String name = f.getName();
-                Competition stats = f.getResume().getSeason().getLeague();
+                Competition stats = f.getResume().getTotal().getLeague();
 
                 if (f.getResume().getTotal().getLeague().getMatches() > 100) {
                     ratings.put(name, f.getResume().getTotal().getLeague().getRating());
@@ -249,7 +251,7 @@ class Printer {
                         LinkedHashMap::new));
 
         for (int i = 0; i < 20 && i < sorted.size(); i++) {
-            System.out.println(String.format("%2d. %-15s %2d", i + 1, sorted.keySet().toArray(new String[0])[i],
+            System.out.println(String.format("%2d. %-20s %2d", i + 1, sorted.keySet().toArray(new String[0])[i],
                     sorted.values().toArray(new Integer[0])[i]));
         }
 
