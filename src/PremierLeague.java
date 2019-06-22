@@ -43,7 +43,7 @@ class PremierLeague {
                     }
                 }
 
-                Printer.cupPlayerStats(league);
+                Printer.playerStats(league, 1);
             }
 
             Data.CHAMPIONS_LEAGUE = Printer.pickChampionsLeagueTeams();
@@ -58,7 +58,7 @@ class PremierLeague {
             for (Footballer footballer : championsLeagueWinner.getFootballers()) {
                 footballer.getResume().getGlory().addContinental();
             }
-            Printer.continentalPlayerStats(Data.CHAMPIONS_LEAGUE);
+            Printer.playerStats(Data.CHAMPIONS_LEAGUE, 2);
 
             finish(year);
             PreSeason.changes();
@@ -272,7 +272,7 @@ class PremierLeague {
 
     private static void finish(int year) {
         for (Club[] league : Data.LEAGUES) {
-            Printer.leaguePlayerStats(league);
+            Printer.playerStats(league, 0);
             System.out.println("FINAL STANDINGS");
             Printer.standings(league);
             Printer.allTimeStats(league);
@@ -282,6 +282,7 @@ class PremierLeague {
         }
 
         Printer.continentalStats();
+        System.out.println();
         System.out.println("DUMMIES");
         System.out.println(Data.DEFENDER_1.getResume().getSeason());
         System.out.println(Data.MIDFIELDER_1.getResume().getSeason());

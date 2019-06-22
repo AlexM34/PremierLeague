@@ -15,11 +15,11 @@ class Statistics {
         return league;
     }
 
-    public Competition getCup() {
+    Competition getCup() {
         return cup;
     }
 
-    public Competition getContinental() {
+    Competition getContinental() {
         return continental;
     }
 

@@ -27,20 +27,20 @@ class Match {
     static void leagueSimulation(Club home, Club away) {
         int result = simulateGame(home, away, false, -1, -1);
 
-        Rater.leagueFinalWhistle(home, away, result / 100, result % 100);
+        Rater.finalWhistle(home, away, result / 100, result % 100, 0);
     }
 
     static int cupSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
         int result = simulateGame(home, away, last, homeGoals, awayGoals);
 
-        Rater.cupFinalWhistle(home, away, result / 100, result % 100);
+        Rater.finalWhistle(home, away, result / 100, result % 100, 1);
         return result;
     }
 
     static int continentalSimulation(Club home, Club away, boolean last, int homeGoals, int awayGoals) {
         int result = simulateGame(home, away, last, homeGoals, awayGoals);
 
-        Rater.continentalFinalWhistle(home, away, result / 100, result % 100);
+        Rater.finalWhistle(home, away, result / 100, result % 100, 2);
         return result;
     }
 
