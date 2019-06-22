@@ -170,10 +170,9 @@ class Match {
         return homeGoals > awayGoals;
     }
 
-    private static int penalty(final Footballer taker, final Footballer keeper) {
-        // TODO: Use stats for penalties
-        System.out.println(taker.getName() + " steps up to take the penalty vs " + keeper.getName());
-        if (random.nextInt(100) < 70) {
+    private static int penalty(final Footballer striker, final Footballer goalkeeper) {
+        System.out.println(striker.getName() + " steps up to take the penalty vs " + goalkeeper.getName());
+        if (random.nextInt(100) < 70 + striker.getOverall() - goalkeeper.getOverall()) {
             System.out.println("He scores with a great shot!");
             return 1;
         }

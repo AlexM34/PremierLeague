@@ -9,15 +9,15 @@ class ChampionsLeague {
         this.group = new League();
     }
 
-    public boolean isAlive() {
+    boolean isAlive() {
         return alive;
     }
 
-    public void setAlive(final boolean alive) {
+    void setAlive(final boolean alive) {
         this.alive = alive;
     }
 
-    public League getGroup() {
+    League getGroup() {
         return group;
     }
 

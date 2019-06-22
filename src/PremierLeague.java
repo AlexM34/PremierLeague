@@ -249,6 +249,7 @@ class PremierLeague {
             final int result;
             if (game % 2 == 0) {
                 // TODO: Refactor simulations
+                // TODO: Two-legger cups
                 if (games == 1) result = Match.cupSimulation(first, second, last, -1, -1);
                 else result = Match.continentalSimulation(first, second, last, -1, -1);
                 firstGoals += result / 100;
