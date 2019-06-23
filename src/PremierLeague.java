@@ -5,10 +5,13 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toMap;
 
 class PremierLeague {
+    // TODO: Add tests
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
-    // TODO: Add tests
-    // TODO: Flags for debugging
+    static final boolean matchFlag = false;
+    private static final boolean standingsFlag = false;
+    private static final boolean playerStatsFlag = false;
+    private static final boolean teamStatsFlag = false;
 
     public static void main(final String[] args) {
 //        Data.extractData();
@@ -43,7 +46,7 @@ class PremierLeague {
                     }
                 }
 
-                Printer.playerStats(league, 1);
+                if (playerStatsFlag) Printer.playerStats(league, 1);
             }
 
             Data.CHAMPIONS_LEAGUE = Printer.pickChampionsLeagueTeams();
@@ -58,7 +61,8 @@ class PremierLeague {
             for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
                 footballer.getResume().getGlory().addContinental();
             }
-            Printer.playerStats(Data.CHAMPIONS_LEAGUE, 2);
+
+            if (playerStatsFlag) Printer.playerStats(Data.CHAMPIONS_LEAGUE, 2);
 
             finish(year);
             PreSeason.changes();
@@ -190,7 +194,7 @@ class PremierLeague {
 
         System.out.println();
         System.out.println(String.format("Standings after round %d:", round + 1));
-        if (round < 2 * league.length - 3) Printer.standings(league);
+        if (round < 2 * league.length - 3 && standingsFlag) Printer.standings(league);
         System.out.println();
     }
 
@@ -203,7 +207,7 @@ class PremierLeague {
                 final int r = random.nextInt(league.length);
                 if (!playing[r]) {
                     selected[count++] = league[r];
-                    System.out.println(selected[count - 1]);
+                    if (standingsFlag) System.out.println(selected[count - 1]);
                     playing[r] = true;
                     break;
                 }
@@ -273,24 +277,30 @@ class PremierLeague {
 
     private static void finish(final int year) {
         for (final Club[] league : Data.LEAGUES) {
-//            Printer.playerStats(league, 0);
-            System.out.println("FINAL STANDINGS");
-            Printer.standings(league);
-//            Printer.allTimeStats(league);
-//            System.out.println();
+            if (playerStatsFlag) Printer.playerStats(league, 0);
+            if (standingsFlag) {
+                System.out.println("FINAL STANDINGS");
+                Printer.standings(league);
+            }
+            if (teamStatsFlag) Printer.allTimeStats(league);
+            System.out.println();
             // TODO: Rate simulation with review
-            System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
         }
 
-//        Printer.continentalStats();
-//        System.out.println();
-//        System.out.println("DUMMIES");
-//        System.out.println(Data.DEFENDER_1.getResume().getSeason());
-//        System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
-//        System.out.println(Data.FORWARD_1.getResume().getSeason());
-//        System.out.println(Data.DEFENDER_2.getResume().getSeason());
-//        System.out.println(Data.MIDFIELDER_2.getResume().getSeason());
-//        System.out.println(Data.FORWARD_2.getResume().getSeason());
+        if (teamStatsFlag) Printer.continentalStats();
+        if (playerStatsFlag) {
+            System.out.println();
+            System.out.println("DUMMIES");
+            System.out.println(Data.DEFENDER_1.getResume().getSeason());
+            System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
+            System.out.println(Data.FORWARD_1.getResume().getSeason());
+            System.out.println(Data.DEFENDER_2.getResume().getSeason());
+            System.out.println(Data.MIDFIELDER_2.getResume().getSeason());
+            System.out.println(Data.FORWARD_2.getResume().getSeason());
+        }
+
+        System.out.println();
+        System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
     }
 
     private static void finishSimulation() {

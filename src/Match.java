@@ -52,6 +52,7 @@ class Match {
         awaySquad = pickSquad(away, false);
         bookings = new int[2][11];
 
+        // TODO: Fine tune the balance
         // TODO: Finals are played on neutral stadium
         final int homeAttack = getAttack(homeSquad, awaySquad);
         final int awayAttack = getAttack(awaySquad, homeSquad);
@@ -69,9 +70,11 @@ class Match {
 
         if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE;
         style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100) / 10;
-        System.out.println();
-        System.out.println(balance);
-        System.out.println(style);
+        if (PremierLeague.matchFlag) {
+            System.out.println();
+            System.out.println(balance);
+            System.out.println(style);
+        }
 
         int homeGoals = 0;
         int awayGoals = 0;
@@ -113,7 +116,7 @@ class Match {
                     balance += 2 * t - 1;
                     (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 0.5;
                     Rater.yellows.add((t == 0 ? homeSquad : awaySquad)[p]);
-                    System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
+                    if (PremierLeague.matchFlag) System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
                 }
             }
 
@@ -127,7 +130,7 @@ class Match {
                 (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
                 Rater.reds.add((t == 0 ? homeSquad : awaySquad)[p]);
                 (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-35);
-                System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
+                if (PremierLeague.matchFlag) System.out.println(minute + "' " + (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
             }
 
             if (minute == 90 && last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
@@ -161,42 +164,48 @@ class Match {
             defence += footballer.getOverall() * (5 - footballer.getPosition().getAttackingDuty());
         }
 
-        System.out.println(attack);
-        System.out.println(defence);
+        if (PremierLeague.matchFlag) {
+            System.out.println(attack);
+            System.out.println(defence);
+        }
         return 50 * attack / defence;
     }
 
     private static boolean penaltyShootout(final Footballer[] homeSquad, final Footballer[] awaySquad) {
-        // TODO: Red-carded players are off
         int homeGoals = 0;
         int awayGoals = 0;
-        int current = 10;
+        int currentHome = 10;
+        int currentAway = 10;
         int taken = 0;
+
         while(true) {
-            homeGoals += penalty(homeSquad[current], awaySquad[0]);
+            while (bookings[0][currentHome] > 1) currentHome = (currentHome + 10) % 11;
+            homeGoals += penalty(homeSquad[currentHome], awaySquad[0]);
             System.out.println(homeGoals + "-" + awayGoals);
             if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
+            currentHome = (currentHome + 10) % 11;
 
-            awayGoals += penalty(awaySquad[current], homeSquad[0]);
+            while (bookings[1][currentAway] > 1) currentAway = (currentAway + 10) % 11;
+            awayGoals += penalty(awaySquad[currentAway], homeSquad[0]);
             System.out.println(homeGoals + "-" + awayGoals);
             if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
                     || taken >= 4 && homeGoals != awayGoals) break;
+            currentAway = (currentAway + 10) % 11;
 
             taken++;
-            current = (current + 10) % 11;
         }
 
         return homeGoals > awayGoals;
     }
 
     private static int penalty(final Footballer striker, final Footballer goalkeeper) {
-        System.out.println(striker.getName() + " steps up to take the penalty vs " + goalkeeper.getName());
+        if (PremierLeague.matchFlag) System.out.println(striker.getName() + " steps up to take the penalty vs " + goalkeeper.getName());
         if (random.nextInt(100) < 70 + striker.getOverall() - goalkeeper.getOverall()) {
-            System.out.println("He scores with a great shot!");
+            if (PremierLeague.matchFlag) System.out.println("He scores with a great shot!");
             return 1;
         }
         else {
-            System.out.println("The goalkeeper makes a wonderful save!");
+            if (PremierLeague.matchFlag) System.out.println("The goalkeeper makes a wonderful save!");
             return 0;
         }
     }

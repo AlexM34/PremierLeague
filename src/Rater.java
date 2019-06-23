@@ -74,8 +74,10 @@ class Rater {
         final Footballer[] squad = isHome ? Match.homeSquad : Match.awaySquad;
 
         for (int player = 0; player < 11; player++) {
-            scoring += scoringChance(squad[player]);
-            assisting += assistingChance(squad[player]);
+            if (Match.bookings[isHome ? 0 : 1][player] < 2) {
+                scoring += scoringChance(squad[player]);
+                assisting += assistingChance(squad[player]);
+            }
         }
 
         int r = random.nextInt(scoring);
@@ -94,8 +96,10 @@ class Rater {
         }
 
         if (goalscorer == null) {
-            // TODO: Own goal scorer
-            System.out.println(minute + "' " + "Own goal scored. " + homeGoals + "-" + awayGoals);
+            // TODO: Red card for the goalkeeper
+            int footballer = ownGoal(isHome ? Match.awaySquad : Match.homeSquad);
+            if (Match.bookings[isHome ? 0 : 1][footballer] >= 2) footballer = 0;
+            if (PremierLeague.matchFlag) System.out.println(minute + "' " + "Own goal scored by " + footballer + ". " + homeGoals + "-" + awayGoals);
         }
         else {
             r = random.nextInt(assisting);
@@ -118,13 +122,20 @@ class Rater {
                 }
             }
 
-            System.out.println(minute + "' " + goalscorer.getName() +
+            if (PremierLeague.matchFlag) System.out.println(minute + "' " + goalscorer.getName() +
                     (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
                             : " scores after a solo run") + ". " + homeGoals + "-" + awayGoals);
         }
 
         goalscorers[homeGoals + awayGoals - 1] = goalscorer;
         assistmakers[homeGoals + awayGoals - 1] = assistmaker;
+    }
+
+    private static int ownGoal(final Footballer[] footballers) {
+        if (random.nextInt(10) < 2) return 0;
+        if (random.nextInt(5) < 3) return 1 + random.nextInt(4);
+        if (random.nextInt(10) < 7) return 5 + random.nextInt(3);
+        return 8 + random.nextInt(3);
     }
 
     private static int scoringChance(final Footballer footballer) {
