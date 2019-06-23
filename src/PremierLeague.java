@@ -8,9 +8,10 @@ class PremierLeague {
     // TODO: Add tests
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
+    static final boolean userFlag = false;
     static final boolean matchFlag = false;
     private static final boolean standingsFlag = false;
-    private static final boolean playerStatsFlag = false;
+    private static final boolean playerStatsFlag = true;
     private static final boolean teamStatsFlag = false;
 
     public static void main(final String[] args) {
@@ -19,7 +20,7 @@ class PremierLeague {
         Data.addDummies();
         IntStream.range(0, 10).forEach(year -> {
             Data.prepare(year);
-//            pickTeam();
+            if (userFlag) pickTeam();
             final Map<Club[], int[][][]> draw = new HashMap<>();
             for (final Club[] league : Data.LEAGUES) draw.put(league, Draw.league(league.length));
 
@@ -30,7 +31,9 @@ class PremierLeague {
             }
 
             for (final Club[] league : Data.LEAGUES) {
-                final Club nationalCupWinner = cup(league, 16);
+                final Club nationalCupWinner = cup(league, 16,
+                        league[0].getLeague().equals(Spain.LEAGUE) ? 2 : 1,
+                        league[0].getLeague().equals(England.LEAGUE));
                 System.out.println(nationalCupWinner.getName() + " win the National Cup!");
                 nationalCupWinner.getGlory().addNationalCup();
                 for (final Footballer footballer : nationalCupWinner.getFootballers()) {
@@ -38,7 +41,7 @@ class PremierLeague {
                 }
 
                 if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
-                    final Club leagueCupWinner = cup(league, 16);
+                    final Club leagueCupWinner = cup(league, 16, 1, false);
                     System.out.println(leagueCupWinner.getName() + " win the League Cup!");
                     leagueCupWinner.getGlory().addLeagueCup();
                     for (final Footballer footballer : leagueCupWinner.getFootballers()) {
@@ -53,9 +56,9 @@ class PremierLeague {
             for (final Club team : Data.CHAMPIONS_LEAGUE) {
                 team.getSeason().getChampionsLeague().setAlive(true);
             }
-            final Club[] advanced = groups(Data.CHAMPIONS_LEAGUE, 4, 2);
+            final Club[] advanced = groups(Data.CHAMPIONS_LEAGUE);
             final Club[] drawn = Draw.championsLeague(advanced);
-            final Club championsLeagueWinner = knockout(drawn, 2);
+            final Club championsLeagueWinner = knockout(drawn, 2, 2, false);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addContinental();
             for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
@@ -71,30 +74,30 @@ class PremierLeague {
         finishSimulation();
     }
 
-    private static Club[] groups(final Club[] teams, final int groupSize, final int advancingPerGroup) {
-        final Club[] advancing = new Club[2 * teams.length / groupSize];
-        final int groups = teams.length / groupSize;
+    private static Club[] groups(final Club[] teams) {
+        final Club[] advancing = new Club[2 * teams.length / 4];
+        final int groups = teams.length / 4;
         int count = 0;
 
-        final int[][][] draw = Draw.league(groupSize);
+        final int[][][] draw = Draw.league(4);
         for (int group = 0; group < groups; group++) {
             System.out.println("GROUP " + (char)('A' + group));
 
-            final Club[] clubs = new Club[groupSize];
-            for (int team = 0; team < groupSize; team++) clubs[team] = teams[groups * team + group];
+            final Club[] clubs = new Club[4];
+            for (int team = 0; team < 4; team++) clubs[team] = teams[groups * team + group];
 
             for (int round = 0; round < draw.length; round++) {
                 System.out.println();
                 System.out.println("Matchday " + (round + 1));
 
-                for (int game = 0; game < groupSize / 2; game++) {
+                for (int game = 0; game < 4 / 2; game++) {
                     final int home = draw[round][game][0];
                     final int away = draw[round][game][1];
-                    final int result = Match.continentalSimulation(clubs[home], clubs[away], false, -1, -1);
+                    final int result = Match.simulation(clubs[home], clubs[away], false, -1, -1, 2);
                     final int homeGoals = result / 100;
                     final int awayGoals = result % 100;
                     final League homeStats = clubs[home].getSeason().getChampionsLeague().getGroup();
-                    final League awayStats = clubs[home].getSeason().getChampionsLeague().getGroup();
+                    final League awayStats = clubs[away].getSeason().getChampionsLeague().getGroup();
 
                     if (result / 100 > result % 100) {
                         homeStats.addPoints(3);
@@ -126,7 +129,7 @@ class PremierLeague {
             }
 
             final Map<Club, Integer> standing = new LinkedHashMap<>();
-            for (int team = 0; team < groupSize; team++) standing.put(clubs[team],
+            for (int team = 0; team < 4; team++) standing.put(clubs[team],
                     10000 * clubs[team].getSeason().getChampionsLeague().getGroup().getPoints() +
                     100 * (clubs[team].getSeason().getChampionsLeague().getGroup().getScored() -
                            clubs[team].getSeason().getChampionsLeague().getGroup().getConceded()) +
@@ -149,7 +152,7 @@ class PremierLeague {
                         groupStats.getMatches(), groupStats.getWins(), groupStats.getDraws(), groupStats.getLosses(),
                         groupStats.getScored(), groupStats.getConceded(), groupStats.getPoints()));
 
-                if (team < advancingPerGroup) advancing[count++] = club;
+                if (team < 2) advancing[count++] = club;
             }
 
             System.out.println();
@@ -188,17 +191,20 @@ class PremierLeague {
             final int away = draw[round][game][1];
             if (home == Data.USER) Match.userTactics(league[away], true);
             else if (away == Data.USER) Match.userTactics(league[home], false);
-            Match.leagueSimulation(league[home], league[away]);
+            Match.simulation(league[home], league[away], false, -1, -1, 0);
             if (home == Data.USER || away == Data.USER) pause();
         }
 
-        System.out.println();
-        System.out.println(String.format("Standings after round %d:", round + 1));
-        if (round < 2 * league.length - 3 && standingsFlag) Printer.standings(league);
+        if (round < 2 * league.length - 3 && standingsFlag) {
+            System.out.println();
+            System.out.println(String.format("Standings after round %d:", round + 1));
+            Printer.standings(league);
+        }
+
         System.out.println();
     }
 
-    private static Club cup(final Club[] league, final int teams) {
+    private static Club cup(final Club[] league, final int teams, final int games, final boolean replay) {
         int count = 0;
         final Club[] selected = new Club[teams];
         final boolean[] playing = new boolean[league.length];
@@ -214,10 +220,10 @@ class PremierLeague {
             }
         }
 
-        return knockout(selected, 1);
+        return knockout(selected, games, 1, replay);
     }
 
-    private static Club knockout(final Club[] selected, final int games) {
+    private static Club knockout(final Club[] selected, final int games, final int type, final boolean replay) {
         int count = selected.length;
 
         for (int round = 1; round <= Math.sqrt(selected.length); round++) {
@@ -233,7 +239,7 @@ class PremierLeague {
 
             for (int team = 0; team < count / 2; team++) {
                 if (knockoutFixture(selected[team], selected[count - team - 1], round < Math.sqrt(selected.length)
-                        ? games : 1)) {
+                        ? games : 1, type, replay && count >= 8)) {
                     selected[team] = selected[count - team - 1];
                     selected[count - team - 1] = null;
                 }
@@ -245,30 +251,25 @@ class PremierLeague {
         return selected[0];
     }
 
-    private static boolean knockoutFixture(final Club first, final Club second, final int games) {
-        // TODO: Replay for FA Cup
+    private static boolean knockoutFixture(final Club first, final Club second, final int games,
+                                           final int type, final boolean replay) {
         int firstGoals = 0;
         int secondGoals = 0;
-        for (int game = 0; game < games; game++) {
-            final boolean last = game + 1 == games;
-            final int result;
-            if (game % 2 == 0) {
-                // TODO: Refactor simulations
-                // TODO: Two-legger cups
-                if (games == 1) result = Match.cupSimulation(first, second, last, -1, -1);
-                else result = Match.continentalSimulation(first, second, last, -1, -1);
-                firstGoals += result / 100;
-                secondGoals += result % 100;
-            }
-            else {
-                result = Match.continentalSimulation(second, first, last, secondGoals, firstGoals);
-                secondGoals += result / 100;
-                firstGoals += result % 100;
 
-                if (game == 1 && games == 2 && firstGoals == secondGoals) {
-                    if (result % 11 > firstGoals) firstGoals++;
-                    else secondGoals++;
-                }
+        int result;
+        result = Match.simulation(first, second, games == 1 && !replay, -1, -1, type);
+
+        firstGoals += result / 100;
+        secondGoals += result % 100;
+
+        if (games == 2 || (replay && firstGoals == secondGoals)) {
+            result = Match.simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
+            secondGoals += result / 100;
+            firstGoals += result % 100;
+
+            if (firstGoals == secondGoals) {
+                if (result % 11 > firstGoals) firstGoals++;
+                else secondGoals++;
             }
         }
 

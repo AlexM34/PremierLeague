@@ -251,8 +251,10 @@ class Printer {
                         LinkedHashMap::new));
 
         for (int i = 0; i < 20 && i < sorted.size(); i++) {
+            final int value = sorted.values().toArray(new Integer[0])[i];
+            if (value == 0) break;
             System.out.println(String.format("%2d. %-20s %2d", i + 1, sorted.keySet().toArray(new String[0])[i],
-                    sorted.values().toArray(new Integer[0])[i]));
+                    value));
         }
 
         System.out.println();

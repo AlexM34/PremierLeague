@@ -11,6 +11,7 @@ class Match {
 
     static void userTactics(final Club opponent, final boolean isHome) {
         // TODO: Add other choices
+        if (PremierLeague.userFlag) return;
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
@@ -24,23 +25,11 @@ class Match {
         }
     }
 
-    static void leagueSimulation(final Club home, final Club away) {
-        final int result = simulateGame(home, away, false, -1, -1);
-
-        Rater.finalWhistle(home, away, result / 100, result % 100, 0);
-    }
-
-    static int cupSimulation(final Club home, final Club away, final boolean last, final int homeGoals, final int awayGoals) {
+    static int simulation(final Club home, final Club away, final boolean last, final int homeGoals,
+                          final int awayGoals, final int type) {
         final int result = simulateGame(home, away, last, homeGoals, awayGoals);
 
-        Rater.finalWhistle(home, away, result / 100, result % 100, 1);
-        return result;
-    }
-
-    static int continentalSimulation(final Club home, final Club away, final boolean last, final int homeGoals, final int awayGoals) {
-        final int result = simulateGame(home, away, last, homeGoals, awayGoals);
-
-        Rater.finalWhistle(home, away, result / 100, result % 100, 2);
+        Rater.finalWhistle(home, away, result / 100, result % 100, type);
         return result;
     }
 
@@ -52,24 +41,17 @@ class Match {
         awaySquad = pickSquad(away, false);
         bookings = new int[2][11];
 
-        // TODO: Fine tune the balance
         // TODO: Finals are played on neutral stadium
         final int homeAttack = getAttack(homeSquad, awaySquad);
         final int awayAttack = getAttack(awaySquad, homeSquad);
-        int balance = Data.FANS + 5 * (homeAttack - awayAttack) / 5  +
+        int balance = Data.FANS + 6 * (homeAttack - awayAttack) / 7  +
                 (home.getSeason().getForm() - away.getSeason().getForm()) / 4 + 50;
-//                (Arrays.stream(homeSquad).mapToInt(Footballer::getOverall).sum() + home.getSeason().getForm() * 2 +
-//                 Arrays.stream(homeSquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) /
-//                (Arrays.stream(awaySquad).mapToInt(Footballer::getOverall).sum() + away.getSeason().getForm() * 2 +
-//                 Arrays.stream(awaySquad).mapToInt(Footballer::getCondition).sum() / 5 - 500) - 50;
 
         int momentum = balance;
         int style = (homeAttack + awayAttack) / 10 - 6;
-//                Arrays.stream(homeSquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum()
-//                + Arrays.stream(awaySquad).mapToInt(f -> f.getPosition().getAttackingDuty()).sum() - 53;
 
-        if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE;
-        style += (home.getCoach().getStyle() + away.getCoach().getStyle() - 100) / 10;
+        if (home.getId() == Data.USER || away.getId() == Data.USER) style += Data.USER_STYLE / 2 - 5;
+
         if (PremierLeague.matchFlag) {
             System.out.println();
             System.out.println(balance);
@@ -81,7 +63,6 @@ class Match {
         int extra = 0;
         for (int minute = 1; minute <= 90 + extra; minute++) {
             // TODO: Add stoppage time
-            // TODO: Too many draws
             final int r = random.nextInt(1000);
 
             if (r < 10 * momentum) {
