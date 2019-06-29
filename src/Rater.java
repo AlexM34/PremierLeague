@@ -16,17 +16,17 @@ class Rater {
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {
             if (f.getPosition() == Position.GK) {
-                f.changeCondition(13 + random.nextInt(2));
+                f.changeCondition(13 + random.nextInt(3));
             }
-            else f.changeCondition(11 + random.nextInt(3));
+            else f.changeCondition(12 + random.nextInt(3));
             // TODO: Short bench solution with fatigue
         }
 
         for (final Footballer f : away.getFootballers()) {
             if (f.getPosition() == Position.GK) {
-                f.changeCondition(13 + random.nextInt(2));
+                f.changeCondition(13 + random.nextInt(3));
             }
-            else f.changeCondition(11 + random.nextInt(3));
+            else f.changeCondition(12 + random.nextInt(3));
         }
 
         IntStream.range(0, 11).forEach(player -> {
@@ -66,7 +66,7 @@ class Rater {
         }
     }
 
-    static void goal(final int minute, final int homeGoals, final int awayGoals, final boolean isHome) {
+    static void goal(final int minute, final int stoppage, final int homeGoals, final int awayGoals, final boolean isHome) {
         int scoring = 30;
         int assisting = 200;
         Footballer goalscorer = null;
@@ -99,7 +99,8 @@ class Rater {
             // TODO: Red card for the goalkeeper
             int footballer = ownGoal(isHome ? Match.awaySquad : Match.homeSquad);
             if (Match.bookings[isHome ? 0 : 1][footballer] >= 2) footballer = 0;
-            if (PremierLeague.matchFlag) System.out.println(minute + "' " + "Own goal scored by " + footballer + ". " + homeGoals + "-" + awayGoals);
+            if (PremierLeague.matchFlag) System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
+                    "Own goal scored by " + footballer + ". " + homeGoals + "-" + awayGoals);
         }
         else {
             r = random.nextInt(assisting);
@@ -122,8 +123,8 @@ class Rater {
                 }
             }
 
-            if (PremierLeague.matchFlag) System.out.println(minute + "' " + goalscorer.getName() +
-                    (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
+            if (PremierLeague.matchFlag) System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
+                    goalscorer.getName() + (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
                             : " scores after a solo run") + ". " + homeGoals + "-" + awayGoals);
         }
 

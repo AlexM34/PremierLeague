@@ -80,12 +80,11 @@ class Spain {
             new Glory(0, 0, 0, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH);
 
-    // TODO: Promoted team
-    private static final Club RAYO_VALLECANO = new Club(20, "Rayo Vallecano", 1886, STADIUM, "Madrid", LEAGUE,
-            new Glory(0, 3, 0, 0, 0, 0, 0),
+    private static final Club MALLORCA = new Club(20, "RCD Mallorca", 1886, STADIUM, "Palma", LEAGUE,
+            new Glory(0, 0, 1, 0, 0, 0, 0),
             100, 100, 100, OWNER, COACH);
 
     static final Club[] CLUBS = {BARCELONA, REAL_MADRID, ATLETICO_MADRID, VALENCIA, SEVILLA, ATHLETIC_BILBAO, GETAFE, ESPANYOL,
             REAL_SOCIEDAD, REAL_BETIS, ALAVES, EIBAR, LEGANES, VILLARREAL, LEVANTE, VALLADOLID, CELTA_VIGO,
-            OSASUNA, GRANADA, RAYO_VALLECANO};
+            OSASUNA, GRANADA, MALLORCA};
 }

@@ -9,9 +9,9 @@ class PremierLeague {
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
     static final boolean userFlag = false;
-    static final boolean matchFlag = false;
+    static final boolean matchFlag = true;
     private static final boolean standingsFlag = false;
-    private static final boolean playerStatsFlag = true;
+    private static final boolean playerStatsFlag = false;
     private static final boolean teamStatsFlag = false;
 
     public static void main(final String[] args) {
@@ -239,7 +239,7 @@ class PremierLeague {
 
             for (int team = 0; team < count / 2; team++) {
                 if (knockoutFixture(selected[team], selected[count - team - 1], round < Math.sqrt(selected.length)
-                        ? games : 1, type, replay && count >= 8)) {
+                        ? games : 1, type, replay && count >= 8, round == Math.sqrt(selected.length))) {
                     selected[team] = selected[count - team - 1];
                     selected[count - team - 1] = null;
                 }
@@ -252,11 +252,12 @@ class PremierLeague {
     }
 
     private static boolean knockoutFixture(final Club first, final Club second, final int games,
-                                           final int type, final boolean replay) {
+                                           final int type, final boolean replay, final boolean neutral) {
         int firstGoals = 0;
         int secondGoals = 0;
 
         int result;
+        if (neutral) Data.FANS = 0;
         result = Match.simulation(first, second, games == 1 && !replay, -1, -1, type);
 
         firstGoals += result / 100;

@@ -4,7 +4,7 @@ import java.util.*;
 class Data {
     static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static Club[] CHAMPIONS_LEAGUE = new Club[32];
-    static final int FANS = 3;
+    static int FANS = 3;
     static int HOME_WINS;
     static int AWAY_WINS;
     static float RATINGS;
