@@ -5,17 +5,15 @@ class Match {
     private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
 
-    static Footballer[] homeSquad;
-    static Footballer[] awaySquad;
-    static Footballer[] homeBench;
-    static Footballer[] awayBench;
-    static int homeSubs;
-    static int awaySubs;
-    static int[][] bookings;
+    static List<MatchStats> homeSquad = new ArrayList<>();
+    static List<MatchStats> awaySquad = new ArrayList<>();
+    static List<MatchStats> homeBench = new ArrayList<>();
+    static List<MatchStats> awayBench = new ArrayList<>();
+    private static int homeSubs;
+    private static int awaySubs;
 
     static void userTactics(final Club opponent, final boolean isHome) {
         // TODO: Add other choices
-        if (PremierLeague.userFlag) return;
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
@@ -38,14 +36,15 @@ class Match {
         return result;
     }
 
-    private static int simulateGame(final Club home, final Club away, final boolean last, final int aggregateHomeGoals, final int aggregateAwayGoals) {
+    private static int simulateGame(final Club home, final Club away, final boolean last,
+                                    final int aggregateHomeGoals, final int aggregateAwayGoals) {
         // TODO: Subs
+        // TODO: Update stats
         Rater.kickoff(home, away);
         pickSquad(home, true);
         pickSquad(away, false);
         homeSubs = 3;
         awaySubs = 3;
-        bookings = new int[2][11];
 
         final int homeAttack = getAttack(homeSquad, awaySquad);
         final int awayAttack = getAttack(awaySquad, homeSquad);
@@ -96,32 +95,38 @@ class Match {
                 }
 
                 // TODO: Use attributes for bookings
-                if (random.nextInt(20) == 0) {
-                    final int t = random.nextInt(2);
+                if (random.nextInt(25) == 0) {
+                    final boolean t = random.nextBoolean();
                     final int p = random.nextInt(11);
+                    final MatchStats footballer = (t ? homeSquad : awaySquad).get(p);
 
-                    if (bookings[t][p] == 0) {
-                        bookings[t][p]++;
-                        balance += 2 * t - 1;
-                        (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 0.5;
-                        Rater.yellows.add((t == 0 ? homeSquad : awaySquad)[p]);
+                    if (!footballer.isYellowCarded()) {
+                        footballer.addYellowCard();
+                        balance += (t ? -1 : 1);
                         if (PremierLeague.matchFlag)
                             System.out.println(minute + (added != 0 ? "+" + added : "") + "' " +
-                                    (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a yellow card");
+                                    footballer.getFootballer().getName() + " gets a yellow card");
+                    }
+                    else {
+                        footballer.addRedCard();
+                        balance += (t ? -10 : 10);
+                        // TODO: Bans
+                        footballer.getFootballer().changeCondition(-35);
+                        if (PremierLeague.matchFlag)
+                            System.out.println(minute + (added != 0 ? "+" + added : "") + "' " +
+                                    footballer.getFootballer().getName() + " gets a second yellow card and he is ejected");
                     }
                 } else if (random.nextInt(200) == 0) {
-                    final int t = random.nextInt(2);
-                    final int p = random.nextInt(10) + 1;
+                    final boolean t = random.nextBoolean();
+                    final int p = random.nextInt(11);
+                    final MatchStats footballer = (t ? homeSquad : awaySquad).get(p);
 
-                    if (bookings[t][p] == 2) break;
-                    bookings[t][p] = 2;
-                    balance += 20 * t - 10;
-                    (t == 0 ? Rater.homeRatings : Rater.awayRatings)[p] -= 2;
-                    Rater.reds.add((t == 0 ? homeSquad : awaySquad)[p]);
-                    (t == 0 ? homeSquad : awaySquad)[p].changeCondition(-35);
+                    footballer.addRedCard();
+                    balance += (t ? -10 : 10);
+                    footballer.getFootballer().changeCondition(-35);
                     if (PremierLeague.matchFlag)
-                        System.out.println(minute + (stoppage != 0 ? "+" + added : "") + "' " +
-                                (t == 0 ? homeSquad : awaySquad)[p].getName() + " gets a red card");
+                        System.out.println(minute + (added != 0 ? "+" + added : "") + "' " +
+                                footballer.getFootballer().getName() + " gets a red card");
                 }
 
                 if (minute > 60) {
@@ -151,39 +156,32 @@ class Match {
     }
 
     private static void substitute(final boolean isHome) {
-        final Footballer[] squad = isHome ? homeSquad : awaySquad;
-        final Footballer[] bench = isHome ? homeBench : awayBench;
-        final float[] ratings = isHome ? Rater.homeRatings : Rater.awayRatings;
+        final List<MatchStats> squad = isHome ? homeSquad : awaySquad;
+        final List<MatchStats> bench = isHome ? homeBench : awayBench;
         float worst = 0;
         int flop = 0;
 
         // TODO: Fix ratings
-        // TODO: Ignore subbed
+        // TODO: Ignore subbed in
         // TODO: Minute
-        // TODO: Migrate squads to map
         for (int player = 1; player < 11; player++) {
-            if (ratings[player] > worst) {
-                worst = ratings[player];
+            final float rating = squad.get(player).getRating();
+            if (rating > worst) {
+                worst = rating;
                 flop = player;
             }
         }
 
-        for (Footballer footballer : bench) {
-            if (footballer == null) continue;
-            if (squad[flop].getPosition().getRole().equals(footballer.getPosition().getRole())) {
+        final Footballer subbedOut = squad.get(flop).getFootballer();
+        for (final MatchStats stats : bench) {
+            if (stats == null) continue;
+            final Footballer subbedIn = stats.getFootballer();
+            if (subbedOut.getPosition().getRole().equals(subbedIn.getPosition().getRole())) {
                 if (PremierLeague.matchFlag) {
-                    System.out.println(footballer.getName() + " replaces " + squad[flop].getName());
+                    System.out.println(subbedIn.getName() + " replaces " + subbedOut.getName());
                     break;
                 }
-
-                if (isHome) {
-                    homeSquad[flop] = footballer;
-                    Rater.homeRatings[flop] = 6;
-                }
-                else {
-                    awaySquad[flop] = footballer;
-                    Rater.awayRatings[flop] = 6;
-                }
+                // TODO: Make the sub
             }
         }
 
@@ -191,15 +189,15 @@ class Match {
         else awaySubs--;
     }
 
-    private static int getAttack(final Footballer[] homeSquad, final Footballer[] awaySquad) {
+    private static int getAttack(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {
         int attack = 0;
         int defence = 0;
-        for (Footballer footballer : homeSquad) {
-            attack += footballer.getOverall() * footballer.getPosition().getAttackingDuty();
+        for (final MatchStats footballer : homeSquad) {
+            attack += footballer.getFootballer().getOverall() * footballer.getFootballer().getPosition().getAttackingDuty();
         }
 
-        for (Footballer footballer : awaySquad) {
-            defence += footballer.getOverall() * (5 - footballer.getPosition().getAttackingDuty());
+        for (final MatchStats footballer : awaySquad) {
+            defence += footballer.getFootballer().getOverall() * (5 - footballer.getFootballer().getPosition().getAttackingDuty());
         }
 
         if (PremierLeague.matchFlag) {
@@ -209,7 +207,7 @@ class Match {
         return 50 * attack / defence;
     }
 
-    private static boolean penaltyShootout(final Footballer[] homeSquad, final Footballer[] awaySquad) {
+    private static boolean penaltyShootout(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {
         int homeGoals = 0;
         int awayGoals = 0;
         int currentHome = 10;
@@ -217,14 +215,14 @@ class Match {
         int taken = 0;
 
         while(true) {
-            while (bookings[0][currentHome] > 1) currentHome = (currentHome + 10) % 11;
-            homeGoals += penalty(homeSquad[currentHome], awaySquad[0]);
+            while (homeSquad.get(currentHome) == null) currentHome = (currentHome + 10) % 11;
+            homeGoals += penalty(homeSquad.get(currentHome), awaySquad.get(0));
             System.out.println(homeGoals + "-" + awayGoals);
             if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
             currentHome = (currentHome + 10) % 11;
 
-            while (bookings[1][currentAway] > 1) currentAway = (currentAway + 10) % 11;
-            awayGoals += penalty(awaySquad[currentAway], homeSquad[0]);
+            while (awaySquad.get(currentAway) == null) currentAway = (currentAway + 10) % 11;
+            awayGoals += penalty(awaySquad.get(currentAway), homeSquad.get(0));
             System.out.println(homeGoals + "-" + awayGoals);
             if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
                     || taken >= 4 && homeGoals != awayGoals) break;
@@ -236,9 +234,10 @@ class Match {
         return homeGoals > awayGoals;
     }
 
-    private static int penalty(final Footballer striker, final Footballer goalkeeper) {
-        if (PremierLeague.matchFlag) System.out.println(striker.getName() + " steps up to take the penalty vs " + goalkeeper.getName());
-        if (random.nextInt(100) < 70 + striker.getOverall() - goalkeeper.getOverall()) {
+    private static int penalty(final MatchStats striker, final MatchStats goalkeeper) {
+        if (PremierLeague.matchFlag) System.out.println(striker.getFootballer().getName() +
+                " steps up to take the penalty vs " + goalkeeper.getFootballer().getName());
+        if (random.nextInt(100) < 70 + striker.getFootballer().getOverall() - goalkeeper.getFootballer().getOverall()) {
             if (PremierLeague.matchFlag) System.out.println("He scores with a great shot!");
             return 1;
         }
@@ -249,16 +248,16 @@ class Match {
     }
 
     private static void pickSquad(final Club team, final boolean isHome) {
-        final List<Footballer> squad = team.getFootballers().stream()
+        final List<Footballer> footballers = team.getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 
-        final Formation formation = pickFormation(squad);
+        final Formation formation = pickFormation(footballers);
         final int defenders = formation.getDefenders();
         final int midfielders = formation.getMidfielders();
         final int forwards = formation.getForwards();
-        final Footballer[] selected = new Footballer[11];
-        final Footballer[] bench = new Footballer[7];
+        final MatchStats[] squad = new MatchStats[11];
+        final MatchStats[] bench = new MatchStats[7];
 
         int g = 1;
         int d = defenders;
@@ -266,54 +265,51 @@ class Match {
         int f = forwards;
         int bg = 1;
         int bf = 6;
+        Data.GOALKEEPER_1.changeCondition(100);
         Data.DEFENDER_1.changeCondition(100);
         Data.MIDFIELDER_1.changeCondition(100);
         Data.FORWARD_1.changeCondition(100);
-        for (final Footballer footballer : squad) {
+        Data.DEFENDER_2.changeCondition(100);
+        Data.MIDFIELDER_2.changeCondition(100);
+        Data.FORWARD_2.changeCondition(100);
+        for (final Footballer footballer : footballers) {
             if (footballer.getPosition() == null || footballer.getCondition() < 70) continue;
 
             switch (footballer.getPosition().getRole()) {
                 case Goalkeeper:
-                    if (g > 0) selected[--g] = footballer;
-                    else if (bg > 0) bench[--bg] = footballer;
+                    if (g > 0) squad[--g] = new MatchStats(footballer);
+                    else if (bg > 0) bench[--bg] = new MatchStats(footballer);
                     break;
 
                 case Defender:
-                    if (d > 0) {
-                        d--;
-                        selected[1 + d] = footballer;
-                    }
-                    else if (bf > 0) bench[bf--] = footballer;
+                    if (d > 0) squad[d--] = new MatchStats(footballer);
+                    else if (bf > 0) bench[bf--] = new MatchStats(footballer);
                     break;
 
                 case Midfielder:
-                    if (m > 0) {
-                        m--;
-                        selected[1 + defenders + m] = footballer;
-                    }
-                    else if (bf > 0) bench[bf--] = footballer;
+                    if (m > 0) squad[--m + defenders + 1] = new MatchStats(footballer);
+                    else if (bf > 0) bench[bf--] = new MatchStats(footballer);
                     break;
 
                 case Forward:
-                    if (f > 0) {
-                        f--;
-                        selected[1 + defenders + midfielders + f] = footballer;
-                    }
-                    else if (bf > 0) bench[bf--] = footballer;
+                    if (f > 0) squad[--f + defenders + midfielders + 1] = new MatchStats(footballer);
+                    else if (bf > 0) bench[bf--] = new MatchStats(footballer);
                     break;
             }
         }
 
-//        Arrays.stream(selected).forEach(System.out::println);
+        if (squad[0] == null) footballers.forEach(f1 -> System.out.println(f1.getPosition() + "" + f1.getCondition()));
+
+//        Arrays.stream(squad).forEach(System.out::println);
 //        Arrays.stream(bench).forEach(System.out::println);
 
         if (isHome) {
-            homeSquad = selected;
-            homeBench = bench;
+            homeSquad = Arrays.asList(squad);
+            homeBench = Arrays.asList(bench);
         }
         else {
-            awaySquad = selected;
-            awayBench = bench;
+            awaySquad = Arrays.asList(squad);
+            awayBench = Arrays.asList(bench);
         }
     }
 
@@ -324,7 +320,6 @@ class Match {
         int forwards = 0;
 
         for (final Footballer f : footballers) {
-//            System.out.println(f);
             if (f.getPosition() == null || f.getCondition() < 70) {
                 continue;
             }

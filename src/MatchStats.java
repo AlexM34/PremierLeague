@@ -1,14 +1,14 @@
 import java.util.Objects;
 
-public class Game {
-    private Footballer footballer;
+class MatchStats {
+    private final Footballer footballer;
     private float rating;
     private int goals;
     private int assists;
     private boolean yellowCarded;
     private boolean redCarded;
 
-    Game(final Footballer footballer) {
+    MatchStats(final Footballer footballer) {
         this.footballer = footballer;
         this.rating = 6;
         this.goals = 0;
@@ -17,11 +17,11 @@ public class Game {
         this.redCarded = false;
     }
 
-    public Footballer getFootballer() {
+    Footballer getFootballer() {
         return footballer;
     }
 
-    public float getRating() {
+    float getRating() {
         return rating;
     }
 
@@ -37,6 +37,13 @@ public class Game {
 
     void addGoals() {
         this.goals += 1;
+        this.rating += 1.25;
+        if (this.getFootballer().getPosition().getAttackingDuty() < 5) {
+            this.rating += 0.25;
+            if (this.getFootballer().getPosition().getAttackingDuty() < 3) {
+                this.rating += 0.5;
+            }
+        }
     }
 
     int getAssists() {
@@ -45,6 +52,13 @@ public class Game {
 
     void addAssists() {
         this.assists += 1;
+        this.rating += 1;
+        if (this.getFootballer().getPosition().getAttackingDuty() < 5) {
+            this.rating += 0.25;
+            if (this.getFootballer().getPosition().getAttackingDuty() < 3) {
+                this.rating += 0.5;
+            }
+        }
     }
 
     boolean isYellowCarded() {
@@ -53,27 +67,29 @@ public class Game {
 
     void addYellowCard() {
         this.yellowCarded = true;
+        this.rating -= 0.5;
     }
 
     boolean isRedCarded() {
         return redCarded;
     }
 
-    void addtRedCard() {
+    void addRedCard() {
         this.redCarded = true;
+        this.rating -= 2;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Game game = (Game) o;
-        return Float.compare(game.rating, rating) == 0 &&
-                goals == game.goals &&
-                assists == game.assists &&
-                yellowCarded == game.yellowCarded &&
-                redCarded == game.redCarded &&
-                footballer.equals(game.footballer);
+        final MatchStats matchStats = (MatchStats) o;
+        return Float.compare(matchStats.rating, rating) == 0 &&
+                goals == matchStats.goals &&
+                assists == matchStats.assists &&
+                yellowCarded == matchStats.yellowCarded &&
+                redCarded == matchStats.redCarded &&
+                footballer.equals(matchStats.footballer);
     }
 
     @Override
@@ -83,7 +99,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return "Game{" +
+        return "MatchStats{" +
                 "footballer=" + footballer +
                 ", rating=" + rating +
                 ", goals=" + goals +

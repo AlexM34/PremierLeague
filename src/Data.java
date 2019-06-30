@@ -11,6 +11,9 @@ class Data {
     static Integer USER = -1;
     static int USER_STYLE;
 
+    static final Footballer GOALKEEPER_1 = new Footballer(123455, "Goalkeeper 1", 18, "", 60, 60,
+            0, 0, Position.GK, 101, 20, 20, new Resume(), 100);
+
     static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
             0, 0, Position.CB, 101, 20, 20, new Resume(), 100);
 
@@ -93,6 +96,7 @@ class Data {
     static void addDummies() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
+                club.addFootballer(GOALKEEPER_1);
                 club.addFootballer(DEFENDER_1);
                 club.addFootballer(MIDFIELDER_1);
                 club.addFootballer(FORWARD_1);

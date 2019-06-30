@@ -8,11 +8,12 @@ class PremierLeague {
     // TODO: Add tests
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
-    static final boolean userFlag = false;
-    static final boolean matchFlag = true;
+
+    private static final boolean userFlag = false;
     private static final boolean standingsFlag = false;
     private static final boolean playerStatsFlag = false;
     private static final boolean teamStatsFlag = false;
+    static final boolean matchFlag = false;
 
     public static void main(final String[] args) {
 //        Data.extractData();
@@ -293,6 +294,7 @@ class PremierLeague {
         if (playerStatsFlag) {
             System.out.println();
             System.out.println("DUMMIES");
+            System.out.println(Data.GOALKEEPER_1.getResume().getSeason());
             System.out.println(Data.DEFENDER_1.getResume().getSeason());
             System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
             System.out.println(Data.FORWARD_1.getResume().getSeason());

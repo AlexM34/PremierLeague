@@ -230,7 +230,7 @@ class Printer {
                     cleanSheets.put(name, stats.getCleanSheets());
                 }
 
-                if (team < 6) System.out.println(String.format("%s %s", name, f.toString()));
+//                if (team < 6) System.out.println(String.format("%s %s", name, f.toString()));
             }
         }
 
