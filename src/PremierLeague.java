@@ -13,7 +13,7 @@ class PremierLeague {
     private static final boolean standingsFlag = false;
     private static final boolean playerStatsFlag = false;
     private static final boolean teamStatsFlag = false;
-    static final boolean matchFlag = false;
+    static final boolean matchFlag = true;
 
     public static void main(final String[] args) {
 //        Data.extractData();

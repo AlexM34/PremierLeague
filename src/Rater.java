@@ -45,7 +45,7 @@ class Rater {
         }
     }
 
-    static void goal(final int minute, final int stoppage, final int homeGoals, final int awayGoals, final boolean isHome) {
+    static void goal(final int homeGoals, final int awayGoals, final boolean isHome) {
         int scoring = 30;
         int assisting = 200;
         Footballer goalscorer = null;
@@ -70,8 +70,8 @@ class Rater {
 
         if (goalscorer == null) {
             // TODO: Red card for the goalkeeper
-            final int footballer = ownGoal(isHome ? Match.awaySquad : Match.homeSquad);
-            if (PremierLeague.matchFlag) System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
+            final int footballer = ownGoal();
+            if (PremierLeague.matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
                     "Own goal scored by " + squad.get(footballer) + ". " + homeGoals + "-" + awayGoals);
         }
         else {
@@ -89,13 +89,13 @@ class Rater {
                 }
             }
 
-            if (PremierLeague.matchFlag) System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
+            if (PremierLeague.matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
                     goalscorer.getName() + (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
                             : " scores after a solo run") + ". " + homeGoals + "-" + awayGoals);
         }
     }
 
-    private static int ownGoal(final List<MatchStats> footballers) {
+    private static int ownGoal() {
         if (random.nextInt(10) < 2) return 0;
         if (random.nextInt(5) < 3) return 1 + random.nextInt(4);
         if (random.nextInt(10) < 7) return 5 + random.nextInt(3);

@@ -5,6 +5,8 @@ class Match {
     private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
 
+    static int minute = 1;
+    static int stoppage = 0;
     static List<MatchStats> homeSquad = new ArrayList<>();
     static List<MatchStats> awaySquad = new ArrayList<>();
     static List<MatchStats> homeBench = new ArrayList<>();
@@ -64,18 +66,19 @@ class Match {
 
         int homeGoals = 0;
         int awayGoals = 0;
+        minute = 0;
         int extra = 0;
-        int stoppage;
-        for (int minute = 1; minute <= 90 + extra; minute++) {
-            // TODO: Make minute global
-            stoppage = (minute % 45 == 0) ? 2 * minute / 45 : 0;
+        int added;
+        while (minute <= 90 + extra) {
+            added = (minute % 45 == 0) ? 2 * minute / 45 : 0;
+            stoppage = 0;
 
-            for (int added = 0; added <= stoppage; added++) {
+            while (stoppage <= added) {
                 final int r = random.nextInt(1000);
                 if (r < 10 * momentum) {
                     if (r < momentum + style - 41) {
                         homeGoals++;
-                        Rater.goal(minute, added, homeGoals, awayGoals, true);
+                        Rater.goal(homeGoals, awayGoals, true);
                         momentum = balance;
                         Rater.updateRatings(3);
                     } else if (r < 5 * momentum) {
@@ -85,7 +88,7 @@ class Match {
                 } else {
                     if (r > 940 + momentum - style) {
                         awayGoals++;
-                        Rater.goal(minute, added, homeGoals, awayGoals, false);
+                        Rater.goal(homeGoals, awayGoals, false);
                         momentum = balance;
                         Rater.updateRatings(-3);
                     } else if (r > 999 - 5 * momentum) {
@@ -104,7 +107,7 @@ class Match {
                         footballer.addYellowCard();
                         balance += (t ? -1 : 1);
                         if (PremierLeague.matchFlag)
-                            System.out.println(minute + (added != 0 ? "+" + added : "") + "' " +
+                            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
                                     footballer.getFootballer().getName() + " gets a yellow card");
                     }
                     else {
@@ -113,7 +116,7 @@ class Match {
                         // TODO: Bans
                         footballer.getFootballer().changeCondition(-35);
                         if (PremierLeague.matchFlag)
-                            System.out.println(minute + (added != 0 ? "+" + added : "") + "' " +
+                            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
                                     footballer.getFootballer().getName() + " gets a second yellow card and he is ejected");
                     }
                 } else if (random.nextInt(200) == 0) {
@@ -125,7 +128,7 @@ class Match {
                     balance += (t ? -10 : 10);
                     footballer.getFootballer().changeCondition(-35);
                     if (PremierLeague.matchFlag)
-                        System.out.println(minute + (added != 0 ? "+" + added : "") + "' " +
+                        System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
                                 footballer.getFootballer().getName() + " gets a red card");
                 }
 
@@ -133,6 +136,8 @@ class Match {
                     if (homeSubs > 0 && random.nextInt(20) == 0) substitute(true);
                     if (awaySubs > 0 && random.nextInt(20) == 0) substitute(false);
                 }
+
+                stoppage++;
             }
 
             if (minute == 90 && last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
@@ -141,7 +146,7 @@ class Match {
                 extra = 30;
             }
 
-//            System.out.println(balance);
+            minute++;
         }
 
         if (last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
@@ -163,7 +168,6 @@ class Match {
 
         // TODO: Fix ratings
         // TODO: Ignore subbed in
-        // TODO: Minute
         for (int player = 1; player < 11; player++) {
             final float rating = squad.get(player).getRating();
             if (rating > worst) {
@@ -178,10 +182,11 @@ class Match {
             final Footballer subbedIn = stats.getFootballer();
             if (subbedOut.getPosition().getRole().equals(subbedIn.getPosition().getRole())) {
                 if (PremierLeague.matchFlag) {
-                    System.out.println(subbedIn.getName() + " replaces " + subbedOut.getName());
-                    break;
+                    System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " + subbedIn.getName() + " replaces " + subbedOut.getName());
                 }
-                // TODO: Make the sub
+
+                squad.set(flop, new MatchStats(subbedIn));
+                break;
             }
         }
 
