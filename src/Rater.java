@@ -4,6 +4,9 @@ import java.util.Random;
 class Rater {
     private static final Random random = new Random();
 
+    private static MatchStats motmPlayer;
+    private static float motmRating;
+
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {
             if (f.getPosition() == Position.GK) {
@@ -53,13 +56,14 @@ class Rater {
         final List<MatchStats> squad = isHome ? Match.homeSquad : Match.awaySquad;
 
         for (int player = 0; player < 11; player++) {
-            //TODO: Red-carded checks
+            if (squad.get(player).isRedCarded()) continue;
             scoring += scoringChance(squad.get(player).getFootballer());
             assisting += assistingChance(squad.get(player).getFootballer());
         }
 
         int r = random.nextInt(scoring);
         for (int player = 0; player < 11; player++) {
+            if (squad.get(player).isRedCarded()) continue;
             r -= scoringChance(squad.get(player).getFootballer());
             if (r < 0) {
                 goalscorer = squad.get(player).getFootballer();
@@ -70,13 +74,15 @@ class Rater {
 
         if (goalscorer == null) {
             // TODO: Red card for the goalkeeper
-            final int footballer = ownGoal();
+            int footballer = ownGoal();
+            if (squad.get(footballer).isRedCarded()) footballer = 0;
             if (PremierLeague.matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
-                    "Own goal scored by " + squad.get(footballer) + ". " + homeGoals + "-" + awayGoals);
+                    "Own goal scored by " + squad.get(footballer).getFootballer().getName() + ". " + homeGoals + "-" + awayGoals);
         }
         else {
             r = random.nextInt(assisting);
             for (int player = 0; player < 11; player++) {
+                if (squad.get(player).isRedCarded()) continue;
                 r -= assistingChance(squad.get(player).getFootballer());
                 if (r < 0) {
                     assistmaker = squad.get(player).getFootballer();
@@ -132,44 +138,42 @@ class Rater {
         return 0;
     }
 
-    static void finalWhistle(final Club home, final Club away, final int homeGoals, final int awayGoals, final int type) {
-        MatchStats motmPlayer = Match.homeSquad.get(0);
-        float motmRating = 0;
-        if (awayGoals == 0) getCompetition(Match.homeSquad.get(0).getFootballer().getResume().getSeason(), type).addCleanSheets(1);
-        if (homeGoals == 0) getCompetition(Match.awaySquad.get(0).getFootballer().getResume().getSeason(), type).addCleanSheets(1);
+    static void finalWhistle(final Club home, final Club away, final int homeGoals, final int awayGoals) {
+        motmPlayer = Match.homeSquad.get(0);
+        motmRating = 0;
+        if (awayGoals == 0) getCompetition(Match.homeSquad.get(0).getFootballer().getResume()
+                .getSeason(), Match.competition).addCleanSheets(1);
+        if (homeGoals == 0) getCompetition(Match.awaySquad.get(0).getFootballer().getResume()
+                .getSeason(), Match.competition).addCleanSheets(1);
 
         for (int player = 0; player < 11; player++) {
-            if (Match.homeSquad.get(player).getRating() > motmRating) {
-                motmPlayer = Match.homeSquad.get(player);
-                motmRating = Match.homeSquad.get(player).getRating();
-            }
-
-            final Competition homeStats = getCompetition(Match.homeSquad.get(player).getFootballer().getResume().getSeason(), type);
-            homeStats.addRating((int) Match.homeSquad.get(player).getRating() * 100, 1);
-            homeStats.addMatches(1);
-            Match.homeSquad.get(player).getFootballer().changeCondition(-15);
-
-            if (Match.awaySquad.get(player).getRating() > motmRating) {
-                motmPlayer = Match.awaySquad.get(player);
-                motmRating = Match.awaySquad.get(player).getRating();
-            }
-
-            final Competition awayStats = getCompetition(Match.awaySquad.get(player).getFootballer().getResume().getSeason(), type);
-            awayStats.addRating((int) Match.awaySquad.get(player).getRating() * 100, 1);
-            awayStats.addMatches(1);
-            Match.awaySquad.get(player).getFootballer().changeCondition(-15);
-
-            Data.RATINGS += Match.homeSquad.get(player).getRating() + Match.awaySquad.get(player).getRating();
+            updateStats(Match.homeSquad.get(player));
+            updateStats(Match.awaySquad.get(player));
         }
 
-        getCompetition(motmPlayer.getFootballer().getResume().getSeason(), type).addMotmAwards(1);
+        getCompetition(motmPlayer.getFootballer().getResume().getSeason(), Match.competition).addMotmAwards(1);
 
-        if (type == 0) updateLeague(home, away, homeGoals, awayGoals);
+        if (Match.competition == 0) updateLeague(home, away, homeGoals, awayGoals);
         updateForm(home, away, homeGoals, awayGoals);
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
-                away.getName(), homeGoals,
-                awayGoals, motmPlayer.getFootballer().getName(), motmRating));
+                away.getName(), homeGoals, awayGoals, motmPlayer.getFootballer().getName(), motmRating));
+    }
+
+    private static void updateStats(final MatchStats matchStats) {
+        if (matchStats.getRating() > motmRating) {
+            motmPlayer = matchStats;
+            motmRating = matchStats.getRating();
+        }
+
+        final Competition homeStats = getCompetition(matchStats.getFootballer().getResume().getSeason(), Match.competition);
+        homeStats.addRating((int) matchStats.getRating() * 100, 1);
+        homeStats.addMatches(1);
+        homeStats.addGoals(matchStats.getGoals());
+        homeStats.addAssists(matchStats.getAssists());
+        if (matchStats.isYellowCarded()) homeStats.addYellowCards(1);
+        if (matchStats.isRedCarded()) homeStats.addRedCards(1);
+        matchStats.getFootballer().changeCondition(-15);
     }
 
     private static void updateLeague(final Club home, final Club away, final int homeGoals, final int awayGoals) {
@@ -204,7 +208,7 @@ class Rater {
         awayStats.addConceded(homeGoals);
     }
 
-    private static Competition getCompetition(final Statistics season, final int type) {
+    static Competition getCompetition(final Statistics season, final int type) {
         switch (type) {
             case 0: return season.getLeague();
             case 1: return season.getCup();

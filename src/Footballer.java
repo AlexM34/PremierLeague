@@ -16,10 +16,11 @@ class Footballer {
     private int vision;
     private Resume resume;
     private int condition;
+    private int ban;
 
     Footballer(final int id, final String name, final int age, final String nationality, final int overall,
                final int potential, final float value, final float wage, final Position position,
-               final int number, final int finishing, final int vision, final Resume resume, final int condition) {
+               final int number, final int finishing, final int vision, final Resume resume) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -33,7 +34,8 @@ class Footballer {
         this.finishing = finishing;
         this.vision = vision;
         this.resume = resume;
-        this.condition = condition;
+        this.condition = 100;
+        this.ban = 0;
     }
 
     int getId() {
@@ -138,6 +140,15 @@ class Footballer {
         else if (this.condition < 0) this.condition = 0;
     }
 
+    int getBan() {
+        return ban;
+    }
+
+    void changeBan(final int ban) {
+        this.ban += ban;
+        if (this.ban < 0) this.ban = 0;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -153,6 +164,7 @@ class Footballer {
                 finishing == that.finishing &&
                 vision == that.vision &&
                 condition == that.condition &&
+                ban == that.ban &&
                 name.equals(that.name) &&
                 nationality.equals(that.nationality) &&
                 position == that.position &&
@@ -161,7 +173,8 @@ class Footballer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number, finishing, vision, resume, condition);
+        return Objects.hash(id, name, age, nationality, overall, potential, value, wage, position, number,
+                finishing, vision, resume, condition, ban);
     }
 
     @Override
@@ -181,6 +194,7 @@ class Footballer {
                 ", vision=" + vision +
                 ", resume=" + resume +
                 ", condition=" + condition +
+                ", ban=" + ban +
                 '}';
     }
 }
