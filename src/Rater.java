@@ -259,6 +259,7 @@ class Rater {
             }
         }
     }
+
     private static void form(final Club team, final int change) {
         team.getSeason().changeForm(change);
     }

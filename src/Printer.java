@@ -3,6 +3,9 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
+    // TODO: Team of the year by rating
+    // TODO: Player of the year by performance
+    // TODO: Win money from competitions and fans
     private static int offset;
 
     private static Map<Club, Integer> sortLeague(final Club[] league) {

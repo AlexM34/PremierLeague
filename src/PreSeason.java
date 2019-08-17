@@ -1,7 +1,12 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 class PreSeason {
+    // TODO: Retirements
     private static final Random random = new Random();
+    private static int deals = 0;
+    private static Map<Footballer, Club> transfers;
 
     static void progression() {
         // TODO: Transfers
@@ -95,5 +100,64 @@ class PreSeason {
     }
 
     static void transfers() {
+        int attempts = 0;
+        Club[] league;
+        Club buying;
+        Club selling;
+        transfers = new HashMap<>();
+
+        while (attempts < 10000) {
+            league = Data.LEAGUES[random.nextInt(5)];
+            buying = league[random.nextInt(league.length)];
+            league = Data.LEAGUES[random.nextInt(5)];
+            selling = league[random.nextInt(league.length)];
+            if (buying == selling) continue;
+
+            negotiate(buying, selling);
+            attempts++;
+        }
+
+        transfers.forEach(((footballer, club) -> club.addFootballer(footballer)));
+    }
+
+    private static void negotiate(final Club buying, final Club selling) {
+        // TODO: No dummy transfers
+        int budget = buying.getBudget();
+        Footballer[] squad = selling.getFootballers().toArray(new Footballer[0]);
+        Footballer footballer = squad[random.nextInt(squad.length)];
+
+        float offered = interest(buying, footballer);
+        float wanted = demand(selling, footballer);
+
+        while (offered < wanted) {
+            if (random.nextInt(3) != 0) {
+                if (random.nextInt(4) != 0) {
+                    offered *= 1.1f;
+                } else {
+                    wanted /= 1.1f;
+                }
+            }
+
+            else return;
+        }
+
+        if (wanted < budget) {
+            buying.changeBudget((int) -wanted);
+            selling.changeBudget((int) wanted);
+            selling.removeFootballer(footballer);
+            transfers.put(footballer, buying);
+            deals++;
+
+            System.out.println(deals + ". " + footballer.getName() + " joins " + buying.getName() + " from " +
+                selling.getName() + " for €" + (int) wanted + " million");
+        }
+    }
+
+    private static float interest(final Club buying, final Footballer footballer) {
+        return footballer.getValue() * 0.8f;
+    }
+
+    private static float demand(final Club selling, final Footballer footballer) {
+        return footballer.getValue() * 1.3f;
     }
 }

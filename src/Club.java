@@ -92,8 +92,8 @@ class Club {
         return budget;
     }
 
-    void setBudget(final int budget) {
-        this.budget = budget;
+    void changeBudget(final int change) {
+        this.budget += change;
     }
 
     Owner getOwner() {
@@ -122,6 +122,10 @@ class Club {
 
     void addFootballer(final Footballer footballer) {
         this.footballers.add(footballer);
+    }
+
+    void removeFootballer(final Footballer footballer) {
+        this.footballers.remove(footballer);
     }
 
     Season getSeason() {
