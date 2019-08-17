@@ -10,9 +10,9 @@ class PremierLeague {
     private static final Scanner scanner = new Scanner(System.in);
 
     private static final boolean userFlag = false;
-    private static final boolean standingsFlag = false;
+    private static final boolean standingsFlag = true;
     private static final boolean playerStatsFlag = true;
-    private static final boolean teamStatsFlag = false;
+    private static final boolean teamStatsFlag = true;
     static final boolean matchFlag = true;
 
     public static void main(final String[] args) {
@@ -24,6 +24,17 @@ class PremierLeague {
             if (userFlag) pickTeam();
             final Map<Club[], int[][][]> draw = new HashMap<>();
             for (final Club[] league : Data.LEAGUES) draw.put(league, Draw.league(league.length));
+
+//            for (int team = 0; team < 6; team++) {
+//                for (int league = 0; league < Data.LEAGUES.length; league++) {
+//                    final Club squad = Data.LEAGUES[league][team];
+//                    squad.getFootballers().forEach(footballer ->
+//                            System.out.println(footballer.getName() + ", " + footballer.getPosition() + ", " +
+//                                    footballer.getOverall() + ", " + footballer.getPotential() + ", " +
+//                                    footballer.getAge() + " => " + (int) footballer.getValue()));
+//                }
+//            }
+//            pause();
 
             for (int round = 0; round < 38; round ++) {
                 for (final Club[] league : Data.LEAGUES) {
@@ -69,7 +80,8 @@ class PremierLeague {
             if (playerStatsFlag) Printer.playerStats(Data.CHAMPIONS_LEAGUE, 2);
 
             finish(year);
-            PreSeason.changes();
+            PreSeason.progression();
+            PreSeason.transfers();
         });
 
         finishSimulation();

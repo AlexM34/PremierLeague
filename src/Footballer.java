@@ -75,6 +75,16 @@ class Footballer {
     }
 
     float getValue() {
+        int overall = getOverall() - 70;
+        overall = overall > 4 ? overall * overall * overall / 120 : 1;
+        float age = getAge() != 27 ? (float) Math.sqrt(Math.abs(27 - getAge())) : 1;
+        age = getAge() < 27 ? age : 1 / age;
+        float position = getPosition().getAttackingDuty() + 1;
+        position = (float) Math.sqrt(position);
+        float potential = (getPotential() - getOverall()) / 3;
+        potential = potential > 1 ? (float) Math.sqrt(potential) : 1;
+
+        value = overall * age * position * potential;
         return value;
     }
 

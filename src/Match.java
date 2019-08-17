@@ -114,9 +114,12 @@ class Match {
                             footballer.addRedCard();
                             balance += (t ? -10 : 10);
                             footballer.getFootballer().changeBan(1);
-                            if (PremierLeague.matchFlag)
+                            if (PremierLeague.matchFlag) {
                                 System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
                                         footballer.getFootballer().getName() + " gets a second yellow card and he is ejected");
+                            }
+
+                            if (p == 0) goalkeeperEjected(t);
                         }
                     }
                 } else if (random.nextInt(200) == 0) {
@@ -128,9 +131,12 @@ class Match {
                         footballer.addRedCard();
                         balance += (t ? -10 : 10);
                         footballer.getFootballer().changeBan(random.nextInt(5) == 0 ? 2 : 1);
-                        if (PremierLeague.matchFlag)
+                        if (PremierLeague.matchFlag) {
                             System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
                                     footballer.getFootballer().getName() + " gets a red card");
+                        }
+
+                        if (p == 0) goalkeeperEjected(t);
                     }
                 }
 
@@ -199,6 +205,36 @@ class Match {
                 break;
             }
         }
+    }
+
+    private static void goalkeeperEjected(final boolean isHome) {
+        final List<MatchStats> squad = isHome ? homeSquad : awaySquad;
+        final List<Footballer> bench = isHome ? homeBench : awayBench;
+        float worst = 10;
+        int flop = 5;
+
+        for (int player = 6; player < 11; player++) {
+            if (squad.get(player).isRedCarded() || squad.get(player).getStarted() != 1) continue;
+            final float rating = squad.get(player).getRating();
+            if (rating < worst) {
+                worst = rating;
+                flop = player;
+            }
+        }
+
+        final Footballer subbedOut = squad.get(flop).getFootballer();
+        final Footballer subbedIn = bench.get(0);
+        if (PremierLeague.matchFlag) {
+            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " + subbedIn.getName() + " replaces " + subbedOut.getName());
+        }
+
+        Competition season = Rater.getCompetition(subbedOut.getResume().getSeason(), competition);
+        updateStats(season, squad.get(flop));
+        squad.set(flop, new MatchStats(subbedIn, minute));
+        bench.set(0, null);
+
+        if (isHome) homeSubs--;
+        else awaySubs--;
     }
 
     private static void updateStats(final Competition season, final MatchStats matchStats) {

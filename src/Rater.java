@@ -73,7 +73,6 @@ class Rater {
         }
 
         if (goalscorer == null) {
-            // TODO: Red card for the goalkeeper
             int footballer = ownGoal();
             if (squad.get(footballer).isRedCarded()) footballer = 0;
             if (PremierLeague.matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +

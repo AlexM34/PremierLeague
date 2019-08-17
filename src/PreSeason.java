@@ -3,7 +3,7 @@ import java.util.Random;
 class PreSeason {
     private static final Random random = new Random();
 
-    static void changes() {
+    static void progression() {
         // TODO: Transfers
         // TODO: Youth academy
         for (final Club[] league : Data.LEAGUES) {
@@ -92,5 +92,8 @@ class PreSeason {
             }
 //            System.out.println(String.format("%s declines to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
         }
+    }
+
+    static void transfers() {
     }
 }
