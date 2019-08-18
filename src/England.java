@@ -1,4 +1,5 @@
 class England {
+    // TODO: Change Ids
     static final String LEAGUE = "Premier League";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);

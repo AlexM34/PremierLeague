@@ -225,6 +225,7 @@ class Match {
         final Footballer subbedOut = squad.get(flop).getFootballer();
         final Footballer subbedIn = bench.get(0);
         if (PremierLeague.matchFlag) {
+            // TODO: Check if not already subbed
             System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " + subbedIn.getName() + " replaces " + subbedOut.getName());
         }
 

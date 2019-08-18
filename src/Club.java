@@ -12,14 +12,14 @@ class Club {
     private Glory glory;
     private int reputation;
     private int value;
-    private int budget;
+    private float budget;
     private Owner owner;
     private Coach coach;
     private Set<Footballer> footballers;
     private Season season;
 
     Club(final int id, final String name, final int established, final Stadium stadium, final String location, final String league, final Glory glory,
-         final int reputation, final int value, final int budget, final Owner owner, final Coach coach) {
+         final int reputation, final int value, final float budget, final Owner owner, final Coach coach) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -88,11 +88,11 @@ class Club {
         this.value = value;
     }
 
-    int getBudget() {
+    float getBudget() {
         return budget;
     }
 
-    void changeBudget(final int change) {
+    void changeBudget(final float change) {
         this.budget += change;
     }
 

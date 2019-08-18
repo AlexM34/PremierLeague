@@ -10,7 +10,7 @@ class PremierLeague {
     private static final Scanner scanner = new Scanner(System.in);
 
     private static final boolean userFlag = false;
-    private static final boolean standingsFlag = false;
+    private static final boolean standingsFlag = true;
     private static final boolean playerStatsFlag = false;
     private static final boolean teamStatsFlag = false;
     static final boolean matchFlag = true;

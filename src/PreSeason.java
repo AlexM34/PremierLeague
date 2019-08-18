@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -7,9 +8,10 @@ class PreSeason {
     private static final Random random = new Random();
     private static int deals = 0;
     private static Map<Footballer, Club> transfers;
+    private static Map<Club, Integer> sold;
+    private static int academy = 0;
 
     static void progression() {
-        // TODO: Transfers
         // TODO: Youth academy
         for (final Club[] league : Data.LEAGUES) {
             for (final Club club : league) {
@@ -105,8 +107,9 @@ class PreSeason {
         Club buying;
         Club selling;
         transfers = new HashMap<>();
+        sold = new HashMap<>();
 
-        while (attempts < 10000) {
+        while (attempts < 30000) {
             league = Data.LEAGUES[random.nextInt(5)];
             buying = league[random.nextInt(league.length)];
             league = Data.LEAGUES[random.nextInt(5)];
@@ -118,15 +121,17 @@ class PreSeason {
         }
 
         transfers.forEach(((footballer, club) -> club.addFootballer(footballer)));
+        academy();
     }
 
     private static void negotiate(final Club buying, final Club selling) {
-        // TODO: No dummy transfers
-        int budget = buying.getBudget();
+        float budget = buying.getBudget();
         Footballer[] squad = selling.getFootballers().toArray(new Footballer[0]);
         Footballer footballer = squad[random.nextInt(squad.length)];
+        if (footballer.getId() > 123450 && footballer.getId() < 123470) return;
 
         float offered = interest(buying, footballer);
+        if (offered == 0) return;
         float wanted = demand(selling, footballer);
 
         while (offered < wanted) {
@@ -142,10 +147,11 @@ class PreSeason {
         }
 
         if (wanted < budget) {
-            buying.changeBudget((int) -wanted);
-            selling.changeBudget((int) wanted);
+            buying.changeBudget(-wanted);
+            selling.changeBudget(wanted);
             selling.removeFootballer(footballer);
             transfers.put(footballer, buying);
+            sold.merge(buying, 1, Integer::sum);
             deals++;
 
             System.out.println(deals + ". " + footballer.getName() + " joins " + buying.getName() + " from " +
@@ -154,10 +160,100 @@ class PreSeason {
     }
 
     private static float interest(final Club buying, final Footballer footballer) {
-        return footballer.getValue() * 0.8f;
+        // TODO: Static imports
+        final Position.Role role = footballer.getPosition().getRole();
+        final int potential = footballer.getPotential();
+        int better = 0;
+
+        for (Footballer f : buying.getFootballers()) {
+            if (f.getPosition().getRole().equals(role) && f.getOverall() > potential) better++;
+        }
+
+        switch (better) {
+            case 0: return footballer.getValue() * 1f;
+            case 1: return footballer.getValue() * 0.8f;
+            default: return 0;
+        }
     }
 
     private static float demand(final Club selling, final Footballer footballer) {
-        return footballer.getValue() * 1.3f;
+        final Position.Role role = footballer.getPosition().getRole();
+        final int potential = footballer.getPotential();
+        int better = 0;
+
+        for (Footballer f : selling.getFootballers()) {
+            if (f.getPosition().getRole().equals(role) && f.getOverall() > potential) better++;
+        }
+
+        if (sold.containsKey(selling) && sold.get(selling) > 5) return footballer.getValue() * 2.5f;
+
+        switch (better) {
+            case 0: return footballer.getValue() * 2f;
+            case 1: return footballer.getValue() * 1.5f;
+            default: return footballer.getValue() * 1.2f;
+        }
+    }
+
+    private static void academy() {
+        int goalkeepers = 0;
+        int defenders = 0;
+        int midfielders = 0;
+        int forwards = 0;
+
+        for (Club[] league : Data.LEAGUES) {
+            for (Club club : league) {
+                youngster(club, null);
+                youngster(club, null);
+                for (Footballer footballer : club.getFootballers()) {
+                    switch (footballer.getPosition().getRole()) {
+                        case Goalkeeper: goalkeepers++; break;
+                        case Defender: defenders++; break;
+                        case Midfielder: midfielders++; break;
+                        case Forward: forwards++; break;
+                    }
+                }
+
+                for (int g = goalkeepers; g < 3; g++) youngster(club, Position.Role.Goalkeeper);
+                for (int d = defenders; d < 7; d++) youngster(club, Position.Role.Defender);
+                for (int m = midfielders; m < 7; m++) youngster(club, Position.Role.Midfielder);
+                for (int f = forwards; f < 4; f++) youngster(club, Position.Role.Forward);
+            }
+        }
+    }
+
+    private static void youngster(final Club club, Position.Role role) {
+        // TODO: Remove dummies
+        if (role == null) {
+            switch (random.nextInt(4)) {
+                case 0: role = Position.Role.Goalkeeper; break;
+                case 1: role = Position.Role.Defender; break;
+                case 2: role = Position.Role.Midfielder; break;
+                default: role = Position.Role.Forward; break;
+            }
+        }
+
+        // TODO: Generate names
+        // TODO: Generate nations
+        // TODO: Fix position
+        final int id = 1000000 + academy++;
+        final String name = "Monev" + (academy - 1);
+        final int age = 17 + random.nextInt(3);
+        final String nationality = "Bulgaria";
+        int overall = 60 + random.nextInt(10);
+        int potential = overall + random.nextInt(15) + 10;
+        float value = 3;
+        float wage = 1;
+        final Position.Role finalRole = role;
+        Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
+        Position position = (Position) positions[random.nextInt(positions.length)];
+        int number = random.nextInt(97) + 2;
+        int finishing = overall + 10 * position.getAttackingDuty() - 50;
+        int vision = overall + 10 - (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
+        Resume resume = new Resume();
+        Footballer footballer = new Footballer(id, name, age, nationality, overall, potential,
+                value, wage, position, number, finishing, vision, resume);
+
+        club.addFootballer(footballer);
+        System.out.println(footballer + " is promoted to " + club.getName());
     }
 }
