@@ -3,10 +3,10 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
-    // TODO: Team of the year by rating
     // TODO: Player of the year by performance
     // TODO: Win money from competitions and fans
     private static int offset;
+    static HashMap<Footballer, Integer> topTeam = new HashMap<>();
 
     private static Map<Club, Integer> sortLeague(final Club[] league) {
         final Map<Club, Integer> standings = new LinkedHashMap<>();
@@ -88,6 +88,7 @@ class Printer {
         final Map<String, Integer> cleanSheets = new LinkedHashMap<>();
         final Map<String, Integer> yellowCards = new LinkedHashMap<>();
         final Map<String, Integer> redCards = new LinkedHashMap<>();
+        final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
 
         for (final Club club : league) {
             for (final Footballer f : club.getFootballers()) {
@@ -110,7 +111,10 @@ class Printer {
                         break;
                 }
 
-                if (stats.getMatches() > games) ratings.put(name, stats.getRating());
+                if (stats.getMatches() > games) {
+                    ratings.put(name, stats.getRating());
+                    topTeam.put(f, stats.getRating());
+                }
                 motm.put(name, stats.getMotmAwards());
                 goals.put(name, stats.getGoals());
                 assists.put(name, stats.getAssists());
@@ -131,6 +135,8 @@ class Printer {
         topPlayers(cleanSheets, "Most Clean Sheets");
         topPlayers(yellowCards, "Most Yellow Cards");
         topPlayers(redCards, "Most Red Cards");
+
+        pickTeam(topTeam, type == 0);
     }
 
     static void allTimeStats(final Club[] league) {
@@ -214,8 +220,8 @@ class Printer {
         final Map<String, Integer> yellowCards = new LinkedHashMap<>();
         final Map<String, Integer> redCards = new LinkedHashMap<>();
 
-        for (int team = 0; team < league.length; team++) {
-            for (final Footballer f : league[team].getFootballers()) {
+        for (final Club club : league) {
+            for (final Footballer f : club.getFootballers()) {
                 final String name = f.getName();
                 final Competition stats = f.getResume().getTotal().getLeague();
 
@@ -253,13 +259,70 @@ class Printer {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
 
-        for (int i = 0; i < 20 && i < sorted.size(); i++) {
-            final int value = sorted.values().toArray(new Integer[0])[i];
+        for (int player = 0; player < 20 && player < sorted.size(); player++) {
+            final int value = sorted.values().toArray(new Integer[0])[player];
             if (value == 0) break;
-            System.out.println(String.format("%2d. %-20s %2d", i + 1, sorted.keySet().toArray(new String[0])[i],
+            System.out.println(String.format("%2d. %-20s %2d", player + 1, sorted.keySet().toArray(new String[0])[player],
                     value));
         }
 
         System.out.println();
+    }
+
+    static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
+        int[] team = new int[11];
+        int goalkeepers = 1;
+        int defenders = 4;
+        int midfielders = 3;
+        int forwards = 3;
+
+        final Map<Footballer, Integer> sorted = ratings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        for (int player = 0; player < sorted.size(); player++) {
+            switch (sorted.keySet().toArray(new Footballer[0])[player].getPosition().getRole()) {
+                case Goalkeeper:
+                    if (goalkeepers > 0) {
+                        team[--goalkeepers] = player;
+                    }
+
+                    break;
+
+                case Defender:
+                    if (defenders > 0) {
+                        team[defenders--] = player;
+                    }
+
+                    break;
+
+                case Midfielder:
+                    if (midfielders > 0) {
+                        team[4 + midfielders--] = player;
+                    }
+
+                    break;
+
+                case Forward:
+                    if (forwards > 0) {
+                        team[7 + forwards--] = player;
+                    }
+
+                    break;
+            }
+
+            if (goalkeepers + defenders + midfielders + forwards == 0) break;
+        }
+
+        System.out.println("TEAM OF THE SEASON");
+        for (int player = 0; player < 11; player++) {
+            Footballer footballer = sorted.keySet().toArray(new Footballer[0])[team[player]];
+            int rating = sorted.values().toArray(new Integer[0])[team[player]];
+
+            System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), rating));
+
+            if (isLeague) topTeam.put(footballer, rating);
+        }
     }
 }

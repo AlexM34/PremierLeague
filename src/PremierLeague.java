@@ -10,10 +10,10 @@ class PremierLeague {
     private static final Scanner scanner = new Scanner(System.in);
 
     private static final boolean userFlag = false;
-    private static final boolean standingsFlag = true;
-    private static final boolean playerStatsFlag = false;
+    private static final boolean standingsFlag = false;
+    private static final boolean playerStatsFlag = true;
     private static final boolean teamStatsFlag = false;
-    static final boolean matchFlag = true;
+    static final boolean matchFlag = false;
 
     public static void main(final String[] args) {
 //        Data.extractData();
@@ -317,6 +317,8 @@ class PremierLeague {
         }
 
         System.out.println();
+        Printer.pickTeam(Printer.topTeam, false);
+        Printer.topTeam = new HashMap<>();
         System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
     }
 
