@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toMap;
 class Printer {
     // TODO: Player of the year by performance
     // TODO: Win money from competitions and fans
+    private static final Random random = new Random();
     private static int offset;
     static HashMap<Footballer, Integer> topTeam = new HashMap<>();
 
@@ -324,5 +325,106 @@ class Printer {
 
             if (isLeague) topTeam.put(footballer, rating);
         }
+
+        System.out.println();
+    }
+
+    static void voting(final Map<Footballer, Integer> contenders) {
+        Footballer[] players = new Footballer[10];
+        int[] chance = new int[10];
+        int[] votes = new int[10];
+        int total = 0;
+        int current = 0;
+        for (Map.Entry<Footballer, Integer> entry : contenders.entrySet()) {
+            Footballer c = entry.getKey();
+            Integer p = entry.getValue();
+            System.out.println(c.getName() + " with " + p);
+
+            players[current] = c;
+            chance[current++] = p - 700;
+            total += p - 700;
+        }
+
+        int v = 0;
+        while (v < 100) {
+            v++;
+            int pick = random.nextInt(total);
+
+            // TODO: Optimise
+            pick -= chance[0];
+            if (pick < 0) {
+                votes[0]++;
+                continue;
+            }
+
+            pick -= chance[1];
+            if (pick < 0) {
+                votes[1]++;
+                continue;
+            }
+
+            pick -= chance[2];
+            if (pick < 0) {
+                votes[2]++;
+                continue;
+            }
+
+            pick -= chance[3];
+            if (pick < 0) {
+                votes[3]++;
+                continue;
+            }
+
+            pick -= chance[4];
+            if (pick < 0) {
+                votes[4]++;
+                continue;
+            }
+
+            pick -= chance[5];
+            if (pick < 0) {
+                votes[5]++;
+                continue;
+            }
+
+            pick -= chance[6];
+            if (pick < 0) {
+                votes[6]++;
+                continue;
+            }
+
+            pick -= chance[7];
+            if (pick < 0) {
+                votes[7]++;
+                continue;
+            }
+
+            pick -= chance[8];
+            if (pick < 0) {
+                votes[8]++;
+                continue;
+            }
+
+            votes[9]++;
+        }
+
+        Map<Footballer, Integer> results = new HashMap<>();
+
+        for (int i = 0; i < 10; i++) results.put(players[i], votes[i]);
+
+        final Map<Footballer, Integer> sorted = results.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        System.out.println("FOOTBALLER OF THE YEAR");
+        for (int player = 0; player < 10; player++) {
+            Footballer footballer = sorted.keySet().toArray(new Footballer[0])[player];
+            int count = sorted.values().toArray(new Integer[0])[player];
+
+            System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), count));
+        }
+
+        System.out.println();
     }
 }

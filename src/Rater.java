@@ -1,11 +1,13 @@
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 class Rater {
     private static final Random random = new Random();
 
     private static MatchStats motmPlayer;
     private static float motmRating;
+    static Map<Footballer, Integer> contenders;
 
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {
@@ -262,5 +264,41 @@ class Rater {
 
     private static void form(final Club team, final int change) {
         team.getSeason().changeForm(change);
+    }
+
+    static void topPlayers(final Club[] clubs) {
+        contenders = new HashMap<>();
+
+        for (int i = 0; i < clubs.length; i++) {
+            for (Footballer footballer : clubs[i].getFootballers()) {
+                Statistics season = footballer.getResume().getSeason();
+                int matches = season.getLeague().getMatches() + season.getCup().getMatches() * 2 +
+                        season.getContinental().getMatches() * 5;
+                float ratings = season.getLeague().getRating() * season.getLeague().getMatches() +
+                        season.getCup().getRating() * season.getCup().getMatches() * 2 +
+                        season.getContinental().getRating() * season.getContinental().getMatches() * 5;
+
+                float performance = matches > 50 ? (ratings / ((float) matches)) : 0;
+
+                if (i == 0) performance += 50;
+                else if (i == 1) performance += 35;
+                else if (i < 4) performance += 20;
+                else if (i < 8) performance += 10;
+
+                contenders.put(footballer, (int) performance);
+            }
+        }
+
+        final Map<Footballer, Integer> sorted = contenders.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        contenders.clear();
+
+        for (int player = 0; player < 10; player++) {
+            contenders.put(sorted.keySet().toArray(new Footballer[0])[player],
+                    sorted.values().toArray(new Integer[0])[player]);
+        }
     }
 }

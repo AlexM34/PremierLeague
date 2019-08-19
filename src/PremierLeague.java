@@ -254,13 +254,16 @@ class PremierLeague {
             for (int team = 0; team < count / 2; team++) {
                 if (knockoutFixture(selected[team], selected[count - team - 1], round < Math.sqrt(selected.length)
                         ? games : 1, type, replay && count >= 8, round == Math.sqrt(selected.length))) {
+                    Club swap = selected[team];
                     selected[team] = selected[count - team - 1];
-                    selected[count - team - 1] = null;
+                    selected[count - team - 1] = swap;
                 }
             }
 
             count /= 2;
         }
+
+        if (type == 2) Rater.topPlayers(selected);
 
         return selected[0];
     }
@@ -319,6 +322,7 @@ class PremierLeague {
         System.out.println();
         Printer.pickTeam(Printer.topTeam, false);
         Printer.topTeam = new HashMap<>();
+        Printer.voting(Rater.contenders);
         System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
     }
 

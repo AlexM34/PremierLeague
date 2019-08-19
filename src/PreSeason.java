@@ -12,7 +12,6 @@ class PreSeason {
     private static int academy = 0;
 
     static void progression() {
-        // TODO: Youth academy
         for (final Club[] league : Data.LEAGUES) {
             for (final Club club : league) {
                 for (final Footballer f : club.getFootballers()) {
@@ -154,8 +153,8 @@ class PreSeason {
             sold.merge(buying, 1, Integer::sum);
             deals++;
 
-            System.out.println(deals + ". " + footballer.getName() + " joins " + buying.getName() + " from " +
-                selling.getName() + " for €" + (int) wanted + " million");
+//            System.out.println(deals + ". " + footballer.getName() + " joins " + buying.getName() + " from " +
+//                selling.getName() + " for €" + (int) wanted + " million");
         }
     }
 
@@ -254,6 +253,6 @@ class PreSeason {
                 value, wage, position, number, finishing, vision, resume);
 
         club.addFootballer(footballer);
-        System.out.println(footballer + " is promoted to " + club.getName());
+//        System.out.println(footballer + " is promoted to " + club.getName());
     }
 }
