@@ -3,7 +3,6 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
-    // TODO: Player of the year by performance
     // TODO: Win money from competitions and fans
     private static final Random random = new Random();
     private static int offset;
@@ -341,71 +340,19 @@ class Printer {
             System.out.println(c.getName() + " with " + p);
 
             players[current] = c;
-            chance[current++] = p - 700;
-            total += p - 700;
+            chance[current] = Math.max(p - 750, 1);
+            total += chance[current++];
         }
 
-        int v = 0;
-        while (v < 100) {
-            v++;
+        for (int v = 0; v < 100; v++) {
             int pick = random.nextInt(total);
-
-            // TODO: Optimise
-            pick -= chance[0];
-            if (pick < 0) {
-                votes[0]++;
-                continue;
+            for (int player = 0; player < 10; player++) {
+                pick -= chance[player];
+                if (pick < 0) {
+                    votes[player]++;
+                    break;
+                }
             }
-
-            pick -= chance[1];
-            if (pick < 0) {
-                votes[1]++;
-                continue;
-            }
-
-            pick -= chance[2];
-            if (pick < 0) {
-                votes[2]++;
-                continue;
-            }
-
-            pick -= chance[3];
-            if (pick < 0) {
-                votes[3]++;
-                continue;
-            }
-
-            pick -= chance[4];
-            if (pick < 0) {
-                votes[4]++;
-                continue;
-            }
-
-            pick -= chance[5];
-            if (pick < 0) {
-                votes[5]++;
-                continue;
-            }
-
-            pick -= chance[6];
-            if (pick < 0) {
-                votes[6]++;
-                continue;
-            }
-
-            pick -= chance[7];
-            if (pick < 0) {
-                votes[7]++;
-                continue;
-            }
-
-            pick -= chance[8];
-            if (pick < 0) {
-                votes[8]++;
-                continue;
-            }
-
-            votes[9]++;
         }
 
         Map<Footballer, Integer> results = new HashMap<>();

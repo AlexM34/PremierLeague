@@ -233,7 +233,6 @@ class PreSeason {
 
         // TODO: Generate names
         // TODO: Generate nations
-        // TODO: Fix position
         final int id = 1000000 + academy++;
         final String name = "Monev" + (academy - 1);
         final int age = 17 + random.nextInt(3);
@@ -253,6 +252,6 @@ class PreSeason {
                 value, wage, position, number, finishing, vision, resume);
 
         club.addFootballer(footballer);
-//        System.out.println(footballer + " is promoted to " + club.getName());
+        System.out.println(footballer + " is promoted to " + club.getName());
     }
 }
