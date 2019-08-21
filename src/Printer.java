@@ -3,7 +3,6 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 
 class Printer {
-    // TODO: Win money from competitions and fans
     private static final Random random = new Random();
     private static int offset;
     static HashMap<Footballer, Integer> topTeam = new HashMap<>();
@@ -77,6 +76,29 @@ class Printer {
             for (final Footballer footballer : first.getFootballers()) {
                 footballer.getResume().getGlory().addLeague();
             }
+
+            leaguePrizes(sorted.keySet().toArray(new Club[0]));
+        }
+    }
+
+    private static void leaguePrizes(final Club[] league) {
+        for (int team = 0; team < league.length; team++) {
+            if (team == 0) league[team].changeBudget(50f);
+            else if (team < 4) league[team].changeBudget(40f - (team - 1) * 5f);
+            else if (team < 7) league[team].changeBudget(26f - (team - 4) * 3f);
+            else league[team].changeBudget(25f - team);
+        }
+    }
+
+    static void knockoutPrizes(final Club[] clubs, final boolean isContinental) {
+        final float base = isContinental ? 10f : 1f;
+
+        for (int team = 0; team < clubs.length; team++) {
+            if (team == 0) clubs[team].changeBudget(10 * base);
+            else if (team == 1) clubs[team].changeBudget(7 * base);
+            else if (team < 4) clubs[team].changeBudget(4 * base);
+            else if (team < 8) clubs[team].changeBudget(2 * base);
+            else clubs[team].changeBudget(base);
         }
     }
 

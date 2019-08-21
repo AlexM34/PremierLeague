@@ -223,10 +223,12 @@ class Match {
         }
 
         final Footballer subbedOut = squad.get(flop).getFootballer();
-        final Footballer subbedIn = bench.get(0);
+        final Footballer subbedIn = bench.get(0) != null ? bench.get(0) :
+                bench.stream().filter(Objects::nonNull).findFirst().get();
+
         if (PremierLeague.matchFlag) {
-            // TODO: Check if not already subbed
-            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " + subbedIn.getName() + " replaces " + subbedOut.getName());
+            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
+                    subbedIn.getName() + " replaces " + subbedOut.getName());
         }
 
         Competition season = Rater.getCompetition(subbedOut.getResume().getSeason(), competition);

@@ -70,6 +70,7 @@ class PremierLeague {
                 team.getSeason().getChampionsLeague().setAlive(true);
             }
             final Club[] advanced = groups(Data.CHAMPIONS_LEAGUE);
+            for (Club club : advanced) club.changeBudget(5f);
             final Club[] drawn = Draw.championsLeague(advanced);
             final Club championsLeagueWinner = knockout(drawn, 2, 2, false);
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
@@ -264,6 +265,7 @@ class PremierLeague {
         }
 
         if (type == 2) Rater.topPlayers(selected);
+        Printer.knockoutPrizes(selected, type == 2);
 
         return selected[0];
     }
@@ -303,6 +305,7 @@ class PremierLeague {
             }
             if (teamStatsFlag) Printer.allTimeStats(league);
             System.out.println();
+            PreSeason.profits(league);
             // TODO: Rate simulation with review
         }
 

@@ -254,4 +254,10 @@ class PreSeason {
         club.addFootballer(footballer);
         System.out.println(footballer + " is promoted to " + club.getName());
     }
+
+    static void profits(final Club[] league) {
+        for (Club club : league) club.changeBudget(club.getReputation() * club.getReputation() / 600);
+    }
+
+    // TODO: Salaries
 }
