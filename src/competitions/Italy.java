@@ -1,4 +1,9 @@
-class Italy {
+package competitions;
+
+import players.Glory;
+import teams.*;
+
+public class Italy {
     private static final String SERIE_A = "Serie A";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
@@ -84,7 +89,7 @@ class Italy {
             new Glory(0, 1, 0, 0, 0, 0, 0),
             100, 100, 8, OWNER, COACH);
 
-    static final Club[] CLUBS = {MILAN, JUVENTUS, INTER, NAPOLI, ROMA, LAZIO, ATALANTA, TORINO,
+    public static final Club[] CLUBS = {MILAN, JUVENTUS, INTER, NAPOLI, ROMA, LAZIO, ATALANTA, TORINO,
             SAMPDORIA, SASSUOLO, BOLOGNA, CAGLIARI, PARMA, FIORENTINA, UDINESE, BRESCIA, SPAL,
             GENOA, LECCE, VERONA};
 }

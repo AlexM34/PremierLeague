@@ -1,5 +1,10 @@
-class Spain {
-    static final String LEAGUE = "La Liga";
+package competitions;
+
+import players.Glory;
+import teams.*;
+
+public class Spain {
+    public static final String LEAGUE = "La Liga";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
     private static final Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
@@ -84,7 +89,7 @@ class Spain {
             new Glory(0, 0, 1, 0, 0, 0, 0),
             100, 100, 6, OWNER, COACH);
 
-    static final Club[] CLUBS = {BARCELONA, REAL_MADRID, ATLETICO_MADRID, VALENCIA, SEVILLA, ATHLETIC_BILBAO, GETAFE, ESPANYOL,
+    public static final Club[] CLUBS = {BARCELONA, REAL_MADRID, ATLETICO_MADRID, VALENCIA, SEVILLA, ATHLETIC_BILBAO, GETAFE, ESPANYOL,
             REAL_SOCIEDAD, REAL_BETIS, ALAVES, EIBAR, LEGANES, VILLARREAL, LEVANTE, VALLADOLID, CELTA_VIGO,
             OSASUNA, GRANADA, MALLORCA};
 }

@@ -1,25 +1,27 @@
+package players;
+
 import java.util.Objects;
 
-class Resume {
+public class Resume {
     private final Glory glory;
     private final Statistics total;
     private final Statistics season;
 
-    Resume() {
+    public Resume() {
         this.glory = new Glory(0, 0, 0, 0, 0, 0, 0);
         this.total = new Statistics();
         this.season = new Statistics();
     }
 
-    Glory getGlory() {
+    public Glory getGlory() {
         return glory;
     }
 
-    Statistics getTotal() {
+    public Statistics getTotal() {
         return total;
     }
 
-    Statistics getSeason() {
+    public Statistics getSeason() {
         return season;
     }
 
@@ -40,7 +42,7 @@ class Resume {
 
     @Override
     public String toString() {
-        return "Resume{" +
+        return "players.Resume{" +
                 "glory=" + glory +
                 ", total=" + total +
                 ", season=" + season +

@@ -1,6 +1,8 @@
+package players;
+
 import java.util.Objects;
 
-class MatchStats {
+public class MatchStats {
     private final Footballer footballer;
     private int started;
     private float rating;
@@ -9,7 +11,7 @@ class MatchStats {
     private boolean yellowCarded;
     private boolean redCarded;
 
-    MatchStats(final Footballer footballer, final int started) {
+    public MatchStats(final Footballer footballer, final int started) {
         this.footballer = footballer;
         this.started = started;
         this.rating = 6;
@@ -19,29 +21,29 @@ class MatchStats {
         this.redCarded = false;
     }
 
-    Footballer getFootballer() {
+    public Footballer getFootballer() {
         return footballer;
     }
 
-    int getStarted() {
+    public int getStarted() {
         return started;
     }
 
-    float getRating() {
+    public float getRating() {
         return rating;
     }
 
-    void changeRating(final float rating) {
+    public void changeRating(final float rating) {
         this.rating += rating;
         this.rating = Math.max(this.rating, 0);
         this.rating = Math.min(this.rating, 10);
     }
 
-    int getGoals() {
+    public int getGoals() {
         return goals;
     }
 
-    void addGoals() {
+    public void addGoals() {
         this.goals += 1;
         this.rating += 1.25;
         if (this.getFootballer().getPosition().getAttackingDuty() < 5) {
@@ -52,11 +54,11 @@ class MatchStats {
         }
     }
 
-    int getAssists() {
+    public int getAssists() {
         return assists;
     }
 
-    void addAssists() {
+    public void addAssists() {
         this.assists += 1;
         this.rating += 1;
         if (this.getFootballer().getPosition().getAttackingDuty() < 5) {
@@ -67,20 +69,20 @@ class MatchStats {
         }
     }
 
-    boolean isYellowCarded() {
+    public boolean isYellowCarded() {
         return yellowCarded;
     }
 
-    void addYellowCard() {
+    public void addYellowCard() {
         this.yellowCarded = true;
         this.rating -= 0.5;
     }
 
-    boolean isRedCarded() {
+    public boolean isRedCarded() {
         return redCarded;
     }
 
-    void addRedCard() {
+    public void addRedCard() {
         this.redCarded = true;
         this.rating -= 2;
     }
@@ -106,7 +108,7 @@ class MatchStats {
 
     @Override
     public String toString() {
-        return "MatchStats{" +
+        return "players.MatchStats{" +
                 "footballer=" + footballer +
                 ", started=" + started +
                 ", rating=" + rating +

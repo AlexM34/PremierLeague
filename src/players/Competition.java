@@ -1,6 +1,8 @@
+package players;
+
 import java.util.Objects;
 
-class Competition {
+public class Competition {
     private int matches;
     private int goals;
     private int assists;
@@ -21,101 +23,101 @@ class Competition {
         this.redCards = 0;
     }
 
-    int getMatches() {
+    public int getMatches() {
         return matches;
     }
 
-    void clearMatches() {
+    public void clearMatches() {
         this.matches = 0;
     }
 
-    void addMatches(final int matches) {
+    public void addMatches(final int matches) {
         this.matches += matches;
     }
 
-    int getGoals() {
+    public int getGoals() {
         return goals;
     }
 
-    void clearGoals() {
+    public void clearGoals() {
         this.goals = 0;
     }
 
-    void addGoals(final int goals) {
+    public void addGoals(final int goals) {
         this.goals += goals;
     }
 
-    int getAssists() {
+    public int getAssists() {
         return assists;
     }
 
-    void clearAssists() {
+    public void clearAssists() {
         this.assists = 0;
     }
 
-    void addAssists(final int assists) {
+    public void addAssists(final int assists) {
         this.assists += assists;
     }
 
-    int getCleanSheets() {
+    public int getCleanSheets() {
         return cleanSheets;
     }
 
-    void clearCleanSheets() {
+    public void clearCleanSheets() {
         this.cleanSheets = 0;
     }
 
-    void addCleanSheets(final int cleanSheets) {
+    public void addCleanSheets(final int cleanSheets) {
         this.cleanSheets += cleanSheets;
     }
 
-    int getRating() {
+    public int getRating() {
         return rating;
     }
 
-    void clearRating() {
+    public void clearRating() {
         this.rating = 0;
     }
 
-    void addRating(final int rating, final int matches) {
+    public void addRating(final int rating, final int matches) {
         if (matches > 0) {
             this.rating = (this.rating * this.matches + rating * matches) / (this.matches + matches);
         }
     }
 
-    int getMotmAwards() {
+    public int getMotmAwards() {
         return motmAwards;
     }
 
-    void clearMotmAwards() {
+    public void clearMotmAwards() {
         this.motmAwards = 0;
     }
 
-    void addMotmAwards(final int motmAwards) {
+    public void addMotmAwards(final int motmAwards) {
         this.motmAwards += motmAwards;
     }
 
-    int getYellowCards() {
+    public int getYellowCards() {
         return yellowCards;
     }
 
-    void clearYellowCards() {
+    public void clearYellowCards() {
         this.yellowCards = 0;
     }
 
-    void addYellowCards(final int yellowCards) {
+    public void addYellowCards(final int yellowCards) {
         this.yellowCards += yellowCards;
     }
 
-    int getRedCards() {
+    public int getRedCards() {
         return redCards;
     }
 
-    void clearRedCards() {
+    public void clearRedCards() {
         this.redCards = 0;
     }
 
-    void addRedCards(final int redCards) {
+    public void addRedCards(final int redCards) {
         this.redCards += redCards;
     }
 
@@ -141,7 +143,7 @@ class Competition {
 
     @Override
     public String toString() {
-        return "Statistics{" +
+        return "players.Statistics{" +
                 "matches=" + matches +
                 ", goals=" + goals +
                 ", assists=" + assists +

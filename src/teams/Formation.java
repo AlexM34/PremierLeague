@@ -1,4 +1,6 @@
-enum Formation {
+package teams;
+
+public enum Formation {
     F1(541, Type.ParkTheBus),
     F2(532, Type.Defensive),
     F3(523, Type.Defensive),
@@ -36,15 +38,15 @@ enum Formation {
         this.type = type;
     }
 
-    int getDefenders() {
+    public int getDefenders() {
         return this.scheme / 100;
     }
 
-    int getMidfielders() {
+    public int getMidfielders() {
         return this.scheme / 10 % 10;
     }
 
-    int getForwards() {
+    public int getForwards() {
         return this.scheme % 10;
     }
 

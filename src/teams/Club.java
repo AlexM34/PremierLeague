@@ -1,8 +1,15 @@
+package teams;
+
+import competitions.ChampionsLeague;
+import competitions.Cup;
+import players.Footballer;
+import players.Glory;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-class Club {
+public class Club {
     private final int id;
     private final String name;
     private final int established;
@@ -18,8 +25,8 @@ class Club {
     private Set<Footballer> footballers;
     private Season season;
 
-    Club(final int id, final String name, final int established, final Stadium stadium, final String location, final String league, final Glory glory,
-         final int reputation, final int value, final float budget, final Owner owner, final Coach coach) {
+    public Club(final int id, final String name, final int established, final Stadium stadium, final String location, final String league, final Glory glory,
+                final int reputation, final int value, final float budget, final Owner owner, final Coach coach) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -36,11 +43,11 @@ class Club {
         this.season = new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100);
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
@@ -56,7 +63,7 @@ class Club {
         return location;
     }
 
-    String getLeague() {
+    public String getLeague() {
         return league;
     }
 
@@ -64,7 +71,7 @@ class Club {
         this.league = league;
     }
 
-    Glory getGlory() {
+    public Glory getGlory() {
         return glory;
     }
 
@@ -72,7 +79,7 @@ class Club {
         this.glory = glory;
     }
 
-    int getReputation() {
+    public int getReputation() {
         return reputation;
     }
 
@@ -88,11 +95,11 @@ class Club {
         this.value = value;
     }
 
-    float getBudget() {
+    public float getBudget() {
         return budget;
     }
 
-    void changeBudget(final float change) {
+    public void changeBudget(final float change) {
         this.budget += change;
     }
 
@@ -112,7 +119,7 @@ class Club {
         this.coach = coach;
     }
 
-    Set<Footballer> getFootballers() {
+    public Set<Footballer> getFootballers() {
         return footballers;
     }
 
@@ -120,19 +127,19 @@ class Club {
         this.footballers = footballers;
     }
 
-    void addFootballer(final Footballer footballer) {
+    public void addFootballer(final Footballer footballer) {
         this.footballers.add(footballer);
     }
 
-    void removeFootballer(final Footballer footballer) {
+    public void removeFootballer(final Footballer footballer) {
         this.footballers.remove(footballer);
     }
 
-    Season getSeason() {
+    public Season getSeason() {
         return season;
     }
 
-    void setSeason(final Season season) {
+    public void setSeason(final Season season) {
         this.season = season;
     }
 
@@ -164,7 +171,7 @@ class Club {
 
     @Override
     public String toString() {
-        return "Club{" +
+        return "teams.Club{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", established=" + established +

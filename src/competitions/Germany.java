@@ -1,4 +1,9 @@
-class Germany {
+package competitions;
+
+import players.Glory;
+import teams.*;
+
+public class Germany {
     private static final String LEAGUE = "Bundesliga";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
@@ -76,7 +81,7 @@ class Germany {
             new Glory(0, 0, 0, 0, 0, 0, 0),
             100, 100, 9, OWNER, COACH);
 
-    static final Club[] CLUBS = {BAYERN_MUNICH, BORUSSIA_DORTMUND, RB_LEIPZIG, BAYER_LEVERKUSEN, WERDER_BREMEN, BORUSSIA_MONCHENGLADBACH, WOLFSBURG, EINTRACHT_FRANKFURT,
+    public static final Club[] CLUBS = {BAYERN_MUNICH, BORUSSIA_DORTMUND, RB_LEIPZIG, BAYER_LEVERKUSEN, WERDER_BREMEN, BORUSSIA_MONCHENGLADBACH, WOLFSBURG, EINTRACHT_FRANKFURT,
             HOFFENHEIM, FORTUNA_DUSSELDORF, HERTHA, MAINZ, FREIBURG, SCHALKE, AUGSBURG, KOLN, PADERBORN,
             UNION_BERLIN};
 }

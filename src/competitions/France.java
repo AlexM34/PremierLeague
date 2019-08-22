@@ -1,5 +1,14 @@
-class France {
-    static final String LEAGUE = "Ligue 1";
+package competitions;
+
+import players.Glory;
+import teams.Club;
+import teams.Coach;
+import teams.Formation;
+import teams.Stadium;
+import teams.Owner;
+
+public class France {
+    public static final String LEAGUE = "Ligue 1";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
     private static final Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
@@ -84,7 +93,7 @@ class France {
             new Glory(0, 0, 2, 2, 0, 0, 0),
             100, 100, 7, OWNER, COACH);
 
-    static final Club[] CLUBS = {LYON, PSG, MARSEILLE, SAINT_ETIENNE, LILLE, MONTPELLIER, NICE, REIMS,
+    public static final Club[] CLUBS = {LYON, PSG, MARSEILLE, SAINT_ETIENNE, LILLE, MONTPELLIER, NICE, REIMS,
             NIMES, RENNES, STRASBOURG, NANTES, BORDEAUX, ANGERS, AMIENS, TOULOUSE, MONACO,
             DIJON, BREST, METZ};
 }

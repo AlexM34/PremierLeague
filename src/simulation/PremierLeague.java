@@ -1,11 +1,31 @@
+package simulation;
+
+import competitions.England;
+import competitions.France;
+import competitions.Spain;
+import players.Footballer;
+import teams.Club;
+import teams.League;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toMap;
+import static simulation.Data.*;
+import static simulation.Draw.championsLeague;
+import static simulation.Draw.league;
+import static simulation.Match.simulation;
+import static simulation.Match.userTactics;
+import static simulation.PreSeason.*;
+import static simulation.Printer.*;
+import static simulation.Rater.contenders;
 
 class PremierLeague {
     // TODO: Add tests
+    // TODO: Main class
+    // TODO: Imports
+    // TODO: Inspect
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -13,21 +33,21 @@ class PremierLeague {
     private static final boolean standingsFlag = false;
     private static final boolean playerStatsFlag = true;
     private static final boolean teamStatsFlag = false;
-    static final boolean matchFlag = false;
+    public static final boolean matchFlag = false;
 
     public static void main(final String[] args) {
-//        Data.extractData();
-        Data.buildSquads();
-        Data.addDummies();
+//        simulation.extractData();
+        buildSquads();
+        addDummies();
         IntStream.range(0, 10).forEach(year -> {
-            Data.prepare(year);
+            prepare(year);
             if (userFlag) pickTeam();
             final Map<Club[], int[][][]> draw = new HashMap<>();
-            for (final Club[] league : Data.LEAGUES) draw.put(league, Draw.league(league.length));
+            for (final Club[] league : LEAGUES) draw.put(league, league(league.length));
 
             for (int team = 0; team < 6; team++) {
-                for (int league = 0; league < Data.LEAGUES.length; league++) {
-                    final Club squad = Data.LEAGUES[league][team];
+                for (int league = 0; league < LEAGUES.length; league++) {
+                    final Club squad = LEAGUES[league][team];
                     System.out.println(squad.getBudget());
                     squad.getFootballers().forEach(footballer ->
                             System.out.println(footballer.getName() + ", " + footballer.getPosition() + ", " +
@@ -38,16 +58,16 @@ class PremierLeague {
             pause();
 
             for (int round = 0; round < 38; round ++) {
-                for (final Club[] league : Data.LEAGUES) {
+                for (final Club[] league : LEAGUES) {
                     if (round < 34 || league.length > 18) play(league, draw.get(league), round);
                 }
             }
 
-            for (final Club[] league : Data.LEAGUES) {
+            for (final Club[] league : LEAGUES) {
                 final Club nationalCupWinner = cup(league, 16,
                         league[0].getLeague().equals(Spain.LEAGUE) ? 2 : 1,
                         league[0].getLeague().equals(England.LEAGUE));
-                System.out.println(nationalCupWinner.getName() + " win the National Cup!");
+                System.out.println(nationalCupWinner.getName() + " win the National competitions.Cup!");
                 nationalCupWinner.getGlory().addNationalCup();
                 for (final Footballer footballer : nationalCupWinner.getFootballers()) {
                     footballer.getResume().getGlory().addNationalCup();
@@ -55,35 +75,35 @@ class PremierLeague {
 
                 if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
                     final Club leagueCupWinner = cup(league, 16, 1, false);
-                    System.out.println(leagueCupWinner.getName() + " win the League Cup!");
+                    System.out.println(leagueCupWinner.getName() + " win the teams.League competitions.Cup!");
                     leagueCupWinner.getGlory().addLeagueCup();
                     for (final Footballer footballer : leagueCupWinner.getFootballers()) {
                         footballer.getResume().getGlory().addLeagueCup();
                     }
                 }
 
-                if (playerStatsFlag) Printer.playerStats(league, 1);
+                if (playerStatsFlag) playerStats(league, 1);
             }
 
-            Data.CHAMPIONS_LEAGUE = Printer.pickChampionsLeagueTeams();
-            for (final Club team : Data.CHAMPIONS_LEAGUE) {
+            CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
+            for (final Club team : CHAMPIONS_LEAGUE) {
                 team.getSeason().getChampionsLeague().setAlive(true);
             }
-            final Club[] advanced = groups(Data.CHAMPIONS_LEAGUE);
+            final Club[] advanced = groups(CHAMPIONS_LEAGUE);
             for (Club club : advanced) club.changeBudget(5f);
-            final Club[] drawn = Draw.championsLeague(advanced);
+            final Club[] drawn = championsLeague(advanced);
             final Club championsLeagueWinner = knockout(drawn, 2, 2, false);
-            System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
+            System.out.println(championsLeagueWinner.getName() + " win the Champions teams.League!");
             championsLeagueWinner.getGlory().addContinental();
             for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
                 footballer.getResume().getGlory().addContinental();
             }
 
-            if (playerStatsFlag) Printer.playerStats(Data.CHAMPIONS_LEAGUE, 2);
+            if (playerStatsFlag) playerStats(CHAMPIONS_LEAGUE, 2);
 
             finish(year);
-            PreSeason.progression();
-            PreSeason.transfers();
+            progression();
+            transfers();
         });
 
         finishSimulation();
@@ -94,7 +114,7 @@ class PremierLeague {
         final int groups = teams.length / 4;
         int count = 0;
 
-        final int[][][] draw = Draw.league(4);
+        final int[][][] draw = league(4);
         for (int group = 0; group < groups; group++) {
             System.out.println("GROUP " + (char)('A' + group));
 
@@ -108,7 +128,7 @@ class PremierLeague {
                 for (int game = 0; game < 4 / 2; game++) {
                     final int home = draw[round][game][0];
                     final int away = draw[round][game][1];
-                    final int result = Match.simulation(clubs[home], clubs[away], false, -1, -1, 2);
+                    final int result = simulation(clubs[home], clubs[away], false, -1, -1, 2);
                     final int homeGoals = result / 100;
                     final int awayGoals = result % 100;
                     final League homeStats = clubs[home].getSeason().getChampionsLeague().getGroup();
@@ -184,12 +204,12 @@ class PremierLeague {
                 System.out.println("Wrong team number.");
                 continue;
             }
-            Data.USER = team - 1;
+            USER = team - 1;
             break;
         }
     }
 
-    static void pause() {
+    public static void pause() {
         System.out.println("Press any Key to continue");
         try {
             System.in.read();
@@ -204,16 +224,16 @@ class PremierLeague {
         for (int game = 0; game < league.length / 2; game++) {
             final int home = draw[round][game][0];
             final int away = draw[round][game][1];
-            if (home == Data.USER) Match.userTactics(league[away], true);
-            else if (away == Data.USER) Match.userTactics(league[home], false);
-            Match.simulation(league[home], league[away], false, -1, -1, 0);
-            if (home == Data.USER || away == Data.USER) pause();
+            if (home == USER) userTactics(league[away], true);
+            else if (away == USER) userTactics(league[home], false);
+            simulation(league[home], league[away], false, -1, -1, 0);
+            if (home == USER || away == USER) pause();
         }
 
         if (round < 2 * league.length - 3 && standingsFlag) {
             System.out.println();
             System.out.println(String.format("Standings after round %d:", round + 1));
-            Printer.standings(league);
+            standings(league);
         }
 
         System.out.println();
@@ -265,7 +285,7 @@ class PremierLeague {
         }
 
         if (type == 2) Rater.topPlayers(selected);
-        Printer.knockoutPrizes(selected, type == 2);
+        knockoutPrizes(selected, type == 2);
 
         return selected[0];
     }
@@ -276,14 +296,14 @@ class PremierLeague {
         int secondGoals = 0;
 
         int result;
-        if (neutral) Data.FANS = 0;
-        result = Match.simulation(first, second, games == 1 && !replay, -1, -1, type);
+        if (neutral) FANS = 0;
+        result = simulation(first, second, games == 1 && !replay, -1, -1, type);
 
         firstGoals += result / 100;
         secondGoals += result % 100;
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
-            result = Match.simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
+            result = simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
             secondGoals += result / 100;
             firstGoals += result % 100;
 
@@ -297,40 +317,41 @@ class PremierLeague {
     }
 
     private static void finish(final int year) {
-        for (final Club[] league : Data.LEAGUES) {
-            if (playerStatsFlag) Printer.playerStats(league, 0);
+        for (final Club[] league : LEAGUES) {
+            if (playerStatsFlag) playerStats(league, 0);
             if (standingsFlag) {
                 System.out.println("FINAL STANDINGS");
-                Printer.standings(league);
+                standings(league);
             }
-            if (teamStatsFlag) Printer.allTimeStats(league);
+            if (teamStatsFlag) allTimeStats(league);
             System.out.println();
-            PreSeason.profits(league);
+            profits(league);
+            salaries(league);
             // TODO: Rate simulation with review
         }
 
-        if (teamStatsFlag) Printer.continentalStats();
+        if (teamStatsFlag) continentalStats();
         if (playerStatsFlag) {
             System.out.println();
             System.out.println("DUMMIES");
-            System.out.println(Data.GOALKEEPER_1.getResume().getSeason());
-            System.out.println(Data.DEFENDER_1.getResume().getSeason());
-            System.out.println(Data.MIDFIELDER_1.getResume().getSeason());
-            System.out.println(Data.FORWARD_1.getResume().getSeason());
-            System.out.println(Data.DEFENDER_2.getResume().getSeason());
-            System.out.println(Data.MIDFIELDER_2.getResume().getSeason());
-            System.out.println(Data.FORWARD_2.getResume().getSeason());
+            System.out.println(GOALKEEPER_1.getResume().getSeason());
+            System.out.println(DEFENDER_1.getResume().getSeason());
+            System.out.println(MIDFIELDER_1.getResume().getSeason());
+            System.out.println(FORWARD_1.getResume().getSeason());
+            System.out.println(DEFENDER_2.getResume().getSeason());
+            System.out.println(MIDFIELDER_2.getResume().getSeason());
+            System.out.println(FORWARD_2.getResume().getSeason());
         }
 
         System.out.println();
-        Printer.pickTeam(Printer.topTeam, false);
-        Printer.topTeam = new HashMap<>();
-        Printer.voting(Rater.contenders);
-        System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
+        Printer.pickTeam(topTeam, false);
+        topTeam = new HashMap<>();
+        voting(contenders);
+        System.out.println(String.format("teams.Season %d-%d ends!", 2019 + year, 2020 + year));
     }
 
     private static void finishSimulation() {
-        Data.prepare(10);
-        for (final Club[] league : Data.LEAGUES) Printer.allTimePlayerStats(league);
+        prepare(10);
+        for (final Club[] league : LEAGUES) allTimePlayerStats(league);
     }
 }

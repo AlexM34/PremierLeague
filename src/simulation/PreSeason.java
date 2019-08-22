@@ -1,18 +1,27 @@
+package simulation;
+
+import players.Footballer;
+import players.Position;
+import players.Resume;
+import teams.Club;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-class PreSeason {
+import static simulation.Data.LEAGUES;
+
+public class PreSeason {
     // TODO: Retirements
     private static final Random random = new Random();
-    private static int deals = 0;
+    private static int deals;
     private static Map<Footballer, Club> transfers;
     private static Map<Club, Integer> sold;
     private static int academy = 0;
 
-    static void progression() {
-        for (final Club[] league : Data.LEAGUES) {
+    public static void progression() {
+        for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 for (final Footballer f : club.getFootballers()) {
                     if (f.getNumber() > 100) continue;
@@ -100,7 +109,8 @@ class PreSeason {
         }
     }
 
-    static void transfers() {
+    public static void transfers() {
+        deals = 0;
         int attempts = 0;
         Club[] league;
         Club buying;
@@ -109,9 +119,9 @@ class PreSeason {
         sold = new HashMap<>();
 
         while (attempts < 30000) {
-            league = Data.LEAGUES[random.nextInt(5)];
+            league = LEAGUES[random.nextInt(5)];
             buying = league[random.nextInt(league.length)];
-            league = Data.LEAGUES[random.nextInt(5)];
+            league = LEAGUES[random.nextInt(5)];
             selling = league[random.nextInt(league.length)];
             if (buying == selling) continue;
 
@@ -119,6 +129,7 @@ class PreSeason {
             attempts++;
         }
 
+        System.out.println(deals + " transfers made");
         transfers.forEach(((footballer, club) -> club.addFootballer(footballer)));
         academy();
     }
@@ -159,7 +170,6 @@ class PreSeason {
     }
 
     private static float interest(final Club buying, final Footballer footballer) {
-        // TODO: Static imports
         final Position.Role role = footballer.getPosition().getRole();
         final int potential = footballer.getPotential();
         int better = 0;
@@ -194,12 +204,13 @@ class PreSeason {
     }
 
     private static void academy() {
+        academy = 0;
         int goalkeepers = 0;
         int defenders = 0;
         int midfielders = 0;
         int forwards = 0;
 
-        for (Club[] league : Data.LEAGUES) {
+        for (Club[] league : LEAGUES) {
             for (Club club : league) {
                 youngster(club, null);
                 youngster(club, null);
@@ -218,6 +229,8 @@ class PreSeason {
                 for (int f = forwards; f < 4; f++) youngster(club, Position.Role.Forward);
             }
         }
+
+        System.out.println(academy + " youngsters promoted");
     }
 
     private static void youngster(final Club club, Position.Role role) {
@@ -252,12 +265,18 @@ class PreSeason {
                 value, wage, position, number, finishing, vision, resume);
 
         club.addFootballer(footballer);
-        System.out.println(footballer + " is promoted to " + club.getName());
+//        System.out.println(footballer + " is promoted to " + club.getName());
     }
 
-    static void profits(final Club[] league) {
-        for (Club club : league) club.changeBudget(club.getReputation() * club.getReputation() / 600);
+    public static void profits(final Club[] league) {
+        for (Club club : league) club.changeBudget(club.getReputation() * club.getReputation() / 100);
     }
 
-    // TODO: Salaries
+    public static void salaries(final Club[] league) {
+        for (Club club : league) {
+            for (Footballer footballer : club.getFootballers()) {
+                club.changeBudget(-footballer.getWage() / 20);
+            }
+        }
+    }
 }

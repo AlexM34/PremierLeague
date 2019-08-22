@@ -1,9 +1,13 @@
+package simulation;
+
+import teams.Club;
+
 import java.util.Random;
 
-class Draw {
+public class Draw {
     private static final Random random = new Random();
 
-    static int[][][] league(final int teams) {
+    public static int[][][] league(final int teams) {
         final int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
         final int[] draw = new int[teams];
         final boolean[] drawn = new boolean[teams];
@@ -56,7 +60,7 @@ class Draw {
         return schedule;
     }
 
-    static Club[] championsLeague(final Club[] advanced) {
+    public static Club[] championsLeague(final Club[] advanced) {
         final int teams = advanced.length;
         final Club[] draw = new Club[teams];
         final boolean[] drawn = new boolean[teams];

@@ -1,6 +1,11 @@
-class England {
+package competitions;
+
+import players.Glory;
+import teams.*;
+
+public class England {
     // TODO: Change Ids
-    static final String LEAGUE = "Premier League";
+    public static final String LEAGUE = "Premier League";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
     private static final Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);
@@ -85,7 +90,7 @@ class England {
             new Glory(0, 1, 4, 0, 0, 0, 0),
             100, 100, 7, OWNER, COACH);
 
-    static final Club[] CLUBS = {ARSENAL, MANCHESTER_CITY, LIVERPOOL, MANCHESTER_UNITED, CHELSEA, TOTTENHAM, EVERTON, LEICESTER,
+    public static final Club[] CLUBS = {ARSENAL, MANCHESTER_CITY, LIVERPOOL, MANCHESTER_UNITED, CHELSEA, TOTTENHAM, EVERTON, LEICESTER,
     WOLVERHAMPTON, WATFORD, WEST_HAM, BOURNEMOUTH, CRYSTAL_PALACE, BURNLEY, NEWCASTLE, SOUTHAMPTON, BRIGHTON,
             ASTON_VILLA, NORWICH, SHEFFIELD_UNITED};
 }

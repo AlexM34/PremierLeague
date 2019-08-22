@@ -1,6 +1,8 @@
+package players;
+
 import java.util.Objects;
 
-class Glory {
+public class Glory {
     private int continental;
     private int league;
     private int nationalCup;
@@ -9,8 +11,8 @@ class Glory {
     private int continentalSuperCup;
     private int worldChampionship;
 
-    Glory(final int continental, final int league, final int nationalCup, final int leagueCup,
-          final int nationalSuperCup, final int continentalSuperCup, final int worldChampionship) {
+    public Glory(final int continental, final int league, final int nationalCup, final int leagueCup,
+                 final int nationalSuperCup, final int continentalSuperCup, final int worldChampionship) {
         this.continental = continental;
         this.league = league;
         this.nationalCup = nationalCup;
@@ -20,35 +22,35 @@ class Glory {
         this.worldChampionship = worldChampionship;
     }
 
-    int getContinental() {
+    public int getContinental() {
         return continental;
     }
 
-    void addContinental() {
+    public void addContinental() {
         this.continental += 1;
     }
 
-    int getLeague() {
+    public int getLeague() {
         return league;
     }
 
-    void addLeague() {
+    public void addLeague() {
         this.league += 1;
     }
 
-    int getNationalCup() {
+    public int getNationalCup() {
         return nationalCup;
     }
 
-    void addNationalCup() {
+    public void addNationalCup() {
         this.nationalCup += 1;
     }
 
-    int getLeagueCup() {
+    public int getLeagueCup() {
         return leagueCup;
     }
 
-    void addLeagueCup() {
+    public void addLeagueCup() {
         this.leagueCup += 1;
     }
 
@@ -97,7 +99,7 @@ class Glory {
 
     @Override
     public String toString() {
-        return "Glory{" +
+        return "players.Glory{" +
                 "continental=" + continental +
                 ", league=" + league +
                 ", nationalCup=" + nationalCup +

@@ -1,6 +1,11 @@
+package teams;
+
+import competitions.ChampionsLeague;
+import competitions.Cup;
+
 import java.util.Objects;
 
-class Season {
+public class Season {
     private League league;
     private Cup nationalCup;
     private Cup leagueCup;
@@ -8,7 +13,7 @@ class Season {
     private int form;
     private int morale;
 
-    Season(final League league, final Cup nationalCup, final Cup leagueCup, final ChampionsLeague championsLeague, final int form, final int morale) {
+    public Season(final League league, final Cup nationalCup, final Cup leagueCup, final ChampionsLeague championsLeague, final int form, final int morale) {
         this.league = league;
         this.nationalCup = nationalCup;
         this.leagueCup = leagueCup;
@@ -17,7 +22,7 @@ class Season {
         this.morale = morale;
     }
 
-    League getLeague() {
+    public League getLeague() {
         return league;
     }
 
@@ -41,7 +46,7 @@ class Season {
         this.leagueCup = leagueCup;
     }
 
-    ChampionsLeague getChampionsLeague() {
+    public ChampionsLeague getChampionsLeague() {
         return championsLeague;
     }
 
@@ -49,7 +54,7 @@ class Season {
         this.championsLeague = championsLeague;
     }
 
-    int getForm() {
+    public int getForm() {
         return form;
     }
 
@@ -57,7 +62,7 @@ class Season {
         this.form = form;
     }
 
-    void changeForm(final int change) {
+    public void changeForm(final int change) {
         this.form += change;
         if (this.form > 20) this.form = 20;
         else if (this.form < 0) this.form = 0;
@@ -91,7 +96,7 @@ class Season {
 
     @Override
     public String toString() {
-        return "Season{" +
+        return "teams.Season{" +
                 "league=" + league +
                 ", nationalCup=" + nationalCup +
                 ", leagueCup=" + leagueCup +

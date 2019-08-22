@@ -1,12 +1,12 @@
+package competitions;
+
 import java.util.Objects;
 
-class ChampionsLeague {
+public class Cup {
     private boolean alive;
-    private final League group;
 
-    ChampionsLeague() {
+    public Cup() {
         this.alive = false;
-        this.group = new League();
     }
 
     boolean isAlive() {
@@ -17,29 +17,23 @@ class ChampionsLeague {
         this.alive = alive;
     }
 
-    League getGroup() {
-        return group;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ChampionsLeague that = (ChampionsLeague) o;
-        return alive == that.alive &&
-                group.equals(that.group);
+        final Cup cup = (Cup) o;
+        return alive == cup.alive;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(alive, group);
+        return Objects.hash(alive);
     }
 
     @Override
     public String toString() {
-        return "ChampionsLeague{" +
+        return "competitions.Cup{" +
                 "alive=" + alive +
-                ", group=" + group +
                 '}';
     }
 }

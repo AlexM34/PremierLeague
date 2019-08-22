@@ -1,6 +1,8 @@
+package teams;
+
 import java.util.Objects;
 
-class Coach {
+public class Coach {
     private final int id;
     private final String name;
     private final int overall;
@@ -9,7 +11,7 @@ class Coach {
     private final int attack;
     private final int defence;
 
-    Coach(final int id, final String name, final int overall, final Formation formation, final int style, final int attack, final int defence) {
+    public Coach(final int id, final String name, final int overall, final Formation formation, final int style, final int attack, final int defence) {
         this.id = id;
         this.name = name;
         this.overall = overall;
@@ -68,7 +70,7 @@ class Coach {
 
     @Override
     public String toString() {
-        return "Coach{" +
+        return "teams.Coach{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", overall=" + overall +

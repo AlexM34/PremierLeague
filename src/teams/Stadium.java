@@ -1,6 +1,8 @@
+package teams;
+
 import java.util.Objects;
 
-class Stadium {
+public class Stadium {
     private final int id;
     private final String name;
     private final int built;
@@ -8,7 +10,7 @@ class Stadium {
     private final int capacity;
     private final int reputation;
 
-    Stadium(final int id, final String name, final int built, final String location, final int capacity, final int reputation) {
+    public Stadium(final int id, final String name, final int built, final String location, final int capacity, final int reputation) {
         this.id = id;
         this.name = name;
         this.built = built;
@@ -61,7 +63,7 @@ class Stadium {
 
     @Override
     public String toString() {
-        return "Stadium{" +
+        return "teams.Stadium{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", built=" + built +

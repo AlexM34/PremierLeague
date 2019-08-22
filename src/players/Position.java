@@ -1,4 +1,6 @@
-enum Position {
+package players;
+
+public enum Position {
     GK(Role.Goalkeeper, 0),
     LWB(Role.Defender, 2),
     LB(Role.Defender, 2),
@@ -27,7 +29,7 @@ enum Position {
     RF(Role.Forward, 5),
     RS(Role.Forward, 5);
 
-    enum Role {
+    public enum Role {
         Goalkeeper,
         Defender,
         Midfielder,
@@ -42,11 +44,11 @@ enum Position {
         this.attackingDuty = attackingDuty;
     }
 
-    Role getRole() {
+    public Role getRole() {
         return this.role;
     }
 
-    int getAttackingDuty() {
+    public int getAttackingDuty() {
         return this.attackingDuty;
     }
 }

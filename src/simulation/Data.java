@@ -1,39 +1,55 @@
-import java.io.*;
-import java.util.*;
+package simulation;
 
-class Data {
-    static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
-    static Club[] CHAMPIONS_LEAGUE = new Club[32];
-    static int FANS = 3;
+import competitions.*;
+import players.Competition;
+import players.Footballer;
+import players.Position;
+import players.Resume;
+import teams.Club;
+import teams.League;
+import teams.Season;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+import static simulation.PremierLeague.pause;
+
+public class Data {
+    public static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
+    public static Club[] CHAMPIONS_LEAGUE = new Club[32];
+    public static int FANS = 3;
     static int HOME_WINS;
     static int AWAY_WINS;
     static float RATINGS;
-    static Integer USER = -1;
+    public static Integer USER = -1;
     static int USER_STYLE;
 
-    static final Footballer GOALKEEPER_1 = new Footballer(123455, "Goalkeeper 1", 18, "", 60, 60,
+    public static final Footballer GOALKEEPER_1 = new Footballer(123455, "Goalkeeper 1", 18, "", 60, 60,
             0, 0, Position.GK, 101, 20, 20, new Resume());
 
-    static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
+    public static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
             0, 0, Position.CB, 101, 20, 20, new Resume());
 
-    static final Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
+    public static final Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
             0, 0, Position.CM, 102, 20, 20, new Resume());
 
-    static final Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
+    public static final Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
             0, 0, Position.ST, 103, 20, 20, new Resume());
 
-    static final Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
+    public static final Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
             0, 0, Position.CB, 104, 20, 20, new Resume());
 
-    static final Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
+    public static final Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
             0, 0, Position.CM, 105, 20, 20, new Resume());
 
-    static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
+    public static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
             0, 0, Position.ST, 106, 20, 20, new Resume());
 
     static void extractData() {
-        final String fileName = "data/data.csv";
+        final String fileName = "data/csv";
         final File data = new File(fileName);
         try {
             for (final Club[] league : LEAGUES) {
@@ -64,7 +80,7 @@ class Data {
         }
     }
 
-    static void buildSquads() {
+    public static void buildSquads() {
         try {
             for (final Club[] league : LEAGUES) {
                 for (final Club club : league) {
@@ -93,7 +109,7 @@ class Data {
         }
     }
 
-    static void addDummies() {
+    public static void addDummies() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 club.addFootballer(GOALKEEPER_1);
@@ -107,8 +123,8 @@ class Data {
         }
     }
 
-    static void prepare(final int year) {
-        PremierLeague.pause();
+    public static void prepare(final int year) {
+        pause();
 
         HOME_WINS = 0;
         AWAY_WINS = 0;

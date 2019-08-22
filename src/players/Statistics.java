@@ -1,6 +1,8 @@
+package players;
+
 import java.util.Objects;
 
-class Statistics {
+public class Statistics {
     private final Competition league;
     private final Competition cup;
     private final Competition continental;
@@ -15,11 +17,11 @@ class Statistics {
         return league;
     }
 
-    Competition getCup() {
+    public Competition getCup() {
         return cup;
     }
 
-    Competition getContinental() {
+    public Competition getContinental() {
         return continental;
     }
 
@@ -40,7 +42,7 @@ class Statistics {
 
     @Override
     public String toString() {
-        return "Statistics{" +
+        return "players.Statistics{" +
                 "league=" + league +
                 ", cup=" + cup +
                 ", continental=" + continental +

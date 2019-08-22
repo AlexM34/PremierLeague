@@ -1,6 +1,8 @@
+package players;
+
 import java.util.Objects;
 
-class Footballer {
+public class Footballer {
     // TODO: Add more stats
     private final int id;
     private final String name;
@@ -18,9 +20,9 @@ class Footballer {
     private int condition;
     private int ban;
 
-    Footballer(final int id, final String name, final int age, final String nationality, final int overall,
-               final int potential, final float value, final float wage, final Position position,
-               final int number, final int finishing, final int vision, final Resume resume) {
+    public Footballer(final int id, final String name, final int age, final String nationality, final int overall,
+                      final int potential, final float value, final float wage, final Position position,
+                      final int number, final int finishing, final int vision, final Resume resume) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -38,19 +40,19 @@ class Footballer {
         this.ban = 0;
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    int getAge() {
+    public int getAge() {
         return age;
     }
 
-    void setAge(final int age) {
+    public void setAge(final int age) {
         this.age = age;
     }
 
@@ -58,23 +60,23 @@ class Footballer {
         return nationality;
     }
 
-    int getOverall() {
+    public int getOverall() {
         return overall;
     }
 
-    void changeOverall(final int change) {
+    public void changeOverall(final int change) {
         this.overall += change;
     }
 
-    int getPotential() {
+    public int getPotential() {
         return potential;
     }
 
-    void changePotential(final int change) {
+    public void changePotential(final int change) {
         this.potential += change;
     }
 
-    float getValue() {
+    public float getValue() {
         int overall = getOverall() - 70;
         overall = overall > 4 ? overall * overall * overall / 100 : 1;
         float age = getAge() != 27 ? (float) Math.sqrt(Math.abs(27 - getAge())) : 1;
@@ -92,7 +94,7 @@ class Footballer {
         this.value = value;
     }
 
-    float getWage() {
+    public float getWage() {
         return wage;
     }
 
@@ -100,7 +102,7 @@ class Footballer {
         this.wage = wage;
     }
 
-    Position getPosition() {
+    public Position getPosition() {
         return position;
     }
 
@@ -108,7 +110,7 @@ class Footballer {
         this.position = position;
     }
 
-    int getNumber() {
+    public int getNumber() {
         return number;
     }
 
@@ -116,7 +118,7 @@ class Footballer {
         this.number = number;
     }
 
-    int getFinishing() {
+    public int getFinishing() {
         return finishing;
     }
 
@@ -124,7 +126,7 @@ class Footballer {
         this.finishing = finishing;
     }
 
-    int getVision() {
+    public int getVision() {
         return vision;
     }
 
@@ -132,7 +134,7 @@ class Footballer {
         this.vision = vision;
     }
 
-    Resume getResume() {
+    public Resume getResume() {
         return resume;
     }
 
@@ -140,21 +142,21 @@ class Footballer {
         this.resume = resume;
     }
 
-    int getCondition() {
+    public int getCondition() {
         return condition;
     }
 
-    void changeCondition(final int change) {
+    public void changeCondition(final int change) {
         this.condition += change;
         if (this.condition > 100) this.condition = 100;
         else if (this.condition < 0) this.condition = 0;
     }
 
-    int getBan() {
+    public int getBan() {
         return ban;
     }
 
-    void changeBan(final int ban) {
+    public void changeBan(final int ban) {
         this.ban += ban;
         if (this.ban < 0) this.ban = 0;
     }
@@ -189,7 +191,7 @@ class Footballer {
 
     @Override
     public String toString() {
-        return "Footballer{" +
+        return "players.Footballer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +

@@ -1,6 +1,8 @@
+package teams;
+
 import java.util.Objects;
 
-class League {
+public class League {
     private int matches;
     private int points;
     private int wins;
@@ -10,7 +12,7 @@ class League {
     private int conceded;
     private int cleanSheets;
 
-    League() {
+    public League() {
         this.matches = 0;
         this.points = 0;
         this.wins = 0;
@@ -21,59 +23,59 @@ class League {
         this.cleanSheets = 0;
     }
 
-    int getMatches() {
+    public int getMatches() {
         return matches;
     }
 
-    void addMatch() {
+    public void addMatch() {
         this.matches += 1;
     }
 
-    int getPoints() {
+    public int getPoints() {
         return points;
     }
 
-    void addPoints(final int points) {
+    public void addPoints(final int points) {
         this.points += points;
     }
 
-    int getWins() {
+    public int getWins() {
         return wins;
     }
 
-    void addWin() {
+    public void addWin() {
         this.wins += 1;
     }
 
-    int getDraws() {
+    public int getDraws() {
         return draws;
     }
 
-    void addDraw() {
+    public void addDraw() {
         this.draws += 1;
     }
 
-    int getLosses() {
+    public int getLosses() {
         return losses;
     }
 
-    void addLoss() {
+    public void addLoss() {
         this.losses += 1;
     }
 
-    int getScored() {
+    public int getScored() {
         return scored;
     }
 
-    void addScored(final int goals) {
+    public void addScored(final int goals) {
         this.scored += goals;
     }
 
-    int getConceded() {
+    public int getConceded() {
         return conceded;
     }
 
-    void addConceded(final int goals) {
+    public void addConceded(final int goals) {
         this.conceded += goals;
     }
 
@@ -81,7 +83,7 @@ class League {
         return cleanSheets;
     }
 
-    void addCleanSheet() {
+    public void addCleanSheet() {
         this.cleanSheets += 1;
     }
 
@@ -107,7 +109,7 @@ class League {
 
     @Override
     public String toString() {
-        return "League{" +
+        return "teams.League{" +
                 "matches=" + matches +
                 ", points=" + points +
                 ", wins=" + wins +

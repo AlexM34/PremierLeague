@@ -1,13 +1,15 @@
+package teams;
+
 import java.util.Objects;
 
-class Owner {
+public class Owner {
     private final int id;
     private final String name;
     private final String nationality;
     private final int wealth;
     private final int ambition;
 
-    Owner(final int id, final String name, final String nationality, final int wealth, final int ambition) {
+    public Owner(final int id, final String name, final String nationality, final int wealth, final int ambition) {
         this.id = id;
         this.name = name;
         this.nationality = nationality;
@@ -54,7 +56,7 @@ class Owner {
 
     @Override
     public String toString() {
-        return "Owner{" +
+        return "teams.Owner{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", nationality='" + nationality + '\'' +

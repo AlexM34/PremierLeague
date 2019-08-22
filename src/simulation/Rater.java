@@ -1,13 +1,22 @@
+package simulation;
+
+import players.*;
+import teams.Club;
+import teams.League;
+
 import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
+import static simulation.Data.HOME_WINS;
+import static simulation.Data.AWAY_WINS;
+import static simulation.PremierLeague.matchFlag;
 
-class Rater {
+public class Rater {
     private static final Random random = new Random();
 
     private static MatchStats motmPlayer;
     private static float motmRating;
-    static Map<Footballer, Integer> contenders;
+    public static Map<Footballer, Integer> contenders;
 
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {
@@ -71,7 +80,7 @@ class Rater {
         if (goalscorer == null) {
             int footballer = ownGoal();
             if (squad.get(footballer).isRedCarded()) footballer = 0;
-            if (PremierLeague.matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
+            if (matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
                     "Own goal scored by " + squad.get(footballer).getFootballer().getName() + ". " + homeGoals + "-" + awayGoals);
         }
         else {
@@ -90,7 +99,7 @@ class Rater {
                 }
             }
 
-            if (PremierLeague.matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
+            if (matchFlag) System.out.println(Match.minute + (Match.stoppage != 0 ? "+" + Match.stoppage : "") + "' " +
                     goalscorer.getName() + (assistmaker != null ? " scores after a pass from " + assistmaker.getName()
                             : " scores after a solo run") + ". " + homeGoals + "-" + awayGoals);
         }
@@ -180,12 +189,12 @@ class Rater {
         if (homeGoals == 0) awayStats.addCleanSheet();
 
         if (homeGoals > awayGoals) {
-            Data.HOME_WINS++;
+            HOME_WINS++;
             homeStats.addPoints(3);
             homeStats.addWin();
             awayStats.addLoss();
         } else if (homeGoals < awayGoals) {
-            Data.AWAY_WINS++;
+            AWAY_WINS++;
             awayStats.addPoints(3);
             awayStats.addWin();
             homeStats.addLoss();
@@ -261,7 +270,7 @@ class Rater {
         team.getSeason().changeForm(change);
     }
 
-    static void topPlayers(final Club[] clubs) {
+    public static void topPlayers(final Club[] clubs) {
         contenders = new HashMap<>();
 
         for (int i = 0; i < clubs.length; i++) {

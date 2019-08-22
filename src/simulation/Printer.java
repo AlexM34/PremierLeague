@@ -1,11 +1,22 @@
+package simulation;
+
+import competitions.England;
+import competitions.France;
+import players.Competition;
+import players.Footballer;
+import teams.Club;
+import teams.League;
+
 import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
+import static players.Position.GK;
+import static simulation.Data.*;
 
-class Printer {
+public class Printer {
     private static final Random random = new Random();
     private static int offset;
-    static HashMap<Footballer, Integer> topTeam = new HashMap<>();
+    public static HashMap<Footballer, Integer> topTeam = new HashMap<>();
 
     private static Map<Club, Integer> sortLeague(final Club[] league) {
         final Map<Club, Integer> standings = new LinkedHashMap<>();
@@ -23,9 +34,9 @@ class Printer {
                         LinkedHashMap::new));
     }
 
-    static Club[] pickChampionsLeagueTeams() {
+    public static Club[] pickChampionsLeagueTeams() {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
-        for (final Club[] league : Data.LEAGUES) {
+        for (final Club[] league : LEAGUES) {
             final Map<Club, Integer> sorted = sortLeague(league);
             int slots = 7;
             for (final Club team : sorted.keySet()) {
@@ -48,7 +59,7 @@ class Printer {
         return selected;
     }
 
-    static void standings(final Club[] league) {
+    public static void standings(final Club[] league) {
         int goals = 0;
         final Map<Club, Integer> sorted = sortLeague(league);
 
@@ -63,10 +74,10 @@ class Printer {
         }
         System.out.println();
         System.out.println("Total goals for the season: " + goals + " // 1072");
-        System.out.println(Data.HOME_WINS + " - " + (380 - Data.HOME_WINS - Data.AWAY_WINS) +
-                " - " + Data.AWAY_WINS + " // 181 - 71 - 128");
+        System.out.println(HOME_WINS + " - " + (380 - HOME_WINS - AWAY_WINS) +
+                " - " + AWAY_WINS + " // 181 - 71 - 128");
         System.out.println();
-        System.out.println("Average rating for the season: " + Data.RATINGS / (22 * 380));
+        System.out.println("Average rating for the season: " + RATINGS / (22 * 380));
         System.out.println();
 
         final Club first = sorted.keySet().toArray(new Club[0])[0];
@@ -90,7 +101,7 @@ class Printer {
         }
     }
 
-    static void knockoutPrizes(final Club[] clubs, final boolean isContinental) {
+    public static void knockoutPrizes(final Club[] clubs, final boolean isContinental) {
         final float base = isContinental ? 10f : 1f;
 
         for (int team = 0; team < clubs.length; team++) {
@@ -102,7 +113,7 @@ class Printer {
         }
     }
 
-    static void playerStats(final Club[] league, final int type) {
+    public static void playerStats(final Club[] league, final int type) {
         final Map<String, Integer> ratings = new LinkedHashMap<>();
         final Map<String, Integer> motm = new LinkedHashMap<>();
         final Map<String, Integer> goals = new LinkedHashMap<>();
@@ -143,7 +154,7 @@ class Printer {
                 yellowCards.put(name, stats.getYellowCards());
                 redCards.put(name, stats.getRedCards());
 
-                if (f.getPosition() == Position.GK) {
+                if (f.getPosition() == GK) {
                     cleanSheets.put(name, stats.getCleanSheets());
                 }
             }
@@ -161,7 +172,7 @@ class Printer {
         pickTeam(topTeam, type == 0);
     }
 
-    static void allTimeStats(final Club[] league) {
+    public static void allTimeStats(final Club[] league) {
         final Map<String, Integer> leagues = new LinkedHashMap<>();
         final Map<String, Integer> nationalCups = new LinkedHashMap<>();
         final Map<String, Integer> leagueCups = new LinkedHashMap<>();
@@ -211,10 +222,10 @@ class Printer {
         }
     }
 
-    static void continentalStats() {
+    public static void continentalStats() {
         final Map<String, Integer> titles = new LinkedHashMap<>();
 
-        for (final Club[] league : Data.LEAGUES) {
+        for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 if (club.getGlory().getContinental() > 0) titles.put(club.getName(), club.getGlory().getContinental());
             }
@@ -233,7 +244,7 @@ class Printer {
         }
     }
 
-    static void allTimePlayerStats(final Club[] league) {
+    public static void allTimePlayerStats(final Club[] league) {
         final Map<String, Integer> ratings = new LinkedHashMap<>();
         final Map<String, Integer> motm = new LinkedHashMap<>();
         final Map<String, Integer> goals = new LinkedHashMap<>();
@@ -257,7 +268,7 @@ class Printer {
                 yellowCards.put(name, stats.getYellowCards());
                 redCards.put(name, stats.getRedCards());
 
-                if (f.getPosition() == Position.GK) {
+                if (f.getPosition() == GK) {
                     cleanSheets.put(name, stats.getCleanSheets());
                 }
 
@@ -291,7 +302,7 @@ class Printer {
         System.out.println();
     }
 
-    static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
+    public static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
         int[] team = new int[11];
         int goalkeepers = 1;
         int defenders = 4;
@@ -350,7 +361,7 @@ class Printer {
         System.out.println();
     }
 
-    static void voting(final Map<Footballer, Integer> contenders) {
+    public static void voting(final Map<Footballer, Integer> contenders) {
         Footballer[] players = new Footballer[10];
         int[] chance = new int[10];
         int[] votes = new int[10];
