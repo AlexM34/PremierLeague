@@ -21,7 +21,7 @@ import static simulation.PreSeason.*;
 import static simulation.Printer.*;
 import static simulation.Rater.contenders;
 
-class PremierLeague {
+public class PremierLeague {
     // TODO: Add tests
     // TODO: Main class
     // TODO: Imports
@@ -33,6 +33,10 @@ class PremierLeague {
     private static final boolean playerStatsFlag = true;
     private static final boolean teamStatsFlag = false;
     static final boolean matchFlag = false;
+
+    public static String connection() {
+        return "YEEES";
+    }
 
     public static void main(final String[] args) {
 //        simulation.extractData();
