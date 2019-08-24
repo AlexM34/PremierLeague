@@ -42,7 +42,7 @@ public class Statistics {
 
     @Override
     public String toString() {
-        return "players.Statistics{" +
+        return "Statistics{" +
                 "league=" + league +
                 ", cup=" + cup +
                 ", continental=" + continental +

@@ -11,12 +11,12 @@ import static simulation.Data.HOME_WINS;
 import static simulation.Data.AWAY_WINS;
 import static simulation.PremierLeague.matchFlag;
 
-public class Rater {
+class Rater {
     private static final Random random = new Random();
 
     private static MatchStats motmPlayer;
     private static float motmRating;
-    public static Map<Footballer, Integer> contenders;
+    static Map<Footballer, Integer> contenders;
 
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {

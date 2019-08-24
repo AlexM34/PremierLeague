@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.toMap;
 import static players.Position.GK;
 import static simulation.Data.*;
 
-public class Printer {
+class Printer {
     private static final Random random = new Random();
     private static int offset;
     public static HashMap<Footballer, Integer> topTeam = new HashMap<>();
@@ -172,7 +172,7 @@ public class Printer {
         pickTeam(topTeam, type == 0);
     }
 
-    public static void allTimeStats(final Club[] league) {
+    static void allTimeStats(final Club[] league) {
         final Map<String, Integer> leagues = new LinkedHashMap<>();
         final Map<String, Integer> nationalCups = new LinkedHashMap<>();
         final Map<String, Integer> leagueCups = new LinkedHashMap<>();
@@ -222,7 +222,7 @@ public class Printer {
         }
     }
 
-    public static void continentalStats() {
+    static void continentalStats() {
         final Map<String, Integer> titles = new LinkedHashMap<>();
 
         for (final Club[] league : LEAGUES) {

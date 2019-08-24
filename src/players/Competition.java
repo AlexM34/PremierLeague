@@ -143,7 +143,7 @@ public class Competition {
 
     @Override
     public String toString() {
-        return "players.Statistics{" +
+        return "Statistics{" +
                 "matches=" + matches +
                 ", goals=" + goals +
                 ", assists=" + assists +

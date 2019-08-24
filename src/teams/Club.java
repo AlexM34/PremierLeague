@@ -171,7 +171,7 @@ public class Club {
 
     @Override
     public String toString() {
-        return "teams.Club{" +
+        return "Club{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", established=" + established +

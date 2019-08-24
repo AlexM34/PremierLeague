@@ -4,7 +4,7 @@ import teams.Club;
 
 import java.util.Random;
 
-public class Draw {
+class Draw {
     private static final Random random = new Random();
 
     public static int[][][] league(final int teams) {

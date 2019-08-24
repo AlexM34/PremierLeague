@@ -70,7 +70,7 @@ public class Coach {
 
     @Override
     public String toString() {
-        return "teams.Coach{" +
+        return "Coach{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", overall=" + overall +

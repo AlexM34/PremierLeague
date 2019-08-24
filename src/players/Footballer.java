@@ -191,7 +191,7 @@ public class Footballer {
 
     @Override
     public String toString() {
-        return "players.Footballer{" +
+        return "Footballer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +

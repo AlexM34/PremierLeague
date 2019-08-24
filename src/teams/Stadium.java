@@ -63,7 +63,7 @@ public class Stadium {
 
     @Override
     public String toString() {
-        return "teams.Stadium{" +
+        return "Stadium{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", built=" + built +

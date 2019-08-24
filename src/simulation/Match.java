@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import static simulation.Data.*;
 import static simulation.PremierLeague.matchFlag;
 
-public class Match {
+class Match {
     private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
 
@@ -26,7 +26,7 @@ public class Match {
     private static int homeSubs;
     private static int awaySubs;
 
-    public static void userTactics(final Club opponent, final boolean isHome) {
+    static void userTactics(final Club opponent, final boolean isHome) {
         // TODO: Add other choices
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
@@ -41,8 +41,8 @@ public class Match {
         }
     }
 
-    public static int simulation(final Club home, final Club away, final boolean last, final int homeGoals,
-                                 final int awayGoals, final int type) {
+    static int simulation(final Club home, final Club away, final boolean last, final int homeGoals,
+                          final int awayGoals, final int type) {
         competition = type;
         final int result = simulateGame(home, away, last, homeGoals, awayGoals);
         FANS = 3;

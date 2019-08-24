@@ -42,7 +42,7 @@ public class Resume {
 
     @Override
     public String toString() {
-        return "players.Resume{" +
+        return "Resume{" +
                 "glory=" + glory +
                 ", total=" + total +
                 ", season=" + season +

@@ -56,7 +56,7 @@ public class Owner {
 
     @Override
     public String toString() {
-        return "teams.Owner{" +
+        return "Owner{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", nationality='" + nationality + '\'' +

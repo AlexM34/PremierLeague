@@ -108,7 +108,7 @@ public class MatchStats {
 
     @Override
     public String toString() {
-        return "players.MatchStats{" +
+        return "MatchStats{" +
                 "footballer=" + footballer +
                 ", started=" + started +
                 ", rating=" + rating +

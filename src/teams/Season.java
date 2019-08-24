@@ -96,7 +96,7 @@ public class Season {
 
     @Override
     public String toString() {
-        return "teams.Season{" +
+        return "Season{" +
                 "league=" + league +
                 ", nationalCup=" + nationalCup +
                 ", leagueCup=" + leagueCup +

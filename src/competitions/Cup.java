@@ -32,7 +32,7 @@ public class Cup {
 
     @Override
     public String toString() {
-        return "competitions.Cup{" +
+        return "Cup{" +
                 "alive=" + alive +
                 '}';
     }

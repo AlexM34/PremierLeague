@@ -109,7 +109,7 @@ public class League {
 
     @Override
     public String toString() {
-        return "teams.League{" +
+        return "League{" +
                 "matches=" + matches +
                 ", points=" + points +
                 ", wins=" + wins +

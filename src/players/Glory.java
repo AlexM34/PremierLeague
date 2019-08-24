@@ -99,7 +99,7 @@ public class Glory {
 
     @Override
     public String toString() {
-        return "players.Glory{" +
+        return "Glory{" +
                 "continental=" + continental +
                 ", league=" + league +
                 ", nationalCup=" + nationalCup +

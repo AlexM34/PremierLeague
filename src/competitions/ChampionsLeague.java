@@ -41,7 +41,7 @@ public class ChampionsLeague {
 
     @Override
     public String toString() {
-        return "competitions.ChampionsLeague{" +
+        return "ChampionsLeague{" +
                 "alive=" + alive +
                 ", group=" + group +
                 '}';

@@ -25,7 +25,6 @@ class PremierLeague {
     // TODO: Add tests
     // TODO: Main class
     // TODO: Imports
-    // TODO: Inspect
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -33,7 +32,7 @@ class PremierLeague {
     private static final boolean standingsFlag = false;
     private static final boolean playerStatsFlag = true;
     private static final boolean teamStatsFlag = false;
-    public static final boolean matchFlag = false;
+    static final boolean matchFlag = false;
 
     public static void main(final String[] args) {
 //        simulation.extractData();
@@ -46,8 +45,8 @@ class PremierLeague {
             for (final Club[] league : LEAGUES) draw.put(league, league(league.length));
 
             for (int team = 0; team < 6; team++) {
-                for (int league = 0; league < LEAGUES.length; league++) {
-                    final Club squad = LEAGUES[league][team];
+                for (final Club[] clubs : LEAGUES) {
+                    final Club squad = clubs[team];
                     System.out.println(squad.getBudget());
                     squad.getFootballers().forEach(footballer ->
                             System.out.println(footballer.getName() + ", " + footballer.getPosition() + ", " +
@@ -67,7 +66,7 @@ class PremierLeague {
                 final Club nationalCupWinner = cup(league, 16,
                         league[0].getLeague().equals(Spain.LEAGUE) ? 2 : 1,
                         league[0].getLeague().equals(England.LEAGUE));
-                System.out.println(nationalCupWinner.getName() + " win the National competitions.Cup!");
+                System.out.println(nationalCupWinner.getName() + " win the National Cup!");
                 nationalCupWinner.getGlory().addNationalCup();
                 for (final Footballer footballer : nationalCupWinner.getFootballers()) {
                     footballer.getResume().getGlory().addNationalCup();
@@ -75,7 +74,7 @@ class PremierLeague {
 
                 if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
                     final Club leagueCupWinner = cup(league, 16, 1, false);
-                    System.out.println(leagueCupWinner.getName() + " win the teams.League competitions.Cup!");
+                    System.out.println(leagueCupWinner.getName() + " win the League Cup!");
                     leagueCupWinner.getGlory().addLeagueCup();
                     for (final Footballer footballer : leagueCupWinner.getFootballers()) {
                         footballer.getResume().getGlory().addLeagueCup();
@@ -93,7 +92,7 @@ class PremierLeague {
             for (Club club : advanced) club.changeBudget(5f);
             final Club[] drawn = championsLeague(advanced);
             final Club championsLeagueWinner = knockout(drawn, 2, 2, false);
-            System.out.println(championsLeagueWinner.getName() + " win the Champions teams.League!");
+            System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addContinental();
             for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
                 footballer.getResume().getGlory().addContinental();
@@ -209,7 +208,7 @@ class PremierLeague {
         }
     }
 
-    public static void pause() {
+    static void pause() {
         System.out.println("Press any Key to continue");
         try {
             System.in.read();
@@ -342,12 +341,16 @@ class PremierLeague {
             System.out.println(MIDFIELDER_2.getResume().getSeason());
             System.out.println(FORWARD_2.getResume().getSeason());
         }
+        List<String> fName = Arrays.asList("Jim", "Fred", "Baz", "Bing");
+        Collections.shuffle(fName );
+        List<String> lName = Arrays.asList("Duck", "Swan", "Cooper", "Bing");
+        Collections.shuffle(lName );
 
         System.out.println();
         Printer.pickTeam(topTeam, false);
         topTeam = new HashMap<>();
         voting(contenders);
-        System.out.println(String.format("teams.Season %d-%d ends!", 2019 + year, 2020 + year));
+        System.out.println(String.format("Season %d-%d ends!", 2019 + year, 2020 + year));
     }
 
     private static void finishSimulation() {

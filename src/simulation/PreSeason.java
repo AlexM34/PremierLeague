@@ -12,15 +12,14 @@ import java.util.Random;
 
 import static simulation.Data.LEAGUES;
 
-public class PreSeason {
-    // TODO: Retirements
+class PreSeason {
     private static final Random random = new Random();
     private static int deals;
     private static Map<Footballer, Club> transfers;
     private static Map<Club, Integer> sold;
     private static int academy = 0;
 
-    public static void progression() {
+    static void progression() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 for (final Footballer f : club.getFootballers()) {
@@ -44,6 +43,11 @@ public class PreSeason {
                     f.setAge(f.getAge() + 1);
 
                     if (f.getAge() > 34) {
+                        if (random.nextInt(42 - Math.min(f.getAge(), 41)) == 0) {
+                            retire(f, club);
+                            break;
+                        }
+
                         r = random.nextInt(2);
                         if (r == 0) {
                             decline(f);
@@ -89,6 +93,11 @@ public class PreSeason {
         }
     }
 
+    private static void retire(final Footballer footballer, final Club club) {
+        System.out.println(footballer.getName() + "(" + footballer.getAge() + ") retires at " + club.getName());
+        club.removeFootballer(footballer);
+    }
+
     private static void improve(final Footballer footballer) {
         if (footballer.getOverall() < footballer.getPotential() && footballer.getOverall() < 100) {
             footballer.changeOverall(1);
@@ -109,7 +118,7 @@ public class PreSeason {
         }
     }
 
-    public static void transfers() {
+    static void transfers() {
         deals = 0;
         int attempts = 0;
         Club[] league;
@@ -244,12 +253,11 @@ public class PreSeason {
             }
         }
 
-        // TODO: Generate names
-        // TODO: Generate nations
         final int id = 1000000 + academy++;
-        final String name = "Monev" + (academy - 1);
+        final String name = (char) ('A' + random.nextInt(26)) + ". " +
+                Data.SURNAMES[random.nextInt(Data.SURNAMES.length)] + (academy - 1);
         final int age = 17 + random.nextInt(3);
-        final String nationality = "Bulgaria";
+        final String nationality = Data.NATIONS[random.nextInt(Data.NATIONS.length)];
         int overall = 60 + random.nextInt(10);
         int potential = overall + random.nextInt(15) + 10;
         float value = 3;
@@ -268,11 +276,11 @@ public class PreSeason {
 //        System.out.println(footballer + " is promoted to " + club.getName());
     }
 
-    public static void profits(final Club[] league) {
+    static void profits(final Club[] league) {
         for (Club club : league) club.changeBudget(club.getReputation() * club.getReputation() / 100);
     }
 
-    public static void salaries(final Club[] league) {
+    static void salaries(final Club[] league) {
         for (Club club : league) {
             for (Footballer footballer : club.getFootballers()) {
                 club.changeBudget(-footballer.getWage() / 20);
