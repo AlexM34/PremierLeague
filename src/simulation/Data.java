@@ -15,10 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import static simulation.PremierLeague.pause;
-
-class Data {
-    static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
+public class Data {
+    public static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Italy.CLUBS, France.CLUBS, Germany.CLUBS};
     static Club[] CHAMPIONS_LEAGUE = new Club[32];
     static int FANS = 3;
     static int HOME_WINS;
@@ -130,7 +128,7 @@ class Data {
     }
 
     static void prepare(final int year) {
-        pause();
+//        pause();
 
         HOME_WINS = 0;
         AWAY_WINS = 0;

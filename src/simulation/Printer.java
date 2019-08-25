@@ -13,12 +13,12 @@ import static java.util.stream.Collectors.toMap;
 import static players.Position.GK;
 import static simulation.Data.*;
 
-class Printer {
+public class Printer {
     private static final Random random = new Random();
     private static int offset;
     public static HashMap<Footballer, Integer> topTeam = new HashMap<>();
 
-    private static Map<Club, Integer> sortLeague(final Club[] league) {
+    public static Map<Club, Integer> sortLeague(final Club[] league) {
         final Map<Club, Integer> standings = new LinkedHashMap<>();
         offset = 0;
         for (final Club team : league) {
