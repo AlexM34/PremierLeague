@@ -13,6 +13,7 @@ import static simulation.Data.*;
 import static simulation.PremierLeague.matchFlag;
 
 class Match {
+    // TODO: Reduce
     private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
 

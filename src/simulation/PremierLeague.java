@@ -25,6 +25,8 @@ public class PremierLeague {
     // TODO: Add tests
     // TODO: Main class
     // TODO: Imports
+    // TODO: Rename
+    // TODO: Move logic to another class
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -36,17 +38,15 @@ public class PremierLeague {
     private static int year = 0;
     private static int round = 0;
     private static Map<Club[], int[][][]> draw = new HashMap<>();
-    private static String displayed;
-    public static String results;
+    public static Map<String, String> results = new HashMap<>();
 
     public static void initialise() {
         buildSquads();
         addDummies();
     }
 
-    public static void connection(final String country) {
-        displayed = country;
-        results = "";
+    public static void proceed(final String country) {
+        results = new HashMap<>();
 
         if (round == 0) {
             prepare(year);
@@ -116,12 +116,6 @@ public class PremierLeague {
 //        finish(year++);
 //        progression();
 //        transfers();
-    }
-
-    public void fixtures() {
-        for (int game = 0; game < 10; game++) {
-
-        }
     }
 
     public static void start(final String[] args) {
@@ -310,6 +304,7 @@ public class PremierLeague {
     private static void play(final Club[] league, final int[][][] draw, final int round) {
 //        pause();
         System.out.println(String.format("Round %d", round + 1));
+        String scores = "";
         for (int game = 0; game < league.length / 2; game++) {
             final int home = draw[round][game][0];
             final int away = draw[round][game][1];
@@ -317,14 +312,13 @@ public class PremierLeague {
             else if (away == USER) userTactics(league[home], false);
             final int score = simulation(league[home], league[away], false, -1, -1, 0);
 
-            if (league[home].getLeague().equals(displayed)) {
-                results += league[home].getName() + " - " + league[away].getName() + " " +
+            scores += league[home].getName() + " - " + league[away].getName() + " " +
                         (score / 100) + ":" + (score % 100) + "<br/>";
-            }
 
             if (home == USER || away == USER) pause();
         }
 
+        results.put(league[0].getLeague(), scores);
         if (round < 2 * league.length - 3 && standingsFlag) {
             System.out.println();
             System.out.println(String.format("Standings after round %d:", round + 1));

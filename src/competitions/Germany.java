@@ -4,7 +4,7 @@ import players.Glory;
 import teams.*;
 
 public class Germany {
-    private static final String LEAGUE = "Bundesliga";
+    public static final String LEAGUE = "Bundesliga";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
     private static final Coach COACH = new Coach(1, "", 80, Formation.F5, 50, 50, 50);

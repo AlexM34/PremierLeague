@@ -14,9 +14,10 @@ import static players.Position.GK;
 import static simulation.Data.*;
 
 public class Printer {
+    // TODO: Reduce
     private static final Random random = new Random();
     private static int offset;
-    public static HashMap<Footballer, Integer> topTeam = new HashMap<>();
+    static HashMap<Footballer, Integer> topTeam = new HashMap<>();
 
     public static Map<Club, Integer> sortLeague(final Club[] league) {
         final Map<Club, Integer> standings = new LinkedHashMap<>();

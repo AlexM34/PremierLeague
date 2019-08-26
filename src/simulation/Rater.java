@@ -12,6 +12,7 @@ import static simulation.Data.AWAY_WINS;
 import static simulation.PremierLeague.matchFlag;
 
 class Rater {
+    // TODO: Reduce
     private static final Random random = new Random();
 
     private static MatchStats motmPlayer;
