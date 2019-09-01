@@ -35,6 +35,21 @@ public class Printer {
                         LinkedHashMap::new));
     }
 
+    public static Map<Footballer, Integer> sortPlayers(final Club[] league) {
+        final Map<Footballer, Integer> goals = new LinkedHashMap<>();
+
+        for (final Club club : league) {
+            for (final Footballer f : club.getFootballers()) {
+                goals.put(f, f.getResume().getSeason().getLeague().getGoals());
+            }
+        }
+
+        return goals.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+    }
+
     public static Club[] pickChampionsLeagueTeams() {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {

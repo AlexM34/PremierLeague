@@ -1,12 +1,14 @@
 package gui;
 
 import competitions.*;
+import players.Footballer;
 import simulation.PremierLeague;
 import simulation.Printer;
 import teams.Club;
 import teams.League;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.Map;
@@ -17,8 +19,10 @@ public class App {
     // TODO: Stats
     // TODO: Cup and CL
     private JLabel resultsLabel;
+    private JLabel goalscorersLabel;
     private JComboBox cb;
     private JTable jt;
+    private JTable jtg;
 
     private App() {
         PremierLeague.initialise();
@@ -29,10 +33,10 @@ public class App {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.add(mainPanel, BorderLayout.CENTER);
 //        frame.pack();
-        frame.setSize(new Dimension(1000, 700));
+//        frame.setSize(new Dimension(1000, 700));
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //        frame.setResizable(true);
         frame.setUndecorated(true);
         frame.setVisible(true);
@@ -43,73 +47,80 @@ public class App {
 
         String[] leagues = {"Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"};
         cb = new JComboBox(leagues);
-        cb.setBounds(width / 2 - 50, 10, 130, 60);
+        cb.setBounds(width / 2 - 50, 10, 130, 40);
 
-        resultsLabel = new JLabel("<html>Results<br/>dsafdsafdas</html>");
-        resultsLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
+        borderResults.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderGoalscorers = BorderFactory.createTitledBorder("GOALSCORERS");
+        borderResults.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
+        borderStandings.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+
+        resultsLabel = new JLabel();
+        resultsLabel.setBorder(borderResults);
+//        resultsLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
         resultsLabel.setBounds(10, 80, width / 2, height / 2 - 100);
-//        resultsLabel.setForeground(Color.BLUE);
-//        adjustFont(resultsLabel);
+        adjustFont(resultsLabel);
 
-        // TODO: Remove
-        String[][] standings = { {"1","Arsenal","90","38","26","12","0","89","19","70"},
-                {"2","Man City","81","38","26","12","0","89","19","70"},
-                {"3","Liverpool","80","38","26","12","0","89","19","70"},
-                {"4","Tottenham","70","38","26","12","0","89","19","70"},
-                {"5","Man Utd","65","38","26","12","0","89","19","70"},
-                {"6","Chelsea","65","38","26","12","0","89","19","70"},
-                {"7","Everton","60","38","26","12","0","89","19","70"},
-                {"8","Wolves","60","38","26","12","0","89","19","70"},
-                {"9","Leicester","60","38","26","12","0","89","19","70"},
-                {"10","West Ham","50","38","26","12","0","89","19","70"},
-                {"11","Southampton","50","38","26","12","0","89","19","70"},
-                {"12","Bournemouth","50","38","26","12","0","89","19","70"},
-                {"13","Burnley","50","38","26","12","0","89","19","70"},
-                {"14","Crystal Palace","50","38","26","12","0","89","19","70"},
-                {"15","Norwich","45","38","26","12","0","89","19","70"},
-                {"16","Aston Villa","45","38","26","12","0","89","19","70"},
-                {"17","Newcastle","40","38","26","12","0","89","19","70"},
-                {"18","Sunderland","30","38","26","12","0","89","19","70"},
-                {"19","Derby","30","38","26","12","0","89","19","70"},
-                {"20","Oxford","20","38","26","12","0","89","19","70"}};
+//        goalscorersLabel = new JLabel();
+//        goalscorersLabel.setBorder(borderGoalscorers);
+//        goalscorersLabel.setBounds(10, height / 2, width / 4, height / 2 - 100);
+//        adjustFont(goalscorersLabel);
+
+        String[][] goalscorers = new String[10][3];
+        String[] columnG = {"N", "PLAYER", "GOALS"};
+
+        jtg = new JTable(goalscorers, columnG);
+        jtg.setBounds(10, height / 2, width / 4, height / 4);
+        setJTableColumnsWidth(jtg, width / 4, 15, 60, 25);
+        JScrollPane tableGoalscorersScrollPane = new JScrollPane(jtg);
+        tableGoalscorersScrollPane.setBorder(borderGoalscorers);
+        tableGoalscorersScrollPane.setBounds(10, height / 2, width / 4, height / 4);
+
+        String[][] standings = new String[20][10];
         String[] column = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
 
         jt = new JTable(standings, column);
         jt.setBounds(width / 2 + 20, 80, width / 2 - 50, height / 2 + 50);
         setJTableColumnsWidth(jt, width / 2 - 50, 8, 28, 8, 8, 8, 8, 8, 8, 8, 8);
         JScrollPane tableScrollPane = new JScrollPane(jt);
-        tableScrollPane.setBorder(BorderFactory.createTitledBorder ("STANDINGS"));
+        tableScrollPane.setBorder(borderStandings);
         tableScrollPane.setBounds(width / 2 + 20, 80, width / 2 - 50, height / 2 + 60);
+
         JButton nextB = new JButton("Next");
         nextB.setBounds(width - 200, height - 100, 150, 80);
-        resultsLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 
         frame.add(cb);
         frame.add(nextB);
         frame.add(resultsLabel);
+//        frame.add(goalscorersLabel);
+        frame.add(tableGoalscorersScrollPane);
         frame.add(tableScrollPane);
 
         nextB.addActionListener(e -> nextRound());
         cb.addActionListener(e -> updateStats());
+
+        updateStats();
     }
 
     private void updateStats() {
-        Club[] league = null;
+        Club[] league;
         switch (String.valueOf(cb.getSelectedItem())) {
             case England.LEAGUE: league = England.CLUBS; break;
             case Spain.LEAGUE: league = Spain.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
             case Germany.LEAGUE: league = Germany.CLUBS; break;
+            default: return;
         }
 
-        Printer.standings(league);
+//        Printer.standings(league);
         final Map<Club, Integer> sorted = Printer.sortLeague(league);
         int row = 0;
         for (final Club team : sorted.keySet()) {
-            // TODO: Modify when showing Bundesliga
             final League stats = team.getSeason().getLeague();
 
+            jt.setValueAt("" + (row + 1), row, 0);
             jt.setValueAt(team.getName(), row, 1);
             jt.setValueAt("" + stats.getMatches(), row, 2);
             jt.setValueAt("" + stats.getWins(), row, 3);
@@ -122,7 +133,23 @@ public class App {
             row++;
         }
 
-        resultsLabel.setText("<html>RESULTS<br/>" + PremierLeague.results.get(cb.getSelectedItem()) + "</html>");
+        for (int i = row; i < 20; i++) {
+            for (int j = 0; j < jt.getColumnCount(); j++) {
+                jt.setValueAt("", i, j);
+            }
+        }
+
+        final Map<Footballer, Integer> sortedGoals = Printer.sortPlayers(league);
+        row = 0;
+        for (final Footballer footballer : sortedGoals.keySet()) {
+            jtg.setValueAt("" + (row + 1), row, 0);
+            jtg.setValueAt(footballer.getName(), row, 1);
+            jtg.setValueAt("" + sortedGoals.getOrDefault(footballer, 0), row, 2);
+
+            if (++row > 9) break;
+        }
+
+        resultsLabel.setText("<html>" + PremierLeague.results.getOrDefault(cb.getSelectedItem(), "") + "</html>");
     }
 
     private void nextRound() {
@@ -155,7 +182,7 @@ public class App {
 
         int newFontSize = (int) (labelFont.getSize() * widthRatio);
         int componentHeight = label.getHeight();
-        int fontSizeToUse = Math.min(newFontSize, componentHeight);
+        int fontSizeToUse = Math.min(newFontSize, componentHeight / 15);
 
         label.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
     }
