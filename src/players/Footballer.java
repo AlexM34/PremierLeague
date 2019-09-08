@@ -3,7 +3,6 @@ package players;
 import java.util.Objects;
 
 public class Footballer {
-    // TODO: Add more stats
     private final int id;
     private final String name;
     private int age;

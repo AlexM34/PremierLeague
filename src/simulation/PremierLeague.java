@@ -22,7 +22,6 @@ import static simulation.Printer.*;
 import static simulation.Rater.contenders;
 
 public class PremierLeague {
-    // TODO: Add tests
     // TODO: Main class
     // TODO: Imports
     // TODO: Rename
@@ -416,7 +415,6 @@ public class PremierLeague {
             System.out.println();
             profits(league);
             salaries(league);
-            // TODO: Rate simulation with review
         }
 
         if (teamStatsFlag) continentalStats();

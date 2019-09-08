@@ -28,7 +28,6 @@ class Match {
     private static int awaySubs;
 
     static void userTactics(final Club opponent, final boolean isHome) {
-        // TODO: Add other choices
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
@@ -390,7 +389,6 @@ class Match {
     }
 
     private static Formation pickFormation(final List<Footballer> footballers) {
-        // TODO: Smart formation pick - opponent, fatigue, form
         int defenders = 0;
         int midfielders = 0;
         int forwards = 0;

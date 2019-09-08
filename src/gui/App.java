@@ -14,15 +14,14 @@ import java.awt.*;
 import java.util.Map;
 
 public class App {
-    // TODO: Name of the app
-    // TODO: Labels for results
-    // TODO: Stats
     // TODO: Cup and CL
     private JLabel resultsLabel;
-    private JLabel goalscorersLabel;
     private JComboBox cb;
     private JTable jt;
     private JTable jtg;
+    private JTable jta;
+    private JTable jtr;
+    private JTable jtc;
 
     private App() {
         PremierLeague.initialise();
@@ -51,8 +50,14 @@ public class App {
 
         TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
         borderResults.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
-        TitledBorder borderGoalscorers = BorderFactory.createTitledBorder("GOALSCORERS");
-        borderResults.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderGoalscorers = BorderFactory.createTitledBorder("GOALS");
+        borderGoalscorers.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderAssisters = BorderFactory.createTitledBorder("ASSISTS");
+        borderAssisters.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderRatings = BorderFactory.createTitledBorder("RATINGS");
+        borderRatings.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        TitledBorder borderCleanSheets = BorderFactory.createTitledBorder("CLEAN SHEETS");
+        borderCleanSheets.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
         TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
         borderStandings.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
 
@@ -67,15 +72,36 @@ public class App {
 //        goalscorersLabel.setBounds(10, height / 2, width / 4, height / 2 - 100);
 //        adjustFont(goalscorersLabel);
 
-        String[][] goalscorers = new String[10][3];
-        String[] columnG = {"N", "PLAYER", "GOALS"};
+//        String[][] leaders = new String[10][3];
+        String[] columnP = {"N", "PLAYER", "COUNT"};
 
-        jtg = new JTable(goalscorers, columnG);
+        jtg = new JTable(new String[10][3], columnP);
         jtg.setBounds(10, height / 2, width / 4, height / 4);
         setJTableColumnsWidth(jtg, width / 4, 15, 60, 25);
         JScrollPane tableGoalscorersScrollPane = new JScrollPane(jtg);
         tableGoalscorersScrollPane.setBorder(borderGoalscorers);
         tableGoalscorersScrollPane.setBounds(10, height / 2, width / 4, height / 4);
+
+        jta = new JTable(new String[10][3], columnP);
+        jta.setBounds(10, 3 * height / 4, width / 4, height / 4);
+        setJTableColumnsWidth(jta, width / 4, 15, 60, 25);
+        JScrollPane tableAssistersScrollPane = new JScrollPane(jta);
+        tableAssistersScrollPane.setBorder(borderAssisters);
+        tableAssistersScrollPane.setBounds(10, 3 * height / 4, width / 4, height / 4);
+
+        jtr = new JTable(new String[10][3], columnP);
+        jtr.setBounds(10 + height / 4, height / 2, width / 4, height / 4);
+        setJTableColumnsWidth(jtr, width / 4, 15, 60, 25);
+        JScrollPane tableRatingsScrollPane = new JScrollPane(jtr);
+        tableRatingsScrollPane.setBorder(borderRatings);
+        tableRatingsScrollPane.setBounds(10 + width / 4, height / 2, width / 4, height / 4);
+
+        jtc = new JTable(new String[10][3], columnP);
+        jtc.setBounds(10 + height / 4, 3 * height / 4, width / 4, height / 4);
+        setJTableColumnsWidth(jta, width / 4, 15, 60, 25);
+        JScrollPane tableCleanSheetsScrollPane = new JScrollPane(jtc);
+        tableCleanSheetsScrollPane.setBorder(borderCleanSheets);
+        tableCleanSheetsScrollPane.setBounds(10 + width / 4, 3 * height / 4, width / 4, height / 4);
 
         String[][] standings = new String[20][10];
         String[] column = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
@@ -93,8 +119,10 @@ public class App {
         frame.add(cb);
         frame.add(nextB);
         frame.add(resultsLabel);
-//        frame.add(goalscorersLabel);
         frame.add(tableGoalscorersScrollPane);
+        frame.add(tableAssistersScrollPane);
+        frame.add(tableRatingsScrollPane);
+        frame.add(tableCleanSheetsScrollPane);
         frame.add(tableScrollPane);
 
         nextB.addActionListener(e -> nextRound());
@@ -139,12 +167,39 @@ public class App {
             }
         }
 
-        final Map<Footballer, Integer> sortedGoals = Printer.sortPlayers(league);
+        final Map<Footballer, Integer> sortedGoals = Printer.sortPlayersG(league);
+        final Map<Footballer, Integer> sortedAssists = Printer.sortPlayersA(league);
+        final Map<Footballer, Integer> sortedRatings = Printer.sortPlayersR(league);
+        final Map<Footballer, Integer> sortedCleanSheets = Printer.sortPlayersCS(league);
         row = 0;
         for (final Footballer footballer : sortedGoals.keySet()) {
             jtg.setValueAt("" + (row + 1), row, 0);
             jtg.setValueAt(footballer.getName(), row, 1);
             jtg.setValueAt("" + sortedGoals.getOrDefault(footballer, 0), row, 2);
+
+            if (++row > 9) break;
+        }
+        row = 0;
+        for (final Footballer footballer : sortedAssists.keySet()) {
+            jta.setValueAt("" + (row + 1), row, 0);
+            jta.setValueAt(footballer.getName(), row, 1);
+            jta.setValueAt("" + sortedAssists.getOrDefault(footballer, 0), row, 2);
+
+            if (++row > 9) break;
+        }
+        row = 0;
+        for (final Footballer footballer : sortedRatings.keySet()) {
+            jtr.setValueAt("" + (row + 1), row, 0);
+            jtr.setValueAt(footballer.getName(), row, 1);
+            jtr.setValueAt("" + sortedRatings.getOrDefault(footballer, 0), row, 2);
+
+            if (++row > 9) break;
+        }
+        row = 0;
+        for (final Footballer footballer : sortedCleanSheets.keySet()) {
+            jtc.setValueAt("" + (row + 1), row, 0);
+            jtc.setValueAt(footballer.getName(), row, 1);
+            jtc.setValueAt("" + sortedCleanSheets.getOrDefault(footballer, 0), row, 2);
 
             if (++row > 9) break;
         }

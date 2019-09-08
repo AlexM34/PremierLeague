@@ -11,6 +11,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 import static players.Position.GK;
+import static players.Position.Role.Goalkeeper;
 import static simulation.Data.*;
 
 public class Printer {
@@ -35,7 +36,8 @@ public class Printer {
                         LinkedHashMap::new));
     }
 
-    public static Map<Footballer, Integer> sortPlayers(final Club[] league) {
+    public static Map<Footballer, Integer> sortPlayersG(final Club[] league) {
+        // TODO: Unite
         final Map<Footballer, Integer> goals = new LinkedHashMap<>();
 
         for (final Club club : league) {
@@ -45,6 +47,53 @@ public class Printer {
         }
 
         return goals.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+    }
+
+    public static Map<Footballer, Integer> sortPlayersA(final Club[] league) {
+        final Map<Footballer, Integer> assists = new LinkedHashMap<>();
+
+        for (final Club club : league) {
+            for (final Footballer f : club.getFootballers()) {
+                assists.put(f, f.getResume().getSeason().getLeague().getAssists());
+            }
+        }
+
+        return assists.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+    }
+
+    public static Map<Footballer, Integer> sortPlayersR(final Club[] league) {
+        final Map<Footballer, Integer> ratings = new LinkedHashMap<>();
+
+        for (final Club club : league) {
+            for (final Footballer f : club.getFootballers()) {
+                ratings.put(f, f.getResume().getSeason().getLeague().getRating());
+            }
+        }
+
+        return ratings.entrySet().stream().sorted(
+                Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+    }
+
+    public static Map<Footballer, Integer> sortPlayersCS(final Club[] league) {
+        final Map<Footballer, Integer> cleanSheets = new LinkedHashMap<>();
+
+        for (final Club club : league) {
+            for (final Footballer f : club.getFootballers()) {
+                if (f.getPosition().getRole() == Goalkeeper) {
+                    cleanSheets.put(f, f.getResume().getSeason().getLeague().getCleanSheets());
+                }
+            }
+        }
+
+        return cleanSheets.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
