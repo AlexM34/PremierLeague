@@ -44,7 +44,7 @@ public class PremierLeague {
         addDummies();
     }
 
-    public static void proceed(final String country) {
+    public static void proceed() {
         results = new HashMap<>();
 
         if (round == 0) {
@@ -68,10 +68,12 @@ public class PremierLeague {
             if (round < 34 || league.length > 18) play(league, draw.get(league), round);
         }
 
-        round++;
-        if (round == 38) {
+        if (++round == 38) {
             round = 0;
+//        finish(year++);
             year++;
+            progression();
+            transfers();
         }
 
 //        for (final Club[] league : LEAGUES) {
@@ -112,9 +114,6 @@ public class PremierLeague {
 //
 //        if (playerStatsFlag) playerStats(CHAMPIONS_LEAGUE, 2);
 
-//        finish(year++);
-//        progression();
-//        transfers();
     }
 
     public static void start(final String[] args) {

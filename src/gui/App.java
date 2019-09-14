@@ -23,95 +23,116 @@ public class App {
     private JTable jtr;
     private JTable jtc;
 
+    private static final String FONT_NAME = "Times New Roman";
+    private static final int FONT_SIZE = 18;
+    private static int rX;
+    private static int rY;
+    private static int rW;
+    private static int rH;
+    private static int gY;
+    private static int gW;
+    private static int gH;
+    private static int cX;
+    private static int aY;
+    private static int sX;
+    private static int sY;
+    private static int sW;
+    private static int sH;
+
     private App() {
         PremierLeague.initialise();
 
         JFrame frame = new JFrame("Football Manager");
-//        frame.setLayout(new BorderLayout());
-//        frame.setContentPane(new App().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.add(mainPanel, BorderLayout.CENTER);
 //        frame.pack();
 //        frame.setSize(new Dimension(1000, 700));
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        frame.setResizable(true);
-        frame.setUndecorated(true);
         frame.setVisible(true);
-//        frame.getContentPane().setBackground(Color.CYAN);
+        calculatePositions(frame.getWidth(), frame.getHeight());
+//        frame.setResizable(true);
+//        frame.setUndecorated(true);
+        frame.getContentPane().setBackground(Color.getHSBColor(0.6f, 0.9f, 0.95f));
 
         final int width = frame.getWidth();
         final int height = frame.getHeight();
 
         String[] leagues = {"Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"};
         cb = new JComboBox(leagues);
-        cb.setBounds(width / 2 - 50, 10, 130, 40);
-
-        TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
-        borderResults.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
-        TitledBorder borderGoalscorers = BorderFactory.createTitledBorder("GOALS");
-        borderGoalscorers.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
-        TitledBorder borderAssisters = BorderFactory.createTitledBorder("ASSISTS");
-        borderAssisters.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
-        TitledBorder borderRatings = BorderFactory.createTitledBorder("RATINGS");
-        borderRatings.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
-        TitledBorder borderCleanSheets = BorderFactory.createTitledBorder("CLEAN SHEETS");
-        borderCleanSheets.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
-        TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
-        borderStandings.setTitleFont(new Font("Times New Roman", Font.PLAIN, 18));
+        cb.setBounds(9 * width / 20, height / 50, width / 8, height / 20);
 
         resultsLabel = new JLabel();
+        resultsLabel.setBounds(rX, rY, rW, rH);
+        TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
+        borderResults.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         resultsLabel.setBorder(borderResults);
-//        resultsLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
-        resultsLabel.setBounds(10, 80, width / 2, height / 2 - 100);
-        adjustFont(resultsLabel);
+        resultsLabel.setFont(new Font(FONT_NAME, Font.PLAIN, rH / 14));
+        resultsLabel.setForeground(Color.WHITE);
 
-//        goalscorersLabel = new JLabel();
-//        goalscorersLabel.setBorder(borderGoalscorers);
-//        goalscorersLabel.setBounds(10, height / 2, width / 4, height / 2 - 100);
-//        adjustFont(goalscorersLabel);
-
-//        String[][] leaders = new String[10][3];
         String[] columnP = {"N", "PLAYER", "COUNT"};
 
         jtg = new JTable(new String[10][3], columnP);
-        jtg.setBounds(10, height / 2, width / 4, height / 4);
-        setJTableColumnsWidth(jtg, width / 4, 15, 60, 25);
-        JScrollPane tableGoalscorersScrollPane = new JScrollPane(jtg);
-        tableGoalscorersScrollPane.setBorder(borderGoalscorers);
-        tableGoalscorersScrollPane.setBounds(10, height / 2, width / 4, height / 4);
+        jtg.setBounds(rX, gY, gW, gH);
+        jtg.setRowHeight(gH / 14);
+        jtg.setEnabled(false);
+//        jtg.setFont(new Font(FONT_NAME, Font.PLAIN, jtg.getHeight() / 12));
+        jtg.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        setJTableColumnsWidth(jtg, gW, 15, 60, 25);
+        JScrollPane tableGoalsScrollPane = new JScrollPane(jtg);
+        TitledBorder borderGoals = BorderFactory.createTitledBorder("GOALS");
+        borderGoals.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+        tableGoalsScrollPane.setBorder(borderGoals);
+        tableGoalsScrollPane.setBounds(rX, gY, gW, gH);
+        tableGoalsScrollPane.setFont(new Font(FONT_NAME, Font.PLAIN, gH / 12));
 
         jta = new JTable(new String[10][3], columnP);
-        jta.setBounds(10, 3 * height / 4, width / 4, height / 4);
-        setJTableColumnsWidth(jta, width / 4, 15, 60, 25);
-        JScrollPane tableAssistersScrollPane = new JScrollPane(jta);
-        tableAssistersScrollPane.setBorder(borderAssisters);
-        tableAssistersScrollPane.setBounds(10, 3 * height / 4, width / 4, height / 4);
+        jta.setBounds(rX, aY, gW, gH);
+        jta.setRowHeight(gH / 14);
+        jta.setEnabled(false);
+        setJTableColumnsWidth(jta, gW, 15, 60, 25);
+        JScrollPane tableAssistsScrollPane = new JScrollPane(jta);
+        TitledBorder borderAssists = BorderFactory.createTitledBorder("ASSISTS");
+        borderAssists.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+        tableAssistsScrollPane.setBorder(borderAssists);
+        tableAssistsScrollPane.setBounds(rX, aY, gW, gH);
+//        tableAssistsScrollPane.setForeground(Color.getHSBColor(0.6f, 0.9f, 0.95f));
 
         jtr = new JTable(new String[10][3], columnP);
-        jtr.setBounds(10 + height / 4, height / 2, width / 4, height / 4);
-        setJTableColumnsWidth(jtr, width / 4, 15, 60, 25);
+        jtr.setBounds(cX, gY, gW, gH);
+        jtr.setRowHeight(gH / 14);
+        jtr.setEnabled(false);
+        setJTableColumnsWidth(jtr, gW, 15, 60, 25);
         JScrollPane tableRatingsScrollPane = new JScrollPane(jtr);
+        TitledBorder borderRatings = BorderFactory.createTitledBorder("RATINGS");
+        borderRatings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         tableRatingsScrollPane.setBorder(borderRatings);
-        tableRatingsScrollPane.setBounds(10 + width / 4, height / 2, width / 4, height / 4);
+        tableRatingsScrollPane.setBounds(cX, gY, gW, gH);
 
         jtc = new JTable(new String[10][3], columnP);
-        jtc.setBounds(10 + height / 4, 3 * height / 4, width / 4, height / 4);
-        setJTableColumnsWidth(jta, width / 4, 15, 60, 25);
+        jtc.setBounds(cX, aY, gW, gH);
+        jtc.setRowHeight(gH / 14);
+        jtc.setEnabled(false);
+        setJTableColumnsWidth(jtc, width / 4, 15, 60, 25);
         JScrollPane tableCleanSheetsScrollPane = new JScrollPane(jtc);
+        TitledBorder borderCleanSheets = BorderFactory.createTitledBorder("CLEAN SHEETS");
+        borderCleanSheets.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         tableCleanSheetsScrollPane.setBorder(borderCleanSheets);
-        tableCleanSheetsScrollPane.setBounds(10 + width / 4, 3 * height / 4, width / 4, height / 4);
+        tableCleanSheetsScrollPane.setBounds(cX, aY, gW, gH);
 
         String[][] standings = new String[20][10];
         String[] column = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
 
         jt = new JTable(standings, column);
-        jt.setBounds(width / 2 + 20, 80, width / 2 - 50, height / 2 + 50);
-        setJTableColumnsWidth(jt, width / 2 - 50, 8, 28, 8, 8, 8, 8, 8, 8, 8, 8);
+        jt.setBounds(sX, sY, sW, sH);
+        jt.setRowHeight(sH / 22);
+        jt.setEnabled(false);
+        setJTableColumnsWidth(jt, sW, 8, 28, 8, 8, 8, 8, 8, 8, 8, 8);
         JScrollPane tableScrollPane = new JScrollPane(jt);
+        TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
+        borderStandings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         tableScrollPane.setBorder(borderStandings);
-        tableScrollPane.setBounds(width / 2 + 20, 80, width / 2 - 50, height / 2 + 60);
+        tableScrollPane.setBounds(sX, sY, sW, sH);
 
         JButton nextB = new JButton("Next");
         nextB.setBounds(width - 200, height - 100, 150, 80);
@@ -119,8 +140,8 @@ public class App {
         frame.add(cb);
         frame.add(nextB);
         frame.add(resultsLabel);
-        frame.add(tableGoalscorersScrollPane);
-        frame.add(tableAssistersScrollPane);
+        frame.add(tableGoalsScrollPane);
+        frame.add(tableAssistsScrollPane);
         frame.add(tableRatingsScrollPane);
         frame.add(tableCleanSheetsScrollPane);
         frame.add(tableScrollPane);
@@ -129,6 +150,22 @@ public class App {
         cb.addActionListener(e -> updateStats());
 
         updateStats();
+    }
+
+    private void calculatePositions(final int width, final int height) {
+        rX = width / 80;
+        rY = height / 15;
+        rW = width / 2;
+        rH = 7 * height / 20;
+        gY = 9 * height / 20;
+        gW = 2 * width / 9;
+        gH = height / 4;
+        aY = 7 * height / 10;
+        cX = 7 * width / 25;
+        sX = 21 * width / 40;
+        sY = height / 10;
+        sW = 17 * width / 40;
+        sH = 3 * height / 5;
     }
 
     private void updateStats() {
@@ -142,7 +179,6 @@ public class App {
             default: return;
         }
 
-//        Printer.standings(league);
         final Map<Club, Integer> sorted = Printer.sortLeague(league);
         int row = 0;
         for (final Club team : sorted.keySet()) {
@@ -205,10 +241,11 @@ public class App {
         }
 
         resultsLabel.setText("<html>" + PremierLeague.results.getOrDefault(cb.getSelectedItem(), "") + "</html>");
+        System.out.println(PremierLeague.results.get(cb.getSelectedItem()));
     }
 
     private void nextRound() {
-        PremierLeague.proceed(String.valueOf(cb.getSelectedItem()));
+        PremierLeague.proceed();
         updateStats();
     }
 
@@ -224,22 +261,6 @@ public class App {
             column.setPreferredWidth((int)
                     (tablePreferredWidth * (percentages[i] / total)));
         }
-    }
-
-    private void adjustFont(final JLabel label) {
-        // TODO: Fix method
-        Font labelFont = label.getFont();
-        String labelText = label.getText();
-
-        int stringWidth = label.getFontMetrics(labelFont).stringWidth(labelText);
-        int componentWidth = label.getWidth();
-        double widthRatio = (double) componentWidth / (double) stringWidth;
-
-        int newFontSize = (int) (labelFont.getSize() * widthRatio);
-        int componentHeight = label.getHeight();
-        int fontSizeToUse = Math.min(newFontSize, componentHeight / 15);
-
-        label.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
     }
 
     public static void main(String[] args) {

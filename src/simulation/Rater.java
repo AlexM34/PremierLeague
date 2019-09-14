@@ -271,7 +271,7 @@ class Rater {
         team.getSeason().changeForm(change);
     }
 
-    public static void topPlayers(final Club[] clubs) {
+    static void topPlayers(final Club[] clubs) {
         contenders = new HashMap<>();
 
         for (int i = 0; i < clubs.length; i++) {
