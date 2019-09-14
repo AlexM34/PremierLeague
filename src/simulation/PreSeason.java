@@ -13,7 +13,6 @@ import java.util.Random;
 import static simulation.Data.LEAGUES;
 
 class PreSeason {
-    // TODO: Reduce
     private static final Random random = new Random();
     private static int deals;
     private static Map<Footballer, Club> transfers;

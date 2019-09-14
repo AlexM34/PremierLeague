@@ -10,10 +10,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static simulation.Data.*;
-import static simulation.PremierLeague.matchFlag;
+import static simulation.Controller.matchFlag;
 
 class Match {
-    // TODO: Reduce
     private static final Scanner scanner = new Scanner(System.in);
     private static final Random random = new Random();
 
@@ -271,10 +270,6 @@ class Match {
             defence += footballer.getFootballer().getOverall() * (5 - footballer.getFootballer().getPosition().getAttackingDuty());
         }
 
-//        if (matchFlag) {
-//            System.out.println(attack);
-//            System.out.println(defence);
-//        }
         return 50 * attack / defence;
     }
 

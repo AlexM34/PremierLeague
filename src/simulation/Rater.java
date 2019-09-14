@@ -9,10 +9,9 @@ import java.util.*;
 import static java.util.stream.Collectors.toMap;
 import static simulation.Data.HOME_WINS;
 import static simulation.Data.AWAY_WINS;
-import static simulation.PremierLeague.matchFlag;
+import static simulation.Controller.matchFlag;
 
 class Rater {
-    // TODO: Reduce
     private static final Random random = new Random();
 
     private static MatchStats motmPlayer;
