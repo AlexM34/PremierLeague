@@ -4,12 +4,15 @@ import players.*;
 import teams.Club;
 import teams.League;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-import static java.util.stream.Collectors.toMap;
-import static simulation.Data.HOME_WINS;
-import static simulation.Data.AWAY_WINS;
 import static simulation.Controller.matchFlag;
+import static simulation.Data.AWAY_WINS;
+import static simulation.Data.HOME_WINS;
+import static simulation.Utils.sortMap;
 
 class Rater {
     private static final Random random = new Random();
@@ -293,11 +296,7 @@ class Rater {
             }
         }
 
-        final Map<Footballer, Integer> sorted = contenders.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
+        final Map<Footballer, Integer> sorted = sortMap(contenders);
         contenders.clear();
 
         for (int player = 0; player < 10; player++) {

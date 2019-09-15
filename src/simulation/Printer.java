@@ -9,20 +9,20 @@ import teams.League;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
 import static players.Position.GK;
 import static simulation.Data.*;
+import static simulation.Utils.sortMap;
 
 public class Printer {
     private static final Random random = new Random();
     private static int offset;
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
-    static Map<Footballer, Integer> motm = new LinkedHashMap<>();
+    private static Map<Footballer, Integer> motm = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
     public static Map<Footballer, Integer> assists = new LinkedHashMap<>();
     public static Map<Footballer, Integer> cleanSheets = new LinkedHashMap<>();
-    static Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
-    static Map<Footballer, Integer> redCards = new LinkedHashMap<>();
+    private static Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
+    private static Map<Footballer, Integer> redCards = new LinkedHashMap<>();
     static Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
 
     public static Map<Club, Integer> sortLeague(final Club[] league) {
@@ -35,10 +35,7 @@ public class Printer {
                     stats.getScored());
         }
 
-        return standings.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        return sortMap(standings);
     }
 
     public static Club[] pickChampionsLeagueTeams() {
@@ -166,25 +163,10 @@ public class Printer {
             }
         }
 
-        goals = goals.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        assists = assists.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        ratings = ratings.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        cleanSheets = cleanSheets.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        goals = sortMap(goals);
+        assists = sortMap(assists);
+        ratings = sortMap(ratings);
+        cleanSheets = sortMap(cleanSheets);
 
         System.out.println();
         topPlayers(ratings, "Top Players");
@@ -209,20 +191,9 @@ public class Printer {
             leagueCups.put(club.getName(), club.getGlory().getLeagueCup());
         }
 
-        final Map<String, Integer> sortedLeagues = leagues.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        final Map<String, Integer> sortedNationalCups = nationalCups.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
-
-        final Map<String, Integer> sortedLeagueCups = leagueCups.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        final Map<String, Integer> sortedLeagues = sortMap(leagues);
+        final Map<String, Integer> sortedNationalCups = sortMap(nationalCups);
+        final Map<String, Integer> sortedLeagueCups = sortMap(leagueCups);
 
         System.out.println();
         System.out.println("League Winners");
@@ -257,10 +228,7 @@ public class Printer {
             }
         }
 
-        final Map<String, Integer> sortedTitles = titles.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        final Map<String, Integer> sortedTitles = sortMap(titles);
 
         System.out.println();
         System.out.println("Champions League Winners");
@@ -310,16 +278,13 @@ public class Printer {
 
     private static void topPlayers(Map<Footballer, Integer> map, final String label) {
         System.out.println(label);
-        map = map.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        final Map<Footballer, Integer> sorted = sortMap(map);
 
-        for (int player = 0; player < 20 && player < map.size(); player++) {
-            final int value = map.values().toArray(new Integer[0])[player];
+        for (int player = 0; player < 20 && player < sorted.size(); player++) {
+            final int value = sorted.values().toArray(new Integer[0])[player];
             if (value == 0) break;
             System.out.println(String.format("%2d. %-20s %2d", player + 1,
-                    map.keySet().toArray(new Footballer[0])[player].getName(),  value));
+                    sorted.keySet().toArray(new Footballer[0])[player].getName(),  value));
         }
 
         System.out.println();
@@ -333,10 +298,7 @@ public class Printer {
         int midfielders = 3;
         int forwards = 3;
 
-        final Map<Footballer, Integer> sorted = ratings.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        final Map<Footballer, Integer> sorted = sortMap(ratings);
 
         for (int player = 0; player < sorted.size(); player++) {
             switch (sorted.keySet().toArray(new Footballer[0])[player].getPosition().getRole()) {
@@ -413,13 +375,9 @@ public class Printer {
         }
 
         Map<Footballer, Integer> results = new HashMap<>();
-
         for (int i = 0; i < 10; i++) results.put(players[i], votes[i]);
 
-        final Map<Footballer, Integer> sorted = results.entrySet().stream().sorted(
-                Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                        LinkedHashMap::new));
+        final Map<Footballer, Integer> sorted = sortMap(results);
 
         System.out.println("FOOTBALLER OF THE YEAR");
         for (int player = 0; player < 10; player++) {

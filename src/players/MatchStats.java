@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class MatchStats {
     private final Footballer footballer;
-    private int started;
+    private final int started;
     private float rating;
     private int goals;
     private int assists;

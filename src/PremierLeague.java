@@ -13,18 +13,19 @@ import java.util.Map;
 
 import static simulation.Printer.*;
 
-public class PremierLeague {
+class PremierLeague {
     // TODO: Cup and CL
-    private JComboBox leagueBox;
-    private JLabel resultsLabel;
-    private JTable goalsTable;
-    private JTable assistsTable;
-    private JTable ratingsTable;
-    private JTable cleanSheetsTable;
-    private JTable standingsTable;
+    private final JComboBox leagueBox;
+    private final JLabel resultsLabel;
+    private final JTable goalsTable;
+    private final JTable assistsTable;
+    private final JTable ratingsTable;
+    private final JTable cleanSheetsTable;
+    private final JTable standingsTable;
 
+    private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
     private static final String FONT_NAME = "Times New Roman";
-    private static final int FONT_SIZE = 18;
+    private static final int FONT_SIZE = 20;
 
     private static int resultsX;
     private static int resultsY;
@@ -39,29 +40,31 @@ public class PremierLeague {
     private static int standingsY;
     private static int standingsWidth;
     private static int standingsHeight;
+    private static int statsFontSize;
+    private static int standingsFontSize;
 
     private PremierLeague() {
         Controller.initialise();
 
-        JFrame frame = new JFrame("Football Manager");
+        final JFrame frame = new JFrame("Football Manager");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setSize(new Dimension(1000, 700));
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
+        frame.setUndecorated(true);
+//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        frame.setSize(screenSize.width, screenSize.height);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
         calculatePositions(frame.getWidth(), frame.getHeight());
-//        frame.setResizable(true);
-//        frame.setUndecorated(true);
-        frame.getContentPane().setBackground(Color.getHSBColor(0.6f, 0.9f, 0.95f));
+        frame.getContentPane().setBackground(COLOR);
 
         final int width = frame.getWidth();
         final int height = frame.getHeight();
 
         String[] leagues = {"Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"};
         leagueBox = new JComboBox(leagues);
-        leagueBox.setBounds(9 * width / 20, height / 50, width / 8, height / 20);
+        leagueBox.setBounds(9 * width / 20, height / 80, width / 11, height / 16);
+        leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         resultsLabel = new JLabel();
         resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
@@ -71,13 +74,13 @@ public class PremierLeague {
         resultsLabel.setFont(new Font(FONT_NAME, Font.PLAIN, resultsHeight / 14));
         resultsLabel.setForeground(Color.WHITE);
 
-        String[] columnP = {"N", "PLAYER", "COUNT"};
+        String[] stats = {"N", "PLAYER", "COUNT"};
 
-        goalsTable = new JTable(new String[10][3], columnP);
+        goalsTable = new JTable(new String[10][3], stats);
         goalsTable.setBounds(resultsX, goalsY, goalsWidth, goalsHeight);
         goalsTable.setRowHeight(goalsHeight / 14);
         goalsTable.setEnabled(false);
-//        goalsTable.setFont(new Font(FONT_NAME, Font.PLAIN, goalsTable.getHeight() / 12));
+        goalsTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         goalsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setJTableColumnsWidth(goalsTable, goalsWidth, 15, 60, 25);
         JScrollPane tableGoalsScrollPane = new JScrollPane(goalsTable);
@@ -85,12 +88,12 @@ public class PremierLeague {
         borderGoals.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         tableGoalsScrollPane.setBorder(borderGoals);
         tableGoalsScrollPane.setBounds(resultsX, goalsY, goalsWidth, goalsHeight);
-        tableGoalsScrollPane.setFont(new Font(FONT_NAME, Font.PLAIN, goalsHeight / 12));
 
-        assistsTable = new JTable(new String[10][3], columnP);
+        assistsTable = new JTable(new String[10][3], stats);
         assistsTable.setBounds(resultsX, assistsY, goalsWidth, goalsHeight);
         assistsTable.setRowHeight(goalsHeight / 14);
         assistsTable.setEnabled(false);
+        assistsTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         setJTableColumnsWidth(assistsTable, goalsWidth, 15, 60, 25);
         JScrollPane tableAssistsScrollPane = new JScrollPane(assistsTable);
         TitledBorder borderAssists = BorderFactory.createTitledBorder("ASSISTS");
@@ -99,10 +102,11 @@ public class PremierLeague {
         tableAssistsScrollPane.setBounds(resultsX, assistsY, goalsWidth, goalsHeight);
 //        tableAssistsScrollPane.setForeground(Color.getHSBColor(0.6f, 0.9f, 0.95f));
 
-        ratingsTable = new JTable(new String[10][3], columnP);
+        ratingsTable = new JTable(new String[10][3], stats);
         ratingsTable.setBounds(cleanSheetsX, goalsY, goalsWidth, goalsHeight);
         ratingsTable.setRowHeight(goalsHeight / 14);
         ratingsTable.setEnabled(false);
+        ratingsTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         setJTableColumnsWidth(ratingsTable, goalsWidth, 15, 60, 25);
         JScrollPane tableRatingsScrollPane = new JScrollPane(ratingsTable);
         TitledBorder borderRatings = BorderFactory.createTitledBorder("RATINGS");
@@ -110,10 +114,11 @@ public class PremierLeague {
         tableRatingsScrollPane.setBorder(borderRatings);
         tableRatingsScrollPane.setBounds(cleanSheetsX, goalsY, goalsWidth, goalsHeight);
 
-        cleanSheetsTable = new JTable(new String[10][3], columnP);
+        cleanSheetsTable = new JTable(new String[10][3], stats);
         cleanSheetsTable.setBounds(cleanSheetsX, assistsY, goalsWidth, goalsHeight);
         cleanSheetsTable.setRowHeight(goalsHeight / 14);
         cleanSheetsTable.setEnabled(false);
+        cleanSheetsTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         setJTableColumnsWidth(cleanSheetsTable, width / 4, 15, 60, 25);
         JScrollPane tableCleanSheetsScrollPane = new JScrollPane(cleanSheetsTable);
         TitledBorder borderCleanSheets = BorderFactory.createTitledBorder("CLEAN SHEETS");
@@ -121,25 +126,24 @@ public class PremierLeague {
         tableCleanSheetsScrollPane.setBorder(borderCleanSheets);
         tableCleanSheetsScrollPane.setBounds(cleanSheetsX, assistsY, goalsWidth, goalsHeight);
 
-        String[][] standings = new String[20][10];
-        String[] column = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
-
-        standingsTable = new JTable(standings, column);
+        String[] standings = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
+        standingsTable = new JTable(new String[20][10], standings);
         standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
-        standingsTable.setRowHeight(standingsHeight / 22);
+        standingsTable.setRowHeight(standingsHeight / 23);
         standingsTable.setEnabled(false);
-        setJTableColumnsWidth(standingsTable, standingsWidth, 8, 28, 8, 8, 8, 8, 8, 8, 8, 8);
+        standingsTable.setFont(new Font(FONT_NAME, Font.PLAIN, standingsFontSize));
+        setJTableColumnsWidth(standingsTable, standingsWidth, 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
         JScrollPane tableScrollPane = new JScrollPane(standingsTable);
         TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
         borderStandings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         tableScrollPane.setBorder(borderStandings);
         tableScrollPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
 
-        JButton nextB = new JButton("Next");
-        nextB.setBounds(width - 200, height - 100, 150, 80);
+        final JButton nextButton = new JButton("Next");
+        nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
 
         frame.add(leagueBox);
-        frame.add(nextB);
+        frame.add(nextButton);
         frame.add(resultsLabel);
         frame.add(tableGoalsScrollPane);
         frame.add(tableAssistsScrollPane);
@@ -147,7 +151,7 @@ public class PremierLeague {
         frame.add(tableCleanSheetsScrollPane);
         frame.add(tableScrollPane);
 
-        nextB.addActionListener(e -> nextRound());
+        nextButton.addActionListener(e -> nextRound());
         leagueBox.addActionListener(e -> updateStats());
 
         updateStats();
@@ -165,8 +169,10 @@ public class PremierLeague {
         cleanSheetsX = 7 * width / 25;
         standingsX = 21 * width / 40;
         standingsY = height / 10;
-        standingsWidth = 17 * width / 40;
+        standingsWidth = 9 * width / 20;
         standingsHeight = 3 * height / 5;
+        statsFontSize = goalsHeight / 15;
+        standingsFontSize = standingsHeight / 30;
     }
 
     private void updateStats() {
@@ -174,9 +180,9 @@ public class PremierLeague {
         switch (String.valueOf(this.leagueBox.getSelectedItem())) {
             case England.LEAGUE: league = England.CLUBS; break;
             case Spain.LEAGUE: league = Spain.CLUBS; break;
+            case Germany.LEAGUE: league = Germany.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
-            case Germany.LEAGUE: league = Germany.CLUBS; break;
             default: return;
         }
 

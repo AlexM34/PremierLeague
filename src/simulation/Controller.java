@@ -5,14 +5,14 @@ import teams.League;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
 import static simulation.Data.*;
 import static simulation.Draw.league;
 import static simulation.Match.simulation;
-import static simulation.Match.userTactics;
 import static simulation.PreSeason.*;
 import static simulation.Printer.*;
 import static simulation.Rater.contenders;
+import static simulation.Tactics.preMatch;
+import static simulation.Utils.sortMap;
 
 public class Controller {
     // TODO: Imports
@@ -173,10 +173,7 @@ public class Controller {
                            clubs[team].getSeason().getChampionsLeague().getGroup().getConceded()) +
                     clubs[team].getSeason().getChampionsLeague().getGroup().getScored());
 
-            final Map<Club, Integer> sorted = standing.entrySet().stream().sorted(
-                    Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                            LinkedHashMap::new));
+            final Map<Club, Integer> sorted = sortMap(standing);
 
             System.out.println();
             System.out.println("Standings for group " + (char)('A' + group));
@@ -218,8 +215,8 @@ public class Controller {
         for (int game = 0; game < league.length / 2; game++) {
             final int home = draw[round][game][0];
             final int away = draw[round][game][1];
-            if (home == USER) userTactics(league[away], true);
-            else if (away == USER) userTactics(league[home], false);
+            if (home == USER) preMatch(league[away], true);
+            else if (away == USER) preMatch(league[home], false);
             final int score = simulation(league[home], league[away], false, -1, -1, 0);
 
             scores.append(league[home].getName())
