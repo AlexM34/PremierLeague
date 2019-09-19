@@ -1,19 +1,37 @@
-import competitions.*;
+import competitions.England;
+import competitions.France;
+import competitions.Germany;
+import competitions.Italy;
+import competitions.Spain;
 import players.Footballer;
 import simulation.Controller;
 import simulation.Printer;
 import teams.Club;
 import teams.League;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.Map;
 
-import static simulation.Printer.*;
+import static simulation.Printer.assists;
+import static simulation.Printer.cleanSheets;
+import static simulation.Printer.goals;
+import static simulation.Printer.playerStats;
+import static simulation.Printer.ratings;
 
 class PremierLeague {
+    // TODO: Name of the app
     // TODO: Cup and CL
     private final JComboBox leagueBox;
     private final JLabel resultsLabel;

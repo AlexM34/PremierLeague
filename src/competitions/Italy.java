@@ -1,7 +1,11 @@
 package competitions;
 
 import players.Glory;
-import teams.*;
+import teams.Club;
+import teams.Coach;
+import teams.Formation;
+import teams.Owner;
+import teams.Stadium;
 
 public class Italy {
     public static final String LEAGUE = "Serie A";

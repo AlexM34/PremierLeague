@@ -1,6 +1,10 @@
 package simulation;
 
-import players.*;
+import players.Competition;
+import players.Footballer;
+import players.MatchStats;
+import players.Position;
+import players.Statistics;
 import teams.Club;
 import teams.League;
 

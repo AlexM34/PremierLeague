@@ -95,7 +95,6 @@ class Match {
                     }
                 }
 
-                // TODO: Use attributes for bookings
                 if (random.nextInt(25) == 0) {
                     final boolean t = random.nextBoolean();
                     final int p = random.nextInt(11);

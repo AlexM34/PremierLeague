@@ -7,10 +7,19 @@ import players.Footballer;
 import teams.Club;
 import teams.League;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static players.Position.GK;
-import static simulation.Data.*;
+import static simulation.Data.AWAY_WINS;
+import static simulation.Data.HOME_WINS;
+import static simulation.Data.LEAGUES;
+import static simulation.Data.RATINGS;
 import static simulation.Utils.sortMap;
 
 public class Printer {

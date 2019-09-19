@@ -3,19 +3,33 @@ package simulation;
 import teams.Club;
 import teams.League;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.Scanner;
 
-import static simulation.Data.*;
+import static simulation.Data.LEAGUES;
+import static simulation.Data.USER;
+import static simulation.Data.FANS;
+import static simulation.Data.addDummies;
+import static simulation.Data.buildSquads;
+import static simulation.Data.prepare;
 import static simulation.Draw.league;
 import static simulation.Match.simulation;
-import static simulation.PreSeason.*;
-import static simulation.Printer.*;
+import static simulation.PreSeason.profits;
+import static simulation.PreSeason.progression;
+import static simulation.PreSeason.salaries;
+import static simulation.PreSeason.transfers;
+import static simulation.Printer.knockoutPrizes;
+import static simulation.Printer.standings;
+import static simulation.Printer.topTeam;
+import static simulation.Printer.voting;
 import static simulation.Rater.contenders;
 import static simulation.Tactics.preMatch;
 import static simulation.Utils.sortMap;
 
 public class Controller {
-    // TODO: Imports
     // TODO: Split large classes
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);

@@ -1,6 +1,12 @@
 package simulation;
 
-import competitions.*;
+import competitions.ChampionsLeague;
+import competitions.Cup;
+import competitions.England;
+import competitions.France;
+import competitions.Germany;
+import competitions.Italy;
+import competitions.Spain;
 import players.Competition;
 import players.Footballer;
 import players.Position;
