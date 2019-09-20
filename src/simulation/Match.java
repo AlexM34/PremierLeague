@@ -11,7 +11,14 @@ import java.util.Objects;
 import java.util.Random;
 
 import static simulation.Controller.matchFlag;
-import static simulation.Data.*;
+import static simulation.Data.FANS;
+import static simulation.Data.USER;
+import static simulation.Data.USER_STYLE;
+import static simulation.Performance.goal;
+import static simulation.Rater.finalWhistle;
+import static simulation.Rater.getCompetition;
+import static simulation.Rater.kickoff;
+import static simulation.Rater.updateRatings;
 import static simulation.Tactics.pickSquad;
 import static simulation.Tactics.substitute;
 
@@ -34,13 +41,13 @@ class Match {
         final int result = simulateGame(home, away, last, homeGoals, awayGoals);
         FANS = 3;
 
-        Rater.finalWhistle(home, away, result / 100, result % 100);
+        finalWhistle(home, away, result / 100, result % 100);
         return result;
     }
 
     private static int simulateGame(final Club home, final Club away, final boolean last,
                                     final int aggregateHomeGoals, final int aggregateAwayGoals) {
-        Rater.kickoff(home, away);
+        kickoff(home, away);
         int homeGoals = 0;
         int awayGoals = 0;
         minute = 1;
@@ -76,22 +83,22 @@ class Match {
                 if (r < 10 * momentum) {
                     if (r < momentum + style - 41) {
                         homeGoals++;
-                        Rater.goal(homeGoals, awayGoals, true);
+                        goal(homeGoals, awayGoals, true);
                         momentum = balance;
-                        Rater.updateRatings(3);
+                        updateRatings(3);
                     } else if (r < 5 * momentum) {
                         momentum++;
-                        Rater.updateRatings(1);
+                        updateRatings(1);
                     }
                 } else {
                     if (r > 940 + momentum - style) {
                         awayGoals++;
-                        Rater.goal(homeGoals, awayGoals, false);
+                        goal(homeGoals, awayGoals, false);
                         momentum = balance;
-                        Rater.updateRatings(-3);
+                        updateRatings(-3);
                     } else if (r > 999 - 5 * momentum) {
                         momentum--;
-                        Rater.updateRatings(-1);
+                        updateRatings(-1);
                     }
                 }
 
@@ -189,7 +196,7 @@ class Match {
                     subbedIn.getName() + " replaces " + subbedOut.getName());
         }
 
-        Competition season = Rater.getCompetition(subbedOut.getResume().getSeason(), competition);
+        Competition season = getCompetition(subbedOut.getResume().getSeason(), competition);
         updateStats(season, squad.get(flop));
         squad.set(flop, new MatchStats(subbedIn, minute));
         bench.set(0, null);

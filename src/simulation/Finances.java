@@ -1,0 +1,40 @@
+package simulation;
+
+import players.Footballer;
+import teams.Club;
+
+class Finances {
+
+    static void leaguePrizes(final Club[] league) {
+        for (int team = 0; team < league.length; team++) {
+            if (team == 0) league[team].changeBudget(50f);
+            else if (team < 4) league[team].changeBudget(40f - (team - 1) * 5f);
+            else if (team < 7) league[team].changeBudget(26f - (team - 4) * 3f);
+            else league[team].changeBudget(25f - team);
+        }
+    }
+
+    static void knockoutPrizes(final Club[] clubs, final boolean isContinental) {
+        final float base = isContinental ? 10f : 1f;
+
+        for (int team = 0; team < clubs.length; team++) {
+            if (team == 0) clubs[team].changeBudget(10 * base);
+            else if (team == 1) clubs[team].changeBudget(7 * base);
+            else if (team < 4) clubs[team].changeBudget(4 * base);
+            else if (team < 8) clubs[team].changeBudget(2 * base);
+            else clubs[team].changeBudget(base);
+        }
+    }
+
+    static void profits(final Club[] league) {
+        for (Club club : league) club.changeBudget(club.getReputation() * club.getReputation() / 100);
+    }
+
+    static void salaries(final Club[] league) {
+        for (Club club : league) {
+            for (Footballer footballer : club.getFootballers()) {
+                club.changeBudget(-footballer.getWage() / 20);
+            }
+        }
+    }
+}

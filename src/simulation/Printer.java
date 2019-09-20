@@ -20,11 +20,13 @@ import static simulation.Data.AWAY_WINS;
 import static simulation.Data.HOME_WINS;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.RATINGS;
+import static simulation.Finances.leaguePrizes;
+import static simulation.Utils.sortLeague;
 import static simulation.Utils.sortMap;
 
 public class Printer {
     private static final Random random = new Random();
-    private static int offset;
+    static int offset;
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
     private static Map<Footballer, Integer> motm = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
@@ -33,19 +35,6 @@ public class Printer {
     private static Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
     private static Map<Footballer, Integer> redCards = new LinkedHashMap<>();
     static Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
-
-    public static Map<Club, Integer> sortLeague(final Club[] league) {
-        final Map<Club, Integer> standings = new LinkedHashMap<>();
-        offset = 0;
-        for (final Club team : league) {
-            if (offset < team.getName().length()) offset = team.getName().length();
-            final League stats = team.getSeason().getLeague();
-            standings.put(team, 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) +
-                    stats.getScored());
-        }
-
-        return sortMap(standings);
-    }
 
     public static Club[] pickChampionsLeagueTeams() {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
@@ -102,27 +91,6 @@ public class Printer {
             }
 
             leaguePrizes(sorted.keySet().toArray(new Club[0]));
-        }
-    }
-
-    private static void leaguePrizes(final Club[] league) {
-        for (int team = 0; team < league.length; team++) {
-            if (team == 0) league[team].changeBudget(50f);
-            else if (team < 4) league[team].changeBudget(40f - (team - 1) * 5f);
-            else if (team < 7) league[team].changeBudget(26f - (team - 4) * 3f);
-            else league[team].changeBudget(25f - team);
-        }
-    }
-
-    static void knockoutPrizes(final Club[] clubs, final boolean isContinental) {
-        final float base = isContinental ? 10f : 1f;
-
-        for (int team = 0; team < clubs.length; team++) {
-            if (team == 0) clubs[team].changeBudget(10 * base);
-            else if (team == 1) clubs[team].changeBudget(7 * base);
-            else if (team < 4) clubs[team].changeBudget(4 * base);
-            else if (team < 8) clubs[team].changeBudget(2 * base);
-            else clubs[team].changeBudget(base);
         }
     }
 

@@ -5,7 +5,6 @@ import competitions.Italy;
 import competitions.Spain;
 import players.Footballer;
 import simulation.Controller;
-import simulation.Printer;
 import teams.Club;
 import teams.League;
 
@@ -29,6 +28,7 @@ import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
 import static simulation.Printer.playerStats;
 import static simulation.Printer.ratings;
+import static simulation.Utils.sortLeague;
 
 class PremierLeague {
     // TODO: Name of the app
@@ -204,7 +204,7 @@ class PremierLeague {
             default: return;
         }
 
-        final Map<Club, Integer> sorted = Printer.sortLeague(league);
+        final Map<Club, Integer> sorted = sortLeague(league);
         int row = 0;
         for (final Club team : sorted.keySet()) {
             final League stats = team.getSeason().getLeague();
