@@ -30,7 +30,6 @@ import static simulation.Transfers.transfers;
 import static simulation.Utils.sortMap;
 
 public class Controller {
-    // TODO: Split large classes
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
 

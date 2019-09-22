@@ -154,7 +154,7 @@ public class Printer {
         topPlayers(yellowCards, "Most Yellow Cards");
         topPlayers(redCards, "Most Red Cards");
 
-        pickTeam(topTeam, type == 0);
+//        pickTeam(topTeam, type == 0);
     }
 
     static void allTimeStats(final Club[] league) {
