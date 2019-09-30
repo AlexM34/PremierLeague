@@ -13,8 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static simulation.Data.AWAY_WINS;
-import static simulation.Data.HOME_WINS;
+import static simulation.Data.assists;
+import static simulation.Data.averageRatings;
+import static simulation.Data.awayWins;
+import static simulation.Data.cleanSheets;
+import static simulation.Data.draws;
+import static simulation.Data.homeWins;
+import static simulation.Data.redCards;
+import static simulation.Data.scoredAway;
+import static simulation.Data.scoredHome;
+import static simulation.Data.yellowCards;
+import static simulation.Match.leagueName;
 import static simulation.Utils.sortMap;
 
 class Rater {
@@ -87,13 +96,25 @@ class Rater {
             motmRating = matchStats.getRating();
         }
 
-        final Competition homeStats = getCompetition(matchStats.getFootballer().getResume().getSeason(), Match.competition);
+        final Competition homeStats = getCompetition(
+                matchStats.getFootballer().getResume().getSeason(), Match.competition);
+
         homeStats.addRating((int) matchStats.getRating() * 100, 1);
+        averageRatings.merge(leagueName, matchStats.getRating(), Float::sum);
         homeStats.addMatches(1);
         homeStats.addGoals(matchStats.getGoals());
         homeStats.addAssists(matchStats.getAssists());
-        if (matchStats.isYellowCarded()) homeStats.addYellowCards(1);
-        if (matchStats.isRedCarded()) homeStats.addRedCards(1);
+        assists.merge(leagueName, matchStats.getAssists(), Integer::sum);
+        if (matchStats.isYellowCarded()) {
+            homeStats.addYellowCards();
+            yellowCards.merge(leagueName, 1, Integer::sum);
+        }
+
+        if (matchStats.isRedCarded()) {
+            homeStats.addRedCards();
+            redCards.merge(leagueName, 1, Integer::sum);
+        }
+
         matchStats.getFootballer().changeCondition(-15);
     }
 
@@ -101,20 +122,28 @@ class Rater {
         final League homeStats = home.getSeason().getLeague();
         final League awayStats = away.getSeason().getLeague();
 
-        if (awayGoals == 0) homeStats.addCleanSheet();
-        if (homeGoals == 0) awayStats.addCleanSheet();
+        if (awayGoals == 0) {
+            homeStats.addCleanSheet();
+            cleanSheets.merge(leagueName, 1, Integer::sum);
+        }
+
+        if (homeGoals == 0) {
+            awayStats.addCleanSheet();
+            cleanSheets.merge(leagueName, 1, Integer::sum);
+        }
 
         if (homeGoals > awayGoals) {
-            HOME_WINS++;
+            homeWins.merge(leagueName, 1, Integer::sum);
             homeStats.addPoints(3);
             homeStats.addWin();
             awayStats.addLoss();
         } else if (homeGoals < awayGoals) {
-            AWAY_WINS++;
+            awayWins.merge(leagueName, 1, Integer::sum);
             awayStats.addPoints(3);
             awayStats.addWin();
             homeStats.addLoss();
         } else {
+            draws.merge(leagueName, 1, Integer::sum);
             homeStats.addPoints(1);
             awayStats.addPoints(1);
             homeStats.addDraw();
@@ -124,7 +153,9 @@ class Rater {
         homeStats.addMatch();
         awayStats.addMatch();
         homeStats.addScored(homeGoals);
+        scoredHome.merge(leagueName, homeGoals, Integer::sum);
         awayStats.addScored(awayGoals);
+        scoredAway.merge(leagueName, awayGoals, Integer::sum);
         homeStats.addConceded(awayGoals);
         awayStats.addConceded(homeGoals);
     }

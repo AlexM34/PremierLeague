@@ -105,8 +105,8 @@ public class Competition {
         this.yellowCards = 0;
     }
 
-    public void addYellowCards(final int yellowCards) {
-        this.yellowCards += yellowCards;
+    public void addYellowCards() {
+        this.yellowCards += 1;
     }
 
     public int getRedCards() {
@@ -117,8 +117,8 @@ public class Competition {
         this.redCards = 0;
     }
 
-    public void addRedCards(final int redCards) {
-        this.redCards += redCards;
+    public void addRedCards() {
+        this.redCards += 1;
     }
 
     @Override

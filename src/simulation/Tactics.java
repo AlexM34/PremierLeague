@@ -25,9 +25,10 @@ class Tactics {
         while (true) {
             final int attack = scanner.nextInt();
             if(attack < 0 || attack > 20) {
-                System.out.println("Wrong attack value");
+                System.out.println("Wrong attack value!");
                 continue;
             }
+
             USER_STYLE = attack - 10;
             break;
         }

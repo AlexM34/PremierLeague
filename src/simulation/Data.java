@@ -19,15 +19,24 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-class Data {
+public class Data {
     static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
     static Club[] CHAMPIONS_LEAGUE = new Club[32];
     static int FANS = 3;
-    static int HOME_WINS;
-    static int AWAY_WINS;
-    static float RATINGS;
+    public static Map<String, Integer> homeWins;
+    public static Map<String, Integer> draws;
+    public static Map<String, Integer> awayWins;
+    public static Map<String, Integer> scoredHome;
+    public static Map<String, Integer> scoredAway;
+    public static Map<String, Integer> assists;
+    public static Map<String, Integer> yellowCards;
+    public static Map<String, Integer> redCards;
+    public static Map<String, Float> averageRatings;
+    public static Map<String, Integer> cleanSheets;
     static Integer USER = -1;
     static int USER_STYLE;
 
@@ -134,11 +143,16 @@ class Data {
     }
 
     static void prepare(final int year) {
-//        pause();
-
-        HOME_WINS = 0;
-        AWAY_WINS = 0;
-        RATINGS = 0;
+        homeWins = new HashMap<>();
+        draws = new HashMap<>();
+        awayWins = new HashMap<>();
+        scoredHome = new HashMap<>();
+        scoredAway = new HashMap<>();
+        assists = new HashMap<>();
+        yellowCards = new HashMap<>();
+        redCards = new HashMap<>();
+        averageRatings = new HashMap<>();
+        cleanSheets = new HashMap<>();
 
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (final Club[] league : LEAGUES) {
@@ -174,8 +188,8 @@ class Data {
         total.addCleanSheets(season.getCleanSheets());
         total.addRating(season.getRating(), season.getMatches());
         total.addMotmAwards(season.getMotmAwards());
-        total.addYellowCards(season.getYellowCards());
-        total.addRedCards(season.getRedCards());
+        total.addYellowCards();
+        total.addRedCards();
     }
 
     private static void clearCompetition(final Competition stats) {
@@ -187,6 +201,5 @@ class Data {
         stats.clearMotmAwards();
         stats.clearYellowCards();
         stats.clearRedCards();
-
     }
 }

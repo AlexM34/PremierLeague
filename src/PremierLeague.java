@@ -5,6 +5,7 @@ import competitions.Italy;
 import competitions.Spain;
 import players.Footballer;
 import simulation.Controller;
+import simulation.Data;
 import teams.Club;
 import teams.League;
 
@@ -23,6 +24,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;
 
+import static simulation.Data.averageRatings;
+import static simulation.Data.awayWins;
+import static simulation.Data.draws;
+import static simulation.Data.homeWins;
+import static simulation.Data.redCards;
+import static simulation.Data.scoredAway;
+import static simulation.Data.scoredHome;
+import static simulation.Data.yellowCards;
 import static simulation.Printer.assists;
 import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
@@ -33,20 +42,21 @@ import static simulation.Utils.sortLeague;
 class PremierLeague {
     // TODO: Name of the app
     // TODO: Cup and CL
+    private static final String[] STATS = {"N", "PLAYER", "COUNT"};
+    private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
+    private static final String FONT_NAME = "Times New Roman";
+    private static final int FONT_SIZE = 25;
+
     private final JFrame frame;
     private final JComboBox leagueBox;
     private final JComboBox competitionBox;
     private final JLabel resultsLabel;
-    private final String[] stats = {"N", "PLAYER", "COUNT"};
-    private final JTable goalsTable = new JTable(new String[10][3], stats);
-    private final JTable assistsTable = new JTable(new String[10][3], stats);
-    private final JTable ratingsTable = new JTable(new String[10][3], stats);
-    private final JTable cleanSheetsTable = new JTable(new String[10][3], stats);
+    private final JTable goalsTable = new JTable(new String[10][3], STATS);
+    private final JTable assistsTable = new JTable(new String[10][3], STATS);
+    private final JTable ratingsTable = new JTable(new String[10][3], STATS);
+    private final JTable cleanSheetsTable = new JTable(new String[10][3], STATS);
     private final JTable standingsTable;
-
-    private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
-    private static final String FONT_NAME = "Times New Roman";
-    private static final int FONT_SIZE = 19;
+    private final JTable gamesTable;
 
     private static int resultsX;
     private static int resultsY;
@@ -61,6 +71,9 @@ class PremierLeague {
     private static int standingsY;
     private static int standingsWidth;
     private static int standingsHeight;
+    private static int gamesY;
+    private static int gamesWidth;
+    private static int gamesHeight;
     private static int statsFontSize;
     private static int standingsFontSize;
 
@@ -110,11 +123,21 @@ class PremierLeague {
         standingsTable.setEnabled(false);
         standingsTable.setFont(new Font(FONT_NAME, Font.PLAIN, standingsFontSize));
         setJTableColumnsWidth(standingsTable, standingsWidth, 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
-        JScrollPane tableScrollPane = new JScrollPane(standingsTable);
+        JScrollPane standingsPane = new JScrollPane(standingsTable);
         TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
         borderStandings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
-        tableScrollPane.setBorder(borderStandings);
-        tableScrollPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+        standingsPane.setBorder(borderStandings);
+        standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+
+        gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
+        gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
+        gamesTable.setRowHeight(statsHeight / 13);
+        gamesTable.setEnabled(false);
+        gamesTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
+        gamesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        setJTableColumnsWidth(gamesTable, gamesWidth, 70, 30);
+        JScrollPane gamesPane = new JScrollPane(gamesTable);
+        gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
 
         final JButton nextButton = new JButton("Next");
         nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
@@ -123,7 +146,8 @@ class PremierLeague {
         frame.add(competitionBox);
         frame.add(nextButton);
         frame.add(resultsLabel);
-        frame.add(tableScrollPane);
+        frame.add(standingsPane);
+        frame.add(gamesPane);
 
         nextButton.addActionListener(e -> nextRound());
         leagueBox.addActionListener(e -> updateStats());
@@ -153,16 +177,19 @@ class PremierLeague {
         resultsY = height / 15;
         resultsWidth = width / 2;
         resultsHeight = 7 * height / 20;
-        goalsY = 9 * height / 20;
+        goalsY = 33 * height / 80;
         statsWidth = 2 * width / 9;
-        statsHeight = height / 4;
-        assistsY = 7 * height / 10;
+        statsHeight = 27 * height / 100;
+        assistsY = 55 * height / 80;
         cleanSheetsX = 7 * width / 25;
         standingsX = 21 * width / 40;
         standingsY = height / 10;
         standingsWidth = 9 * width / 20;
         standingsHeight = 3 * height / 5;
-        statsFontSize = statsHeight / 15;
+        gamesY = 7 * height / 10;
+        gamesWidth = standingsWidth / 3;
+        gamesHeight = height / 4;
+        statsFontSize = statsHeight / 16;
         standingsFontSize = standingsHeight / 30;
     }
 
@@ -177,27 +204,10 @@ class PremierLeague {
             default: return;
         }
 
-        final Map<Club, Integer> sorted = sortLeague(league);
-        int row = 0;
-        for (final Club team : sorted.keySet()) {
-            final League stats = team.getSeason().getLeague();
-
-            standingsTable.setValueAt("" + (row + 1), row, 0);
-            standingsTable.setValueAt(team.getName(), row, 1);
-            standingsTable.setValueAt("" + stats.getMatches(), row, 2);
-            standingsTable.setValueAt("" + stats.getWins(), row, 3);
-            standingsTable.setValueAt("" + stats.getDraws(), row, 4);
-            standingsTable.setValueAt("" + stats.getLosses(), row, 5);
-            standingsTable.setValueAt("" + stats.getScored(), row, 6);
-            standingsTable.setValueAt("" + stats.getConceded(), row, 7);
-            standingsTable.setValueAt("" + (stats.getScored() - stats.getConceded()), row, 8);
-            standingsTable.setValueAt("" + stats.getPoints(), row++, 9);
-        }
-
-        for (int i = row; i < 20; i++) {
-            for (int j = 0; j < standingsTable.getColumnCount(); j++) {
-                standingsTable.setValueAt("", i, j);
-            }
+        if (String.valueOf(this.competitionBox.getSelectedItem()).equals("League")) {
+            leagueView(league);
+        } else {
+            cupView(league);
         }
 
         playerStats(league, String.valueOf(this.competitionBox.getSelectedItem()).equals("League") ? 0 : 1);
@@ -210,14 +220,80 @@ class PremierLeague {
         System.out.println(Controller.results.get(leagueBox.getSelectedItem()));
     }
 
+    private void leagueView(final Club[] league) {
+        final String leagueName = league[0].getLeague();
+        final Map<Club, Integer> sorted = sortLeague(league);
+        int row = 0;
+        for (final Club team : sorted.keySet()) {
+            final League stats = team.getSeason().getLeague();
+
+            standingsTable.setValueAt(String.valueOf(row + 1), row, 0);
+            standingsTable.setValueAt(team.getName(), row, 1);
+            standingsTable.setValueAt(String.valueOf(stats.getMatches()), row, 2);
+            standingsTable.setValueAt(String.valueOf(stats.getWins()), row, 3);
+            standingsTable.setValueAt(String.valueOf(stats.getDraws()), row, 4);
+            standingsTable.setValueAt(String.valueOf(stats.getLosses()), row, 5);
+            standingsTable.setValueAt(String.valueOf(stats.getScored()), row, 6);
+            standingsTable.setValueAt(String.valueOf(stats.getConceded()), row, 7);
+            standingsTable.setValueAt(String.valueOf((stats.getScored() - stats.getConceded())), row, 8);
+            standingsTable.setValueAt(String.valueOf(stats.getPoints()), row++, 9);
+        }
+
+        for (int i = row; i < 20; i++) {
+            for (int j = 0; j < standingsTable.getColumnCount(); j++) {
+                standingsTable.setValueAt("", i, j);
+            }
+        }
+
+        final int games = homeWins.getOrDefault(leagueName, 0)
+                + draws.getOrDefault(leagueName, 0)
+                + awayWins.getOrDefault(leagueName, 0);
+
+        gamesTable.setValueAt("Games", 0, 0);
+        gamesTable.setValueAt(String.valueOf(games), 0, 1);
+
+        gamesTable.setValueAt("Home Wins", 1, 0);
+        gamesTable.setValueAt(String.valueOf(homeWins.getOrDefault(leagueName, 0)), 1, 1);
+
+        gamesTable.setValueAt("Draws", 2, 0);
+        gamesTable.setValueAt(String.valueOf(draws.getOrDefault(leagueName, 0)), 2, 1);
+
+        gamesTable.setValueAt("Away Wins", 3, 0);
+        gamesTable.setValueAt(String.valueOf(awayWins.getOrDefault(leagueName, 0)), 3, 1);
+
+        gamesTable.setValueAt("Home Goals", 4, 0);
+        gamesTable.setValueAt(String.valueOf(scoredHome.getOrDefault(leagueName, 0)), 4, 1);
+
+        gamesTable.setValueAt("Away Goals", 5, 0);
+        gamesTable.setValueAt(String.valueOf(scoredAway.getOrDefault(leagueName, 0)), 5, 1);
+
+        gamesTable.setValueAt("Assists", 6, 0);
+        gamesTable.setValueAt(String.valueOf(Data.assists.getOrDefault(leagueName, 0)), 6, 1);
+
+        gamesTable.setValueAt("Yellow Cards", 7, 0);
+        gamesTable.setValueAt(String.valueOf(yellowCards.getOrDefault(leagueName, 0)), 7, 1);
+
+        gamesTable.setValueAt("Red Cards", 8, 0);
+        gamesTable.setValueAt(String.valueOf(redCards.getOrDefault(leagueName, 0)), 8, 1);
+
+        gamesTable.setValueAt("Average Ratings", 9, 0);
+        gamesTable.setValueAt(String.valueOf(averageRatings.getOrDefault(leagueName, 0.0f) / (games * 22)), 9, 1);
+
+        gamesTable.setValueAt("Clean Sheets", 10, 0);
+        gamesTable.setValueAt(String.valueOf(Data.cleanSheets.getOrDefault(leagueName, 0)), 10, 1);
+    }
+
+    private void cupView(final Club[] league) {
+    }
+
     private void displayStats(final JTable table, final Map<Footballer, Integer> map) {
         int row = 0;
         for (final Footballer footballer : map.keySet()) {
             if (row > 9 || map.getOrDefault(footballer, 0) == 0) break;
 
-            table.setValueAt("" + (row + 1), row, 0);
+            table.setValueAt(String.valueOf(row + 1), row, 0);
             table.setValueAt(footballer.getName(), row, 1);
-            table.setValueAt("" + map.getOrDefault(footballer, 0), row++, 2);
+            table.setValueAt(String.valueOf(map.getOrDefault(footballer, 0)), row++, 2);
         }
 
         for (int i = row; i < 10; i++) {

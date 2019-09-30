@@ -144,18 +144,18 @@ public class Controller {
                 for (int game = 0; game < 4 / 2; game++) {
                     final int home = draw[round][game][0];
                     final int away = draw[round][game][1];
-                    final int result = simulation(clubs[home], clubs[away], false, -1, -1, 2);
-                    final int homeGoals = result / 100;
-                    final int awayGoals = result % 100;
+                    final int[] result = simulation(clubs[home], clubs[away], false, -1, -1, 2);
+                    final int homeGoals = result[0];
+                    final int awayGoals = result[1];
                     final League homeStats = clubs[home].getSeason().getChampionsLeague().getGroup();
                     final League awayStats = clubs[away].getSeason().getChampionsLeague().getGroup();
 
-                    if (result / 100 > result % 100) {
+                    if (homeGoals > awayGoals) {
                         homeStats.addPoints(3);
                         homeStats.addWin();
                         awayStats.addLoss();
                     }
-                    else if (result / 100 < result % 100) {
+                    else if (homeGoals < awayGoals) {
                         awayStats.addPoints(3);
                         awayStats.addWin();
                         homeStats.addLoss();
@@ -230,12 +230,12 @@ public class Controller {
             final int away = draw[round][game][1];
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
-            final int score = simulation(league[home], league[away], false, -1, -1, 0);
+            final int[] score = simulation(league[home], league[away], false, -1, -1, 0);
 
             scores.append(league[home].getName())
                     .append(" - ").append(league[away].getName())
-                    .append(" ").append(score / 100).append(":")
-                    .append(score % 100).append("<br/>");
+                    .append(" ").append(score[0]).append(":")
+                    .append(score[1]).append("<br/>");
         }
 
         results.put(league[0].getLeague(), scores.toString());
@@ -304,20 +304,19 @@ public class Controller {
         int firstGoals = 0;
         int secondGoals = 0;
 
-        int result;
         if (neutral) FANS = 0;
-        result = simulation(first, second, games == 1 && !replay, -1, -1, type);
+        int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
 
-        firstGoals += result / 100;
-        secondGoals += result % 100;
+        firstGoals += result[0];
+        secondGoals += result[1];
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
             result = simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
-            secondGoals += result / 100;
-            firstGoals += result % 100;
+            secondGoals += result[0];
+            firstGoals += result[1];
 
             if (firstGoals == secondGoals) {
-                if (result % 11 > firstGoals) firstGoals++;
+                if (result[0] + result[1] > firstGoals) firstGoals++;
                 else secondGoals++;
             }
         }

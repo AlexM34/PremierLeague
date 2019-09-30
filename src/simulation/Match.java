@@ -26,6 +26,7 @@ class Match {
     private static final Random random = new Random();
 
     static int competition = 0;
+    static String leagueName;
     static int minute = 1;
     static int stoppage = 0;
     static List<MatchStats> homeSquad = new ArrayList<>();
@@ -35,17 +36,18 @@ class Match {
     static int homeSubs;
     static int awaySubs;
 
-    static int simulation(final Club home, final Club away, final boolean last, final int homeGoals,
+    static int[] simulation(final Club home, final Club away, final boolean last, final int homeGoals,
                           final int awayGoals, final int type) {
         competition = type;
-        final int result = simulateGame(home, away, last, homeGoals, awayGoals);
+        if (competition == 0) leagueName = home.getLeague();
+        final int[] result = simulateGame(home, away, last, homeGoals, awayGoals);
         FANS = 3;
 
-        finalWhistle(home, away, result / 100, result % 100);
+        finalWhistle(home, away, result[0], result[1]);
         return result;
     }
 
-    private static int simulateGame(final Club home, final Club away, final boolean last,
+    private static int[] simulateGame(final Club home, final Club away, final boolean last,
                                     final int aggregateHomeGoals, final int aggregateAwayGoals) {
         kickoff(home, away);
         int homeGoals = 0;
@@ -74,6 +76,7 @@ class Match {
             System.out.println(balance);
             System.out.println(style);
         }
+
         while (minute <= 90 + extra) {
             added = (minute % 45 == 0) ? 2 * minute / 45 : 0;
             stoppage = 0;
@@ -111,9 +114,10 @@ class Match {
                         if (!footballer.isYellowCarded()) {
                             footballer.addYellowCard();
                             balance += (t ? -1 : 1);
-                            if (matchFlag)
+                            if (matchFlag) {
                                 System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
                                         footballer.getFootballer().getName() + " gets a yellow card");
+                            }
                         } else {
                             footballer.addRedCard();
                             balance += (t ? -10 : 10);
@@ -169,7 +173,7 @@ class Match {
             else awayGoals++;
         }
 
-        return homeGoals * 100 + awayGoals;
+        return new int[]{homeGoals, awayGoals};
     }
 
     private static void goalkeeperEjected(final boolean isHome) {
@@ -210,8 +214,8 @@ class Match {
         season.addRating((int) matchStats.getRating() * 100, 1);
         season.addGoals(matchStats.getGoals());
         season.addAssists(matchStats.getAssists());
-        if (matchStats.isYellowCarded()) season.addYellowCards(1);
-        if (matchStats.isRedCarded()) season.addRedCards(1);
+        if (matchStats.isYellowCarded()) season.addYellowCards();
+        if (matchStats.isRedCarded()) season.addRedCards();
     }
 
     private static int getAttack(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {

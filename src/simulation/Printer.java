@@ -16,10 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static players.Position.GK;
-import static simulation.Data.AWAY_WINS;
-import static simulation.Data.HOME_WINS;
 import static simulation.Data.LEAGUES;
-import static simulation.Data.RATINGS;
 import static simulation.Finances.leaguePrizes;
 import static simulation.Utils.sortLeague;
 import static simulation.Utils.sortMap;
@@ -74,13 +71,13 @@ public class Printer {
                     team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
                     stats.getScored(), stats.getConceded(), stats.getPoints()));
         }
-        System.out.println();
-        System.out.println("Total goals for the season: " + goals + " // 1072");
-        System.out.println(HOME_WINS + " - " + (380 - HOME_WINS - AWAY_WINS) +
-                " - " + AWAY_WINS + " // 181 - 71 - 128");
-        System.out.println();
-        System.out.println("Average rating for the season: " + RATINGS / (22 * 380));
-        System.out.println();
+//        System.out.println();
+//        System.out.println("Total goals for the season: " + goals + " // 1072");
+//        System.out.println(homeWins + " - " + (380 - homeWins - awayWins) +
+//                " - " + awayWins + " // 181 - 71 - 128");
+//        System.out.println();
+//        System.out.println("Average rating for the season: " + RATINGS / (22 * 380));
+//        System.out.println();
 
         final Club first = sorted.keySet().toArray(new Club[0])[0];
 
