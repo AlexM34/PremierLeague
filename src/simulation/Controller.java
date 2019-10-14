@@ -1,12 +1,14 @@
 package simulation;
 
+import competitions.England;
+import competitions.Spain;
 import teams.Club;
 import teams.League;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
 
 import static simulation.Data.FANS;
@@ -30,7 +32,6 @@ import static simulation.Transfers.transfers;
 import static simulation.Utils.sortMap;
 
 public class Controller {
-    private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
 
     private static final boolean userFlag = false;
@@ -38,8 +39,10 @@ public class Controller {
     static final boolean matchFlag = false;
     private static int year = 0;
     private static int round = 0;
-    private static Map<Club[], int[][][]> draw = new HashMap<>();
-    public static Map<String, String> results = new HashMap<>();
+    private static Map<String, int[][][]> draw = new HashMap<>();
+    private static Map<String, Club[]> nationalCup = new HashMap<>();
+    public static Map<String, String> leagueResults = new HashMap<>();
+    public static Map<String, String> nationalCupResults = new HashMap<>();
 
     public static void initialise() {
         buildSquads();
@@ -47,13 +50,18 @@ public class Controller {
     }
 
     public static void proceed() {
-        results = new HashMap<>();
+        leagueResults = new HashMap<>();
 
         if (round == 0) {
             prepare(year);
             if (userFlag) pickTeam();
+
             draw = new HashMap<>();
-            for (final Club[] league : LEAGUES) draw.put(league, league(league.length));
+
+            for (final Club[] league : LEAGUES) {
+                draw.put(league[0].getLeague(), league(league.length));
+                nationalCup.put(league[0].getLeague(), cup(league));
+            }
         }
 
         for (int team = 0; team < 6; team++) {
@@ -68,7 +76,16 @@ public class Controller {
         }
 
         for (final Club[] league : LEAGUES) {
-            if (round < 34 || league.length > 18) play(league, draw.get(league), round);
+            if (round < 34 || league.length > 18) play(league, draw.get(league[0].getLeague()), round);
+        }
+
+        if (round % 8 == 7) {
+            nationalCupResults = new HashMap<>();
+            for (final Club[] league : LEAGUES) {
+                final String leagueName = league[0].getLeague();
+                nationalCup.put(leagueName, knockoutRound(nationalCup.get(leagueName),
+                        leagueName.equals(Spain.LEAGUE) ? 2 : 1, 1, leagueName.equals(England.LEAGUE)));
+            }
         }
 
         if (++round == 38) {
@@ -238,7 +255,7 @@ public class Controller {
                     .append(score[1]).append("<br/>");
         }
 
-        results.put(league[0].getLeague(), scores.toString());
+        leagueResults.put(league[0].getLeague(), scores.toString());
         if (round < 2 * league.length - 3 && standingsFlag) {
             System.out.println();
             System.out.println(String.format("Standings after round %d:", round + 1));
@@ -248,23 +265,11 @@ public class Controller {
         System.out.println();
     }
 
-    private static Club cup(final Club[] league, final int teams, final int games, final boolean replay) {
-        int count = 0;
-        final Club[] selected = new Club[teams];
-        final boolean[] playing = new boolean[league.length];
-        while (count < teams) {
-            while (true) {
-                final int r = random.nextInt(league.length);
-                if (!playing[r]) {
-                    selected[count++] = league[r];
-                    if (standingsFlag) System.out.println(selected[count - 1]);
-                    playing[r] = true;
-                    break;
-                }
-            }
-        }
+    private static Club[] cup(final Club[] league) {
+        final Club[] selected = new Club[16];
+        System.arraycopy(league, 0, selected, 0, 16);
 
-        return knockout(selected, games, 1, replay);
+        return selected;
     }
 
     private static Club knockout(final Club[] selected, final int games, final int type, final boolean replay) {
@@ -299,6 +304,22 @@ public class Controller {
         return selected[0];
     }
 
+    private static Club[] knockoutRound(final Club[] clubs, final int games, final int type, final boolean replay) {
+        final int count = clubs.length;
+
+        for (int team = 0; team < count / 2; team++) {
+            if (knockoutFixture(clubs[team], clubs[count - team - 1], round < Math.sqrt(count)
+                    ? games : 1, type, replay && count >= 8, round == Math.sqrt(count))) {
+
+                final Club swap = clubs[team];
+                clubs[team] = clubs[count - team - 1];
+                clubs[count - team - 1] = swap;
+            }
+        }
+
+        return Arrays.copyOf(clubs, count / 2);
+    }
+
     private static boolean knockoutFixture(final Club first, final Club second, final int games,
                                            final int type, final boolean replay, final boolean neutral) {
         int firstGoals = 0;
@@ -306,12 +327,22 @@ public class Controller {
 
         if (neutral) FANS = 0;
         int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
+        final StringBuilder scores = new StringBuilder(nationalCupResults.getOrDefault(first.getLeague(), ""));
+        scores.append(first.getName())
+                .append(" - ").append(second.getName())
+                .append(" ").append(result[0]).append(":")
+                .append(result[1]).append("<br/>");
 
         firstGoals += result[0];
         secondGoals += result[1];
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
             result = simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
+            scores.append(second.getName())
+                    .append(" - ").append(first.getName())
+                    .append(" ").append(result[0]).append(":")
+                    .append(result[1]).append("<br/>");
+
             secondGoals += result[0];
             firstGoals += result[1];
 
@@ -320,6 +351,8 @@ public class Controller {
                 else secondGoals++;
             }
         }
+
+        nationalCupResults.put(first.getLeague(), scores.toString());
 
         return secondGoals > firstGoals;
     }

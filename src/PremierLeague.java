@@ -22,6 +22,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Font;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import static simulation.Data.averageRatings;
@@ -35,13 +36,15 @@ import static simulation.Data.yellowCards;
 import static simulation.Printer.assists;
 import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
-import static simulation.Printer.ratings;
 import static simulation.Printer.playerStats;
+import static simulation.Printer.ratings;
 import static simulation.Utils.sortLeague;
 
 class PremierLeague {
     // TODO: Name of the app
     // TODO: Cup and CL
+    // TODO: Update CSV file
+    // TODO: Ignore class files
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
     private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
     private static final String FONT_NAME = "Times New Roman";
@@ -57,6 +60,7 @@ class PremierLeague {
     private final JTable cleanSheetsTable = new JTable(new String[10][3], STATS);
     private final JTable standingsTable;
     private final JTable gamesTable;
+    private final DecimalFormat df = new DecimalFormat("#,##0.00");
 
     private static int resultsX;
     private static int resultsY;
@@ -211,13 +215,10 @@ class PremierLeague {
         }
 
         playerStats(league, String.valueOf(this.competitionBox.getSelectedItem()).equals("League") ? 0 : 1);
-        displayStats(goalsTable, goals);
-        displayStats(assistsTable, assists);
-        displayStats(ratingsTable, ratings);
-        displayStats(cleanSheetsTable, cleanSheets);
-
-        resultsLabel.setText("<html>" + Controller.results.getOrDefault(leagueBox.getSelectedItem(), "") + "</html>");
-        System.out.println(Controller.results.get(leagueBox.getSelectedItem()));
+        displayStats(goalsTable, goals, false);
+        displayStats(assistsTable, assists, false);
+        displayStats(ratingsTable, ratings, true);
+        displayStats(cleanSheetsTable, cleanSheets, false);
     }
 
     private void leagueView(final Club[] league) {
@@ -277,23 +278,33 @@ class PremierLeague {
         gamesTable.setValueAt(String.valueOf(redCards.getOrDefault(leagueName, 0)), 8, 1);
 
         gamesTable.setValueAt("Average Ratings", 9, 0);
-        gamesTable.setValueAt(String.valueOf(averageRatings.getOrDefault(leagueName, 0.0f) / (games * 22)), 9, 1);
+        gamesTable.setValueAt(df.format(averageRatings.getOrDefault(leagueName, 0.0f) / (games * 22)), 9, 1);
 
         gamesTable.setValueAt("Clean Sheets", 10, 0);
         gamesTable.setValueAt(String.valueOf(Data.cleanSheets.getOrDefault(leagueName, 0)), 10, 1);
+
+        resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(leagueBox.getSelectedItem(), "") + "</html>");
+        System.out.println(Controller.leagueResults.get(leagueBox.getSelectedItem()));
     }
 
     private void cupView(final Club[] league) {
+        resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(leagueBox.getSelectedItem(), "") + "</html>");
+        System.out.println(Controller.nationalCupResults.get(leagueBox.getSelectedItem()));
     }
 
-    private void displayStats(final JTable table, final Map<Footballer, Integer> map) {
+    private void displayStats(final JTable table, final Map<Footballer, Integer> map, final boolean format) {
         int row = 0;
         for (final Footballer footballer : map.keySet()) {
             if (row > 9 || map.getOrDefault(footballer, 0) == 0) break;
 
             table.setValueAt(String.valueOf(row + 1), row, 0);
             table.setValueAt(footballer.getName(), row, 1);
-            table.setValueAt(String.valueOf(map.getOrDefault(footballer, 0)), row++, 2);
+
+            if (format) {
+                table.setValueAt(String.valueOf(df.format((float) map.getOrDefault(footballer, 0) / 100)), row++, 2);
+            } else {
+                table.setValueAt(String.valueOf(map.getOrDefault(footballer, 0)), row++, 2);
+            }
         }
 
         for (int i = row; i < 10; i++) {
