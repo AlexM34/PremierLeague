@@ -19,14 +19,14 @@ class Performance {
         final List<MatchStats> squad = isHome ? Match.homeSquad : Match.awaySquad;
 
         for (int player = 0; player < 11; player++) {
-            if (squad.get(player).isRedCarded()) continue;
+            if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
             scoring += scoringChance(squad.get(player).getFootballer());
             assisting += assistingChance(squad.get(player).getFootballer());
         }
 
         int r = random.nextInt(scoring);
         for (int player = 0; player < 11; player++) {
-            if (squad.get(player).isRedCarded()) continue;
+            if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
             r -= scoringChance(squad.get(player).getFootballer());
             if (r < 0) {
                 goalscorer = squad.get(player).getFootballer();
@@ -44,7 +44,7 @@ class Performance {
         else {
             r = random.nextInt(assisting);
             for (int player = 0; player < 11; player++) {
-                if (squad.get(player).isRedCarded()) continue;
+                if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
                 r -= assistingChance(squad.get(player).getFootballer());
                 if (r < 0) {
                     assistmaker = squad.get(player).getFootballer();

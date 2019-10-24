@@ -17,13 +17,11 @@ class Draw {
 
             while (true) {
                 if (!drawn[current]) {
-                    if (r == 0) {
+                    if (r-- == 0) {
                         drawn[current] = true;
                         draw[team] = current;
                         break;
                     }
-
-                    r--;
                 }
 
                 current++;
@@ -71,14 +69,12 @@ class Draw {
 
             while (true) {
                 if (!drawn[current]) {
-                    if (r == 0) {
+                    if (r-- == 0) {
                         drawn[current] = true;
                         draw[current] = advanced[team];
 //                        System.out.println("Draws " + current);
                         break;
                     }
-
-                    r--;
                 }
 
                 current++;

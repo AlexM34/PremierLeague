@@ -102,7 +102,7 @@ class PremierLeague {
         leagueBox.setBounds(2 * width / 5, height / 80, width / 11, height / 16);
         leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] competitions = {"League", "Cup"};
+        String[] competitions = {"League", "League Cup", "National Cup"};
         competitionBox = new JComboBox(competitions);
         competitionBox.setBounds(10 * width / 20, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
@@ -145,6 +145,7 @@ class PremierLeague {
 
         final JButton nextButton = new JButton("Next");
         nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
+        nextButton.setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
 
         frame.add(leagueBox);
         frame.add(competitionBox);
@@ -211,7 +212,7 @@ class PremierLeague {
         if (String.valueOf(this.competitionBox.getSelectedItem()).equals("League")) {
             leagueView(league);
         } else {
-            cupView(league);
+            cupView(league, this.competitionBox.getSelectedItem().equals("League Cup"));
         }
 
         playerStats(league, String.valueOf(this.competitionBox.getSelectedItem()).equals("League") ? 0 : 1);
@@ -245,6 +246,8 @@ class PremierLeague {
                 standingsTable.setValueAt("", i, j);
             }
         }
+
+        if (homeWins == null) return;
 
         final int games = homeWins.getOrDefault(leagueName, 0)
                 + draws.getOrDefault(leagueName, 0)
@@ -283,13 +286,19 @@ class PremierLeague {
         gamesTable.setValueAt("Clean Sheets", 10, 0);
         gamesTable.setValueAt(String.valueOf(Data.cleanSheets.getOrDefault(leagueName, 0)), 10, 1);
 
-        resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(leagueBox.getSelectedItem(), "") + "</html>");
-        System.out.println(Controller.leagueResults.get(leagueBox.getSelectedItem()));
+        resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(leagueName, "") + "</html>");
+        System.out.println(Controller.leagueResults.get(leagueName));
     }
 
-    private void cupView(final Club[] league) {
-        resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(leagueBox.getSelectedItem(), "") + "</html>");
-        System.out.println(Controller.nationalCupResults.get(leagueBox.getSelectedItem()));
+    private void cupView(final Club[] league, final boolean leagueCup) {
+        final String leagueName = league[0].getLeague();
+        if (leagueCup) {
+            resultsLabel.setText("<html>" + Controller.leagueCupResults.getOrDefault(leagueName, "") + "</html>");
+            System.out.println(Controller.leagueCupResults.get(leagueName));
+        } else {
+            resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(leagueName, "") + "</html>");
+            System.out.println(Controller.nationalCupResults.get(leagueName));
+        }
     }
 
     private void displayStats(final JTable table, final Map<Footballer, Integer> map, final boolean format) {

@@ -142,14 +142,14 @@ public class Printer {
         ratings = sortMap(ratings);
         cleanSheets = sortMap(cleanSheets);
 
-        System.out.println();
-        topPlayers(ratings, "Top Players");
-        topPlayers(motm, "Most MOTM Awards");
-        topPlayers(goals, "Top Goalscorer");
-        topPlayers(assists, "Most Assists");
-        topPlayers(cleanSheets, "Most Clean Sheets");
-        topPlayers(yellowCards, "Most Yellow Cards");
-        topPlayers(redCards, "Most Red Cards");
+//        System.out.println();
+//        topPlayers(ratings, "Top Players");
+//        topPlayers(motm, "Most MOTM Awards");
+//        topPlayers(goals, "Top Goalscorer");
+//        topPlayers(assists, "Most Assists");
+//        topPlayers(cleanSheets, "Most Clean Sheets");
+//        topPlayers(yellowCards, "Most Yellow Cards");
+//        topPlayers(redCards, "Most Red Cards");
 
 //        pickTeam(topTeam, type == 0);
     }

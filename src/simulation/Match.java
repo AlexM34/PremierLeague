@@ -12,6 +12,7 @@ import java.util.Random;
 
 import static simulation.Controller.matchFlag;
 import static simulation.Data.FANS;
+import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
 import static simulation.Performance.goal;
@@ -221,11 +222,13 @@ class Match {
     private static int getAttack(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {
         int attack = 0;
         int defence = 0;
-        for (final MatchStats footballer : homeSquad) {
+        for (MatchStats footballer : homeSquad) {
+            if (footballer == null) footballer = new MatchStats(MIDFIELDER_1, 0);
             attack += footballer.getFootballer().getOverall() * footballer.getFootballer().getPosition().getAttackingDuty();
         }
 
-        for (final MatchStats footballer : awaySquad) {
+        for (MatchStats footballer : awaySquad) {
+            if (footballer == null) footballer = new MatchStats(MIDFIELDER_1, 0);
             defence += footballer.getFootballer().getOverall() * (5 - footballer.getFootballer().getPosition().getAttackingDuty());
         }
 

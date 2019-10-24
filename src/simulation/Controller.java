@@ -1,16 +1,20 @@
 package simulation;
 
 import competitions.England;
+import competitions.France;
 import competitions.Spain;
+import players.Footballer;
 import teams.Club;
 import teams.League;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import static java.util.Collections.shuffle;
 import static simulation.Data.FANS;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
@@ -41,10 +45,13 @@ public class Controller {
     private static int round = 0;
     private static Map<String, int[][][]> draw = new HashMap<>();
     private static Map<String, Club[]> nationalCup = new HashMap<>();
+    private static Map<String, Club[]> leagueCup = new HashMap<>();
     public static Map<String, String> leagueResults = new HashMap<>();
     public static Map<String, String> nationalCupResults = new HashMap<>();
+    public static Map<String, String> leagueCupResults = new HashMap<>();
 
     public static void initialise() {
+//        extractData();
         buildSquads();
         addDummies();
     }
@@ -59,19 +66,12 @@ public class Controller {
             draw = new HashMap<>();
 
             for (final Club[] league : LEAGUES) {
-                draw.put(league[0].getLeague(), league(league.length));
-                nationalCup.put(league[0].getLeague(), cup(league));
-            }
-        }
-
-        for (int team = 0; team < 6; team++) {
-            for (final Club[] clubs : LEAGUES) {
-                final Club squad = clubs[team];
-                System.out.println(squad.getBudget());
-                squad.getFootballers().forEach(footballer ->
-                        System.out.println(footballer.getName() + ", " + footballer.getPosition() + ", " +
-                                footballer.getOverall() + ", " + footballer.getPotential() + ", " +
-                                footballer.getAge() + " => " + (int) footballer.getValue()));
+                final String leagueName = league[0].getLeague();
+                draw.put(leagueName, league(league.length));
+                nationalCup.put(leagueName, cup(league));
+                if (leagueName.equals("Premier League") || leagueName.equals("Ligue 1")) {
+                    leagueCup.put(leagueName, cup(league));
+                }
             }
         }
 
@@ -79,18 +79,44 @@ public class Controller {
             if (round < 34 || league.length > 18) play(league, draw.get(league[0].getLeague()), round);
         }
 
+        if (round % 8 == 3) {
+            leagueCupResults = new HashMap<>();
+            for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
+                final String leagueName = league[0].getLeague();
+                leagueCup.put(leagueName, knockoutRound(leagueCup.get(leagueName),
+                        1, 1, false, true));
+            }
+        }
+
         if (round % 8 == 7) {
             nationalCupResults = new HashMap<>();
             for (final Club[] league : LEAGUES) {
                 final String leagueName = league[0].getLeague();
                 nationalCup.put(leagueName, knockoutRound(nationalCup.get(leagueName),
-                        leagueName.equals(Spain.LEAGUE) ? 2 : 1, 1, leagueName.equals(England.LEAGUE)));
+                        leagueName.equals(Spain.LEAGUE) ? 2 : 1, 1, leagueName.equals(England.LEAGUE), false));
             }
         }
 
         if (++round == 38) {
             round = 0;
             for (final Club[] league : LEAGUES) {
+                final String leagueName = league[0].getLeague();
+                final Club leagueCupWinner = leagueCup.get(leagueName)[0];
+                if (leagueCupWinner != null) {
+                    System.out.println(leagueCupWinner.getName() + " win the League Cup!");
+                    leagueCupWinner.getGlory().addLeagueCup();
+                    for (final Footballer footballer : leagueCupWinner.getFootballers()) {
+                        footballer.getResume().getGlory().addLeagueCup();
+                    }
+                }
+
+                final Club nationalCupWinner = leagueCup.get(leagueName)[0];
+                System.out.println(nationalCupWinner.getName() + " win the National Cup!");
+                nationalCupWinner.getGlory().addNationalCup();
+                for (final Footballer footballer : nationalCupWinner.getFootballers()) {
+                    footballer.getResume().getGlory().addNationalCup();
+                }
+
                 profits(league);
                 salaries(league);
             }
@@ -103,28 +129,6 @@ public class Controller {
             transfers();
         }
 
-//        for (final Club[] league : LEAGUES) {
-//            final Club nationalCupWinner = cup(league, 16,
-//                    league[0].getLeague().equals(Spain.LEAGUE) ? 2 : 1,
-//                    league[0].getLeague().equals(England.LEAGUE));
-//            System.out.println(nationalCupWinner.getName() + " win the National Cup!");
-//            nationalCupWinner.getGlory().addNationalCup();
-//            for (final Footballer footballer : nationalCupWinner.getFootballers()) {
-//                footballer.getResume().getGlory().addNationalCup();
-//            }
-//
-//            if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
-//                final Club leagueCupWinner = cup(league, 16, 1, false);
-//                System.out.println(leagueCupWinner.getName() + " win the League Cup!");
-//                leagueCupWinner.getGlory().addLeagueCup();
-//                for (final Footballer footballer : leagueCupWinner.getFootballers()) {
-//                    footballer.getResume().getGlory().addLeagueCup();
-//                }
-//            }
-//
-//            playerStats(league, 1);
-//        }
-//
 //        CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
 //        for (final Club team : CHAMPIONS_LEAGUE) {
 //            team.getSeason().getChampionsLeague().setAlive(true);
@@ -149,7 +153,7 @@ public class Controller {
 
         final int[][][] draw = league(4);
         for (int group = 0; group < groups; group++) {
-            System.out.println("GROUP " + (char)('A' + group));
+            System.out.println("GROUP " + (char) ('A' + group));
 
             final Club[] clubs = new Club[4];
             for (int team = 0; team < 4; team++) clubs[team] = teams[groups * team + group];
@@ -171,13 +175,11 @@ public class Controller {
                         homeStats.addPoints(3);
                         homeStats.addWin();
                         awayStats.addLoss();
-                    }
-                    else if (homeGoals < awayGoals) {
+                    } else if (homeGoals < awayGoals) {
                         awayStats.addPoints(3);
                         awayStats.addWin();
                         homeStats.addLoss();
-                    }
-                    else {
+                    } else {
                         homeStats.addPoints(1);
                         awayStats.addPoints(1);
                         homeStats.addDraw();
@@ -197,16 +199,17 @@ public class Controller {
             }
 
             final Map<Club, Integer> standing = new LinkedHashMap<>();
-            for (int team = 0; team < 4; team++) standing.put(clubs[team],
-                    10000 * clubs[team].getSeason().getChampionsLeague().getGroup().getPoints() +
-                    100 * (clubs[team].getSeason().getChampionsLeague().getGroup().getScored() -
-                           clubs[team].getSeason().getChampionsLeague().getGroup().getConceded()) +
-                    clubs[team].getSeason().getChampionsLeague().getGroup().getScored());
+            for (int team = 0; team < 4; team++)
+                standing.put(clubs[team],
+                        10000 * clubs[team].getSeason().getChampionsLeague().getGroup().getPoints() +
+                                100 * (clubs[team].getSeason().getChampionsLeague().getGroup().getScored() -
+                                        clubs[team].getSeason().getChampionsLeague().getGroup().getConceded()) +
+                                clubs[team].getSeason().getChampionsLeague().getGroup().getScored());
 
             final Map<Club, Integer> sorted = sortMap(standing);
 
             System.out.println();
-            System.out.println("Standings for group " + (char)('A' + group));
+            System.out.println("Standings for group " + (char) ('A' + group));
             System.out.println("No  Teams                     G  W  D  L  GF:GA  P");
             final Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
             for (int team = 0; team < sorted.size(); team++) {
@@ -230,10 +233,11 @@ public class Controller {
         System.out.println("Pick a team from 1 to 20");
         while (true) {
             final int team = scanner.nextInt();
-            if(team < 0 || team > 20) {
+            if (team < 0 || team > 20) {
                 System.out.println("Wrong team number.");
                 continue;
             }
+
             USER = team - 1;
             break;
         }
@@ -278,17 +282,25 @@ public class Controller {
         for (int round = 1; round <= Math.sqrt(selected.length); round++) {
             System.out.println();
             switch (count) {
-                case 2: System.out.println("FINAL"); break;
-                case 4: System.out.println("SEMI-FINALS"); break;
-                case 8: System.out.println("QUARTER-FINALS"); break;
-                default: System.out.println("ROUND OF " + count); break;
+                case 2:
+                    System.out.println("FINAL");
+                    break;
+                case 4:
+                    System.out.println("SEMI-FINALS");
+                    break;
+                case 8:
+                    System.out.println("QUARTER-FINALS");
+                    break;
+                default:
+                    System.out.println("ROUND OF " + count);
+                    break;
             }
 
             System.out.println();
 
             for (int team = 0; team < count / 2; team++) {
                 if (knockoutFixture(selected[team], selected[count - team - 1], round < Math.sqrt(selected.length)
-                        ? games : 1, type, replay && count >= 8, round == Math.sqrt(selected.length))) {
+                        ? games : 1, type, replay && count >= 8, round == Math.sqrt(selected.length), false)) {
                     Club swap = selected[team];
                     selected[team] = selected[count - team - 1];
                     selected[count - team - 1] = swap;
@@ -304,30 +316,33 @@ public class Controller {
         return selected[0];
     }
 
-    private static Club[] knockoutRound(final Club[] clubs, final int games, final int type, final boolean replay) {
+    private static Club[] knockoutRound(final Club[] clubs, final int games, final int type,
+                                        final boolean replay, final boolean leagueCup) {
         final int count = clubs.length;
 
+        final List<Club> draw = Arrays.asList(clubs);
+        shuffle(draw);
         for (int team = 0; team < count / 2; team++) {
-            if (knockoutFixture(clubs[team], clubs[count - team - 1], round < Math.sqrt(count)
-                    ? games : 1, type, replay && count >= 8, round == Math.sqrt(count))) {
-
-                final Club swap = clubs[team];
-                clubs[team] = clubs[count - team - 1];
-                clubs[count - team - 1] = swap;
+            if (knockoutFixture(draw.get(team), draw.get(count - team - 1), round < Math.sqrt(count)
+                    ? games : 1, type, replay && count >= 8, round == Math.sqrt(count), leagueCup)) {
+                clubs[team] = draw.get(count - team - 1);
+            } else {
+                clubs[team] = draw.get(team);
             }
         }
 
         return Arrays.copyOf(clubs, count / 2);
     }
 
-    private static boolean knockoutFixture(final Club first, final Club second, final int games,
-                                           final int type, final boolean replay, final boolean neutral) {
+    private static boolean knockoutFixture(final Club first, final Club second, final int games, final int type,
+                                           final boolean replay, final boolean neutral, final boolean leagueCup) {
         int firstGoals = 0;
         int secondGoals = 0;
 
         if (neutral) FANS = 0;
         int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
-        final StringBuilder scores = new StringBuilder(nationalCupResults.getOrDefault(first.getLeague(), ""));
+        Map<String, String> results = leagueCup ? leagueCupResults : nationalCupResults;
+        final StringBuilder scores = new StringBuilder(results.getOrDefault(first.getLeague(), ""));
         scores.append(first.getName())
                 .append(" - ").append(second.getName())
                 .append(" ").append(result[0]).append(":")
@@ -352,7 +367,7 @@ public class Controller {
             }
         }
 
-        nationalCupResults.put(first.getLeague(), scores.toString());
+        results.put(first.getLeague(), scores.toString());
 
         return secondGoals > firstGoals;
     }

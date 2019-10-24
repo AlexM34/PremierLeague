@@ -60,6 +60,7 @@ class Rater {
 
     private static void updateRating(final List<MatchStats> squad, final float change) {
         final int player = random.nextInt(11);
+        if (squad.get(player) == null) return;
         float overall = squad.get(player).getFootballer().getOverall() *
                 squad.get(player).getFootballer().getOverall() / 6000;
 
@@ -68,10 +69,10 @@ class Rater {
     }
 
     static void finalWhistle(final Club home, final Club away, final int homeGoals, final int awayGoals) {
-        if (awayGoals == 0) getCompetition(Match.homeSquad.get(0).getFootballer().getResume()
-                .getSeason(), Match.competition).addCleanSheets(1);
-        if (homeGoals == 0) getCompetition(Match.awaySquad.get(0).getFootballer().getResume()
-                .getSeason(), Match.competition).addCleanSheets(1);
+        if (Match.homeSquad.get(0) != null && awayGoals == 0) getCompetition(Match.homeSquad.get(0)
+                .getFootballer().getResume().getSeason(), Match.competition).addCleanSheets(1);
+        if (Match.awaySquad.get(0) != null && homeGoals == 0) getCompetition(Match.awaySquad.get(0)
+                .getFootballer().getResume().getSeason(), Match.competition).addCleanSheets(1);
 
         motmPlayer = Match.homeSquad.get(0);
         motmRating = 0;
@@ -91,6 +92,8 @@ class Rater {
     }
 
     private static void updateStats(final MatchStats matchStats) {
+        if (matchStats == null) return;
+
         if (matchStats.getRating() > motmRating) {
             motmPlayer = matchStats;
             motmRating = matchStats.getRating();

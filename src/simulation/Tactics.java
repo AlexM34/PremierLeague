@@ -138,7 +138,7 @@ class Tactics {
             }
         }
 
-        System.out.println("Could not pick an appropriate formation");
+        System.out.println("Could not pick appropriate formation");
         for (final Footballer f : footballers) {
             System.out.println(f.getName() + " " + f.getPosition().getRole() + " " + f.getCondition());
         }

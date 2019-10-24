@@ -9,8 +9,8 @@ public class Footballer {
     private final String nationality;
     private int overall;
     private int potential;
-    private float value;
-    private float wage;
+    private long value;
+    private long wage;
     private Position position;
     private int number;
     private int finishing;
@@ -20,7 +20,7 @@ public class Footballer {
     private int ban;
 
     public Footballer(final int id, final String name, final int age, final String nationality, final int overall,
-                      final int potential, final float value, final float wage, final Position position,
+                      final int potential, final long value, final long wage, final Position position,
                       final int number, final int finishing, final int vision, final Resume resume) {
         this.id = id;
         this.name = name;
@@ -75,7 +75,7 @@ public class Footballer {
         this.potential += change;
     }
 
-    public float getValue() {
+    public long getValue() {
         int overall = getOverall() - 70;
         overall = overall > 4 ? overall * overall * overall / 100 : 1;
         float age = getAge() != 27 ? (float) Math.sqrt(Math.abs(27 - getAge())) : 1;
@@ -85,11 +85,11 @@ public class Footballer {
         float potential = (getPotential() - getOverall()) / 3;
         potential = potential > 1 ? (float) Math.sqrt(potential) : 1;
 
-        value = overall * age * position * potential;
+        value = (long) (overall * age * position * potential);
         return value;
     }
 
-    void setValue(final float value) {
+    void setValue(final long value) {
         this.value = value;
     }
 
@@ -97,7 +97,7 @@ public class Footballer {
         return wage;
     }
 
-    void setWage(final float wage) {
+    void setWage(final long wage) {
         this.wage = wage;
     }
 

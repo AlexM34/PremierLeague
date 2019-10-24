@@ -164,8 +164,8 @@ class PreSeason {
         final String nationality = Data.NATIONS[random.nextInt(Data.NATIONS.length)];
         int overall = 60 + random.nextInt(10);
         int potential = overall + random.nextInt(15) + 10;
-        float value = 3;
-        float wage = 1;
+        long value = 3;
+        long wage = 1;
         final Position.Role finalRole = role;
         Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
         Position position = (Position) positions[random.nextInt(positions.length)];

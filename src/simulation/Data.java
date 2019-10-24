@@ -68,7 +68,7 @@ public class Data {
             0, 0, Position.ST, 106, 20, 20, new Resume());
 
     static void extractData() {
-        final String fileName = "data/csv";
+        final String fileName = "data/data.csv";
         final File data = new File(fileName);
         try {
             for (final Club[] league : LEAGUES) {
@@ -109,16 +109,48 @@ public class Data {
 
                     while (inputStream.hasNextLine()) {
                         final String footballer = inputStream.nextLine();
-                        final String[] values = footballer.split(",");
+//                        System.out.println(footballer);
+                        final String[] v = footballer.split("\"");
+//                        System.out.println(v[1]);
+//                        System.out.println(v[3]);
+//                        System.out.println(v[5]);
+                        for (int i = 1; i < v.length; i += 2) {
+                            v[i] = v[i].replace(",", "|");
+                        }
+//                        System.out.println(v[1]);
+//                        System.out.println(v[3]);
+//                        System.out.println(v[5]);
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < v.length; i++) {
+//                            System.out.println(v[i]);
+                            sb.append(v[i]);
+                        }
+
+                        final String ff = sb.toString();
+//                        System.out.println(ff);
+                        final String[] values = ff.split(",");
+
+//                        System.out.println("values");
+                        for (int i = 0; i < values.length; i++) {
+//                            System.out.println(values[i]);
+                        }
 
                         if (club.getName().equals(values[9])) {
-                            club.addFootballer(new Footballer(Integer.parseInt(values[0]), values[2], Integer.parseInt(values[3]), values[5],
-                                    Integer.parseInt(values[7]), Integer.parseInt(values[8]),
-                                    values[11].substring(1, values[11].length() - 1).length() > 0 ? Float.parseFloat(values[11].substring(1, values[11].length() - 1)) : 0,
-                                    values[11].substring(1, values[11].length() - 1).length() > 0 ? Float.parseFloat(values[12].substring(1, values[12].length() - 1)) : 0,
-                                    Position.valueOf(values[21]), Integer.parseInt(values[22]),
-                                    Integer.parseInt(values[56]), Integer.parseInt(values[78]),
-                                    new Resume()));
+//                            System.out.println("position " + values[14].split("\\|")[0]);
+//                            System.out.println(values[23]);
+//                            System.out.println(values[24]);
+//                            System.out.println(values[25]);
+                            final Footballer f = new Footballer(Integer.parseInt(values[0]), values[2],
+                                    Integer.parseInt(values[4]), values[8],
+                                    Integer.parseInt(values[10]), Integer.parseInt(values[11]),
+                                    Long.parseLong(values[12]), Long.parseLong(values[13]),
+                                    Position.valueOf(values[14].split("\\|")[0]), Integer.parseInt(values[25]),
+                                    Integer.parseInt(values[45]), Integer.parseInt(values[67]),
+                                    new Resume());
+
+//                            System.out.println(f);
+                            club.addFootballer(f);
                         }
                     }
                 }
