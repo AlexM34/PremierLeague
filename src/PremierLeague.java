@@ -9,11 +9,16 @@ import simulation.Data;
 import teams.Club;
 import teams.League;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -22,8 +27,10 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Font;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Map;
+import java.util.Random;
 
 import static simulation.Data.averageRatings;
 import static simulation.Data.awayWins;
@@ -42,8 +49,7 @@ import static simulation.Utils.sortLeague;
 
 class PremierLeague {
     // TODO: Name of the app
-    // TODO: Cup and CL
-    // TODO: Update CSV file
+    // TODO: Champions League
     // TODO: Ignore class files
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
     private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
@@ -80,6 +86,7 @@ class PremierLeague {
     private static int gamesHeight;
     private static int statsFontSize;
     private static int standingsFontSize;
+    private static int song = 0;
 
     private PremierLeague() {
         Controller.initialise();
@@ -158,6 +165,7 @@ class PremierLeague {
         leagueBox.addActionListener(e -> updateStats());
         competitionBox.addActionListener(e -> updateStats());
 
+        playMusic();
         updateStats();
     }
 
@@ -339,6 +347,33 @@ class PremierLeague {
             TableColumn column = table.getColumnModel().getColumn(i);
             column.setPreferredWidth((int)
                     (tablePreferredWidth * (percentages[i] / total)));
+        }
+    }
+
+    private void playMusic() {
+        int r;
+        do {
+            r = new Random().nextInt(5) + 1;
+        } while (r == song);
+
+        song = r;
+        final String fileName = song + ".wav";
+        try {
+            final URL url = getClass().getResource(fileName);
+            final AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
+
+            final Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+
+            clip.loop(0);
+            clip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    playMusic();
+                }
+            });
+
+        } catch (final Exception e) {
+            JOptionPane.showMessageDialog(null, e.getLocalizedMessage());
         }
     }
 
