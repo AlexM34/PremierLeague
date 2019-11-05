@@ -8,7 +8,6 @@ import players.Statistics;
 import teams.Club;
 import teams.League;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -166,7 +165,8 @@ class Rater {
     static Competition getCompetition(final Statistics season, final int type) {
         switch (type) {
             case 0: return season.getLeague();
-            case 1: return season.getCup();
+            case 1:
+            case 2: return season.getCup();
             default: return season.getContinental();
         }
     }
@@ -221,7 +221,7 @@ class Rater {
     }
 
     static void topPlayers(final Club[] clubs) {
-        contenders = new HashMap<>();
+        contenders.clear();
 
         for (int i = 0; i < clubs.length; i++) {
             for (Footballer footballer : clubs[i].getFootballers()) {

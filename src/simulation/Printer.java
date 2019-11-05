@@ -23,7 +23,6 @@ import static simulation.Utils.sortMap;
 
 public class Printer {
     private static final Random random = new Random();
-    static int offset;
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
     private static Map<Footballer, Integer> motm = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
@@ -32,8 +31,9 @@ public class Printer {
     private static Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
     private static Map<Footballer, Integer> redCards = new LinkedHashMap<>();
     static Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
+    static int offset;
 
-    public static Club[] pickChampionsLeagueTeams() {
+    static Club[] pickChampionsLeagueTeams() {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {
             final Map<Club, Integer> sorted = sortLeague(league);
@@ -53,6 +53,10 @@ public class Printer {
         for (final Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
             selected[limit] = clubIntegerEntry.getKey();
             if (limit++ == 31) break;
+        }
+
+        for (final Club team : selected) {
+            team.getSeason().getChampionsLeague().setAlive(true);
         }
 
         return selected;
@@ -92,14 +96,14 @@ public class Printer {
     }
 
     public static void playerStats(final Club[] league, final int type) {
-        ratings = new LinkedHashMap<>();
-        motm = new LinkedHashMap<>();
-        goals = new LinkedHashMap<>();
-        assists = new LinkedHashMap<>();
-        cleanSheets = new LinkedHashMap<>();
-        yellowCards = new LinkedHashMap<>();
-        redCards = new LinkedHashMap<>();
-        topTeam = new LinkedHashMap<>();
+        ratings.clear();
+        motm.clear();
+        goals.clear();
+        assists.clear();
+        cleanSheets.clear();
+        yellowCards.clear();
+        redCards.clear();
+        topTeam.clear();
 
         for (final Club club : league) {
             for (final Footballer f : club.getFootballers()) {
@@ -213,13 +217,13 @@ public class Printer {
     }
 
     public static void allTimePlayerStats(final Club[] league) {
-        ratings = new LinkedHashMap<>();
-        motm = new LinkedHashMap<>();
-        goals = new LinkedHashMap<>();
-        assists = new LinkedHashMap<>();
-        cleanSheets = new LinkedHashMap<>();
-        yellowCards = new LinkedHashMap<>();
-        redCards = new LinkedHashMap<>();
+        ratings.clear();
+        motm.clear();
+        goals.clear();
+        assists.clear();
+        cleanSheets.clear();
+        yellowCards.clear();
+        redCards.clear();
 
         for (final Club club : league) {
             for (final Footballer f : club.getFootballers()) {
@@ -265,7 +269,7 @@ public class Printer {
     }
 
     static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
-        topTeam = new HashMap<>();
+        topTeam.clear();
         int[] team = new int[11];
         int goalkeepers = 1;
         int defenders = 4;

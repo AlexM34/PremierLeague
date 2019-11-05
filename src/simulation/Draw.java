@@ -58,12 +58,11 @@ class Draw {
         return schedule;
     }
 
-    public static Club[] championsLeague(final Club[] advanced) {
-        final int teams = advanced.length;
+    static Club[] championsLeague(final Club[] advancing) {
+        final int teams = advancing.length;
         final Club[] draw = new Club[teams];
         final boolean[] drawn = new boolean[teams];
         for (int team = 0; team < teams; team++) {
-//            System.out.println(team + advanced[team].getName());
             int r = random.nextInt(teams / 2 - team / 2);
             int current = team % 2 == 0 ? 8 : 0;
 
@@ -71,8 +70,7 @@ class Draw {
                 if (!drawn[current]) {
                     if (r-- == 0) {
                         drawn[current] = true;
-                        draw[current] = advanced[team];
-//                        System.out.println("Draws " + current);
+                        draw[current] = advancing[team];
                         break;
                     }
                 }

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import static simulation.Controller.matchFlag;
 import static simulation.Data.*;
 import static simulation.Match.*;
+import static simulation.Rater.getCompetition;
 
 class Tactics {
     private static final Scanner scanner = new Scanner(System.in);
@@ -169,7 +170,7 @@ class Tactics {
                     System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " + subbedIn.getName() + " replaces " + subbedOut.getName());
                 }
 
-                Competition season = Rater.getCompetition(subbedOut.getResume().getSeason(), competition);
+                Competition season = getCompetition(subbedOut.getResume().getSeason(), competition);
                 updateStats(season, squad.get(flop));
                 squad.set(flop, new MatchStats(subbedIn, minute));
                 bench.set(player, null);

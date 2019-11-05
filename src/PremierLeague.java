@@ -50,7 +50,6 @@ import static simulation.Utils.sortLeague;
 class PremierLeague {
     // TODO: Name of the app
     // TODO: Champions League
-    // TODO: Ignore class files
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
     private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
     private static final String FONT_NAME = "Times New Roman";
@@ -87,6 +86,7 @@ class PremierLeague {
     private static int statsFontSize;
     private static int standingsFontSize;
     private static int song = 0;
+    private static final String CHAMPIONS_LEAGUE = "Champions League";
 
     private PremierLeague() {
         Controller.initialise();
@@ -104,14 +104,14 @@ class PremierLeague {
         final int width = frame.getWidth();
         final int height = frame.getHeight();
 
-        String[] leagues = {"Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"};
+        String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE};
         leagueBox = new JComboBox(leagues);
-        leagueBox.setBounds(2 * width / 5, height / 80, width / 11, height / 16);
+        leagueBox.setBounds(2 * width / 5, height / 80, width / 10, height / 16);
         leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         String[] competitions = {"League", "League Cup", "National Cup"};
         competitionBox = new JComboBox(competitions);
-        competitionBox.setBounds(10 * width / 20, height / 80, width / 11, height / 16);
+        competitionBox.setBounds(21 * width / 40, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         resultsLabel = new JLabel();
@@ -214,6 +214,7 @@ class PremierLeague {
             case Germany.LEAGUE: league = Germany.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
+            case CHAMPIONS_LEAGUE: continentalView(); return;
             default: return;
         }
 
@@ -301,12 +302,27 @@ class PremierLeague {
     private void cupView(final Club[] league, final boolean leagueCup) {
         final String leagueName = league[0].getLeague();
         if (leagueCup) {
-            resultsLabel.setText("<html>" + Controller.leagueCupResults.getOrDefault(leagueName, "") + "</html>");
+            resultsLabel.setText("<html>" + Controller.leagueCupResults.getOrDefault(
+                    leagueName, "") + "</html>");
             System.out.println(Controller.leagueCupResults.get(leagueName));
         } else {
-            resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(leagueName, "") + "</html>");
+            resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(
+                    leagueName, "") + "</html>");
             System.out.println(Controller.nationalCupResults.get(leagueName));
         }
+    }
+
+    private void continentalView() {
+        resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
+                CHAMPIONS_LEAGUE, "") + "</html>");
+        System.out.println(Controller.continentalCupResults.get(CHAMPIONS_LEAGUE));
+
+        playerStats(Controller.CHAMPIONS_LEAGUE, 2);
+        displayStats(goalsTable, goals, false);
+        displayStats(assistsTable, assists, false);
+        displayStats(ratingsTable, ratings, true);
+        displayStats(cleanSheetsTable, cleanSheets, false);
+
     }
 
     private void displayStats(final JTable table, final Map<Footballer, Integer> map, final boolean format) {

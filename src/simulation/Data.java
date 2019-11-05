@@ -25,18 +25,17 @@ import java.util.Scanner;
 
 public class Data {
     static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
-    static Club[] CHAMPIONS_LEAGUE = new Club[32];
+    public static Map<String, Integer> homeWins = new HashMap<>();
+    public static Map<String, Integer> draws = new HashMap<>();
+    public static Map<String, Integer> awayWins = new HashMap<>();
+    public static Map<String, Integer> scoredHome = new HashMap<>();
+    public static Map<String, Integer> scoredAway = new HashMap<>();
+    public static Map<String, Integer> assists = new HashMap<>();
+    public static Map<String, Integer> yellowCards = new HashMap<>();
+    public static Map<String, Integer> redCards = new HashMap<>();
+    public static Map<String, Float> averageRatings = new HashMap<>();
+    public static Map<String, Integer> cleanSheets = new HashMap<>();
     static int FANS = 3;
-    public static Map<String, Integer> homeWins;
-    public static Map<String, Integer> draws;
-    public static Map<String, Integer> awayWins;
-    public static Map<String, Integer> scoredHome;
-    public static Map<String, Integer> scoredAway;
-    public static Map<String, Integer> assists;
-    public static Map<String, Integer> yellowCards;
-    public static Map<String, Integer> redCards;
-    public static Map<String, Float> averageRatings;
-    public static Map<String, Integer> cleanSheets;
     static Integer USER = -1;
     static int USER_STYLE;
 
@@ -175,16 +174,16 @@ public class Data {
     }
 
     static void prepare(final int year) {
-        homeWins = new HashMap<>();
-        draws = new HashMap<>();
-        awayWins = new HashMap<>();
-        scoredHome = new HashMap<>();
-        scoredAway = new HashMap<>();
-        assists = new HashMap<>();
-        yellowCards = new HashMap<>();
-        redCards = new HashMap<>();
-        averageRatings = new HashMap<>();
-        cleanSheets = new HashMap<>();
+        homeWins.clear();
+        draws.clear();
+        awayWins.clear();
+        scoredHome.clear();
+        scoredAway.clear();
+        assists.clear();
+        yellowCards.clear();
+        redCards.clear();
+        averageRatings.clear();
+        cleanSheets.clear();
 
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (final Club[] league : LEAGUES) {

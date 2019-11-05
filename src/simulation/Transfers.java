@@ -4,7 +4,6 @@ import players.Footballer;
 import players.Position;
 import teams.Club;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import static simulation.Data.LEAGUES;
@@ -22,8 +21,8 @@ class Transfers {
         Club[] league;
         Club buying;
         Club selling;
-        transfers = new HashMap<>();
-        sold = new HashMap<>();
+        transfers.clear();
+        sold.clear();
 
         while (attempts < 30000) {
             league = LEAGUES[random.nextInt(5)];
