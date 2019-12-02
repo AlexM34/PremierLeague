@@ -195,17 +195,6 @@ public class Footballer {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", nationality='" + nationality + '\'' +
-                ", overall=" + overall +
-                ", potential=" + potential +
-                ", value=" + value +
-                ", wage=" + wage +
-                ", position=" + position +
-                ", number=" + number +
-                ", finishing=" + finishing +
-                ", vision=" + vision +
-                ", resume=" + resume +
-                ", condition=" + condition +
-                ", ban=" + ban +
                 '}';
     }
 }

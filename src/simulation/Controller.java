@@ -45,7 +45,7 @@ public class Controller {
     static final boolean matchFlag = false;
     private static int year = 0;
     private static int round = 0;
-    public static String CHAMPIONS_LEAGUE_NAME = "Champions League";
+    public static final String CHAMPIONS_LEAGUE_NAME = "Champions League";
     public static Club[] CHAMPIONS_LEAGUE = new Club[32];
     private static Map<String, int[][][]> leagueDraw = new HashMap<>();
     private static Map<String, int[][][]> continentalDraw = new HashMap<>();
@@ -104,24 +104,21 @@ public class Controller {
         }
 
         if (round % 4 == 0) {
-            if (round < 21) {
-                groupStage(CHAMPIONS_LEAGUE, round / 4);
-            } else {
-                continentalCup.put(CHAMPIONS_LEAGUE_NAME, knockoutRound(
-                        continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
+            if (round < 21) groupStage(CHAMPIONS_LEAGUE, round / 4);
+            else {
+                continentalCup.put(String.valueOf(Math.sqrt(continentalCup.get(CHAMPIONS_LEAGUE_NAME).length)),
+                        knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
             }
         }
 
-        if (round == 21) {
-            concludeGroups(CHAMPIONS_LEAGUE);
-        }
+        if (round == 21) concludeGroups(CHAMPIONS_LEAGUE);
 
         if (++round == 38) {
             round = 0;
             for (final Club[] league : LEAGUES) {
                 final String leagueName = league[0].getLeague();
-                final Club leagueCupWinner = leagueCup.get(leagueName)[0];
-                if (leagueCupWinner != null) {
+                if (leagueCup.containsKey(leagueName)) {
+                    final Club leagueCupWinner = leagueCup.get(leagueName)[0];
                     System.out.println(leagueCupWinner.getName() + " win the League Cup!");
                     leagueCupWinner.getGlory().addLeagueCup();
                     for (final Footballer footballer : leagueCupWinner.getFootballers()) {
@@ -294,29 +291,7 @@ public class Controller {
 
     private static Club[] knockoutRound(final Club[] clubs, final int games, final int type, final boolean replay) {
         final int count = clubs.length;
-
-        final List<Club> draw = Arrays.asList(clubs);
-        shuffle(draw);
-        for (int team = 0; team < count / 2; team++) {
-            if (knockoutFixture(draw.get(team), draw.get(count - team - 1), round < Math.sqrt(count)
-                    ? games : 1, type, replay && count >= 8, round == Math.sqrt(count))) {
-                clubs[team] = draw.get(count - team - 1);
-            } else {
-                clubs[team] = draw.get(team);
-            }
-        }
-
-        return Arrays.copyOf(clubs, count / 2);
-    }
-
-    private static boolean knockoutFixture(final Club first, final Club second, final int games, final int type,
-                                           final boolean replay, final boolean neutral) {
-        int firstGoals = 0;
-        int secondGoals = 0;
-
-        if (neutral) FANS = 0;
-        int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
-        Map<String, String> results;
+        final Map<String, String> results;
         switch (type) {
             case 1:
                 results = nationalCupResults;
@@ -332,7 +307,33 @@ public class Controller {
                 break;
         }
 
-        final StringBuilder scores = new StringBuilder(results.getOrDefault(first.getLeague(), ""));
+        results.put("new", "");
+        final List<Club> draw = Arrays.asList(clubs);
+        shuffle(draw);
+
+        for (int team = 0; team < count / 2; team++) {
+            if (knockoutFixture(draw.get(team), draw.get(count - team - 1), count > 2
+                    ? games : 1, type, replay && count >= 8, count == 2, results)) {
+                clubs[team] = draw.get(count - team - 1);
+            } else {
+                clubs[team] = draw.get(team);
+            }
+        }
+
+        results.put(String.valueOf(count), results.get("new"));
+        return Arrays.copyOf(clubs, count / 2);
+    }
+
+    private static boolean knockoutFixture(final Club first, final Club second, final int games, final int type,
+                                           final boolean replay, final boolean neutral,
+                                           final Map<String, String> results) {
+        int firstGoals = 0;
+        int secondGoals = 0;
+
+        if (neutral) FANS = 0;
+        int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
+
+        final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
         scores.append(first.getName())
                 .append(" - ").append(second.getName())
                 .append(" ").append(result[0]).append(":")
@@ -357,9 +358,7 @@ public class Controller {
             }
         }
 
-        final String leagueName = type < 3 ? first.getLeague() : CHAMPIONS_LEAGUE_NAME;
-        results.put(leagueName, scores.toString());
-
+        results.put("new", scores.toString());
         return secondGoals > firstGoals;
     }
 

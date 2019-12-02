@@ -32,6 +32,7 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Random;
 
+import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
 import static simulation.Data.averageRatings;
 import static simulation.Data.awayWins;
 import static simulation.Data.draws;
@@ -84,7 +85,6 @@ class Gladiators {
     private static int statsFontSize;
     private static int standingsFontSize;
     private static int song = 0;
-    private static final String CHAMPIONS_LEAGUE = "Champions League";
 
     private Gladiators() {
         Controller.initialise();
@@ -102,12 +102,12 @@ class Gladiators {
         final int width = frame.getWidth();
         final int height = frame.getHeight();
 
-        String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE};
+        String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
         leagueBox = new JComboBox(leagues);
         leagueBox.setBounds(2 * width / 5, height / 80, width / 10, height / 16);
         leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] competitions = {"League", "League Cup", "National Cup"};
+        String[] competitions = {"League", "League Cup", "National Cup", "16", "8", "4", "2"};
         competitionBox = new JComboBox(competitions);
         competitionBox.setBounds(21 * width / 40, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
@@ -206,23 +206,23 @@ class Gladiators {
 
     private void updateStats() {
         Club[] league;
-        switch (String.valueOf(this.leagueBox.getSelectedItem())) {
+        switch (String.valueOf(leagueBox.getSelectedItem())) {
             case England.LEAGUE: league = England.CLUBS; break;
             case Spain.LEAGUE: league = Spain.CLUBS; break;
             case Germany.LEAGUE: league = Germany.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
-            case CHAMPIONS_LEAGUE: continentalView(); return;
+            case CHAMPIONS_LEAGUE_NAME: continentalView(); return;
             default: return;
         }
 
-        if (String.valueOf(this.competitionBox.getSelectedItem()).equals("League")) {
+        if (String.valueOf(competitionBox.getSelectedItem()).equals("League")) {
             leagueView(league);
         } else {
-            cupView(league, this.competitionBox.getSelectedItem().equals("League Cup"));
+            cupView(league, competitionBox.getSelectedItem().equals("League Cup"));
         }
 
-        playerStats(league, String.valueOf(this.competitionBox.getSelectedItem()).equals("League") ? 0 : 1);
+        playerStats(league, String.valueOf(competitionBox.getSelectedItem()).equals("League") ? 0 : 1);
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
@@ -311,16 +311,38 @@ class Gladiators {
     }
 
     private void continentalView() {
+//        final Map<Club, Integer> sorted = sortLeague(league);
+        int row = 0;
+//        for (final Club team : sorted.keySet()) {
+//            final League stats = team.getSeason().getLeague();
+//
+//            standingsTable.setValueAt(String.valueOf(row + 1), row, 0);
+//            standingsTable.setValueAt(team.getName(), row, 1);
+//            standingsTable.setValueAt(String.valueOf(stats.getMatches()), row, 2);
+//            standingsTable.setValueAt(String.valueOf(stats.getWins()), row, 3);
+//            standingsTable.setValueAt(String.valueOf(stats.getDraws()), row, 4);
+//            standingsTable.setValueAt(String.valueOf(stats.getLosses()), row, 5);
+//            standingsTable.setValueAt(String.valueOf(stats.getScored()), row, 6);
+//            standingsTable.setValueAt(String.valueOf(stats.getConceded()), row, 7);
+//            standingsTable.setValueAt(String.valueOf((stats.getScored() - stats.getConceded())), row, 8);
+//            standingsTable.setValueAt(String.valueOf(stats.getPoints()), row++, 9);
+//        }
+
+        for (int i = row; i < 20; i++) {
+            for (int j = 0; j < standingsTable.getColumnCount(); j++) {
+                standingsTable.setValueAt("", i, j);
+            }
+        }
+
         resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
-                CHAMPIONS_LEAGUE, "") + "</html>");
-        System.out.println(Controller.continentalCupResults.get(CHAMPIONS_LEAGUE));
+                competitionBox.getSelectedItem(), "") + "</html>");
+        System.out.println(Controller.continentalCupResults);
 
         playerStats(Controller.CHAMPIONS_LEAGUE, 2);
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
         displayStats(cleanSheetsTable, cleanSheets, false);
-
     }
 
     private void displayStats(final JTable table, final Map<Footballer, Integer> map, final boolean format) {

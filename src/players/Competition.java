@@ -27,7 +27,7 @@ public class Competition {
         return matches;
     }
 
-    public void clearMatches() {
+    private void clearMatches() {
         this.matches = 0;
     }
 
@@ -39,7 +39,7 @@ public class Competition {
         return goals;
     }
 
-    public void clearGoals() {
+    private void clearGoals() {
         this.goals = 0;
     }
 
@@ -51,7 +51,7 @@ public class Competition {
         return assists;
     }
 
-    public void clearAssists() {
+    private void clearAssists() {
         this.assists = 0;
     }
 
@@ -63,7 +63,7 @@ public class Competition {
         return cleanSheets;
     }
 
-    public void clearCleanSheets() {
+    private void clearCleanSheets() {
         this.cleanSheets = 0;
     }
 
@@ -75,7 +75,7 @@ public class Competition {
         return rating;
     }
 
-    public void clearRating() {
+    private void clearRating() {
         this.rating = 0;
     }
 
@@ -89,7 +89,7 @@ public class Competition {
         return motmAwards;
     }
 
-    public void clearMotmAwards() {
+    private void clearMotmAwards() {
         this.motmAwards = 0;
     }
 
@@ -101,7 +101,7 @@ public class Competition {
         return yellowCards;
     }
 
-    public void clearYellowCards() {
+    private void clearYellowCards() {
         this.yellowCards = 0;
     }
 
@@ -113,12 +113,34 @@ public class Competition {
         return redCards;
     }
 
-    public void clearRedCards() {
+    private void clearRedCards() {
         this.redCards = 0;
     }
 
     public void addRedCards() {
         this.redCards += 1;
+    }
+
+    void clear() {
+        clearMatches();
+        clearGoals();
+        clearAssists();
+        clearCleanSheets();
+        clearRating();
+        clearMotmAwards();
+        clearYellowCards();
+        clearRedCards();
+    }
+
+    void update(final Competition competition) {
+        addMatches(competition.getMatches());
+        addGoals(competition.getGoals());
+        addAssists(competition.getAssists());
+        addCleanSheets(competition.getCleanSheets());
+        addRating(competition.getRating(), competition.getMatches());
+        addMotmAwards(competition.getMotmAwards());
+        addYellowCards();
+        addRedCards();
     }
 
     @Override

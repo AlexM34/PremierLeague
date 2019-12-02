@@ -7,10 +7,10 @@ import competitions.France;
 import competitions.Germany;
 import competitions.Italy;
 import competitions.Spain;
-import players.Competition;
 import players.Footballer;
 import players.Position;
 import players.Resume;
+import players.Statistics;
 import teams.Club;
 import teams.League;
 import teams.Season;
@@ -83,9 +83,7 @@ public class Data {
                     while (inputStream.hasNext()) {
                         final String footballer = inputStream.nextLine();
                         final String[] values = footballer.replaceAll("\\s","").split(",");
-                        if (club.getName().replaceAll("\\s","").equals(values[9]) &&
-                                values.length > 78 && !values[21].isEmpty() && !values[22].isEmpty() &&
-                                !values[56].isEmpty() && !values[78].isEmpty() ) {
+                        if (club.getName().replaceAll("\\s","").equals(values[9])) {
                             line.printf(footballer + "\n");
                         }
                     }
@@ -103,52 +101,34 @@ public class Data {
             for (final Club[] league : LEAGUES) {
                 for (final Club club : league) {
                     final File data = new File("data/" + club.getName() + ".csv");
-
                     final Scanner inputStream = new Scanner(data);
 
                     while (inputStream.hasNextLine()) {
                         final String footballer = inputStream.nextLine();
-//                        System.out.println(footballer);
                         final String[] v = footballer.split("\"");
-//                        System.out.println(v[1]);
-//                        System.out.println(v[3]);
-//                        System.out.println(v[5]);
                         for (int i = 1; i < v.length; i += 2) {
                             v[i] = v[i].replace(",", "|");
                         }
-//                        System.out.println(v[1]);
-//                        System.out.println(v[3]);
-//                        System.out.println(v[5]);
 
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < v.length; i++) {
-//                            System.out.println(v[i]);
-                            sb.append(v[i]);
-                        }
-
-                        final String ff = sb.toString();
-//                        System.out.println(ff);
-                        final String[] values = ff.split(",");
-
-//                        System.out.println("values");
-                        for (int i = 0; i < values.length; i++) {
-//                            System.out.println(values[i]);
-                        }
+                        final String[] values = String.join("", v).split(",");
 
                         if (club.getName().equals(values[9])) {
-//                            System.out.println("position " + values[14].split("\\|")[0]);
-//                            System.out.println(values[23]);
-//                            System.out.println(values[24]);
-//                            System.out.println(values[25]);
-                            final Footballer f = new Footballer(Integer.parseInt(values[0]), values[2],
-                                    Integer.parseInt(values[4]), values[8],
-                                    Integer.parseInt(values[10]), Integer.parseInt(values[11]),
-                                    Long.parseLong(values[12]), Long.parseLong(values[13]),
-                                    Position.valueOf(values[14].split("\\|")[0]), Integer.parseInt(values[25]),
-                                    Integer.parseInt(values[45]), Integer.parseInt(values[67]),
-                                    new Resume());
+                            final int id = Integer.parseInt(values[0]);
+                            final String name = values[2];
+                            final int age = Integer.parseInt(values[4]);
+                            final String nationality = values[8];
+                            final int overall = Integer.parseInt(values[10]);
+                            final int potential = Integer.parseInt(values[11]);
+                            final long value = Long.parseLong(values[12]);
+                            final long wage = Long.parseLong(values[13]);
+                            final Position position = Position.valueOf(values[14].split("\\|")[0]);
+                            final int number = Integer.parseInt(values[25]);
+                            final int finishing = Integer.parseInt(values[45]);
+                            final int vision = Integer.parseInt(values[67]);
 
-//                            System.out.println(f);
+                            final Footballer f = new Footballer(id, name, age, nationality, overall, potential,
+                                    value, wage, position, number, finishing, vision, new Resume());
+
                             club.addFootballer(f);
                         }
                     }
@@ -191,46 +171,15 @@ public class Data {
                 club.setSeason(new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
 
                 for (final Footballer f : club.getFootballers()) {
-                    updateCareerStats(f);
-                    clearSeasonStats(f);
+                    final Statistics career = f.getResume().getTotal();
+                    final Statistics season = f.getResume().getSeason();
+
+                    career.update(season);
+                    season.clear();
                 }
             }
         }
 
         System.out.println();
-    }
-
-    private static void updateCareerStats(final Footballer footballer) {
-        updateCompetition(footballer.getResume().getTotal().getLeague(), footballer.getResume().getSeason().getLeague());
-        updateCompetition(footballer.getResume().getTotal().getCup(), footballer.getResume().getSeason().getCup());
-        updateCompetition(footballer.getResume().getTotal().getContinental(), footballer.getResume().getSeason().getContinental());
-    }
-
-    private static void clearSeasonStats(final Footballer footballer) {
-        clearCompetition(footballer.getResume().getSeason().getLeague());
-        clearCompetition(footballer.getResume().getSeason().getCup());
-        clearCompetition(footballer.getResume().getSeason().getContinental());
-    }
-
-    private static void updateCompetition(final Competition total, final Competition season) {
-        total.addMatches(season.getMatches());
-        total.addGoals(season.getGoals());
-        total.addAssists(season.getAssists());
-        total.addCleanSheets(season.getCleanSheets());
-        total.addRating(season.getRating(), season.getMatches());
-        total.addMotmAwards(season.getMotmAwards());
-        total.addYellowCards();
-        total.addRedCards();
-    }
-
-    private static void clearCompetition(final Competition stats) {
-        stats.clearMatches();
-        stats.clearGoals();
-        stats.clearAssists();
-        stats.clearCleanSheets();
-        stats.clearRating();
-        stats.clearMotmAwards();
-        stats.clearYellowCards();
-        stats.clearRedCards();
     }
 }

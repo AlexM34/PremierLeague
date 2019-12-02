@@ -117,18 +117,19 @@ public class Printer {
                         break;
                     case 1:
                         stats = f.getResume().getSeason().getCup();
-                        games = 2;
+                        games = 1;
                         break;
                     default:
                         stats = f.getResume().getSeason().getContinental();
-                        games = 6;
+                        games = 1;
                         break;
                 }
 
-                if (stats.getMatches() > games) {
+                if (stats.getMatches() >= games) {
                     ratings.put(f, stats.getRating());
                     topTeam.put(f, stats.getRating());
                 }
+
                 motm.put(f, stats.getMotmAwards());
                 goals.put(f, stats.getGoals());
                 assists.put(f, stats.getAssists());

@@ -25,6 +25,18 @@ public class Statistics {
         return continental;
     }
 
+    public void clear() {
+        league.clear();
+        cup.clear();
+        continental.clear();
+    }
+
+    public void update(final Statistics statistics) {
+        league.update(statistics.getLeague());
+        cup.update(statistics.getCup());
+        continental.update(statistics.getContinental());
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
