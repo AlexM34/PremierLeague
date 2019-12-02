@@ -47,9 +47,7 @@ import static simulation.Printer.playerStats;
 import static simulation.Printer.ratings;
 import static simulation.Utils.sortLeague;
 
-class PremierLeague {
-    // TODO: Name of the app
-    // TODO: Champions League
+class Gladiators {
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
     private static final Color COLOR = Color.getHSBColor(0.6f, 0.9f, 0.95f);
     private static final String FONT_NAME = "Times New Roman";
@@ -88,7 +86,7 @@ class PremierLeague {
     private static int song = 0;
     private static final String CHAMPIONS_LEAGUE = "Champions League";
 
-    private PremierLeague() {
+    private Gladiators() {
         Controller.initialise();
 
         frame = new JFrame("Football Manager");
@@ -400,6 +398,6 @@ class PremierLeague {
             e.printStackTrace();
         }
 
-        SwingUtilities.invokeLater(PremierLeague::new);
+        SwingUtilities.invokeLater(Gladiators::new);
     }
 }
