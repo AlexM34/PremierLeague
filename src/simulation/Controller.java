@@ -49,12 +49,12 @@ public class Controller {
     public static Club[] CHAMPIONS_LEAGUE = new Club[32];
     private static Map<String, int[][][]> leagueDraw = new HashMap<>();
     private static Map<String, int[][][]> continentalDraw = new HashMap<>();
-    private static Map<String, Club[]> nationalCup = new HashMap<>();
     private static Map<String, Club[]> leagueCup = new HashMap<>();
+    private static Map<String, Club[]> nationalCup = new HashMap<>();
     private static Map<String, Club[]> continentalCup = new HashMap<>();
     public static Map<String, String> leagueResults = new HashMap<>();
-    public static Map<String, String> nationalCupResults = new HashMap<>();
     public static Map<String, String> leagueCupResults = new HashMap<>();
+    public static Map<String, String> nationalCupResults = new HashMap<>();
     public static Map<String, String> continentalCupResults = new HashMap<>();
 
     public static void initialise() {
@@ -66,6 +66,17 @@ public class Controller {
     public static void proceed() {
         if (round == 0) {
             prepare(year);
+
+            leagueDraw.clear();
+            continentalDraw.clear();
+            leagueCup.clear();
+            nationalCup.clear();
+            continentalCup.clear();
+            leagueResults.clear();
+            leagueCupResults.clear();
+            nationalCupResults.clear();
+            continentalCupResults.clear();
+
             if (userFlag) pickTeam();
 
             for (final Club[] league : LEAGUES) {
@@ -87,7 +98,7 @@ public class Controller {
             if (round < 34 || league.length > 18) play(league, leagueDraw.get(league[0].getLeague()), round);
         }
 
-        if (round % 8 == 3) {
+        if (round % 10 == 3) {
             for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
                 final String leagueName = league[0].getLeague();
                 leagueCup.put(leagueName, knockoutRound(leagueCup.get(leagueName),
@@ -95,7 +106,7 @@ public class Controller {
             }
         }
 
-        if (round % 8 == 7) {
+        if (round % 10 == 7) {
             for (final Club[] league : LEAGUES) {
                 final String leagueName = league[0].getLeague();
                 nationalCup.put(leagueName, knockoutRound(nationalCup.get(leagueName),
@@ -106,7 +117,7 @@ public class Controller {
         if (round % 4 == 0) {
             if (round < 21) groupStage(CHAMPIONS_LEAGUE, round / 4);
             else {
-                continentalCup.put(String.valueOf(Math.sqrt(continentalCup.get(CHAMPIONS_LEAGUE_NAME).length)),
+                continentalCup.put(CHAMPIONS_LEAGUE_NAME,
                         knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
             }
         }
@@ -253,7 +264,7 @@ public class Controller {
             }
         }
 
-        continentalCupResults.put(CHAMPIONS_LEAGUE_NAME, scores.toString());
+        continentalCupResults.put(CHAMPIONS_LEAGUE_NAME + "Group stage", scores.toString());
     }
 
     private static void play(final Club[] league, final int[][][] draw, final int round) {
@@ -291,6 +302,7 @@ public class Controller {
 
     private static Club[] knockoutRound(final Club[] clubs, final int games, final int type, final boolean replay) {
         final int count = clubs.length;
+        final String competition = type == 3 ? CHAMPIONS_LEAGUE_NAME : clubs[0].getLeague();
         final Map<String, String> results;
         switch (type) {
             case 1:
@@ -320,7 +332,7 @@ public class Controller {
             }
         }
 
-        results.put(String.valueOf(count), results.get("new"));
+        results.put(competition + count, results.remove("new"));
         return Arrays.copyOf(clubs, count / 2);
     }
 

@@ -57,6 +57,7 @@ class Gladiators {
     private final JFrame frame;
     private final JComboBox leagueBox;
     private final JComboBox competitionBox;
+    private final JComboBox roundBox;
     private final JLabel resultsLabel;
     private final JTable goalsTable = new JTable(new String[10][3], STATS);
     private final JTable assistsTable = new JTable(new String[10][3], STATS);
@@ -104,13 +105,18 @@ class Gladiators {
 
         String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
         leagueBox = new JComboBox(leagues);
-        leagueBox.setBounds(2 * width / 5, height / 80, width / 10, height / 16);
+        leagueBox.setBounds(9 * width / 25, height / 80, width / 10, height / 16);
         leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] competitions = {"League", "League Cup", "National Cup", "16", "8", "4", "2"};
+        String[] competitions = {"League", "League Cup", "National Cup"};
         competitionBox = new JComboBox(competitions);
-        competitionBox.setBounds(21 * width / 40, height / 80, width / 11, height / 16);
+        competitionBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+
+        String[] rounds = {"Group Stage", "Round of 16", "Quarter-finals", "Semi-finals", "Final"};
+        roundBox = new JComboBox(rounds);
+        roundBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
+        roundBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         resultsLabel = new JLabel();
         resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
@@ -154,14 +160,16 @@ class Gladiators {
 
         frame.add(leagueBox);
         frame.add(competitionBox);
+        frame.add(roundBox);
         frame.add(nextButton);
         frame.add(resultsLabel);
         frame.add(standingsPane);
         frame.add(gamesPane);
 
-        nextButton.addActionListener(e -> nextRound());
         leagueBox.addActionListener(e -> updateStats());
         competitionBox.addActionListener(e -> updateStats());
+        roundBox.addActionListener(e -> updateStats());
+        nextButton.addActionListener(e -> nextRound());
 
         playMusic();
         updateStats();
@@ -205,24 +213,31 @@ class Gladiators {
     }
 
     private void updateStats() {
-        Club[] league;
+        final String competition = String.valueOf(competitionBox.getSelectedItem());
+        final int teams;
+        switch (String.valueOf(roundBox.getSelectedItem())) {
+            case "Round of 16": teams = 16; break;
+            case "Quarter-finals": teams = 8; break;
+            case "Semi-finals": teams = 4; break;
+            case "Final": teams = 2; break;
+            default: teams = 1; break;
+        }
+
+        final Club[] league;
         switch (String.valueOf(leagueBox.getSelectedItem())) {
             case England.LEAGUE: league = England.CLUBS; break;
             case Spain.LEAGUE: league = Spain.CLUBS; break;
             case Germany.LEAGUE: league = Germany.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
-            case CHAMPIONS_LEAGUE_NAME: continentalView(); return;
+            case CHAMPIONS_LEAGUE_NAME: continentalView(teams); return;
             default: return;
         }
 
-        if (String.valueOf(competitionBox.getSelectedItem()).equals("League")) {
-            leagueView(league);
-        } else {
-            cupView(league, competitionBox.getSelectedItem().equals("League Cup"));
-        }
+        if (competition.equals("League")) leagueView(league);
+        else cupView(league, competition.equals("League Cup"), teams);
 
-        playerStats(league, String.valueOf(competitionBox.getSelectedItem()).equals("League") ? 0 : 1);
+        playerStats(league, competition.equals("League") ? 0 : 1);
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
@@ -297,45 +312,29 @@ class Gladiators {
         System.out.println(Controller.leagueResults.get(leagueName));
     }
 
-    private void cupView(final Club[] league, final boolean leagueCup) {
+    private void cupView(final Club[] league, final boolean leagueCup, final int teams) {
         final String leagueName = league[0].getLeague();
+
         if (leagueCup) {
             resultsLabel.setText("<html>" + Controller.leagueCupResults.getOrDefault(
-                    leagueName, "") + "</html>");
+                    leagueName + teams, "") + "</html>");
             System.out.println(Controller.leagueCupResults.get(leagueName));
         } else {
             resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(
-                    leagueName, "") + "</html>");
+                    leagueName + teams, "") + "</html>");
             System.out.println(Controller.nationalCupResults.get(leagueName));
         }
     }
 
-    private void continentalView() {
-//        final Map<Club, Integer> sorted = sortLeague(league);
-        int row = 0;
-//        for (final Club team : sorted.keySet()) {
-//            final League stats = team.getSeason().getLeague();
-//
-//            standingsTable.setValueAt(String.valueOf(row + 1), row, 0);
-//            standingsTable.setValueAt(team.getName(), row, 1);
-//            standingsTable.setValueAt(String.valueOf(stats.getMatches()), row, 2);
-//            standingsTable.setValueAt(String.valueOf(stats.getWins()), row, 3);
-//            standingsTable.setValueAt(String.valueOf(stats.getDraws()), row, 4);
-//            standingsTable.setValueAt(String.valueOf(stats.getLosses()), row, 5);
-//            standingsTable.setValueAt(String.valueOf(stats.getScored()), row, 6);
-//            standingsTable.setValueAt(String.valueOf(stats.getConceded()), row, 7);
-//            standingsTable.setValueAt(String.valueOf((stats.getScored() - stats.getConceded())), row, 8);
-//            standingsTable.setValueAt(String.valueOf(stats.getPoints()), row++, 9);
-//        }
-
-        for (int i = row; i < 20; i++) {
+    private void continentalView(final int teams) {
+        for (int i = 0; i < 20; i++) {
             for (int j = 0; j < standingsTable.getColumnCount(); j++) {
                 standingsTable.setValueAt("", i, j);
             }
         }
 
         resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
-                competitionBox.getSelectedItem(), "") + "</html>");
+                CHAMPIONS_LEAGUE_NAME + teams, "") + "</html>");
         System.out.println(Controller.continentalCupResults);
 
         playerStats(Controller.CHAMPIONS_LEAGUE, 2);
