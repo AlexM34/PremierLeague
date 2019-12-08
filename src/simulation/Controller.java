@@ -44,23 +44,25 @@ public class Controller {
     private static final boolean standingsFlag = false;
     static final boolean matchFlag = false;
     private static int year = 0;
-    private static int round = 0;
+    public static int round = 0;
     public static final String CHAMPIONS_LEAGUE_NAME = "Champions League";
     public static Club[] CHAMPIONS_LEAGUE = new Club[32];
-    private static Map<String, int[][][]> leagueDraw = new HashMap<>();
-    private static Map<String, int[][][]> continentalDraw = new HashMap<>();
-    private static Map<String, Club[]> leagueCup = new HashMap<>();
-    private static Map<String, Club[]> nationalCup = new HashMap<>();
-    private static Map<String, Club[]> continentalCup = new HashMap<>();
-    public static Map<String, String> leagueResults = new HashMap<>();
-    public static Map<String, String> leagueCupResults = new HashMap<>();
-    public static Map<String, String> nationalCupResults = new HashMap<>();
-    public static Map<String, String> continentalCupResults = new HashMap<>();
+    private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
+    private static final Map<String, int[][][]> continentalDraw = new HashMap<>();
+    private static final Map<String, Club[]> leagueCup = new HashMap<>();
+    private static final Map<String, Club[]> nationalCup = new HashMap<>();
+    private static final Map<String, Club[]> continentalCup = new HashMap<>();
+    public static final Map<String, String> leagueResults = new HashMap<>();
+    public static final Map<String, String> leagueCupResults = new HashMap<>();
+    public static final Map<String, String> nationalCupResults = new HashMap<>();
+    public static final Map<String, String> continentalCupResults = new HashMap<>();
 
     public static void initialise() {
 //        extractData();
         buildSquads();
         addDummies();
+
+        CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
     }
 
     public static void proceed() {
@@ -90,7 +92,6 @@ public class Controller {
                 leagueCup.put(leagueName, cup(league));
             }
 
-            CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
             continentalDraw.put(CHAMPIONS_LEAGUE_NAME, league(4));
         }
 
@@ -161,12 +162,14 @@ public class Controller {
 
             knockoutPrizes(CHAMPIONS_LEAGUE, true);
 
-            year++;
             Printer.pickTeam(topTeam, false);
             voting(contenders);
+            year++;
 
             progression();
             transfers();
+
+            CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
         }
     }
 
@@ -211,9 +214,11 @@ public class Controller {
     private static void groupStage(final Club[] teams, final int round) {
         final int groups = teams.length / 4;
         final int[][][] draw = continentalDraw.get(CHAMPIONS_LEAGUE_NAME);
-        final StringBuilder scores = new StringBuilder();
         for (int group = 0; group < groups; group++) {
-            System.out.println("GROUP " + (char) ('A' + group));
+            final String letter = String.valueOf((char) ('A' + group));
+            System.out.println("GROUP " + letter);
+            final StringBuilder scores = new StringBuilder(continentalCupResults.getOrDefault(
+                    CHAMPIONS_LEAGUE_NAME + letter, ""));
 
             final Club[] clubs = new Club[4];
             for (int team = 0; team < 4; team++) clubs[team] = teams[groups * team + group];
@@ -262,14 +267,14 @@ public class Controller {
                 homeStats.addConceded(awayGoals);
                 awayStats.addConceded(homeGoals);
             }
-        }
 
-        continentalCupResults.put(CHAMPIONS_LEAGUE_NAME + "Group stage", scores.toString());
+            continentalCupResults.put(CHAMPIONS_LEAGUE_NAME + letter, scores.toString());
+        }
     }
 
     private static void play(final Club[] league, final int[][][] draw, final int round) {
         System.out.println(String.format("Round %d", round + 1));
-        StringBuilder scores = new StringBuilder();
+        final StringBuilder scores = new StringBuilder();
         for (int game = 0; game < league.length / 2; game++) {
             final int home = draw[round][game][0];
             final int away = draw[round][game][1];

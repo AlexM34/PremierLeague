@@ -32,7 +32,9 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Random;
 
+import static simulation.Controller.CHAMPIONS_LEAGUE;
 import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
+import static simulation.Controller.round;
 import static simulation.Data.averageRatings;
 import static simulation.Data.awayWins;
 import static simulation.Data.draws;
@@ -57,7 +59,9 @@ class Gladiators {
     private final JFrame frame;
     private final JComboBox leagueBox;
     private final JComboBox competitionBox;
-    private final JComboBox roundBox;
+    private final JComboBox continentalBox;
+    private final JComboBox knockoutBox;
+    private final JComboBox groupBox;
     private final JLabel resultsLabel;
     private final JTable goalsTable = new JTable(new String[10][3], STATS);
     private final JTable assistsTable = new JTable(new String[10][3], STATS);
@@ -105,7 +109,7 @@ class Gladiators {
 
         String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
         leagueBox = new JComboBox(leagues);
-        leagueBox.setBounds(9 * width / 25, height / 80, width / 10, height / 16);
+        leagueBox.setBounds(9 * width / 25, height / 80, width / 9, height / 16);
         leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         String[] competitions = {"League", "League Cup", "National Cup"};
@@ -113,10 +117,20 @@ class Gladiators {
         competitionBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] rounds = {"Group Stage", "Round of 16", "Quarter-finals", "Semi-finals", "Final"};
-        roundBox = new JComboBox(rounds);
-        roundBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
-        roundBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+        String[] stages = {"Group Stage", "Knockout"};
+        continentalBox = new JComboBox(stages);
+        continentalBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
+        continentalBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+
+        String[] rounds = {"Round of 16", "Quarter-finals", "Semi-finals", "Final"};
+        knockoutBox = new JComboBox(rounds);
+        knockoutBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
+        knockoutBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+
+        String[] groups = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        groupBox = new JComboBox(groups);
+        groupBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
+        groupBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         resultsLabel = new JLabel();
         resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
@@ -160,15 +174,19 @@ class Gladiators {
 
         frame.add(leagueBox);
         frame.add(competitionBox);
-        frame.add(roundBox);
-        frame.add(nextButton);
+        frame.add(continentalBox);
+        frame.add(knockoutBox);
+        frame.add(groupBox);
         frame.add(resultsLabel);
         frame.add(standingsPane);
         frame.add(gamesPane);
+        frame.add(nextButton);
 
         leagueBox.addActionListener(e -> updateStats());
         competitionBox.addActionListener(e -> updateStats());
-        roundBox.addActionListener(e -> updateStats());
+        continentalBox.addActionListener(e -> updateStats());
+        knockoutBox.addActionListener(e -> updateStats());
+        groupBox.addActionListener(e -> updateStats());
         nextButton.addActionListener(e -> nextRound());
 
         playMusic();
@@ -215,7 +233,7 @@ class Gladiators {
     private void updateStats() {
         final String competition = String.valueOf(competitionBox.getSelectedItem());
         final int teams;
-        switch (String.valueOf(roundBox.getSelectedItem())) {
+        switch (String.valueOf(knockoutBox.getSelectedItem())) {
             case "Round of 16": teams = 16; break;
             case "Quarter-finals": teams = 8; break;
             case "Semi-finals": teams = 4; break;
@@ -245,22 +263,16 @@ class Gladiators {
     }
 
     private void leagueView(final Club[] league) {
+        competitionBox.setVisible(true);
+        continentalBox.setVisible(false);
+        knockoutBox.setVisible(false);
+        groupBox.setVisible(false);
+
         final String leagueName = league[0].getLeague();
-        final Map<Club, Integer> sorted = sortLeague(league);
+        final Map<Club, Integer> sorted = sortLeague(league, 0);
         int row = 0;
         for (final Club team : sorted.keySet()) {
-            final League stats = team.getSeason().getLeague();
-
-            standingsTable.setValueAt(String.valueOf(row + 1), row, 0);
-            standingsTable.setValueAt(team.getName(), row, 1);
-            standingsTable.setValueAt(String.valueOf(stats.getMatches()), row, 2);
-            standingsTable.setValueAt(String.valueOf(stats.getWins()), row, 3);
-            standingsTable.setValueAt(String.valueOf(stats.getDraws()), row, 4);
-            standingsTable.setValueAt(String.valueOf(stats.getLosses()), row, 5);
-            standingsTable.setValueAt(String.valueOf(stats.getScored()), row, 6);
-            standingsTable.setValueAt(String.valueOf(stats.getConceded()), row, 7);
-            standingsTable.setValueAt(String.valueOf((stats.getScored() - stats.getConceded())), row, 8);
-            standingsTable.setValueAt(String.valueOf(stats.getPoints()), row++, 9);
+            insertStandingsEntry(team.getName(), team.getSeason().getLeague(), row++);
         }
 
         for (int i = row; i < 20; i++) {
@@ -313,6 +325,10 @@ class Gladiators {
     }
 
     private void cupView(final Club[] league, final boolean leagueCup, final int teams) {
+        competitionBox.setVisible(true);
+        continentalBox.setVisible(false);
+        knockoutBox.setVisible(true);
+        groupBox.setVisible(false);
         final String leagueName = league[0].getLeague();
 
         if (leagueCup) {
@@ -327,21 +343,56 @@ class Gladiators {
     }
 
     private void continentalView(final int teams) {
+        competitionBox.setVisible(false);
+        continentalBox.setVisible(true);
+
+        final boolean knockout = String.valueOf(continentalBox.getSelectedItem()).equals("Knockout");
+        knockoutBox.setVisible(knockout);
+        groupBox.setVisible(!knockout);
+
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < standingsTable.getColumnCount(); j++) {
                 standingsTable.setValueAt("", i, j);
             }
         }
 
-        resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
-                CHAMPIONS_LEAGUE_NAME + teams, "") + "</html>");
-        System.out.println(Controller.continentalCupResults);
+        if (knockout) {
+            resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
+                    CHAMPIONS_LEAGUE_NAME + teams, "") + "</html>");
+        } else {
+            final Club[] league = new Club[4];
+            for (int team = 0; team < 4; team++) league[team] = CHAMPIONS_LEAGUE[8 * team +
+                    ((int) String.valueOf(groupBox.getSelectedItem()) .charAt(0) - 'A')];
 
+            final Map<Club, Integer> sorted = sortLeague(league, 3);
+            int row = 0;
+            for (final Club team : sorted.keySet()) {
+                insertStandingsEntry(team.getName(), team.getSeason().getChampionsLeague().getGroup(), row++);
+            }
+
+            resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
+                    CHAMPIONS_LEAGUE_NAME + groupBox.getSelectedItem(), "") + "</html>");
+        }
+
+        System.out.println(Controller.continentalCupResults);
         playerStats(Controller.CHAMPIONS_LEAGUE, 2);
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
         displayStats(cleanSheetsTable, cleanSheets, false);
+    }
+
+    private void insertStandingsEntry(final String name, final League league, final int row) {
+        standingsTable.setValueAt(String.valueOf(row + 1), row, 0);
+        standingsTable.setValueAt(name, row, 1);
+        standingsTable.setValueAt(String.valueOf(league.getMatches()), row, 2);
+        standingsTable.setValueAt(String.valueOf(league.getWins()), row, 3);
+        standingsTable.setValueAt(String.valueOf(league.getDraws()), row, 4);
+        standingsTable.setValueAt(String.valueOf(league.getLosses()), row, 5);
+        standingsTable.setValueAt(String.valueOf(league.getScored()), row, 6);
+        standingsTable.setValueAt(String.valueOf(league.getConceded()), row, 7);
+        standingsTable.setValueAt(String.valueOf((league.getScored() - league.getConceded())), row, 8);
+        standingsTable.setValueAt(String.valueOf(league.getPoints()), row, 9);
     }
 
     private void displayStats(final JTable table, final Map<Footballer, Integer> map, final boolean format) {
@@ -367,7 +418,7 @@ class Gladiators {
     }
 
     private void nextRound() {
-        Controller.proceed();
+        for (int i = 0; i < 10 && round < 38; i++) Controller.proceed();
         updateStats();
     }
 

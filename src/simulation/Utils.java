@@ -18,12 +18,17 @@ public class Utils {
                         (e1, e2) -> e2, LinkedHashMap::new));
     }
 
-    public static Map<Club, Integer> sortLeague(final Club[] league) {
+    public static Map<Club, Integer> sortLeague(final Club[] league, final int type) {
         final Map<Club, Integer> standings = new LinkedHashMap<>();
         offset = 0;
         for (final Club team : league) {
             if (offset < team.getName().length()) offset = team.getName().length();
-            final League stats = team.getSeason().getLeague();
+            final League stats;
+            switch (type) {
+                case 0: stats = team.getSeason().getLeague(); break;
+                case 3: stats = team.getSeason().getChampionsLeague().getGroup(); break;
+                default: return Collections.emptyMap();
+            }
             standings.put(team, 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) +
                     stats.getScored());
         }

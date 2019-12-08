@@ -24,22 +24,22 @@ import static simulation.Utils.sortMap;
 public class Printer {
     private static final Random random = new Random();
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
-    private static Map<Footballer, Integer> motm = new LinkedHashMap<>();
+    private static final Map<Footballer, Integer> motm = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
     public static Map<Footballer, Integer> assists = new LinkedHashMap<>();
     public static Map<Footballer, Integer> cleanSheets = new LinkedHashMap<>();
-    private static Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
-    private static Map<Footballer, Integer> redCards = new LinkedHashMap<>();
-    static Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
+    private static final Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
+    private static final Map<Footballer, Integer> redCards = new LinkedHashMap<>();
+    static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
     static int offset;
 
     static Club[] pickChampionsLeagueTeams() {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {
-            final Map<Club, Integer> sorted = sortLeague(league);
+            final Map<Club, Integer> sorted = sortLeague(league, 3);
             int slots = 7;
             for (final Club team : sorted.keySet()) {
-                teams.put(team, team.getSeason().getLeague().getPoints());
+                teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5));
                 slots--;
                 if (slots == 0) break;
             }
@@ -64,7 +64,7 @@ public class Printer {
 
     static void standings(final Club[] league) {
         int goals = 0;
-        final Map<Club, Integer> sorted = sortLeague(league);
+        final Map<Club, Integer> sorted = sortLeague(league, 0);
 
         int position = 1;
         System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
@@ -106,6 +106,7 @@ public class Printer {
         topTeam.clear();
 
         for (final Club club : league) {
+            System.out.println(club);
             for (final Footballer f : club.getFootballers()) {
                 final Competition stats;
                 final int games;

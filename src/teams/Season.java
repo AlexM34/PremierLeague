@@ -30,7 +30,7 @@ public class Season {
         this.league = league;
     }
 
-    Cup getNationalCup() {
+    public Cup getNationalCup() {
         return nationalCup;
     }
 
@@ -38,7 +38,7 @@ public class Season {
         this.nationalCup = nationalCup;
     }
 
-    Cup getLeagueCup() {
+    public Cup getLeagueCup() {
         return leagueCup;
     }
 

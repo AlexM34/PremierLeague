@@ -25,16 +25,16 @@ import java.util.Scanner;
 
 public class Data {
     static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
-    public static Map<String, Integer> homeWins = new HashMap<>();
-    public static Map<String, Integer> draws = new HashMap<>();
-    public static Map<String, Integer> awayWins = new HashMap<>();
-    public static Map<String, Integer> scoredHome = new HashMap<>();
-    public static Map<String, Integer> scoredAway = new HashMap<>();
-    public static Map<String, Integer> assists = new HashMap<>();
-    public static Map<String, Integer> yellowCards = new HashMap<>();
-    public static Map<String, Integer> redCards = new HashMap<>();
-    public static Map<String, Float> averageRatings = new HashMap<>();
-    public static Map<String, Integer> cleanSheets = new HashMap<>();
+    public static final Map<String, Integer> homeWins = new HashMap<>();
+    public static final Map<String, Integer> draws = new HashMap<>();
+    public static final Map<String, Integer> awayWins = new HashMap<>();
+    public static final Map<String, Integer> scoredHome = new HashMap<>();
+    public static final Map<String, Integer> scoredAway = new HashMap<>();
+    public static final Map<String, Integer> assists = new HashMap<>();
+    public static final Map<String, Integer> yellowCards = new HashMap<>();
+    public static final Map<String, Integer> redCards = new HashMap<>();
+    public static final Map<String, Float> averageRatings = new HashMap<>();
+    public static final Map<String, Integer> cleanSheets = new HashMap<>();
     static int FANS = 3;
     static Integer USER = -1;
     static int USER_STYLE;

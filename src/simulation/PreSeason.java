@@ -16,7 +16,7 @@ class PreSeason {
     static int deals;
     static Map<Footballer, Club> transfers;
     static Map<Club, Integer> sold;
-    static int academy = 0;
+    private static int academy = 0;
 
     static void progression() {
         for (final Club[] league : LEAGUES) {
