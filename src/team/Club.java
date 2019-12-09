@@ -1,7 +1,7 @@
-package teams;
+package team;
 
-import competitions.ChampionsLeague;
-import competitions.Cup;
+import competition.ChampionsLeague;
+import competition.Cup;
 import players.Footballer;
 import players.Glory;
 

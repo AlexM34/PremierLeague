@@ -3,7 +3,7 @@ package simulation;
 import players.Competition;
 import players.Footballer;
 import players.MatchStats;
-import teams.Club;
+import team.Club;
 
 import java.util.ArrayList;
 import java.util.List;

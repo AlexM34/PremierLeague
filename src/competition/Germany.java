@@ -1,11 +1,11 @@
-package competitions;
+package competition;
 
 import players.Glory;
-import teams.Club;
-import teams.Coach;
-import teams.Formation;
-import teams.Owner;
-import teams.Stadium;
+import team.Club;
+import team.Coach;
+import team.Formation;
+import team.Owner;
+import team.Stadium;
 
 public class Germany {
     public static final String LEAGUE = "Bundesliga";

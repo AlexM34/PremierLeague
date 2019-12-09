@@ -1,6 +1,6 @@
 package simulation;
 
-import teams.Club;
+import team.Club;
 
 import java.util.Random;
 

@@ -1,6 +1,6 @@
-package competitions;
+package competition;
 
-import teams.League;
+import team.League;
 
 import java.util.Objects;
 

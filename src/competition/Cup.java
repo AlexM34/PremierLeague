@@ -1,4 +1,4 @@
-package competitions;
+package competition;
 
 import java.util.Objects;
 

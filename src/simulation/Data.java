@@ -1,23 +1,22 @@
 package simulation;
 
-import competitions.ChampionsLeague;
-import competitions.Cup;
-import competitions.England;
-import competitions.France;
-import competitions.Germany;
-import competitions.Italy;
-import competitions.Spain;
+import competition.ChampionsLeague;
+import competition.Cup;
+import competition.England;
+import competition.France;
+import competition.Germany;
+import competition.Italy;
+import competition.Spain;
 import players.Footballer;
 import players.Position;
 import players.Resume;
 import players.Statistics;
-import teams.Club;
-import teams.League;
-import teams.Season;
+import team.Club;
+import team.League;
+import team.Season;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,8 +72,8 @@ public class Data {
             for (final Club[] league : LEAGUES) {
                 for (final Club club : league) {
                     final File file = new File("data/" + club.getName() + ".csv");
-                    file.delete();
-                    file.createNewFile();
+                    if (!file.delete() || !file.createNewFile()) throw new Exception("Unable to recreate file!");
+
                     final FileWriter write = new FileWriter(file, true);
                     final PrintWriter line = new PrintWriter(write);
                     final Scanner inputStream = new Scanner(data);
@@ -91,8 +90,8 @@ public class Data {
                     line.close();
                 }
             }
-        } catch (final IOException e) {
-            System.out.println("Exception thrown while extracting data!");
+        } catch (final Exception e) {
+            System.out.println("Exception thrown while extracting data! " + e);
         }
     }
 

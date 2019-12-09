@@ -5,8 +5,8 @@ import players.Footballer;
 import players.MatchStats;
 import players.Position;
 import players.Statistics;
-import teams.Club;
-import teams.League;
+import team.Club;
+import team.League;
 
 import java.util.List;
 import java.util.Map;
@@ -23,14 +23,14 @@ import static simulation.Data.scoredAway;
 import static simulation.Data.scoredHome;
 import static simulation.Data.yellowCards;
 import static simulation.Match.leagueName;
-import static simulation.Utils.sortMap;
+import static simulation.Helper.sortMap;
 
 class Rater {
     private static final Random random = new Random();
 
     private static MatchStats motmPlayer;
     private static float motmRating;
-    static Map<Footballer, Integer> contenders;
+    private static Map<Footballer, Integer> contenders;
 
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {
@@ -60,7 +60,7 @@ class Rater {
     private static void updateRating(final List<MatchStats> squad, final float change) {
         final int player = random.nextInt(11);
         if (squad.get(player) == null) return;
-        float overall = squad.get(player).getFootballer().getOverall() *
+        float overall = (float) squad.get(player).getFootballer().getOverall() *
                 squad.get(player).getFootballer().getOverall() / 6000;
 
         if (change < 0) overall = 1 / overall;

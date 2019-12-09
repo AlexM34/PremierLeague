@@ -1,11 +1,11 @@
-package competitions;
+package competition;
 
 import players.Glory;
-import teams.Club;
-import teams.Coach;
-import teams.Formation;
-import teams.Stadium;
-import teams.Owner;
+import team.Club;
+import team.Coach;
+import team.Formation;
+import team.Stadium;
+import team.Owner;
 
 public class France {
     public static final String LEAGUE = "Ligue 1";

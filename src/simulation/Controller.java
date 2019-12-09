@@ -1,11 +1,11 @@
 package simulation;
 
-import competitions.England;
-import competitions.France;
-import competitions.Spain;
+import competition.England;
+import competition.France;
+import competition.Spain;
 import players.Footballer;
-import teams.Club;
-import teams.League;
+import team.Club;
+import team.League;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,19 +23,16 @@ import static simulation.Data.buildSquads;
 import static simulation.Data.prepare;
 import static simulation.Draw.championsLeague;
 import static simulation.Draw.league;
-import static simulation.Finances.knockoutPrizes;
-import static simulation.Finances.profits;
-import static simulation.Finances.salaries;
+import static simulation.Finance.knockoutPrizes;
+import static simulation.Finance.profits;
+import static simulation.Finance.salaries;
 import static simulation.Match.simulation;
 import static simulation.PreSeason.progression;
 import static simulation.Printer.pickChampionsLeagueTeams;
 import static simulation.Printer.standings;
-import static simulation.Printer.topTeam;
-import static simulation.Printer.voting;
-import static simulation.Rater.contenders;
 import static simulation.Tactics.preMatch;
-import static simulation.Transfers.transfers;
-import static simulation.Utils.sortMap;
+import static simulation.Transfer.transfers;
+import static simulation.Helper.sortMap;
 
 public class Controller {
     private static final Scanner scanner = new Scanner(System.in);
@@ -44,7 +41,7 @@ public class Controller {
     private static final boolean standingsFlag = false;
     static final boolean matchFlag = false;
     private static int year = 0;
-    public static int round = 0;
+    private static int round = 0;
     public static final String CHAMPIONS_LEAGUE_NAME = "Champions League";
     public static Club[] CHAMPIONS_LEAGUE = new Club[32];
     private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
@@ -57,16 +54,22 @@ public class Controller {
     public static final Map<String, String> nationalCupResults = new HashMap<>();
     public static final Map<String, String> continentalCupResults = new HashMap<>();
 
+    public static void main(String[] args) {
+        initialise();
+        while(scanner.nextInt() == 1) {
+            for (int i = 0; i < 38; i++) Controller.proceed();
+        }
+    }
+
     public static void initialise() {
 //        extractData();
         buildSquads();
         addDummies();
-
-        CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
     }
 
     public static void proceed() {
         if (round == 0) {
+            CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
             prepare(year);
 
             leagueDraw.clear();
@@ -162,14 +165,12 @@ public class Controller {
 
             knockoutPrizes(CHAMPIONS_LEAGUE, true);
 
-            Printer.pickTeam(topTeam, false);
-            voting(contenders);
+//            Printer.pickTeam(topTeam, false);
+//            voting(contenders);
             year++;
 
             progression();
             transfers();
-
-            CHAMPIONS_LEAGUE = pickChampionsLeagueTeams();
         }
     }
 

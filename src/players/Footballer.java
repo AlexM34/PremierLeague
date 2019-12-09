@@ -82,7 +82,7 @@ public class Footballer {
         age = getAge() < 27 ? age : 1 / age;
         float position = getPosition().getAttackingDuty() + 1;
         position = (float) Math.sqrt(position);
-        float potential = (getPotential() - getOverall()) / 3;
+        float potential = (float) (getPotential() - getOverall()) / 3;
         potential = potential > 1 ? (float) Math.sqrt(potential) : 1;
 
         value = (long) (overall * age * position * potential);
@@ -166,22 +166,10 @@ public class Footballer {
         if (o == null || getClass() != o.getClass()) return false;
         final Footballer that = (Footballer) o;
         return id == that.id &&
-                age == that.age &&
-                overall == that.overall &&
-                potential == that.potential &&
-                Float.compare(that.value, value) == 0 &&
-                Float.compare(that.wage, wage) == 0 &&
-                number == that.number &&
-                finishing == that.finishing &&
-                vision == that.vision &&
-                condition == that.condition &&
-                ban == that.ban &&
                 name.equals(that.name) &&
-                nationality.equals(that.nationality) &&
-                position == that.position &&
-                resume.equals(that.resume);
+                age == that.age &&
+                nationality.equals(that.nationality);
     }
-
 
     @Override
     public int hashCode() {

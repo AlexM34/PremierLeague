@@ -1,7 +1,7 @@
 package simulation;
 
-import teams.Club;
-import teams.League;
+import team.Club;
+import team.League;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.toMap;
 import static simulation.Printer.offset;
 
-public class Utils {
+public class Helper {
     static <T> Map<T, Integer> sortMap(final Map<T, Integer> clubs) {
         return clubs.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))

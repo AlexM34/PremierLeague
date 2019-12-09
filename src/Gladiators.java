@@ -1,13 +1,13 @@
-import competitions.England;
-import competitions.France;
-import competitions.Germany;
-import competitions.Italy;
-import competitions.Spain;
+import competition.England;
+import competition.France;
+import competition.Germany;
+import competition.Italy;
+import competition.Spain;
 import players.Footballer;
 import simulation.Controller;
 import simulation.Data;
-import teams.Club;
-import teams.League;
+import team.Club;
+import team.League;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -34,7 +34,6 @@ import java.util.Random;
 
 import static simulation.Controller.CHAMPIONS_LEAGUE;
 import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
-import static simulation.Controller.round;
 import static simulation.Data.averageRatings;
 import static simulation.Data.awayWins;
 import static simulation.Data.draws;
@@ -48,7 +47,7 @@ import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
 import static simulation.Printer.playerStats;
 import static simulation.Printer.ratings;
-import static simulation.Utils.sortLeague;
+import static simulation.Helper.sortLeague;
 
 class Gladiators {
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
@@ -57,11 +56,11 @@ class Gladiators {
     private static final int FONT_SIZE = 25;
 
     private final JFrame frame;
-    private final JComboBox leagueBox;
-    private final JComboBox competitionBox;
-    private final JComboBox continentalBox;
-    private final JComboBox knockoutBox;
-    private final JComboBox groupBox;
+    private final JComboBox<String> leagueBox;
+    private final JComboBox<String> competitionBox;
+    private final JComboBox<String> continentalBox;
+    private final JComboBox<String> knockoutBox;
+    private final JComboBox<String> groupBox;
     private final JLabel resultsLabel;
     private final JTable goalsTable = new JTable(new String[10][3], STATS);
     private final JTable assistsTable = new JTable(new String[10][3], STATS);
@@ -108,27 +107,27 @@ class Gladiators {
         final int height = frame.getHeight();
 
         String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
-        leagueBox = new JComboBox(leagues);
+        leagueBox = new JComboBox<>(leagues);
         leagueBox.setBounds(9 * width / 25, height / 80, width / 9, height / 16);
         leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         String[] competitions = {"League", "League Cup", "National Cup"};
-        competitionBox = new JComboBox(competitions);
+        competitionBox = new JComboBox<>(competitions);
         competitionBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         String[] stages = {"Group Stage", "Knockout"};
-        continentalBox = new JComboBox(stages);
+        continentalBox = new JComboBox<>(stages);
         continentalBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
         continentalBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         String[] rounds = {"Round of 16", "Quarter-finals", "Semi-finals", "Final"};
-        knockoutBox = new JComboBox(rounds);
+        knockoutBox = new JComboBox<>(rounds);
         knockoutBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
         knockoutBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
         String[] groups = {"A", "B", "C", "D", "E", "F", "G", "H"};
-        groupBox = new JComboBox(groups);
+        groupBox = new JComboBox<>(groups);
         groupBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
         groupBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
@@ -164,6 +163,19 @@ class Gladiators {
         gamesTable.setEnabled(false);
         gamesTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         gamesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        gamesTable.setValueAt("Games", 0, 0);
+        gamesTable.setValueAt("Home Wins", 1, 0);
+        gamesTable.setValueAt("Draws", 2, 0);
+        gamesTable.setValueAt("Away Wins", 3, 0);
+        gamesTable.setValueAt("Home Goals", 4, 0);
+        gamesTable.setValueAt("Away Goals", 5, 0);
+        gamesTable.setValueAt("Assists", 6, 0);
+        gamesTable.setValueAt("Yellow Cards", 7, 0);
+        gamesTable.setValueAt("Red Cards", 8, 0);
+        gamesTable.setValueAt("Average Ratings", 9, 0);
+        gamesTable.setValueAt("Clean Sheets", 10, 0);
+
         setJTableColumnsWidth(gamesTable, gamesWidth, 70, 30);
         JScrollPane gamesPane = new JScrollPane(gamesTable);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
@@ -248,7 +260,7 @@ class Gladiators {
             case Germany.LEAGUE: league = Germany.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
-            case CHAMPIONS_LEAGUE_NAME: continentalView(teams); return;
+            case CHAMPIONS_LEAGUE_NAME: continentalView(teams);
             default: return;
         }
 
@@ -287,37 +299,16 @@ class Gladiators {
                 + draws.getOrDefault(leagueName, 0)
                 + awayWins.getOrDefault(leagueName, 0);
 
-        gamesTable.setValueAt("Games", 0, 0);
         gamesTable.setValueAt(String.valueOf(games), 0, 1);
-
-        gamesTable.setValueAt("Home Wins", 1, 0);
         gamesTable.setValueAt(String.valueOf(homeWins.getOrDefault(leagueName, 0)), 1, 1);
-
-        gamesTable.setValueAt("Draws", 2, 0);
         gamesTable.setValueAt(String.valueOf(draws.getOrDefault(leagueName, 0)), 2, 1);
-
-        gamesTable.setValueAt("Away Wins", 3, 0);
         gamesTable.setValueAt(String.valueOf(awayWins.getOrDefault(leagueName, 0)), 3, 1);
-
-        gamesTable.setValueAt("Home Goals", 4, 0);
         gamesTable.setValueAt(String.valueOf(scoredHome.getOrDefault(leagueName, 0)), 4, 1);
-
-        gamesTable.setValueAt("Away Goals", 5, 0);
         gamesTable.setValueAt(String.valueOf(scoredAway.getOrDefault(leagueName, 0)), 5, 1);
-
-        gamesTable.setValueAt("Assists", 6, 0);
         gamesTable.setValueAt(String.valueOf(Data.assists.getOrDefault(leagueName, 0)), 6, 1);
-
-        gamesTable.setValueAt("Yellow Cards", 7, 0);
         gamesTable.setValueAt(String.valueOf(yellowCards.getOrDefault(leagueName, 0)), 7, 1);
-
-        gamesTable.setValueAt("Red Cards", 8, 0);
         gamesTable.setValueAt(String.valueOf(redCards.getOrDefault(leagueName, 0)), 8, 1);
-
-        gamesTable.setValueAt("Average Ratings", 9, 0);
         gamesTable.setValueAt(df.format(averageRatings.getOrDefault(leagueName, 0.0f) / (games * 22)), 9, 1);
-
-        gamesTable.setValueAt("Clean Sheets", 10, 0);
         gamesTable.setValueAt(String.valueOf(Data.cleanSheets.getOrDefault(leagueName, 0)), 10, 1);
 
         resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(leagueName, "") + "</html>");
@@ -418,7 +409,7 @@ class Gladiators {
     }
 
     private void nextRound() {
-        for (int i = 0; i < 10 && round < 38; i++) Controller.proceed();
+        for (int i = 0; i < 38; i++) Controller.proceed();
         updateStats();
     }
 

@@ -3,9 +3,10 @@ package simulation;
 import players.Footballer;
 import players.Position;
 import players.Resume;
-import teams.Club;
+import team.Club;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -14,8 +15,8 @@ import static simulation.Data.LEAGUES;
 class PreSeason {
     private static final Random random = new Random();
     static int deals;
-    static Map<Footballer, Club> transfers;
-    static Map<Club, Integer> sold;
+    static final Map<Footballer, Club> transfers = new HashMap<>();
+    static final Map<Club, Integer> sold = new HashMap<>();
     private static int academy = 0;
 
     static void progression() {

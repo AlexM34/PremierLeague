@@ -1,9 +1,9 @@
 package simulation;
 
 import players.Footballer;
-import teams.Club;
+import team.Club;
 
-class Finances {
+class Finance {
 
     static void leaguePrizes(final Club[] league) {
         for (int team = 0; team < league.length; team++) {
@@ -27,14 +27,14 @@ class Finances {
     }
 
     static void profits(final Club[] league) {
-        for (Club club : league) club.changeBudget(club.getReputation() * club.getReputation() / 100);
+        for (final Club club : league) club.changeBudget((float) club.getReputation() * club.getReputation() / 500);
     }
 
     static void salaries(final Club[] league) {
         for (Club club : league) {
-            for (Footballer footballer : club.getFootballers()) {
-                club.changeBudget(-footballer.getWage() / 20);
-            }
+            System.out.println(club.getName() + " has before " + club.getBudget());
+            for (Footballer footballer : club.getFootballers()) club.changeBudget(-footballer.getWage() / 80000);
+            System.out.println(club.getName() + " has after " + club.getBudget());
         }
     }
 }

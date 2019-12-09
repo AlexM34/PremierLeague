@@ -2,8 +2,10 @@ package simulation;
 
 import players.Footballer;
 import players.Position;
-import teams.Club;
+import team.Club;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static simulation.Data.LEAGUES;
@@ -11,11 +13,14 @@ import static simulation.PreSeason.academy;
 import static simulation.PreSeason.deals;
 import static simulation.PreSeason.sold;
 import static simulation.PreSeason.transfers;
+import static simulation.Helper.sortMap;
 
-class Transfers {
+class Transfer {
     private static final Random random = new Random();
+    private static Map<String, Integer> summary = new HashMap<>();
 
     static void transfers() {
+        summary.clear();
         deals = 0;
         int attempts = 0;
         Club[] league;
@@ -24,7 +29,7 @@ class Transfers {
         transfers.clear();
         sold.clear();
 
-        while (attempts < 30000) {
+        while (attempts < 10000) {
             league = LEAGUES[random.nextInt(5)];
             buying = league[random.nextInt(league.length)];
             league = LEAGUES[random.nextInt(5)];
@@ -37,6 +42,14 @@ class Transfers {
 
         System.out.println(deals + " transfers made");
         transfers.forEach(((footballer, club) -> club.addFootballer(footballer)));
+
+        summary = sortMap(summary);
+        int row = 0;
+        for (final String news : summary.keySet()) {
+            System.out.println(++row + ". " + news);
+            if (row >= 50) break;
+        }
+
         academy();
     }
 
@@ -49,6 +62,7 @@ class Transfers {
         float offered = interest(buying, footballer);
         if (offered == 0) return;
         float wanted = demand(selling, footballer);
+        if (wanted == 0) return;
 
         while (offered < wanted) {
             if (random.nextInt(3) != 0) {
@@ -62,7 +76,7 @@ class Transfers {
             else return;
         }
 
-        if (wanted < budget) {
+        if (2 * wanted < budget) {
             buying.changeBudget(-wanted);
             selling.changeBudget(wanted);
             selling.removeFootballer(footballer);
@@ -70,8 +84,8 @@ class Transfers {
             sold.merge(buying, 1, Integer::sum);
             deals++;
 
-//            System.out.println(deals + ". " + footballer.getName() + " joins " + buying.getName() + " from " +
-//                selling.getName() + " for €" + (int) wanted + " million");
+            summary.put(footballer.getName() + " joins " + buying.getName() + " from " +
+                selling.getName() + " for €" + (int) wanted + " million", (int) wanted);
         }
     }
 
@@ -103,8 +117,8 @@ class Transfers {
         if (sold.containsKey(selling) && sold.get(selling) > 5) return footballer.getValue() * 2.5f;
 
         switch (better) {
-            case 0: return footballer.getValue() * 2f;
-            case 1: return footballer.getValue() * 1.5f;
+            case 0: return random.nextInt(3) != 0 ? 0 : footballer.getValue() * 2.5f;
+            case 1: return footballer.getValue() * 1.8f;
             default: return footballer.getValue() * 1.2f;
         }
     }

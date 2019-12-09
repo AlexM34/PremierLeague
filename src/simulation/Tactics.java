@@ -3,8 +3,8 @@ package simulation;
 import players.Competition;
 import players.Footballer;
 import players.MatchStats;
-import teams.Club;
-import teams.Formation;
+import team.Club;
+import team.Formation;
 
 import java.util.Arrays;
 import java.util.Comparator;

@@ -1,11 +1,11 @@
 package simulation;
 
-import competitions.England;
-import competitions.France;
+import competition.England;
+import competition.France;
 import players.Competition;
 import players.Footballer;
-import teams.Club;
-import teams.League;
+import team.Club;
+import team.League;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,9 +17,9 @@ import java.util.Random;
 
 import static players.Position.GK;
 import static simulation.Data.LEAGUES;
-import static simulation.Finances.leaguePrizes;
-import static simulation.Utils.sortLeague;
-import static simulation.Utils.sortMap;
+import static simulation.Finance.leaguePrizes;
+import static simulation.Helper.sortLeague;
+import static simulation.Helper.sortMap;
 
 public class Printer {
     private static final Random random = new Random();
@@ -30,13 +30,13 @@ public class Printer {
     public static Map<Footballer, Integer> cleanSheets = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> redCards = new LinkedHashMap<>();
-    static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
+    private static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
     static int offset;
 
     static Club[] pickChampionsLeagueTeams() {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {
-            final Map<Club, Integer> sorted = sortLeague(league, 3);
+            final Map<Club, Integer> sorted = sortLeague(league, 0);
             int slots = 7;
             for (final Club team : sorted.keySet()) {
                 teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5));
@@ -51,7 +51,7 @@ public class Printer {
         int limit = 0;
 
         for (final Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
-            selected[limit] = clubIntegerEntry.getKey();
+            System.out.println(selected[limit] = clubIntegerEntry.getKey());
             if (limit++ == 31) break;
         }
 
