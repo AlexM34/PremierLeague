@@ -1,5 +1,7 @@
 *.class
 *.iml
+*.jpg
+*.wav
 
 /out/
 /data/

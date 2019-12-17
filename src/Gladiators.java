@@ -9,11 +9,13 @@ import simulation.Data;
 import team.Club;
 import team.League;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -27,10 +29,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static simulation.Controller.CHAMPIONS_LEAGUE;
 import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
@@ -42,12 +48,12 @@ import static simulation.Data.redCards;
 import static simulation.Data.scoredAway;
 import static simulation.Data.scoredHome;
 import static simulation.Data.yellowCards;
+import static simulation.Helper.sortLeague;
 import static simulation.Printer.assists;
 import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
 import static simulation.Printer.playerStats;
 import static simulation.Printer.ratings;
-import static simulation.Helper.sortLeague;
 
 class Gladiators {
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
@@ -56,9 +62,10 @@ class Gladiators {
     private static final int FONT_SIZE = 25;
 
     private final JFrame frame;
-    private final JComboBox<String> leagueBox;
+    private final JComboBox<String> nationBox;
     private final JComboBox<String> competitionBox;
     private final JComboBox<String> continentalBox;
+    private final JComboBox<String> roundBox;
     private final JComboBox<String> knockoutBox;
     private final JComboBox<String> groupBox;
     private final JLabel resultsLabel;
@@ -93,40 +100,62 @@ class Gladiators {
     private Gladiators() {
         Controller.initialise();
 
-        frame = new JFrame("Football Manager");
+        frame = new JFrame("Gladiators");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.setUndecorated(true);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
-        calculatePositions(frame.getWidth(), frame.getHeight());
-        frame.getContentPane().setBackground(COLOR);
 
         final int width = frame.getWidth();
         final int height = frame.getHeight();
+        calculatePositions(width, height);
+        frame.getContentPane().setBackground(COLOR);
 
-        String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
-        leagueBox = new JComboBox<>(leagues);
-        leagueBox.setBounds(9 * width / 25, height / 80, width / 9, height / 16);
-        leagueBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+        JLabel background = new JLabel();
 
-        String[] competitions = {"League", "League Cup", "National Cup"};
+        try {
+            BufferedImage ball = ImageIO.read(getClass().getResource("ball.jpg"));
+            frame.setIconImage(ball);
+
+            BufferedImage image = ImageIO.read(getClass().getResource("gladiators.jpg"));
+            Image scaledInstance = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(scaledInstance);
+
+            background.setIcon(icon);
+            background.setSize(width, height);
+            background.setLocation(0, 0);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+
+        final String[] leagues = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
+        nationBox = new JComboBox<>(leagues);
+        nationBox.setBounds(9 * width / 25, height / 80, width / 9, height / 16);
+        nationBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+
+        final String[] competitions = {"League", "League Cup", "National Cup"};
         competitionBox = new JComboBox<>(competitions);
         competitionBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
         competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] stages = {"Group Stage", "Knockout"};
-        continentalBox = new JComboBox<>(stages);
+        final String[] phases = {"Group Stage", "Knockout"};
+        continentalBox = new JComboBox<>(phases);
         continentalBox.setBounds(19 * width / 40, height / 80, width / 11, height / 16);
         continentalBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] rounds = {"Round of 16", "Quarter-finals", "Semi-finals", "Final"};
-        knockoutBox = new JComboBox<>(rounds);
+        final String[] rounds = IntStream.range(1, 39).mapToObj(String::valueOf).toArray(String[]::new);
+        roundBox = new JComboBox<>(rounds);
+        roundBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
+        roundBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
+
+        final String[] stages = {"Round of 16", "Quarter-finals", "Semi-finals", "Final"};
+        knockoutBox = new JComboBox<>(stages);
         knockoutBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
         knockoutBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
 
-        String[] groups = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        final String[] groups = {"A", "B", "C", "D", "E", "F", "G", "H"};
         groupBox = new JComboBox<>(groups);
         groupBox.setBounds(23 * width / 40, height / 80, width / 11, height / 16);
         groupBox.setFont(new Font(FONT_NAME, Font.PLAIN, height / 50));
@@ -137,14 +166,13 @@ class Gladiators {
         borderResults.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         resultsLabel.setBorder(borderResults);
         resultsLabel.setFont(new Font(FONT_NAME, Font.PLAIN, resultsHeight / 14));
-        resultsLabel.setForeground(Color.WHITE);
 
         setStatTables(goalsTable, resultsX, goalsY, "GOALS");
         setStatTables(assistsTable, resultsX, assistsY, "ASSISTS");
         setStatTables(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
         setStatTables(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
 
-        String[] standings = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
+        final String[] standings = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
         standingsTable = new JTable(new String[20][10], standings);
         standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
         standingsTable.setRowHeight(standingsHeight / 23);
@@ -164,17 +192,8 @@ class Gladiators {
         gamesTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         gamesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-        gamesTable.setValueAt("Games", 0, 0);
-        gamesTable.setValueAt("Home Wins", 1, 0);
-        gamesTable.setValueAt("Draws", 2, 0);
-        gamesTable.setValueAt("Away Wins", 3, 0);
-        gamesTable.setValueAt("Home Goals", 4, 0);
-        gamesTable.setValueAt("Away Goals", 5, 0);
-        gamesTable.setValueAt("Assists", 6, 0);
-        gamesTable.setValueAt("Yellow Cards", 7, 0);
-        gamesTable.setValueAt("Red Cards", 8, 0);
-        gamesTable.setValueAt("Average Ratings", 9, 0);
-        gamesTable.setValueAt("Clean Sheets", 10, 0);
+        setTableValues(gamesTable, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
+                "Assists", "Yellow Cards", "Red Cards", "Average Ratings", "Clean Sheets");
 
         setJTableColumnsWidth(gamesTable, gamesWidth, 70, 30);
         JScrollPane gamesPane = new JScrollPane(gamesTable);
@@ -184,25 +203,32 @@ class Gladiators {
         nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
         nextButton.setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
 
-        frame.add(leagueBox);
+        frame.add(nationBox);
         frame.add(competitionBox);
         frame.add(continentalBox);
+        frame.add(roundBox);
         frame.add(knockoutBox);
         frame.add(groupBox);
         frame.add(resultsLabel);
         frame.add(standingsPane);
         frame.add(gamesPane);
         frame.add(nextButton);
+        frame.getContentPane().add(background);
 
-        leagueBox.addActionListener(e -> updateStats());
+        nationBox.addActionListener(e -> updateStats());
         competitionBox.addActionListener(e -> updateStats());
         continentalBox.addActionListener(e -> updateStats());
+        roundBox.addActionListener(e -> updateStats());
         knockoutBox.addActionListener(e -> updateStats());
         groupBox.addActionListener(e -> updateStats());
         nextButton.addActionListener(e -> nextRound());
 
         playMusic();
         updateStats();
+    }
+
+    private void setTableValues(final JTable table, final String... values) {
+        for (int row = 0; row < values.length; row++) table.setValueAt(values[row], row, 0);
     }
 
     private void setStatTables(final JTable table, final int x, final int y, final String label) {
@@ -254,7 +280,7 @@ class Gladiators {
         }
 
         final Club[] league;
-        switch (String.valueOf(leagueBox.getSelectedItem())) {
+        switch (String.valueOf(nationBox.getSelectedItem())) {
             case England.LEAGUE: league = England.CLUBS; break;
             case Spain.LEAGUE: league = Spain.CLUBS; break;
             case Germany.LEAGUE: league = Germany.CLUBS; break;
@@ -277,6 +303,7 @@ class Gladiators {
     private void leagueView(final Club[] league) {
         competitionBox.setVisible(true);
         continentalBox.setVisible(false);
+        roundBox.setVisible(true);
         knockoutBox.setVisible(false);
         groupBox.setVisible(false);
 
@@ -292,8 +319,6 @@ class Gladiators {
                 standingsTable.setValueAt("", i, j);
             }
         }
-
-        if (homeWins == null) return;
 
         final int games = homeWins.getOrDefault(leagueName, 0)
                 + draws.getOrDefault(leagueName, 0)
@@ -311,13 +336,26 @@ class Gladiators {
         gamesTable.setValueAt(df.format(averageRatings.getOrDefault(leagueName, 0.0f) / (games * 22)), 9, 1);
         gamesTable.setValueAt(String.valueOf(Data.cleanSheets.getOrDefault(leagueName, 0)), 10, 1);
 
-        resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(leagueName, "") + "</html>");
+        final int round = getInteger(String.valueOf(roundBox.getSelectedItem()));
+        resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(
+                leagueName + round, "") + "</html>");
         System.out.println(Controller.leagueResults.get(leagueName));
+    }
+
+    private int getInteger(final String stringValue) {
+        int intValue = 0;
+        for (char c : stringValue.toCharArray()) {
+            intValue *= 10;
+            intValue += (c - '0');
+        }
+
+        return intValue;
     }
 
     private void cupView(final Club[] league, final boolean leagueCup, final int teams) {
         competitionBox.setVisible(true);
         continentalBox.setVisible(false);
+        roundBox.setVisible(false);
         knockoutBox.setVisible(true);
         groupBox.setVisible(false);
         final String leagueName = league[0].getLeague();
@@ -338,6 +376,7 @@ class Gladiators {
         continentalBox.setVisible(true);
 
         final boolean knockout = String.valueOf(continentalBox.getSelectedItem()).equals("Knockout");
+        roundBox.setVisible(false);
         knockoutBox.setVisible(knockout);
         groupBox.setVisible(!knockout);
 

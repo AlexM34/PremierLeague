@@ -232,45 +232,31 @@ public class Controller {
                 final int[] result = simulation(clubs[home], clubs[away],
                         false, -1, -1, 3);
 
+                appendScore(scores, clubs[home], clubs[away], result);
                 final int homeGoals = result[0];
                 final int awayGoals = result[1];
 
-                scores.append(clubs[home].getName())
-                        .append(" - ").append(clubs[away].getName())
-                        .append(" ").append(homeGoals).append(":")
-                        .append(awayGoals).append("<br/>");
-
-                final League homeStats = clubs[home].getSeason().getChampionsLeague().getGroup();
-                final League awayStats = clubs[away].getSeason().getChampionsLeague().getGroup();
-
-                if (homeGoals > awayGoals) {
-                    homeStats.addPoints(3);
-                    homeStats.addWin();
-                    awayStats.addLoss();
-                } else if (homeGoals < awayGoals) {
-                    awayStats.addPoints(3);
-                    awayStats.addWin();
-                    homeStats.addLoss();
-                } else {
-                    homeStats.addPoints(1);
-                    awayStats.addPoints(1);
-                    homeStats.addDraw();
-                    awayStats.addDraw();
-                }
-
-                if (awayGoals == 0) homeStats.addCleanSheet();
-                if (homeGoals == 0) awayStats.addCleanSheet();
-
-                homeStats.addMatch();
-                awayStats.addMatch();
-                homeStats.addScored(homeGoals);
-                awayStats.addScored(awayGoals);
-                homeStats.addConceded(awayGoals);
-                awayStats.addConceded(homeGoals);
+                groupGameOutcome(clubs[home].getSeason().getChampionsLeague().getGroup(), homeGoals, awayGoals);
+                groupGameOutcome(clubs[away].getSeason().getChampionsLeague().getGroup(), awayGoals, homeGoals);
             }
 
             continentalCupResults.put(CHAMPIONS_LEAGUE_NAME + letter, scores.toString());
         }
+    }
+
+    private static void groupGameOutcome(final League team, final int scored, final int conceded) {
+        if (scored > conceded) {
+            team.addPoints(3);
+            team.addWin();
+        } else if (scored == conceded) {
+            team.addPoints(1);
+            team.addDraw();
+        } else team.addLoss();
+
+        team.addMatch();
+        team.addScored(scored);
+        team.addConceded(conceded);
+        if (conceded == 0) team.addCleanSheet();
     }
 
     private static void play(final Club[] league, final int[][][] draw, final int round) {
@@ -281,15 +267,11 @@ public class Controller {
             final int away = draw[round][game][1];
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
-            final int[] score = simulation(league[home], league[away], false, -1, -1, 0);
-
-            scores.append(league[home].getName())
-                    .append(" - ").append(league[away].getName())
-                    .append(" ").append(score[0]).append(":")
-                    .append(score[1]).append("<br/>");
+            final int[] result = simulation(league[home], league[away], false, -1, -1, 0);
+            appendScore(scores, league[home], league[away], result);
         }
 
-        leagueResults.put(league[0].getLeague(), scores.toString());
+        leagueResults.put(league[0].getLeague() + (round + 1), scores.toString());
         if (round < 2 * league.length - 3 && standingsFlag) {
             System.out.println();
             System.out.println(String.format("Standings after round %d:", round + 1));
@@ -352,20 +334,14 @@ public class Controller {
         int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
 
         final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
-        scores.append(first.getName())
-                .append(" - ").append(second.getName())
-                .append(" ").append(result[0]).append(":")
-                .append(result[1]).append("<br/>");
+        appendScore(scores, first, second, result);
 
         firstGoals += result[0];
         secondGoals += result[1];
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
             result = simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
-            scores.append(second.getName())
-                    .append(" - ").append(first.getName())
-                    .append(" ").append(result[0]).append(":")
-                    .append(result[1]).append("<br/>");
+            appendScore(scores, second, first, result);
 
             secondGoals += result[0];
             firstGoals += result[1];
@@ -378,6 +354,13 @@ public class Controller {
 
         results.put("new", scores.toString());
         return secondGoals > firstGoals;
+    }
+
+    private static void appendScore(final StringBuilder scores, final Club home, final Club away, final int[] result) {
+        scores.append(home.getName())
+                .append(" - ").append(away.getName())
+                .append(" ").append(result[0]).append(":")
+                .append(result[1]).append("<br/>");
     }
 
     private static void pickTeam() {
