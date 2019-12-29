@@ -26,7 +26,7 @@ public class Helper {
             final League stats;
             switch (type) {
                 case 0: stats = team.getSeason().getLeague(); break;
-                case 3: stats = team.getSeason().getChampionsLeague().getGroup(); break;
+                case 3: stats = team.getSeason().getContinental().getGroup(); break;
                 default: return Collections.emptyMap();
             }
             standings.put(team, 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) +

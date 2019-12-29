@@ -58,7 +58,7 @@ class Draw {
         return schedule;
     }
 
-    static Club[] championsLeague(final Club[] advancing) {
+    static Club[] seededKnockout(final Club[] advancing) {
         final int teams = advancing.length;
         final Club[] draw = new Club[teams];
         final boolean[] drawn = new boolean[teams];

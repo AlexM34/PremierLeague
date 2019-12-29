@@ -5,7 +5,6 @@ import competition.France;
 import competition.Germany;
 import competition.Italy;
 import competition.Spain;
-import simulation.Controller;
 import team.Club;
 
 import javax.imageio.ImageIO;
@@ -28,6 +27,14 @@ import java.util.stream.IntStream;
 
 import static simulation.Controller.CHAMPIONS_LEAGUE;
 import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
+import static simulation.Controller.EUROPA_LEAGUE;
+import static simulation.Controller.EUROPA_LEAGUE_NAME;
+import static simulation.Controller.continentalCupResults;
+import static simulation.Controller.initialise;
+import static simulation.Controller.leagueCupResults;
+import static simulation.Controller.leagueResults;
+import static simulation.Controller.nationalCupResults;
+import static simulation.Controller.proceed;
 import static simulation.Helper.sortLeague;
 import static simulation.Printer.assists;
 import static simulation.Printer.cleanSheets;
@@ -48,12 +55,13 @@ public class View {
     private static final int FONT_SIZE = 25;
 
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
-    private static final String[] LEAGUES = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE, CHAMPIONS_LEAGUE_NAME};
+    private static final String[] LEAGUES = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE,
+            CHAMPIONS_LEAGUE_NAME, EUROPA_LEAGUE_NAME};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
     private static final String[] PHASES = {"Group Stage", "Knockout"};
     private static final String[] ROUNDS = IntStream.range(1, 39).mapToObj(String::valueOf).toArray(String[]::new);
-    private static final String[] STAGES = {"Round of 16", "Quarter-finals", "Semi-finals", "Final"};
-    private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H"};
+    private static final String[] STAGES = {"Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"};
+    private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
 
     private static final JFrame frame = new JFrame("Gladiators");
@@ -95,7 +103,7 @@ public class View {
     private final JTable cleanSheetsTable = new JTable(new String[10][3], STATS);
 
     public View() {
-        Controller.initialise();
+        initialise();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
@@ -209,14 +217,17 @@ public class View {
     }
 
     private void nextRound() {
-        for (int i = 0; i < 38; i++) Controller.proceed();
+        for (int i = 0; i < 38; i++) proceed();
         updateStats();
     }
 
     private void updateStats() {
+        for (int i = 0; i < 32; i++) System.out.println(CHAMPIONS_LEAGUE[i].getName());
+        for (int i = 0; i < 48; i++) System.out.println(EUROPA_LEAGUE[i].getName());
         final String competition = String.valueOf(competitionBox.getSelectedItem());
         final int teams;
         switch (String.valueOf(knockoutBox.getSelectedItem())) {
+            case "Round of 32": teams = 32; break;
             case "Round of 16": teams = 16; break;
             case "Quarter-finals": teams = 8; break;
             case "Semi-finals": teams = 4; break;
@@ -231,7 +242,8 @@ public class View {
             case Germany.LEAGUE: league = Germany.CLUBS; break;
             case Italy.LEAGUE: league = Italy.CLUBS; break;
             case France.LEAGUE: league = France.CLUBS; break;
-            case CHAMPIONS_LEAGUE_NAME: continentalView(teams);
+            case CHAMPIONS_LEAGUE_NAME: continentalView(CHAMPIONS_LEAGUE_NAME, teams); return;
+            case EUROPA_LEAGUE_NAME: continentalView(EUROPA_LEAGUE_NAME, teams);
             default: return;
         }
 
@@ -270,9 +282,9 @@ public class View {
         leagueStats(gamesTable, leagueName);
 
         final int round = getInteger(String.valueOf(roundBox.getSelectedItem()));
-        resultsLabel.setText("<html>" + Controller.leagueResults.getOrDefault(
+        resultsLabel.setText("<html>" + leagueResults.getOrDefault(
                 leagueName + round, "") + "</html>");
-        System.out.println(Controller.leagueResults.get(leagueName));
+        System.out.println(leagueResults.get(leagueName));
     }
 
     private void cupView(final Club[] league, final boolean leagueCup, final int teams) {
@@ -286,17 +298,17 @@ public class View {
 
         final String leagueName = league[0].getLeague();
         if (leagueCup) {
-            resultsLabel.setText("<html>" + Controller.leagueCupResults.getOrDefault(
+            resultsLabel.setText("<html>" + leagueCupResults.getOrDefault(
                     leagueName + teams, "") + "</html>");
-            System.out.println(Controller.leagueCupResults.get(leagueName));
+            System.out.println(leagueCupResults.get(leagueName));
         } else {
-            resultsLabel.setText("<html>" + Controller.nationalCupResults.getOrDefault(
+            resultsLabel.setText("<html>" + nationalCupResults.getOrDefault(
                     leagueName + teams, "") + "</html>");
-            System.out.println(Controller.nationalCupResults.get(leagueName));
+            System.out.println(nationalCupResults.get(leagueName));
         }
     }
 
-    private void continentalView(final int teams) {
+    private void continentalView(final String competition, final int teams) {
         competitionBox.setVisible(false);
         continentalBox.setVisible(true);
         roundBox.setVisible(false);
@@ -314,26 +326,30 @@ public class View {
         }
 
         if (knockout) {
-            resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
-                    CHAMPIONS_LEAGUE_NAME + teams, "") + "</html>");
+            resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
+                    competition + teams, "") + "</html>");
         } else {
             final Club[] league = new Club[4];
-            for (int team = 0; team < 4; team++)
-                league[team] = CHAMPIONS_LEAGUE[8 * team +
-                        ((int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A')];
+            for (int team = 0; team < 4; team++) {
+                league[team] = competition.equals(CHAMPIONS_LEAGUE_NAME)
+                        ? CHAMPIONS_LEAGUE[8 * team + ((int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A')]
+                        : EUROPA_LEAGUE[12 * team + ((int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A')];
+            }
 
             final Map<Club, Integer> sorted = sortLeague(league, 3);
             int row = 0;
             for (final Club team : sorted.keySet()) {
-                insertStandingsEntry(standingsTable, team.getName(), team.getSeason().getChampionsLeague().getGroup(), row++);
+                insertStandingsEntry(standingsTable, team.getName(), team.getSeason().getContinental().getGroup(), row++);
             }
 
-            resultsLabel.setText("<html>" + Controller.continentalCupResults.getOrDefault(
-                    CHAMPIONS_LEAGUE_NAME + groupBox.getSelectedItem(), "") + "</html>");
+            resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
+                    competition + groupBox.getSelectedItem(), "") + "</html>");
         }
 
-        System.out.println(Controller.continentalCupResults);
-        playerStats(Controller.CHAMPIONS_LEAGUE, 2);
+        System.out.println(continentalCupResults);
+        if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 2);
+        else playerStats(EUROPA_LEAGUE, 2);
+
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);

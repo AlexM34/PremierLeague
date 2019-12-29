@@ -1,6 +1,6 @@
 package team;
 
-import competition.ChampionsLeague;
+import competition.Continental;
 import competition.Cup;
 import players.Footballer;
 import players.Glory;
@@ -40,7 +40,7 @@ public class Club {
         this.owner = owner;
         this.coach = coach;
         this.footballers = new HashSet<>();
-        this.season = new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100);
+        this.season = new Season(new League(), new Cup(), new Cup(), new Continental(), 100, 100);
     }
 
     public int getId() {

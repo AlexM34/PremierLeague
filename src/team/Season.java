@@ -1,6 +1,6 @@
 package team;
 
-import competition.ChampionsLeague;
+import competition.Continental;
 import competition.Cup;
 
 import java.util.Objects;
@@ -9,15 +9,15 @@ public class Season {
     private League league;
     private Cup nationalCup;
     private Cup leagueCup;
-    private ChampionsLeague championsLeague;
+    private Continental continental;
     private int form;
     private int morale;
 
-    public Season(final League league, final Cup nationalCup, final Cup leagueCup, final ChampionsLeague championsLeague, final int form, final int morale) {
+    public Season(final League league, final Cup nationalCup, final Cup leagueCup, final Continental continental, final int form, final int morale) {
         this.league = league;
         this.nationalCup = nationalCup;
         this.leagueCup = leagueCup;
-        this.championsLeague = championsLeague;
+        this.continental = continental;
         this.form = form;
         this.morale = morale;
     }
@@ -46,12 +46,12 @@ public class Season {
         this.leagueCup = leagueCup;
     }
 
-    public ChampionsLeague getChampionsLeague() {
-        return championsLeague;
+    public Continental getContinental() {
+        return continental;
     }
 
-    void setChampionsLeague(final ChampionsLeague championsLeague) {
-        this.championsLeague = championsLeague;
+    void setContinental(final Continental continental) {
+        this.continental = continental;
     }
 
     public int getForm() {
@@ -86,12 +86,12 @@ public class Season {
                 league.equals(season.league) &&
                 Objects.equals(nationalCup, season.nationalCup) &&
                 Objects.equals(leagueCup, season.leagueCup) &&
-                Objects.equals(championsLeague, season.championsLeague);
+                Objects.equals(continental, season.continental);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(league, nationalCup, leagueCup, championsLeague, form, morale);
+        return Objects.hash(league, nationalCup, leagueCup, continental, form, morale);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class Season {
                 "league=" + league +
                 ", nationalCup=" + nationalCup +
                 ", leagueCup=" + leagueCup +
-                ", championsLeague=" + championsLeague +
+                ", championsLeague=" + continental +
                 ", form=" + form +
                 ", morale=" + morale +
                 '}';

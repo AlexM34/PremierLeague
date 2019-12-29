@@ -34,33 +34,36 @@ public class Printer {
     private static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
     static int offset;
 
-    static Club[] pickChampionsLeagueTeams() {
+    static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {
             final Map<Club, Integer> sorted = sortLeague(league, 0);
-            int slots = 7;
+            int slots = 16;
             for (final Club team : sorted.keySet()) {
-                teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5));
-                slots--;
+                teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5) + slots--);
                 if (slots == 0) break;
             }
         }
 
         final List<Map.Entry<Club, Integer>> toSort = new ArrayList<>(teams.entrySet());
         toSort.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
-        final Club[] selected = new Club[32];
         int limit = 0;
 
         for (final Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
-            System.out.println(selected[limit] = clubIntegerEntry.getKey());
-            if (limit++ == 31) break;
+            if (limit < 32) System.out.println(championsLeagueTeams[limit] = clubIntegerEntry.getKey());
+            else if (limit < 80) System.out.println(europaLeagueTeams[limit - 32] = clubIntegerEntry.getKey());
+            else break;
+
+            limit++;
         }
 
-        for (final Club team : selected) {
-            team.getSeason().getChampionsLeague().setAlive(true);
+        for (final Club team : championsLeagueTeams) {
+            team.getSeason().getContinental().setAlive(true);
         }
 
-        return selected;
+        for (final Club team : europaLeagueTeams) {
+            team.getSeason().getContinental().setAlive(true);
+        }
     }
 
     static void standings(final Club[] league) {

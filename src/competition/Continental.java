@@ -4,11 +4,11 @@ import team.League;
 
 import java.util.Objects;
 
-public class ChampionsLeague {
+public class Continental {
     private boolean alive;
     private final League group;
 
-    public ChampionsLeague() {
+    public Continental() {
         this.alive = false;
         this.group = new League();
     }
@@ -29,7 +29,7 @@ public class ChampionsLeague {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ChampionsLeague that = (ChampionsLeague) o;
+        final Continental that = (Continental) o;
         return alive == that.alive &&
                 group.equals(that.group);
     }

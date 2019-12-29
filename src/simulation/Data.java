@@ -1,6 +1,6 @@
 package simulation;
 
-import competition.ChampionsLeague;
+import competition.Continental;
 import competition.Cup;
 import competition.England;
 import competition.France;
@@ -167,7 +167,7 @@ public class Data {
         if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
-                club.setSeason(new Season(new League(), new Cup(), new Cup(), new ChampionsLeague(), 100, 100));
+                club.setSeason(new Season(new League(), new Cup(), new Cup(), new Continental(), 100, 100));
 
                 for (final Footballer f : club.getFootballers()) {
                     final Statistics career = f.getResume().getTotal();
