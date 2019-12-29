@@ -222,8 +222,6 @@ public class View {
     }
 
     private void updateStats() {
-        for (int i = 0; i < 32; i++) System.out.println(CHAMPIONS_LEAGUE[i].getName());
-        for (int i = 0; i < 48; i++) System.out.println(EUROPA_LEAGUE[i].getName());
         final String competition = String.valueOf(competitionBox.getSelectedItem());
         final int teams;
         switch (String.valueOf(knockoutBox.getSelectedItem())) {

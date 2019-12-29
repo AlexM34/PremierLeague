@@ -11,6 +11,28 @@ import static java.util.stream.Collectors.toMap;
 import static simulation.Printer.offset;
 
 public class Helper {
+
+    static void groupGameOutcome(final League team, final int scored, final int conceded) {
+        if (scored > conceded) {
+            team.addPoints(3);
+            team.addWin();
+        } else if (scored == conceded) {
+            team.addPoints(1);
+            team.addDraw();
+        } else team.addLoss();
+
+        team.addMatch();
+        team.addScored(scored);
+        team.addConceded(conceded);
+        if (conceded == 0) team.addCleanSheet();
+    }
+
+    static Club[] cup(final Club[] league) {
+        final Club[] selected = new Club[16];
+        System.arraycopy(league, 0, selected, 0, 16);
+        return selected;
+    }
+
     static <T> Map<T, Integer> sortMap(final Map<T, Integer> clubs) {
         return clubs.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
@@ -34,5 +56,12 @@ public class Helper {
         }
 
         return sortMap(standings);
+    }
+
+    static void appendScore(final StringBuilder scores, final Club home, final Club away, final int[] result) {
+        scores.append(home.getName())
+                .append(" - ").append(away.getName())
+                .append(" ").append(result[0]).append(":")
+                .append(result[1]).append("<br/>");
     }
 }

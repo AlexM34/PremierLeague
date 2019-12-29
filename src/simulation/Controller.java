@@ -7,6 +7,7 @@ import players.Footballer;
 import team.Club;
 import team.League;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,18 +22,21 @@ import static simulation.Data.USER;
 import static simulation.Data.addDummies;
 import static simulation.Data.buildSquads;
 import static simulation.Data.prepare;
-import static simulation.Draw.seededKnockout;
 import static simulation.Draw.league;
+import static simulation.Draw.seededKnockout;
 import static simulation.Finance.knockoutPrizes;
 import static simulation.Finance.profits;
 import static simulation.Finance.salaries;
+import static simulation.Helper.appendScore;
+import static simulation.Helper.cup;
+import static simulation.Helper.groupGameOutcome;
+import static simulation.Helper.sortMap;
 import static simulation.Match.simulation;
 import static simulation.PreSeason.progression;
 import static simulation.Printer.pickContinentalTeams;
 import static simulation.Printer.standings;
 import static simulation.Tactics.preMatch;
 import static simulation.Transfer.transfers;
-import static simulation.Helper.sortMap;
 
 public class Controller {
     private static final Scanner scanner = new Scanner(System.in);
@@ -60,7 +64,7 @@ public class Controller {
 
     public static void main(String[] args) {
         initialise();
-        while(scanner.nextInt() == 1) {
+        while(scanner.nextInt() != 0) {
             for (int i = 0; i < 38; i++) Controller.proceed();
         }
     }
@@ -104,7 +108,7 @@ public class Controller {
         }
 
         for (final Club[] league : LEAGUES) {
-            if (round < 34 || league.length > 18) play(league, leagueDraw.get(league[0].getLeague()), round);
+            if (round < 34 || league.length > 18) leagueRound(league, leagueDraw.get(league[0].getLeague()), round);
         }
 
         if (round % 10 == 3) {
@@ -125,8 +129,8 @@ public class Controller {
 
         if (round % 4 == 0) {
             if (round < 21) {
-                groupStage(CHAMPIONS_LEAGUE_NAME, CHAMPIONS_LEAGUE, round / 4);
-                groupStage(EUROPA_LEAGUE_NAME, EUROPA_LEAGUE, round / 4);
+                groupRound(CHAMPIONS_LEAGUE_NAME, CHAMPIONS_LEAGUE, round / 4);
+                groupRound(EUROPA_LEAGUE_NAME, EUROPA_LEAGUE, round / 4);
             } else {
                 continentalCup.put(CHAMPIONS_LEAGUE_NAME,
                         knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
@@ -137,8 +141,11 @@ public class Controller {
         }
 
         if (round == 21) {
-            concludeGroups(CHAMPIONS_LEAGUE_NAME, CHAMPIONS_LEAGUE);
             concludeGroups(EUROPA_LEAGUE_NAME, EUROPA_LEAGUE);
+            concludeGroups(CHAMPIONS_LEAGUE_NAME, CHAMPIONS_LEAGUE);
+
+            continentalCup.put(EUROPA_LEAGUE_NAME,
+                    knockoutRound(continentalCup.get(EUROPA_LEAGUE_NAME), 2, 4, false));
         }
 
         if (++round == 38) {
@@ -169,13 +176,6 @@ public class Controller {
                 salaries(league);
             }
 
-            final Club championsLeagueWinner = CHAMPIONS_LEAGUE[0];
-            System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
-            championsLeagueWinner.getGlory().addContinental();
-            for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
-                footballer.getResume().getGlory().addContinental();
-            }
-
             final Club europaLeagueWinner = EUROPA_LEAGUE[0];
             System.out.println(europaLeagueWinner.getName() + " win the Europa League!");
             europaLeagueWinner.getGlory().addContinental();
@@ -183,8 +183,15 @@ public class Controller {
                 footballer.getResume().getGlory().addContinental();
             }
 
-            knockoutPrizes(CHAMPIONS_LEAGUE, true);
+            final Club championsLeagueWinner = CHAMPIONS_LEAGUE[0];
+            System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
+            championsLeagueWinner.getGlory().addContinental();
+            for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
+                footballer.getResume().getGlory().addContinental();
+            }
+
             knockoutPrizes(EUROPA_LEAGUE, true);
+            knockoutPrizes(CHAMPIONS_LEAGUE, true);
 //            Printer.pickTeam(topTeam, false);
 //            voting(contenders);
             year++;
@@ -194,45 +201,29 @@ public class Controller {
         }
     }
 
-    private static void concludeGroups(final String competition, final Club[] teams) {
-        final Club[] advancing = new Club[2 * teams.length / 4];
-        final int groups = teams.length / 4;
-        int count = 0;
-
-        for (int group = 0; group < groups; group++) {
-            System.out.println("GROUP " + (char) ('A' + group));
-
-            final Map<Club, Integer> standing = new LinkedHashMap<>();
-            for (int team = 0; team < 4; team++) {
-                final League groupStats = teams[4 * group + team].getSeason().getContinental().getGroup();
-
-                standing.put(teams[4 * group + team], 10000 * groupStats.getPoints() +
-                        100 * (groupStats.getScored() - groupStats.getConceded()) + groupStats.getScored());
-            }
-
-            System.out.println();
-            final Map<Club, Integer> sorted = sortMap(standing);
-
-            System.out.println();
-            System.out.println("Standings for group " + (char) ('A' + group));
-            System.out.println("No  Teams                     G  W  D  L  GF:GA  P");
-            final Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
-            for (int team = 0; team < sorted.size(); team++) {
-                final Club club = rankedTeams[team];
-                final League groupStats = club.getSeason().getContinental().getGroup();
-
-                System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %2d:%-2d %2d", team + 1, club.getName(),
-                        groupStats.getMatches(), groupStats.getWins(), groupStats.getDraws(), groupStats.getLosses(),
-                        groupStats.getScored(), groupStats.getConceded(), groupStats.getPoints()));
-
-                if (team < 2) advancing[count++] = club;
-            }
+    private static void leagueRound(final Club[] league, final int[][][] draw, final int round) {
+        System.out.println(String.format("Round %d", round + 1));
+        final StringBuilder scores = new StringBuilder();
+        for (int game = 0; game < league.length / 2; game++) {
+            final int home = draw[round][game][0];
+            final int away = draw[round][game][1];
+            if (home == USER) preMatch(league[away], true);
+            else if (away == USER) preMatch(league[home], false);
+            final int[] result = simulation(league[home], league[away], false, -1, -1, 0);
+            appendScore(scores, league[home], league[away], result);
         }
 
-        continentalCup.put(competition, seededKnockout(advancing));
+        leagueResults.put(league[0].getLeague() + (round + 1), scores.toString());
+        if (round < 2 * league.length - 3 && standingsFlag) {
+            System.out.println();
+            System.out.println(String.format("Standings after round %d:", round + 1));
+            standings(league);
+        }
+
+        System.out.println();
     }
 
-    private static void groupStage(final String competition, final Club[] teams, final int round) {
+    private static void groupRound(final String competition, final Club[] teams, final int round) {
         final int groups = teams.length / 4;
         final int[][][] draw = continentalDraw.get(competition);
         for (int group = 0; group < groups; group++) {
@@ -265,48 +256,56 @@ public class Controller {
         }
     }
 
-    private static void groupGameOutcome(final League team, final int scored, final int conceded) {
-        if (scored > conceded) {
-            team.addPoints(3);
-            team.addWin();
-        } else if (scored == conceded) {
-            team.addPoints(1);
-            team.addDraw();
-        } else team.addLoss();
+    private static void concludeGroups(final String competition, final Club[] teams) {
+        final Club[] advancing = new Club[2 * teams.length / 4];
+        final int groups = teams.length / 4;
+        int count = 0;
 
-        team.addMatch();
-        team.addScored(scored);
-        team.addConceded(conceded);
-        if (conceded == 0) team.addCleanSheet();
-    }
+        final List<Club> thirds = new ArrayList<>();
+        for (int group = 0; group < groups; group++) {
+            System.out.println("GROUP " + (char) ('A' + group));
 
-    private static void play(final Club[] league, final int[][][] draw, final int round) {
-        System.out.println(String.format("Round %d", round + 1));
-        final StringBuilder scores = new StringBuilder();
-        for (int game = 0; game < league.length / 2; game++) {
-            final int home = draw[round][game][0];
-            final int away = draw[round][game][1];
-            if (home == USER) preMatch(league[away], true);
-            else if (away == USER) preMatch(league[home], false);
-            final int[] result = simulation(league[home], league[away], false, -1, -1, 0);
-            appendScore(scores, league[home], league[away], result);
-        }
+            final Map<Club, Integer> standing = new LinkedHashMap<>();
+            for (int team = 0; team < 4; team++) {
+                final League groupStats = teams[4 * group + team].getSeason().getContinental().getGroup();
 
-        leagueResults.put(league[0].getLeague() + (round + 1), scores.toString());
-        if (round < 2 * league.length - 3 && standingsFlag) {
+                standing.put(teams[4 * group + team], 10000 * groupStats.getPoints() +
+                        100 * (groupStats.getScored() - groupStats.getConceded()) + groupStats.getScored());
+            }
+
             System.out.println();
-            System.out.println(String.format("Standings after round %d:", round + 1));
-            standings(league);
+            final Map<Club, Integer> sorted = sortMap(standing);
+
+            System.out.println();
+            System.out.println("Standings for group " + (char) ('A' + group));
+            System.out.println("No  Teams                     G  W  D  L  GF:GA  P");
+            final Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
+            for (int team = 0; team < sorted.size(); team++) {
+                final Club club = rankedTeams[team];
+                final League groupStats = club.getSeason().getContinental().getGroup();
+
+                System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %2d:%-2d %2d", team + 1, club.getName(),
+                        groupStats.getMatches(), groupStats.getWins(), groupStats.getDraws(), groupStats.getLosses(),
+                        groupStats.getScored(), groupStats.getConceded(), groupStats.getPoints()));
+
+                if (team < 2) advancing[count++] = club;
+            }
+
+            if (competition.equals(CHAMPIONS_LEAGUE_NAME)) thirds.add(rankedTeams[2]);
         }
 
-        System.out.println();
-    }
+        if (competition.equals(CHAMPIONS_LEAGUE_NAME)) {
+            final Club[] europaLeagueTeams = new Club[32];
+            System.arraycopy(continentalCup.get(EUROPA_LEAGUE_NAME), 0, europaLeagueTeams, 0, 24);
+            System.out.println("Third are..");
+            thirds.forEach(t -> System.out.println(t.getName()));
+            for (int team = 24; team < 32; team++) europaLeagueTeams[team] = thirds.remove(0);
+            System.out.println(thirds.size());
+            for (int team = 0; team < 32; team++) System.out.println(europaLeagueTeams[team].getName());
+            continentalCup.put(EUROPA_LEAGUE_NAME, europaLeagueTeams);
+        }
 
-    private static Club[] cup(final Club[] league) {
-        final Club[] selected = new Club[16];
-        System.arraycopy(league, 0, selected, 0, 16);
-
-        return selected;
+        continentalCup.put(competition, seededKnockout(advancing));
     }
 
     private static Club[] knockoutRound(final Club[] clubs, final int games, final int type, final boolean replay) {
@@ -365,13 +364,6 @@ public class Controller {
 
         results.put("new", scores.toString());
         return secondGoals > firstGoals;
-    }
-
-    private static void appendScore(final StringBuilder scores, final Club home, final Club away, final int[] result) {
-        scores.append(home.getName())
-                .append(" - ").append(away.getName())
-                .append(" ").append(result[0]).append(":")
-                .append(result[1]).append("<br/>");
     }
 
     private static void pickTeam() {
