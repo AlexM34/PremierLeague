@@ -10,12 +10,12 @@ public class Footballer {
     private int overall;
     private int potential;
     private long value;
-    private long wage;
-    private Position position;
-    private int number;
-    private int finishing;
-    private int vision;
-    private Resume resume;
+    private final long wage;
+    private final Position position;
+    private final int number;
+    private final int finishing;
+    private final int vision;
+    private final Resume resume;
     private int condition;
     private int ban;
 
@@ -55,10 +55,6 @@ public class Footballer {
         this.age = age;
     }
 
-    String getNationality() {
-        return nationality;
-    }
-
     public int getOverall() {
         return overall;
     }
@@ -89,56 +85,28 @@ public class Footballer {
         return value;
     }
 
-    void setValue(final long value) {
-        this.value = value;
-    }
-
     public float getWage() {
         return wage;
-    }
-
-    void setWage(final long wage) {
-        this.wage = wage;
     }
 
     public Position getPosition() {
         return position;
     }
 
-    void setPosition(final Position position) {
-        this.position = position;
-    }
-
     public int getNumber() {
         return number;
-    }
-
-    void setNumber(final int number) {
-        this.number = number;
     }
 
     public int getFinishing() {
         return finishing;
     }
 
-    void setFinishing(final int finishing) {
-        this.finishing = finishing;
-    }
-
     public int getVision() {
         return vision;
     }
 
-    void setVision(final int vision) {
-        this.vision = vision;
-    }
-
     public Resume getResume() {
         return resume;
-    }
-
-    void setResume(final Resume resume) {
-        this.resume = resume;
     }
 
     public int getCondition() {

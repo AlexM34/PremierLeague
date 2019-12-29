@@ -79,10 +79,6 @@ public class League {
         this.conceded += goals;
     }
 
-    int getCleanSheets() {
-        return cleanSheets;
-    }
-
     public void addCleanSheet() {
         this.cleanSheets += 1;
     }

@@ -49,8 +49,8 @@ public class Controller {
 
     public static final String CHAMPIONS_LEAGUE_NAME = "Champions League";
     public static final String EUROPA_LEAGUE_NAME = "Europa League";
-    public static Club[] CHAMPIONS_LEAGUE = new Club[32];
-    public static Club[] EUROPA_LEAGUE = new Club[48];
+    public static final Club[] CHAMPIONS_LEAGUE = new Club[32];
+    public static final Club[] EUROPA_LEAGUE = new Club[48];
 
     private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
     private static final Map<String, int[][][]> continentalDraw = new HashMap<>();

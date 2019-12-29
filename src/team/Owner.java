@@ -17,26 +17,6 @@ public class Owner {
         this.ambition = ambition;
     }
 
-    int getId() {
-        return id;
-    }
-
-    String getName() {
-        return name;
-    }
-
-    String getNationality() {
-        return nationality;
-    }
-
-    int getWealth() {
-        return wealth;
-    }
-
-    int getAmbition() {
-        return ambition;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

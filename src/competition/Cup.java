@@ -9,14 +9,6 @@ public class Cup {
         this.alive = false;
     }
 
-    boolean isAlive() {
-        return alive;
-    }
-
-    void setAlive(final boolean alive) {
-        this.alive = alive;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

@@ -24,10 +24,6 @@ public enum Formation {
         Type(final int style) {
             this.style = style;
         }
-
-        int getStyle() {
-            return this.style;
-        }
     }
 
     private final int scheme;
@@ -48,9 +44,5 @@ public enum Formation {
 
     public int getForwards() {
         return this.scheme % 10;
-    }
-
-    Type getType() {
-        return this.type;
     }
 }

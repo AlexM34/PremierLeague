@@ -8,6 +8,7 @@ import players.Statistics;
 import team.Club;
 import team.League;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,7 +31,7 @@ class Rater {
 
     private static MatchStats motmPlayer;
     private static float motmRating;
-    private static Map<Footballer, Integer> contenders;
+    private static final Map<Footballer, Integer> contenders = new HashMap<>();
 
     static void kickoff(final Club home, final Club away) {
         for (final Footballer f : home.getFootballers()) {

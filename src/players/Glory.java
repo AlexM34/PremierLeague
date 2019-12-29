@@ -54,30 +54,6 @@ public class Glory {
         this.leagueCup += 1;
     }
 
-    int getNationalSuperCup() {
-        return nationalSuperCup;
-    }
-
-    void addNationalSupCup() {
-        this.nationalSuperCup += 1;
-    }
-
-    int getContinentalSuperCup() {
-        return continentalSuperCup;
-    }
-
-    void addContinentalSuperCup() {
-        this.continentalSuperCup += 1;
-    }
-
-    int getWorldChampionship() {
-        return worldChampionship;
-    }
-
-    void addWorldChampionship() {
-        this.worldChampionship += 1;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

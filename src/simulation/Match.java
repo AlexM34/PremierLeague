@@ -12,6 +12,7 @@ import java.util.Random;
 
 import static simulation.Controller.matchFlag;
 import static simulation.Data.FANS;
+import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
@@ -194,7 +195,7 @@ class Match {
 
         final Footballer subbedOut = squad.get(flop).getFootballer();
         final Footballer subbedIn = bench.get(0) != null ? bench.get(0) :
-                bench.stream().filter(Objects::nonNull).findFirst().get();
+                bench.stream().filter(Objects::nonNull).findFirst().orElse(GOALKEEPER_1);
 
         if (matchFlag) {
             System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +

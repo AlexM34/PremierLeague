@@ -280,8 +280,7 @@ public class View {
         leagueStats(gamesTable, leagueName);
 
         final int round = getInteger(String.valueOf(roundBox.getSelectedItem()));
-        resultsLabel.setText("<html>" + leagueResults.getOrDefault(
-                leagueName + round, "") + "</html>");
+        resultsLabel.setText("<html>" + leagueResults.getOrDefault(leagueName + round, "") + "</html>");
         System.out.println(leagueResults.get(leagueName));
     }
 
@@ -323,15 +322,15 @@ public class View {
             }
         }
 
+        final boolean isChampionsLeague = competition.equals(CHAMPIONS_LEAGUE_NAME);
+        final int group = (int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A';
         if (knockout) {
             resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
                     competition + teams, "") + "</html>");
-        } else {
+        } else if (!isChampionsLeague || group < 8){
             final Club[] league = new Club[4];
             for (int team = 0; team < 4; team++) {
-                league[team] = competition.equals(CHAMPIONS_LEAGUE_NAME)
-                        ? CHAMPIONS_LEAGUE[8 * team + ((int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A')]
-                        : EUROPA_LEAGUE[12 * team + ((int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A')];
+                league[team] = isChampionsLeague ? CHAMPIONS_LEAGUE[8 * team + group] : EUROPA_LEAGUE[12 * team + group];
             }
 
             final Map<Club, Integer> sorted = sortLeague(league, 3);
@@ -362,7 +361,7 @@ public class View {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setColumnWidths(table, statsWidth, 15, 60, 25);
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        final JScrollPane scrollPane = new JScrollPane(table);
         TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
         titledBorder.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         scrollPane.setBorder(titledBorder);

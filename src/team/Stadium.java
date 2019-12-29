@@ -19,30 +19,6 @@ public class Stadium {
         this.reputation = reputation;
     }
 
-    int getId() {
-        return id;
-    }
-
-    String getName() {
-        return name;
-    }
-
-    int getBuilt() {
-        return built;
-    }
-
-    String getLocation() {
-        return location;
-    }
-
-    int getCapacity() {
-        return capacity;
-    }
-
-    int getReputation() {
-        return reputation;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

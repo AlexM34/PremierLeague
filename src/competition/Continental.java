@@ -13,10 +13,6 @@ public class Continental {
         this.group = new League();
     }
 
-    boolean isAlive() {
-        return alive;
-    }
-
     public void setAlive(final boolean alive) {
         this.alive = alive;
     }

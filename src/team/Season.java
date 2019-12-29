@@ -6,12 +6,12 @@ import competition.Cup;
 import java.util.Objects;
 
 public class Season {
-    private League league;
-    private Cup nationalCup;
-    private Cup leagueCup;
-    private Continental continental;
+    private final League league;
+    private final Cup nationalCup;
+    private final Cup leagueCup;
+    private final Continental continental;
     private int form;
-    private int morale;
+    private final int morale;
 
     public Season(final League league, final Cup nationalCup, final Cup leagueCup, final Continental continental, final int form, final int morale) {
         this.league = league;
@@ -26,54 +26,18 @@ public class Season {
         return league;
     }
 
-    void setLeague(final League league) {
-        this.league = league;
-    }
-
-    public Cup getNationalCup() {
-        return nationalCup;
-    }
-
-    void setNationalCup(final Cup nationalCup) {
-        this.nationalCup = nationalCup;
-    }
-
-    public Cup getLeagueCup() {
-        return leagueCup;
-    }
-
-    void setLeagueCup(final Cup leagueCup) {
-        this.leagueCup = leagueCup;
-    }
-
     public Continental getContinental() {
         return continental;
-    }
-
-    void setContinental(final Continental continental) {
-        this.continental = continental;
     }
 
     public int getForm() {
         return form;
     }
 
-    void setForm(final int form) {
-        this.form = form;
-    }
-
     public void changeForm(final int change) {
         this.form += change;
         if (this.form > 20) this.form = 20;
         else if (this.form < 0) this.form = 0;
-    }
-
-    int getMorale() {
-        return morale;
-    }
-
-    void setMorale(final int morale) {
-        this.morale = morale;
     }
 
     @Override

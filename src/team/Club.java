@@ -15,14 +15,14 @@ public class Club {
     private final int established;
     private final Stadium stadium;
     private final String location;
-    private String league;
-    private Glory glory;
-    private int reputation;
-    private int value;
+    private final String league;
+    private final Glory glory;
+    private final int reputation;
+    private final int value;
     private float budget;
-    private Owner owner;
-    private Coach coach;
-    private Set<Footballer> footballers;
+    private final Owner owner;
+    private final Coach coach;
+    private final Set<Footballer> footballers;
     private Season season;
 
     public Club(final int id, final String name, final int established, final Stadium stadium, final String location, final String league, final Glory glory,
@@ -51,48 +51,16 @@ public class Club {
         return name;
     }
 
-    int getEstablished() {
-        return established;
-    }
-
-    Stadium getStadium() {
-        return stadium;
-    }
-
-    String getLocation() {
-        return location;
-    }
-
     public String getLeague() {
         return league;
-    }
-
-    void setLeague(final String league) {
-        this.league = league;
     }
 
     public Glory getGlory() {
         return glory;
     }
 
-    void setGlory(final Glory glory) {
-        this.glory = glory;
-    }
-
     public int getReputation() {
         return reputation;
-    }
-
-    void setReputation(final int reputation) {
-        this.reputation = reputation;
-    }
-
-    int getValue() {
-        return value;
-    }
-
-    void setValue(final int value) {
-        this.value = value;
     }
 
     public float getBudget() {
@@ -103,28 +71,8 @@ public class Club {
         this.budget += change;
     }
 
-    Owner getOwner() {
-        return owner;
-    }
-
-    void setOwner(final Owner owner) {
-        this.owner = owner;
-    }
-
-    Coach getCoach() {
-        return coach;
-    }
-
-    void setCoach(final Coach coach) {
-        this.coach = coach;
-    }
-
     public Set<Footballer> getFootballers() {
         return footballers;
-    }
-
-    void setFootballers(final Set<Footballer> footballers) {
-        this.footballers = footballers;
     }
 
     public void addFootballer(final Footballer footballer) {
@@ -150,23 +98,15 @@ public class Club {
         final Club club = (Club) o;
         return id == club.id &&
                 established == club.established &&
-                reputation == club.reputation &&
-                value == club.value &&
-                budget == club.budget &&
                 name.equals(club.name) &&
                 stadium.equals(club.stadium) &&
                 location.equals(club.location) &&
-                league.equals(club.league) &&
-                glory.equals(club.glory) &&
-                owner.equals(club.owner) &&
-                coach.equals(club.coach) &&
-                footballers.equals(club.footballers) &&
-                season.equals(club.season);
+                league.equals(club.league);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, established, stadium, location, league, glory, reputation, value, budget, owner, coach, footballers, season);
+        return Objects.hash(id, name, established, stadium, location, league);
     }
 
     @Override
@@ -178,14 +118,6 @@ public class Club {
                 ", stadium=" + stadium +
                 ", location='" + location + '\'' +
                 ", league='" + league + '\'' +
-                ", glory=" + glory +
-                ", reputation=" + reputation +
-                ", value=" + value +
-                ", budget=" + budget +
-                ", owner=" + owner +
-                ", coach=" + coach +
-                ", footballers=" + footballers +
-                ", season=" + season +
                 '}';
     }
 }

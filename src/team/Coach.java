@@ -21,34 +21,6 @@ public class Coach {
         this.defence = defence;
     }
 
-    int getId() {
-        return id;
-    }
-
-    String getName() {
-        return name;
-    }
-
-    int getOverall() {
-        return overall;
-    }
-
-    Formation getFormation() {
-        return formation;
-    }
-
-    int getStyle() {
-        return style;
-    }
-
-    int getAttack() {
-        return attack;
-    }
-
-    int getDefence() {
-        return defence;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
