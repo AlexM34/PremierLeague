@@ -41,7 +41,7 @@ public class Controller {
     private static final boolean standingsFlag = false;
     static final boolean matchFlag = false;
     private static int year = 0;
-    private static int round = 0;
+    static int round = 0;
     public static final String CHAMPIONS_LEAGUE_NAME = "Champions League";
     public static Club[] CHAMPIONS_LEAGUE = new Club[32];
     private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
@@ -164,7 +164,6 @@ public class Controller {
             }
 
             knockoutPrizes(CHAMPIONS_LEAGUE, true);
-
 //            Printer.pickTeam(topTeam, false);
 //            voting(contenders);
             year++;
@@ -225,6 +224,7 @@ public class Controller {
             for (int team = 0; team < 4; team++) clubs[team] = teams[groups * team + group];
             System.out.println();
             System.out.println("Matchday " + (round + 1));
+            if (scores.length() > 0) scores.append("<br/>");
 
             for (int game = 0; game < 2; game++) {
                 final int home = draw[round][game][0];
@@ -325,19 +325,18 @@ public class Controller {
     }
 
     private static boolean knockoutFixture(final Club first, final Club second, final int games, final int type,
-                                           final boolean replay, final boolean neutral,
-                                           final Map<String, String> results) {
+                                           final boolean replay, final boolean neutral, final Map<String, String> results) {
         int firstGoals = 0;
         int secondGoals = 0;
-
         if (neutral) FANS = 0;
+
         int[] result = simulation(first, second, games == 1 && !replay, -1, -1, type);
-
-        final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
-        appendScore(scores, first, second, result);
-
         firstGoals += result[0];
         secondGoals += result[1];
+
+        final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
+        if (games == 2 && scores.length() > 0) scores.append("<br/>");
+        appendScore(scores, first, second, result);
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
             result = simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
@@ -367,8 +366,8 @@ public class Controller {
         System.out.println("Pick a team from 1 to 20");
         while (true) {
             final int team = scanner.nextInt();
-            if (team < 0 || team > 20) {
-                System.out.println("Wrong team number.");
+            if (team < 1 || team > 20) {
+                System.out.println("Wrong number.");
                 continue;
             }
 

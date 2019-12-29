@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static players.Position.GK;
+import static simulation.Controller.round;
 import static simulation.Data.LEAGUES;
 import static simulation.Finance.leaguePrizes;
 import static simulation.Helper.sortLeague;
@@ -63,28 +64,18 @@ public class Printer {
     }
 
     static void standings(final Club[] league) {
-        int goals = 0;
         final Map<Club, Integer> sorted = sortLeague(league, 0);
 
         int position = 1;
         System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
         for (final Club team : sorted.keySet()) {
             final League stats = team.getSeason().getLeague();
-            goals += stats.getScored();
             System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", position++,
                     team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
                     stats.getScored(), stats.getConceded(), stats.getPoints()));
         }
-//        System.out.println();
-//        System.out.println("Total goals for the season: " + goals + " // 1072");
-//        System.out.println(homeWins + " - " + (380 - homeWins - awayWins) +
-//                " - " + awayWins + " // 181 - 71 - 128");
-//        System.out.println();
-//        System.out.println("Average rating for the season: " + RATINGS / (22 * 380));
-//        System.out.println();
 
         final Club first = sorted.keySet().toArray(new Club[0])[0];
-
         if (first.getSeason().getLeague().getMatches() == 2 * league.length - 2) {
             first.getGlory().addLeague();
             for (final Footballer footballer : first.getFootballers()) {
@@ -114,19 +105,19 @@ public class Printer {
                 switch (type) {
                     case 0:
                         stats = f.getResume().getSeason().getLeague();
-                        games = club.getSeason().getLeague().getMatches() / 2;
+                        games = round / 2;
                         break;
                     case 1:
                         stats = f.getResume().getSeason().getCup();
-                        games = 1;
+                        games = round / 12;
                         break;
                     default:
                         stats = f.getResume().getSeason().getContinental();
-                        games = 1;
+                        games = round / 8;
                         break;
                 }
 
-                if (stats.getMatches() >= games) {
+                if (stats.getMatches() > games) {
                     ratings.put(f, stats.getRating());
                     topTeam.put(f, stats.getRating());
                 }
