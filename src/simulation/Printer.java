@@ -24,14 +24,16 @@ import static simulation.Helper.sortMap;
 
 public class Printer {
     private static final Random random = new Random();
+
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
-    private static final Map<Footballer, Integer> motm = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
     public static Map<Footballer, Integer> assists = new LinkedHashMap<>();
     public static Map<Footballer, Integer> cleanSheets = new LinkedHashMap<>();
+    private static final Map<Footballer, Integer> motm = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> redCards = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
+
     static int offset;
 
     static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
@@ -45,11 +47,11 @@ public class Printer {
             }
         }
 
-        final List<Map.Entry<Club, Integer>> toSort = new ArrayList<>(teams.entrySet());
-        toSort.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+        final List<Map.Entry<Club, Integer>> sorted = new ArrayList<>(teams.entrySet());
+        sorted.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
         int limit = 0;
 
-        for (final Map.Entry<Club, Integer> clubIntegerEntry : toSort) {
+        for (final Map.Entry<Club, Integer> clubIntegerEntry : sorted) {
             if (limit < 32) System.out.println(championsLeagueTeams[limit] = clubIntegerEntry.getKey());
             else if (limit < 80) System.out.println(europaLeagueTeams[limit - 32] = clubIntegerEntry.getKey());
             else break;
@@ -277,31 +279,16 @@ public class Printer {
         for (int player = 0; player < sorted.size(); player++) {
             switch (sorted.keySet().toArray(new Footballer[0])[player].getPosition().getRole()) {
                 case Goalkeeper:
-                    if (goalkeepers > 0) {
-                        team[--goalkeepers] = player;
-                    }
-
+                    if (goalkeepers > 0) team[--goalkeepers] = player;
                     break;
-
                 case Defender:
-                    if (defenders > 0) {
-                        team[defenders--] = player;
-                    }
-
+                    if (defenders > 0) team[defenders--] = player;
                     break;
-
                 case Midfielder:
-                    if (midfielders > 0) {
-                        team[4 + midfielders--] = player;
-                    }
-
+                    if (midfielders > 0) team[4 + midfielders--] = player;
                     break;
-
                 case Forward:
-                    if (forwards > 0) {
-                        team[7 + forwards--] = player;
-                    }
-
+                    if (forwards > 0) team[7 + forwards--] = player;
                     break;
             }
 

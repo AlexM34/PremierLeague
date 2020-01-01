@@ -52,7 +52,7 @@ import static view.Helper.setTableValues;
 public class View {
     static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
     private static final String FONT_NAME = "Times New Roman";
-    private static final int FONT_SIZE = 25;
+    private static final int FONT_SIZE = 22;
 
     private static final String[] STATS = {"N", "PLAYER", "COUNT"};
     private static final String[] LEAGUES = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE,
@@ -75,6 +75,8 @@ public class View {
     private static final JTable standingsTable = new JTable(new String[20][10], STANDINGS);
     private static final JTable gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
 
+    private static int width;
+    private static int height;
     private static int resultsX;
     private static int resultsY;
     private static int resultsWidth;
@@ -105,112 +107,12 @@ public class View {
     public View() {
         initialise();
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(null);
-        frame.setUndecorated(true);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
-
-        final int width = frame.getWidth();
-        final int height = frame.getHeight();
-        calculatePositions(width, height);
-
-        final JLabel background = new JLabel();
-
-        try {
-            BufferedImage ball = ImageIO.read(getClass().getResource("/ball.jpg"));
-            frame.setIconImage(ball);
-
-            BufferedImage image = ImageIO.read(getClass().getResource("/gladiators.jpg"));
-            Image scaledInstance = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            ImageIcon icon = new ImageIcon(scaledInstance);
-
-            background.setIcon(icon);
-            background.setSize(width, height);
-            background.setLocation(0, 0);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-
-        nationBox.setBounds(9 * width / 25, boxY, width / 9, boxHeight);
-        nationBox.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-
-        competitionBox.setBounds(19 * width / 40, boxY, width / 11, boxHeight);
-        competitionBox.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-
-        continentalBox.setBounds(19 * width / 40, boxY, width / 11, boxHeight);
-        continentalBox.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-
-        roundBox.setBounds(23 * width / 40, boxY, width / 11, boxHeight);
-        roundBox.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-
-        knockoutBox.setBounds(23 * width / 40, boxY, width / 11, boxHeight);
-        knockoutBox.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-
-        groupBox.setBounds(23 * width / 40, boxY, width / 11, boxHeight);
-        groupBox.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-
-        resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        resultsLabel.setFont(new Font(FONT_NAME, Font.PLAIN, resultsHeight / 14));
-        TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
-        borderResults.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
-        JScrollPane resultsPane = new JScrollPane(resultsLabel);
-        resultsPane.setBorder(borderResults);
-        resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-
-        setStatTables(goalsTable, resultsX, goalsY, "GOALS");
-        setStatTables(assistsTable, resultsX, assistsY, "ASSISTS");
-        setStatTables(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
-        setStatTables(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
-
-        standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
-        standingsTable.setRowHeight(standingsHeight / 23);
-        standingsTable.setEnabled(false);
-        standingsTable.setFont(new Font(FONT_NAME, Font.PLAIN, standingsFontSize));
-        setColumnWidths(standingsTable, standingsWidth, 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
-        JScrollPane standingsPane = new JScrollPane(standingsTable);
-        TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
-        borderStandings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
-        standingsPane.setBorder(borderStandings);
-        standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
-
-        gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
-        gamesTable.setRowHeight(statsHeight / 13);
-        gamesTable.setEnabled(false);
-        gamesTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
-        gamesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-        setTableValues(gamesTable, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
-                "Assists", "Yellow Cards", "Red Cards", "Average Ratings", "Clean Sheets");
-
-        setColumnWidths(gamesTable, gamesWidth, 70, 30);
-        JScrollPane gamesPane = new JScrollPane(gamesTable);
-        gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
-
-        final JButton nextButton = new JButton("Next");
-        nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
-        nextButton.setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
-
-        frame.add(nationBox);
-        frame.add(competitionBox);
-        frame.add(continentalBox);
-        frame.add(roundBox);
-        frame.add(knockoutBox);
-        frame.add(groupBox);
-        frame.add(resultsPane);
-        frame.add(standingsPane);
-        frame.add(gamesPane);
-        frame.add(nextButton);
-        frame.getContentPane().add(background);
-
-        nationBox.addActionListener(e -> updateStats());
-        competitionBox.addActionListener(e -> updateStats());
-        continentalBox.addActionListener(e -> updateStats());
-        roundBox.addActionListener(e -> updateStats());
-        knockoutBox.addActionListener(e -> updateStats());
-        groupBox.addActionListener(e -> updateStats());
-        nextButton.addActionListener(e -> nextRound());
+        calculatePositions();
+        placeBoxes();
+        placeResults();
+        placeTables();
+        placeButton();
+        placeImages();
 
         playMusic();
         updateStats();
@@ -256,13 +158,7 @@ public class View {
     }
 
     private void leagueView(final Club[] league) {
-        competitionBox.setVisible(true);
-        continentalBox.setVisible(false);
-        roundBox.setVisible(true);
-        knockoutBox.setVisible(false);
-        groupBox.setVisible(false);
-        standingsTable.setVisible(true);
-        gamesTable.setVisible(true);
+        boxVisibility(0);
 
         final String leagueName = league[0].getLeague();
         final Map<Club, Integer> sorted = sortLeague(league, 0);
@@ -285,13 +181,7 @@ public class View {
     }
 
     private void cupView(final Club[] league, final boolean leagueCup, final int teams) {
-        competitionBox.setVisible(true);
-        continentalBox.setVisible(false);
-        roundBox.setVisible(false);
-        knockoutBox.setVisible(true);
-        groupBox.setVisible(false);
-        standingsTable.setVisible(false);
-        gamesTable.setVisible(false);
+        boxVisibility(1);
 
         final String leagueName = league[0].getLeague();
         if (leagueCup) {
@@ -306,15 +196,7 @@ public class View {
     }
 
     private void continentalView(final String competition, final int teams) {
-        competitionBox.setVisible(false);
-        continentalBox.setVisible(true);
-        roundBox.setVisible(false);
-        gamesTable.setVisible(false);
-
-        final boolean knockout = String.valueOf(continentalBox.getSelectedItem()).equals("Knockout");
-        knockoutBox.setVisible(knockout);
-        groupBox.setVisible(!knockout);
-        standingsTable.setVisible(!knockout);
+        boxVisibility(2);
 
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < standingsTable.getColumnCount(); j++) {
@@ -324,10 +206,10 @@ public class View {
 
         final boolean isChampionsLeague = competition.equals(CHAMPIONS_LEAGUE_NAME);
         final int group = (int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A';
-        if (knockout) {
+        if (String.valueOf(continentalBox.getSelectedItem()).equals("Knockout")) {
             resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
                     competition + teams, "") + "</html>");
-        } else if (!isChampionsLeague || group < 8){
+        } else if (!isChampionsLeague || group < 8) {
             final Club[] league = new Club[4];
             for (int team = 0; team < 4; team++) {
                 league[team] = isChampionsLeague ? CHAMPIONS_LEAGUE[8 * team + group] : EUROPA_LEAGUE[12 * team + group];
@@ -353,6 +235,29 @@ public class View {
         displayStats(cleanSheetsTable, cleanSheets, false);
     }
 
+    private void boxVisibility(final int competition) {
+        competitionBox.setVisible(competition != 2);
+        continentalBox.setVisible(competition == 2);
+        roundBox.setVisible(competition == 0);
+        gamesTable.setVisible(competition == 0);
+
+        final boolean knockout;
+        switch (competition) {
+            case 0:
+                knockout = false;
+                break;
+            case 1:
+                knockout = true;
+                break;
+            default:
+                knockout = String.valueOf(continentalBox.getSelectedItem()).equals("Knockout");
+        }
+
+        knockoutBox.setVisible(knockout);
+        groupBox.setVisible(!knockout);
+        standingsTable.setVisible(!knockout);
+    }
+
     private static void setStatTables(final JTable table, final int x, final int y, final String label) {
         table.setBounds(x, y, statsWidth, statsHeight);
         table.setRowHeight(statsHeight / 15);
@@ -362,14 +267,113 @@ public class View {
         setColumnWidths(table, statsWidth, 15, 60, 25);
 
         final JScrollPane scrollPane = new JScrollPane(table);
-        TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
+        final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
         titledBorder.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
         scrollPane.setBorder(titledBorder);
         scrollPane.setBounds(x, y, statsWidth, statsHeight);
         frame.add(scrollPane);
     }
 
-    private static void calculatePositions(final int width, final int height) {
+    private void placeBoxes() {
+        placeBox(nationBox, 9 * width / 25, width / 9);
+        placeBox(competitionBox, 19 * width / 40, width / 11);
+        placeBox(continentalBox, 19 * width / 40, width / 11);
+        placeBox(roundBox, 23 * width / 40, width / 11);
+        placeBox(knockoutBox, 23 * width / 40, width / 11);
+        placeBox(groupBox, 23 * width / 40, width / 11);
+    }
+
+    private void placeBox(final JComboBox<String> box, final int x, final int width) {
+        box.setBounds(x, boxY, width, boxHeight);
+        box.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
+        frame.add(box);
+        box.addActionListener(e -> updateStats());
+    }
+
+    private void placeResults() {
+        resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
+        resultsLabel.setFont(new Font(FONT_NAME, Font.PLAIN, resultsHeight / 14));
+        final TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
+        borderResults.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+
+        final JScrollPane resultsPane = new JScrollPane(resultsLabel);
+        resultsPane.setBorder(borderResults);
+        resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
+        frame.add(resultsPane);
+    }
+
+    private void placeTables() {
+        setStatTables(goalsTable, resultsX, goalsY, "GOALS");
+        setStatTables(assistsTable, resultsX, assistsY, "ASSISTS");
+        setStatTables(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
+        setStatTables(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
+
+        standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+        standingsTable.setRowHeight(standingsHeight / 23);
+        standingsTable.setEnabled(false);
+        standingsTable.setFont(new Font(FONT_NAME, Font.PLAIN, standingsFontSize));
+        setColumnWidths(standingsTable, standingsWidth, 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
+
+        final JScrollPane standingsPane = new JScrollPane(standingsTable);
+        final TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
+        borderStandings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+        standingsPane.setBorder(borderStandings);
+        standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+
+        gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
+        gamesTable.setRowHeight(statsHeight / 13);
+        gamesTable.setEnabled(false);
+        gamesTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
+        gamesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        setTableValues(gamesTable, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
+                "Assists", "Yellow Cards", "Red Cards", "Average Ratings", "Clean Sheets");
+
+        setColumnWidths(gamesTable, gamesWidth, 70, 30);
+        final JScrollPane gamesPane = new JScrollPane(gamesTable);
+        gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
+
+        frame.add(standingsPane);
+        frame.add(gamesPane);
+    }
+
+    private void placeButton() {
+        final JButton nextButton = new JButton("Next");
+        nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
+        nextButton.setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+        nextButton.addActionListener(e -> nextRound());
+        frame.add(nextButton);
+    }
+
+    private void placeImages() {
+        try {
+            final BufferedImage ball = ImageIO.read(getClass().getResource("/ball.jpg"));
+            frame.setIconImage(ball);
+
+            final BufferedImage image = ImageIO.read(getClass().getResource("/gladiators.jpg"));
+            final Image scaledInstance = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            final ImageIcon icon = new ImageIcon(scaledInstance);
+
+            final JLabel background = new JLabel();
+            background.setIcon(icon);
+            background.setSize(width, height);
+            background.setLocation(0, 0);
+            frame.getContentPane().add(background);
+        } catch (final IOException e) {
+            System.out.println("Exception thrown while extracting images! " + e);
+        }
+    }
+
+    private static void calculatePositions() {
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(null);
+        frame.setUndecorated(true);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
+
+        width = frame.getWidth();
+        height = frame.getHeight();
         resultsX = width / 80;
         resultsY = height / 15;
         resultsWidth = width / 2;

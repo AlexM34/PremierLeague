@@ -164,7 +164,7 @@ public class Data {
         averageRatings.clear();
         cleanSheets.clear();
 
-        if (year < 10) System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
+        System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 club.setSeason(new Season(new League(), new Cup(), new Cup(), new Continental(), 100, 100));
