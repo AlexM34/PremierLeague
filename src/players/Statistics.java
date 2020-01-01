@@ -4,37 +4,53 @@ import java.util.Objects;
 
 public class Statistics {
     private final Competition league;
-    private final Competition cup;
-    private final Competition continental;
+    private final Competition nationalCup;
+    private final Competition leagueCup;
+    private final Competition championsLeague;
+    private final Competition europaLeague;
 
     Statistics() {
         this.league = new Competition();
-        this.cup = new Competition();
-        this.continental = new Competition();
+        this.nationalCup = new Competition();
+        this.leagueCup = new Competition();
+        this.championsLeague = new Competition();
+        this.europaLeague = new Competition();
     }
 
     public Competition getLeague() {
         return league;
     }
 
-    public Competition getCup() {
-        return cup;
+    public Competition getNationalCup() {
+        return nationalCup;
     }
 
-    public Competition getContinental() {
-        return continental;
+    public Competition getLeagueCup() {
+        return leagueCup;
+    }
+
+    public Competition getChampionsLeague() {
+        return championsLeague;
+    }
+
+    public Competition getEuropaLeague() {
+        return europaLeague;
     }
 
     public void clear() {
         league.clear();
-        cup.clear();
-        continental.clear();
+        nationalCup.clear();
+        leagueCup.clear();
+        championsLeague.clear();
+        europaLeague.clear();
     }
 
     public void update(final Statistics statistics) {
         league.update(statistics.getLeague());
-        cup.update(statistics.getCup());
-        continental.update(statistics.getContinental());
+        nationalCup.update(statistics.getNationalCup());
+        leagueCup.update(statistics.getLeagueCup());
+        championsLeague.update(statistics.getChampionsLeague());
+        europaLeague.update(statistics.getEuropaLeague());
     }
 
     @Override
@@ -43,21 +59,25 @@ public class Statistics {
         if (o == null || getClass() != o.getClass()) return false;
         final Statistics that = (Statistics) o;
         return league.equals(that.league) &&
-                cup.equals(that.cup) &&
-                continental.equals(that.continental);
+                nationalCup.equals(that.nationalCup) &&
+                leagueCup.equals(that.leagueCup) &&
+                championsLeague.equals(that.championsLeague) &&
+                europaLeague.equals(that.europaLeague);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(league, cup, continental);
+        return Objects.hash(league, nationalCup, leagueCup, championsLeague, europaLeague);
     }
 
     @Override
     public String toString() {
         return "Statistics{" +
                 "league=" + league +
-                ", cup=" + cup +
-                ", continental=" + continental +
+                ", nationalCup=" + nationalCup +
+                ", leagueCup=" + leagueCup +
+                ", championsLeague=" + championsLeague +
+                ", europaLeague=" + europaLeague +
                 '}';
     }
 }

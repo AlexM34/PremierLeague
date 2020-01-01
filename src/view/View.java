@@ -150,7 +150,7 @@ public class View {
         if (competition.equals("League")) leagueView(league);
         else cupView(league, competition.equals("League Cup"), teams);
 
-        playerStats(league, competition.equals("League") ? 0 : 1);
+        playerStats(league, competition.equals("League") ? 0 : competition.equals("National Cup") ? 1 : 2);
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
@@ -226,8 +226,8 @@ public class View {
         }
 
         System.out.println(continentalCupResults);
-        if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 2);
-        else playerStats(EUROPA_LEAGUE, 2);
+        if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 3);
+        else playerStats(EUROPA_LEAGUE, 4);
 
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);

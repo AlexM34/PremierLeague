@@ -29,6 +29,7 @@ import static simulation.Finance.profits;
 import static simulation.Finance.salaries;
 import static simulation.Helper.appendScore;
 import static simulation.Helper.cup;
+import static simulation.Helper.getPerformance;
 import static simulation.Helper.groupGameOutcome;
 import static simulation.Helper.sortMap;
 import static simulation.Match.simulation;
@@ -178,16 +179,16 @@ public class Controller {
 
             final Club europaLeagueWinner = EUROPA_LEAGUE[0];
             System.out.println(europaLeagueWinner.getName() + " win the Europa League!");
-            europaLeagueWinner.getGlory().addContinental();
+            europaLeagueWinner.getGlory().addEuropaLeague();
             for (final Footballer footballer : europaLeagueWinner.getFootballers()) {
-                footballer.getResume().getGlory().addContinental();
+                footballer.getResume().getGlory().addEuropaLeague();
             }
 
             final Club championsLeagueWinner = CHAMPIONS_LEAGUE[0];
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
-            championsLeagueWinner.getGlory().addContinental();
+            championsLeagueWinner.getGlory().addChampionsLeague();
             for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
-                footballer.getResume().getGlory().addContinental();
+                footballer.getResume().getGlory().addChampionsLeague();
             }
 
             knockoutPrizes(EUROPA_LEAGUE, true);
@@ -268,9 +269,7 @@ public class Controller {
             final Map<Club, Integer> standing = new LinkedHashMap<>();
             for (int team = 0; team < 4; team++) {
                 final League groupStats = teams[4 * group + team].getSeason().getContinental().getGroup();
-
-                standing.put(teams[4 * group + team], 10000 * groupStats.getPoints() +
-                        100 * (groupStats.getScored() - groupStats.getConceded()) + groupStats.getScored());
+                standing.put(teams[4 * group + team], getPerformance(groupStats));
             }
 
             System.out.println();

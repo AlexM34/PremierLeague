@@ -113,11 +113,19 @@ public class Printer {
                         games = round / 2;
                         break;
                     case 1:
-                        stats = f.getResume().getSeason().getCup();
-                        games = round / 12;
+                        stats = f.getResume().getSeason().getNationalCup();
+                        games = round / 18;
+                        break;
+                    case 2:
+                        stats = f.getResume().getSeason().getLeagueCup();
+                        games = round / 18;
+                        break;
+                    case 3:
+                        stats = f.getResume().getSeason().getChampionsLeague();
+                        games = round / 8;
                         break;
                     default:
-                        stats = f.getResume().getSeason().getContinental();
+                        stats = f.getResume().getSeason().getEuropaLeague();
                         games = round / 8;
                         break;
                 }
@@ -200,7 +208,7 @@ public class Printer {
 
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
-                if (club.getGlory().getContinental() > 0) titles.put(club.getName(), club.getGlory().getContinental());
+                if (club.getGlory().getChampionsLeague() > 0) titles.put(club.getName(), club.getGlory().getChampionsLeague());
             }
         }
 

@@ -3,31 +3,25 @@ package players;
 import java.util.Objects;
 
 public class Glory {
-    private int continental;
     private int league;
     private int nationalCup;
     private int leagueCup;
+    private int championsLeague;
+    private int europaLeague;
     private int nationalSuperCup;
     private int continentalSuperCup;
     private int worldChampionship;
 
-    public Glory(final int continental, final int league, final int nationalCup, final int leagueCup,
+    public Glory(final int championsLeague, final int league, final int nationalCup, final int leagueCup,
                  final int nationalSuperCup, final int continentalSuperCup, final int worldChampionship) {
-        this.continental = continental;
         this.league = league;
         this.nationalCup = nationalCup;
         this.leagueCup = leagueCup;
+        this.championsLeague = championsLeague;
+        this.europaLeague = 0;
         this.nationalSuperCup = nationalSuperCup;
         this.continentalSuperCup = continentalSuperCup;
         this.worldChampionship = worldChampionship;
-    }
-
-    public int getContinental() {
-        return continental;
-    }
-
-    public void addContinental() {
-        this.continental += 1;
     }
 
     public int getLeague() {
@@ -54,15 +48,32 @@ public class Glory {
         this.leagueCup += 1;
     }
 
+    public int getChampionsLeague() {
+        return championsLeague;
+    }
+
+    public void addChampionsLeague() {
+        this.championsLeague += 1;
+    }
+
+    public int getEuropaLeague() {
+        return europaLeague;
+    }
+
+    public void addEuropaLeague() {
+        this.europaLeague += 1;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Glory glory = (Glory) o;
-        return continental == glory.continental &&
-                league == glory.league &&
+        return league == glory.league &&
                 nationalCup == glory.nationalCup &&
                 leagueCup == glory.leagueCup &&
+                championsLeague == glory.championsLeague &&
+                europaLeague == glory.europaLeague &&
                 nationalSuperCup == glory.nationalSuperCup &&
                 continentalSuperCup == glory.continentalSuperCup &&
                 worldChampionship == glory.worldChampionship;
@@ -70,16 +81,17 @@ public class Glory {
 
     @Override
     public int hashCode() {
-        return Objects.hash(continental, league, nationalCup, leagueCup, nationalSuperCup, continentalSuperCup, worldChampionship);
+        return Objects.hash(league, nationalCup, leagueCup, championsLeague, europaLeague, nationalSuperCup, continentalSuperCup, worldChampionship);
     }
 
     @Override
     public String toString() {
         return "Glory{" +
-                "continental=" + continental +
-                ", league=" + league +
+                "league=" + league +
                 ", nationalCup=" + nationalCup +
                 ", leagueCup=" + leagueCup +
+                ", championsLeague=" + championsLeague +
+                ", europaLeague=" + europaLeague +
                 ", nationalSuperCup=" + nationalSuperCup +
                 ", continentalSuperCup=" + continentalSuperCup +
                 ", worldChampionship=" + worldChampionship +

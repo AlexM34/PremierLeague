@@ -166,9 +166,10 @@ class Rater {
     static Competition getCompetition(final Statistics season, final int type) {
         switch (type) {
             case 0: return season.getLeague();
-            case 1:
-            case 2: return season.getCup();
-            default: return season.getContinental();
+            case 1: return season.getNationalCup();
+            case 2: return season.getLeagueCup();
+            case 3: return season.getChampionsLeague();
+            default: return season.getEuropaLeague();
         }
     }
 
@@ -227,11 +228,14 @@ class Rater {
         for (int i = 0; i < clubs.length; i++) {
             for (Footballer footballer : clubs[i].getFootballers()) {
                 Statistics season = footballer.getResume().getSeason();
-                int matches = season.getLeague().getMatches() + season.getCup().getMatches() * 2 +
-                        season.getContinental().getMatches() * 5;
+                int matches = season.getLeague().getMatches() + season.getNationalCup().getMatches() * 2 +
+                        season.getLeagueCup().getMatches() * 2 + season.getChampionsLeague().getMatches() * 5 +
+                        season.getEuropaLeague().getMatches() * 3;
                 float ratings = season.getLeague().getRating() * season.getLeague().getMatches() +
-                        season.getCup().getRating() * season.getCup().getMatches() * 2 +
-                        season.getContinental().getRating() * season.getContinental().getMatches() * 5;
+                        season.getNationalCup().getRating() * season.getNationalCup().getMatches() * 2 +
+                        season.getLeagueCup().getRating() * season.getLeagueCup().getMatches() * 2 +
+                        season.getChampionsLeague().getRating() * season.getChampionsLeague().getMatches() * 5 +
+                        season.getEuropaLeague().getRating() * season.getEuropaLeague().getMatches() * 3;
 
                 float performance = matches > 50 ? (ratings / ((float) matches)) : 0;
 

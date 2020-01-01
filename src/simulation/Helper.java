@@ -51,17 +51,19 @@ public class Helper {
                 case 3: stats = team.getSeason().getContinental().getGroup(); break;
                 default: return Collections.emptyMap();
             }
-            standings.put(team, 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) +
-                    stats.getScored());
+
+            standings.put(team, getPerformance(stats));
         }
 
         return sortMap(standings);
     }
 
+    static int getPerformance(final League stats) {
+        return 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) + stats.getScored();
+    }
+
     static void appendScore(final StringBuilder scores, final Club home, final Club away, final int[] result) {
-        scores.append(home.getName())
-                .append(" - ").append(away.getName())
-                .append(" ").append(result[0]).append(":")
-                .append(result[1]).append("<br/>");
+        scores.append(home.getName()).append(" - ").append(away.getName()).append(" ")
+                .append(result[0]).append(":").append(result[1]).append("<br/>");
     }
 }
