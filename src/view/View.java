@@ -54,7 +54,7 @@ public class View {
     private static final String FONT_NAME = "Times New Roman";
     private static final int FONT_SIZE = 22;
 
-    private static final String[] STATS = {"N", "PLAYER", "COUNT"};
+    private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
     private static final String[] LEAGUES = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE,
             CHAMPIONS_LEAGUE_NAME, EUROPA_LEAGUE_NAME};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
@@ -99,21 +99,19 @@ public class View {
     private static int statsFontSize;
     private static int standingsFontSize;
 
-    private final JTable goalsTable = new JTable(new String[10][3], STATS);
-    private final JTable assistsTable = new JTable(new String[10][3], STATS);
-    private final JTable ratingsTable = new JTable(new String[10][3], STATS);
-    private final JTable cleanSheetsTable = new JTable(new String[10][3], STATS);
+    private final JTable goalsTable = new JTable(new String[10][4], STATS);
+    private final JTable assistsTable = new JTable(new String[10][4], STATS);
+    private final JTable ratingsTable = new JTable(new String[10][4], STATS);
+    private final JTable cleanSheetsTable = new JTable(new String[10][4], STATS);
 
     public View() {
         initialise();
-
         calculatePositions();
         placeBoxes();
         placeResults();
         placeTables();
         placeButton();
         placeImages();
-
         playMusic();
         updateStats();
     }
@@ -264,7 +262,7 @@ public class View {
         table.setEnabled(false);
         table.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        setColumnWidths(table, statsWidth, 15, 60, 25);
+        setColumnWidths(table, statsWidth, 8, 40, 35, 17);
 
         final JScrollPane scrollPane = new JScrollPane(table);
         final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);

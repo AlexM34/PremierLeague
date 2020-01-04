@@ -33,7 +33,7 @@ import static simulation.Helper.getPerformance;
 import static simulation.Helper.groupGameOutcome;
 import static simulation.Helper.sortMap;
 import static simulation.Match.simulation;
-import static simulation.PreSeason.progression;
+import static simulation.Preseason.progression;
 import static simulation.Printer.pickContinentalTeams;
 import static simulation.Printer.standings;
 import static simulation.Tactics.preMatch;

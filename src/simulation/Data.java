@@ -45,25 +45,25 @@ public class Data {
             "Portugal",  "Netherlands", "Belgium",  "Colombia",  "Uruguay",  "Russia",  "Nigeria",  "Ukraine",  "Austria"};
 
     static final Footballer GOALKEEPER_1 = new Footballer(123455, "Goalkeeper 1", 18, "", 60, 60,
-            0, 0, Position.GK, 101, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.GK, 101, 20, 20, new Resume());
 
     static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
-            0, 0, Position.CB, 101, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.CB, 101, 20, 20, new Resume());
 
     static final Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
-            0, 0, Position.CM, 102, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.CM, 102, 20, 20, new Resume());
 
     static final Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
-            0, 0, Position.ST, 103, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.ST, 103, 20, 20, new Resume());
 
     static final Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
-            0, 0, Position.CB, 104, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.CB, 104, 20, 20, new Resume());
 
     static final Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
-            0, 0, Position.CM, 105, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.CM, 105, 20, 20, new Resume());
 
     static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
-            0, 0, Position.ST, 106, 20, 20, new Resume());
+            "Dummy", 0, 0, Position.ST, 106, 20, 20, new Resume());
 
     static void extractData() {
         final String fileName = "data/data.csv";
@@ -126,7 +126,7 @@ public class Data {
                             final int vision = Integer.parseInt(values[67]);
 
                             final Footballer f = new Footballer(id, name, age, nationality, overall, potential,
-                                    value, wage, position, number, finishing, vision, new Resume());
+                                    club.getName(), value, wage, position, number, finishing, vision, new Resume());
 
                             club.addFootballer(f);
                         }

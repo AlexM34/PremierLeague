@@ -12,7 +12,7 @@ import java.util.Random;
 
 import static simulation.Data.LEAGUES;
 
-class PreSeason {
+class Preseason {
     private static final Random random = new Random();
     static int deals;
     static final Map<Footballer, Club> transfers = new HashMap<>();
@@ -174,8 +174,8 @@ class PreSeason {
         int finishing = overall + 10 * position.getAttackingDuty() - 50;
         int vision = overall + 10 - (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
         Resume resume = new Resume();
-        Footballer footballer = new Footballer(id, name, age, nationality, overall, potential,
-                value, wage, position, number, finishing, vision, resume);
+        final Footballer footballer = new Footballer(id, name, age, nationality, overall, potential,
+                club.getName(), value, wage, position, number, finishing, vision, resume);
 
         club.addFootballer(footballer);
 //        System.out.println(footballer + " is promoted to " + club.getName());

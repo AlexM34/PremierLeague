@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Random;
 
 import static simulation.Data.LEAGUES;
-import static simulation.PreSeason.academy;
-import static simulation.PreSeason.deals;
-import static simulation.PreSeason.sold;
-import static simulation.PreSeason.transfers;
+import static simulation.Preseason.academy;
+import static simulation.Preseason.deals;
+import static simulation.Preseason.sold;
+import static simulation.Preseason.transfers;
 import static simulation.Helper.sortMap;
 
 class Transfer {
@@ -80,6 +80,7 @@ class Transfer {
             buying.changeBudget(-wanted);
             selling.changeBudget(wanted);
             selling.removeFootballer(footballer);
+            footballer.setTeam(buying.getName());
             transfers.put(footballer, buying);
             sold.merge(buying, 1, Integer::sum);
             deals++;
@@ -94,13 +95,15 @@ class Transfer {
         final int potential = footballer.getPotential();
         int better = 0;
 
-        for (Footballer f : buying.getFootballers()) {
+        for (final Footballer f : buying.getFootballers()) {
             if (f.getPosition().getRole().equals(role) && f.getOverall() > potential) better++;
         }
 
         switch (better) {
-            case 0: return footballer.getValue() * 1f;
-            case 1: return footballer.getValue() * 0.8f;
+            case 0: return footballer.getValue() * 1.2f;
+            case 1: return footballer.getValue() * 1f;
+            case 2: return footballer.getValue() * 0.8f;
+            case 3: return footballer.getValue() * 0.7f;
             default: return 0;
         }
     }
@@ -110,16 +113,17 @@ class Transfer {
         final int potential = footballer.getPotential();
         int better = 0;
 
-        for (Footballer f : selling.getFootballers()) {
+        for (final Footballer f : selling.getFootballers()) {
             if (f.getPosition().getRole().equals(role) && f.getOverall() > potential) better++;
         }
 
-        if (sold.containsKey(selling) && sold.get(selling) > 5) return footballer.getValue() * 2.5f;
+        if (sold.getOrDefault(selling, 0) > 5) return footballer.getValue() * 2.5f;
 
         switch (better) {
-            case 0: return random.nextInt(3) != 0 ? 0 : footballer.getValue() * 2.5f;
-            case 1: return footballer.getValue() * 1.8f;
-            default: return footballer.getValue() * 1.2f;
+            case 0: return random.nextInt(3) != 0 ? 0 : footballer.getValue() * 2f;
+            case 1: return footballer.getValue() * 1.6f;
+            case 2: return footballer.getValue() * 1.2f;
+            default: return footballer.getValue() * 1f;
         }
     }
 }

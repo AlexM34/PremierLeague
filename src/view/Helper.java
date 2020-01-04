@@ -102,12 +102,13 @@ class Helper {
 
             table.setValueAt(String.valueOf(row + 1), row, 0);
             table.setValueAt(footballer.getName(), row, 1);
+            table.setValueAt(footballer.getTeam(), row, 2);
 
             if (format) {
                 table.setValueAt(String.valueOf(decimalFormat.format((float) map.getOrDefault(footballer,
-                        0) / 100)), row++, 2);
+                        0) / 100)), row++, 3);
             } else {
-                table.setValueAt(String.valueOf(map.getOrDefault(footballer, 0)), row++, 2);
+                table.setValueAt(String.valueOf(map.getOrDefault(footballer, 0)), row++, 3);
             }
         }
 

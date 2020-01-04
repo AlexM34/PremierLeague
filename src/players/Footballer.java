@@ -9,6 +9,7 @@ public class Footballer {
     private final String nationality;
     private int overall;
     private int potential;
+    private String team;
     private long value;
     private final long wage;
     private final Position position;
@@ -20,7 +21,7 @@ public class Footballer {
     private int ban;
 
     public Footballer(final int id, final String name, final int age, final String nationality, final int overall,
-                      final int potential, final long value, final long wage, final Position position,
+                      final int potential, final String team, final long value, final long wage, final Position position,
                       final int number, final int finishing, final int vision, final Resume resume) {
         this.id = id;
         this.name = name;
@@ -28,6 +29,7 @@ public class Footballer {
         this.nationality = nationality;
         this.overall = overall;
         this.potential = potential;
+        this.team = team;
         this.value = value;
         this.wage = wage;
         this.position = position;
@@ -69,6 +71,14 @@ public class Footballer {
 
     public void changePotential(final int change) {
         this.potential += change;
+    }
+
+    public String getTeam() {
+        return team;
+    }
+
+    public void setTeam(final String team) {
+        this.team = team;
     }
 
     public long getValue() {
