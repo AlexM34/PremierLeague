@@ -12,13 +12,13 @@ public class Glory {
     private int continentalSuperCup;
     private int worldChampionship;
 
-    public Glory(final int championsLeague, final int league, final int nationalCup, final int leagueCup,
+    public Glory(final int championsLeague, final int europaLeague, final int league, final int nationalCup, final int leagueCup,
                  final int nationalSuperCup, final int continentalSuperCup, final int worldChampionship) {
         this.league = league;
         this.nationalCup = nationalCup;
         this.leagueCup = leagueCup;
         this.championsLeague = championsLeague;
-        this.europaLeague = 0;
+        this.europaLeague = europaLeague;
         this.nationalSuperCup = nationalSuperCup;
         this.continentalSuperCup = continentalSuperCup;
         this.worldChampionship = worldChampionship;

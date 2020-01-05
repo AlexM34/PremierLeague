@@ -133,11 +133,11 @@ public class Controller {
                 groupRound(CHAMPIONS_LEAGUE_NAME, CHAMPIONS_LEAGUE, round / 4);
                 groupRound(EUROPA_LEAGUE_NAME, EUROPA_LEAGUE, round / 4);
             } else {
-                continentalCup.put(CHAMPIONS_LEAGUE_NAME,
-                        knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
-
                 continentalCup.put(EUROPA_LEAGUE_NAME,
                         knockoutRound(continentalCup.get(EUROPA_LEAGUE_NAME), 2, 4, false));
+
+                continentalCup.put(CHAMPIONS_LEAGUE_NAME,
+                        knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
             }
         }
 
@@ -152,6 +152,7 @@ public class Controller {
         if (++round == 38) {
             round = 0;
             for (final Club[] league : LEAGUES) {
+                standings(league);
                 final String leagueName = league[0].getLeague();
                 if (leagueCup.containsKey(leagueName)) {
                     final Club leagueCupWinner = leagueCup.get(leagueName)[0];
@@ -177,14 +178,14 @@ public class Controller {
                 salaries(league);
             }
 
-            final Club europaLeagueWinner = EUROPA_LEAGUE[0];
+            final Club europaLeagueWinner = continentalCup.get(EUROPA_LEAGUE_NAME)[0];
             System.out.println(europaLeagueWinner.getName() + " win the Europa League!");
             europaLeagueWinner.getGlory().addEuropaLeague();
             for (final Footballer footballer : europaLeagueWinner.getFootballers()) {
                 footballer.getResume().getGlory().addEuropaLeague();
             }
 
-            final Club championsLeagueWinner = CHAMPIONS_LEAGUE[0];
+            final Club championsLeagueWinner = continentalCup.get(CHAMPIONS_LEAGUE_NAME)[0];
             System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
             championsLeagueWinner.getGlory().addChampionsLeague();
             for (final Footballer footballer : championsLeagueWinner.getFootballers()) {

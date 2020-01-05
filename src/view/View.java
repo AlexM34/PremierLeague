@@ -5,6 +5,7 @@ import competition.France;
 import competition.Germany;
 import competition.Italy;
 import competition.Spain;
+import simulation.Data;
 import team.Club;
 
 import javax.imageio.ImageIO;
@@ -23,6 +24,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -43,6 +45,7 @@ import static simulation.Controller.leagueResults;
 import static simulation.Controller.nationalCupResults;
 import static simulation.Controller.proceed;
 import static simulation.Helper.sortLeague;
+import static simulation.Printer.allTime;
 import static simulation.Printer.assists;
 import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
@@ -81,9 +84,11 @@ public class View {
     private static final JComboBox<String> roundBox = new JComboBox<>(ROUNDS);
     private static final JComboBox<String> knockoutBox = new JComboBox<>(STAGES);
     private static final JComboBox<String> groupBox = new JComboBox<>(GROUPS);
+    private static final JComboBox<String> historyNationBox = new JComboBox<>(LEAGUES);
+    private static final JComboBox<String> historyCompetitionBox = new JComboBox<>(COMPETITIONS);
     private static final JLabel resultsLabel = new JLabel();
     private static final JTable standingsTable = new JTable(new String[20][10], STANDINGS);
-    private static final JTable trophiesTable = new JTable(new String[50][3], TROPHIES);
+    private static final JTable trophiesTable = new JTable(new String[30][3], TROPHIES);
     private static final JTable gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
 
     private static int width;
@@ -135,6 +140,44 @@ public class View {
     private void history() {
         currentSeason.setVisible(false);
         history.setVisible(true);
+
+        final String nation = String.valueOf(historyNationBox.getSelectedItem());
+        final boolean international = nation.equals(CHAMPIONS_LEAGUE_NAME) || nation.equals(EUROPA_LEAGUE_NAME);
+        if (international) historyCompetitionBox.setVisible(false);
+        else historyCompetitionBox.setVisible(true);
+
+        final Club[] league;
+        switch (nation) {
+            case England.LEAGUE: league = England.CLUBS; break;
+            case Spain.LEAGUE: league = Spain.CLUBS; break;
+            case Germany.LEAGUE: league = Germany.CLUBS; break;
+            case Italy.LEAGUE: league = Italy.CLUBS; break;
+            case France.LEAGUE: league = France.CLUBS; break;
+            default: league = Arrays.stream(Data.LEAGUES).flatMap(Arrays::stream).toArray(Club[]::new);
+        }
+
+        int competition;
+        switch(String.valueOf(historyCompetitionBox.getSelectedItem())) {
+            case "League": competition = 0; break;
+            case "National Cup": competition = 1; break;
+            case "League Cup": competition = 2; break;
+            default: competition = -1;
+        }
+
+        if (international) competition = nation.equals(CHAMPIONS_LEAGUE_NAME) ? 3 : 4;
+        final Map<String, Integer> winners = allTime(league, competition);
+        int row = 0;
+        for (final String club : winners.keySet()) {
+            trophiesTable.setValueAt(String.valueOf(row + 1), row, 0);
+            trophiesTable.setValueAt(club, row, 1);
+            trophiesTable.setValueAt(String.valueOf(winners.get(club)), row++, 2);
+        }
+
+        for (int i = row; i < 30; i++) {
+            trophiesTable.setValueAt("", i, 0);
+            trophiesTable.setValueAt("", i, 1);
+            trophiesTable.setValueAt("", i, 2);
+        }
     }
 
     private void updateStats() {
@@ -292,19 +335,24 @@ public class View {
     }
 
     private void placeBoxes() {
-        placeBox(nationBox, 9 * width / 25, width / 9);
-        placeBox(competitionBox, 19 * width / 40, width / 11);
-        placeBox(continentalBox, 19 * width / 40, width / 11);
-        placeBox(roundBox, 23 * width / 40, width / 11);
-        placeBox(knockoutBox, 23 * width / 40, width / 11);
-        placeBox(groupBox, 23 * width / 40, width / 11);
+        placeBox(currentSeason, nationBox, 9 * width / 25, width / 9);
+        placeBox(currentSeason, competitionBox, 19 * width / 40, width / 11);
+        placeBox(currentSeason, continentalBox, 19 * width / 40, width / 11);
+        placeBox(currentSeason, roundBox, 23 * width / 40, width / 11);
+        placeBox(currentSeason, knockoutBox, 23 * width / 40, width / 11);
+        placeBox(currentSeason, groupBox, 23 * width / 40, width / 11);
+
+        placeBox(history, historyNationBox, 17 * width / 40, width / 9);
+        placeBox(history, historyCompetitionBox, 23 * width / 40, width / 11);
     }
 
-    private void placeBox(final JComboBox<String> box, final int x, final int width) {
+    private void placeBox(final JPanel panel, final JComboBox<String> box, final int x, final int width) {
         box.setBounds(x, boxY, width, boxHeight);
         box.setFont(new Font(FONT_NAME, PLAIN, boxFontSize));
-        currentSeason.add(box);
-        box.addActionListener(e -> updateStats());
+        panel.add(box);
+
+        if (panel == currentSeason) box.addActionListener(e -> updateStats());
+        else box.addActionListener(e -> history());
     }
 
     private void placeResults() {

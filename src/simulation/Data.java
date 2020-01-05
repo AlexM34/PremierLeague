@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Data {
-    static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
+    public static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
     public static final Map<String, Integer> homeWins = new HashMap<>();
     public static final Map<String, Integer> draws = new HashMap<>();
     public static final Map<String, Integer> awayWins = new HashMap<>();

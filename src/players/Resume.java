@@ -8,7 +8,7 @@ public class Resume {
     private final Statistics season;
 
     public Resume() {
-        this.glory = new Glory(0, 0, 0, 0, 0, 0, 0);
+        this.glory = new Glory(0, 0, 0, 0, 0, 0, 0, 0);
         this.total = new Statistics();
         this.season = new Statistics();
     }

@@ -102,7 +102,6 @@ public class Printer {
         topTeam.clear();
 
         for (final Club club : league) {
-            System.out.println(club);
             for (final Footballer f : club.getFootballers()) {
                 final Competition stats;
                 final int games;
@@ -162,6 +161,36 @@ public class Printer {
 //        topPlayers(redCards, "Most Red Cards");
 
 //        pickTeam(topTeam, type == 0);
+    }
+
+    public static Map<String, Integer> allTime(final Club[] league, final int competition) {
+        final Map<String, Integer> winners = new LinkedHashMap<>();
+
+        for (final Club club : league) {
+            final int cups;
+            switch (competition) {
+                case 0: cups = club.getGlory().getLeague(); break;
+                case 1: cups = club.getGlory().getNationalCup(); break;
+                case 2: cups = club.getGlory().getLeagueCup(); break;
+                case 3: cups = club.getGlory().getChampionsLeague(); break;
+                case 4: cups = club.getGlory().getEuropaLeague(); break;
+                default: cups = 0; break;
+            }
+
+            if (cups == 0) continue;
+            winners.put(club.getName(), cups);
+        }
+
+        final Map<String, Integer> sorted = sortMap(winners);
+
+        System.out.println();
+        System.out.println("Winners");
+        for (int i = 0; i < sorted.size(); i++) {
+            System.out.println(String.format("%2d. %-25s %d", i + 1,
+                    sorted.keySet().toArray(new String[0])[i], sorted.values().toArray(new Integer[0])[i]));
+        }
+
+        return sorted;
     }
 
     static void allTimeStats(final Club[] league) {
