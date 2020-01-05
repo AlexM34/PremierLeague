@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
@@ -25,6 +26,12 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.awt.Font.ITALIC;
+import static java.awt.Font.PLAIN;
+import static java.awt.Frame.MAXIMIZED_BOTH;
+import static java.awt.Image.SCALE_SMOOTH;
+import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static simulation.Controller.CHAMPIONS_LEAGUE;
 import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
 import static simulation.Controller.EUROPA_LEAGUE;
@@ -63,8 +70,11 @@ public class View {
     private static final String[] STAGES = {"Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"};
     private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
+    private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
 
     private static final JFrame frame = new JFrame("Gladiators");
+    private static final JPanel currentSeason = new JPanel();
+    private static final JPanel history = new JPanel();
     private static final JComboBox<String> nationBox = new JComboBox<>(LEAGUES);
     private static final JComboBox<String> competitionBox = new JComboBox<>(COMPETITIONS);
     private static final JComboBox<String> continentalBox = new JComboBox<>(PHASES);
@@ -73,6 +83,7 @@ public class View {
     private static final JComboBox<String> groupBox = new JComboBox<>(GROUPS);
     private static final JLabel resultsLabel = new JLabel();
     private static final JTable standingsTable = new JTable(new String[20][10], STANDINGS);
+    private static final JTable trophiesTable = new JTable(new String[50][3], TROPHIES);
     private static final JTable gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
 
     private static int width;
@@ -110,7 +121,7 @@ public class View {
         placeBoxes();
         placeResults();
         placeTables();
-        placeButton();
+        placeButtons();
         placeImages();
         playMusic();
         updateStats();
@@ -121,7 +132,15 @@ public class View {
         updateStats();
     }
 
+    private void history() {
+        currentSeason.setVisible(false);
+        history.setVisible(true);
+    }
+
     private void updateStats() {
+        history.setVisible(false);
+        currentSeason.setVisible(true);
+
         final String competition = String.valueOf(competitionBox.getSelectedItem());
         final int teams;
         switch (String.valueOf(knockoutBox.getSelectedItem())) {
@@ -260,16 +279,16 @@ public class View {
         table.setBounds(x, y, statsWidth, statsHeight);
         table.setRowHeight(statsHeight / 15);
         table.setEnabled(false);
-        table.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
+        table.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
         setColumnWidths(table, statsWidth, 8, 40, 35, 17);
 
         final JScrollPane scrollPane = new JScrollPane(table);
         final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
-        titledBorder.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+        titledBorder.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
         scrollPane.setBorder(titledBorder);
         scrollPane.setBounds(x, y, statsWidth, statsHeight);
-        frame.add(scrollPane);
+        currentSeason.add(scrollPane);
     }
 
     private void placeBoxes() {
@@ -283,21 +302,21 @@ public class View {
 
     private void placeBox(final JComboBox<String> box, final int x, final int width) {
         box.setBounds(x, boxY, width, boxHeight);
-        box.setFont(new Font(FONT_NAME, Font.PLAIN, boxFontSize));
-        frame.add(box);
+        box.setFont(new Font(FONT_NAME, PLAIN, boxFontSize));
+        currentSeason.add(box);
         box.addActionListener(e -> updateStats());
     }
 
     private void placeResults() {
         resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        resultsLabel.setFont(new Font(FONT_NAME, Font.PLAIN, resultsHeight / 14));
+        resultsLabel.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
         final TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
-        borderResults.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+        borderResults.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
 
         final JScrollPane resultsPane = new JScrollPane(resultsLabel);
         resultsPane.setBorder(borderResults);
         resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        frame.add(resultsPane);
+        currentSeason.add(resultsPane);
     }
 
     private void placeTables() {
@@ -309,20 +328,32 @@ public class View {
         standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
         standingsTable.setRowHeight(standingsHeight / 23);
         standingsTable.setEnabled(false);
-        standingsTable.setFont(new Font(FONT_NAME, Font.PLAIN, standingsFontSize));
+        standingsTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
         setColumnWidths(standingsTable, standingsWidth, 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
 
         final JScrollPane standingsPane = new JScrollPane(standingsTable);
         final TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
-        borderStandings.setTitleFont(new Font(FONT_NAME, Font.ITALIC, FONT_SIZE));
+        borderStandings.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
         standingsPane.setBorder(borderStandings);
         standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+
+        trophiesTable.setBounds(standingsX / 2, standingsY, standingsWidth, 5 * standingsHeight / 4);
+        trophiesTable.setRowHeight(standingsHeight / 23);
+        trophiesTable.setEnabled(false);
+        trophiesTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
+        setColumnWidths(trophiesTable, standingsWidth, 7, 60, 33);
+
+        final JScrollPane trophiesPane = new JScrollPane(trophiesTable);
+        final TitledBorder borderTrophies = BorderFactory.createTitledBorder("TROPHIES");
+        borderTrophies.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
+        trophiesPane.setBorder(borderTrophies);
+        trophiesPane.setBounds(standingsX / 2, standingsY, standingsWidth, 5 * standingsHeight / 4);
 
         gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         gamesTable.setRowHeight(statsHeight / 13);
         gamesTable.setEnabled(false);
-        gamesTable.setFont(new Font(FONT_NAME, Font.PLAIN, statsFontSize));
-        gamesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        gamesTable.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
+        gamesTable.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         setTableValues(gamesTable, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
                 "Assists", "Yellow Cards", "Red Cards", "Average Ratings", "Clean Sheets");
@@ -331,47 +362,74 @@ public class View {
         final JScrollPane gamesPane = new JScrollPane(gamesTable);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
 
-        frame.add(standingsPane);
-        frame.add(gamesPane);
+        currentSeason.add(standingsPane);
+        currentSeason.add(gamesPane);
+        history.add(trophiesPane);
     }
 
-    private void placeButton() {
+    private void placeButtons() {
         final JButton nextButton = new JButton("Next");
         nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
-        nextButton.setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+        nextButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
         nextButton.addActionListener(e -> nextRound());
-        frame.add(nextButton);
+        currentSeason.add(nextButton);
+
+        final JButton historyButton = new JButton("History");
+        historyButton.setBounds(7 * width / 8, 4 * height / 5, width / 12, height / 12);
+        historyButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        historyButton.addActionListener(e -> history());
+        currentSeason.add(historyButton);
+
+        final JButton currentButton = new JButton("Current");
+        currentButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
+        currentButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        currentButton.addActionListener(e -> updateStats());
+        history.add(currentButton);
     }
 
     private void placeImages() {
         try {
-            final BufferedImage ball = ImageIO.read(getClass().getResource("/ball.jpg"));
-            frame.setIconImage(ball);
-
-            final BufferedImage image = ImageIO.read(getClass().getResource("/gladiators.jpg"));
-            final Image scaledInstance = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            final ImageIcon icon = new ImageIcon(scaledInstance);
-
-            final JLabel background = new JLabel();
-            background.setIcon(icon);
-            background.setSize(width, height);
-            background.setLocation(0, 0);
-            frame.getContentPane().add(background);
+            frame.setIconImage(ImageIO.read(getClass().getResource("/ball.jpg")));
+            currentSeason.add(getImage("/current.jpg"));
+            history.add(getImage("/history.jpg"));
         } catch (final IOException e) {
             System.out.println("Exception thrown while extracting images! " + e);
         }
     }
 
+    private JLabel getImage(final String name) throws IOException {
+        final BufferedImage image = ImageIO.read(getClass().getResource(name));
+        final Image scaledInstance = image.getScaledInstance(width, height, SCALE_SMOOTH);
+        final ImageIcon icon = new ImageIcon(scaledInstance);
+
+        final JLabel label = new JLabel();
+        label.setIcon(icon);
+        label.setSize(width, height);
+        label.setLocation(0, 0);
+
+        return label;
+    }
+
     private static void calculatePositions() {
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.setUndecorated(true);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setExtendedState(MAXIMIZED_BOTH);
         frame.setVisible(true);
-
         width = frame.getWidth();
         height = frame.getHeight();
+
+        currentSeason.setLayout(null);
+        currentSeason.setVisible(true);
+        currentSeason.setSize(width, height);
+        frame.getContentPane().add(currentSeason);
+
+        history.setLayout(null);
+        history.setVisible(false);
+        history.setSize(width, height);
+        frame.getContentPane().add(history);
+
         resultsX = width / 80;
         resultsY = height / 15;
         resultsWidth = width / 2;
