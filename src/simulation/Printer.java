@@ -4,6 +4,7 @@ import competition.England;
 import competition.France;
 import players.Competition;
 import players.Footballer;
+import players.Statistics;
 import team.Club;
 import team.League;
 
@@ -91,7 +92,7 @@ public class Printer {
         }
     }
 
-    public static void playerStats(final Club[] league, final int type) {
+    public static void playerStats(final Club[] league, final int type, final boolean seasonal) {
         ratings.clear();
         motm.clear();
         goals.clear();
@@ -103,45 +104,46 @@ public class Printer {
 
         for (final Club club : league) {
             for (final Footballer f : club.getFootballers()) {
-                final Competition stats;
+                final Statistics stats = seasonal ? f.getResume().getSeason() : f.getResume().getTotal();
+                final Competition competition;
                 final int games;
 
                 switch (type) {
                     case 0:
-                        stats = f.getResume().getSeason().getLeague();
+                        competition = stats.getLeague();
                         games = round / 2;
                         break;
                     case 1:
-                        stats = f.getResume().getSeason().getNationalCup();
+                        competition = stats.getNationalCup();
                         games = round / 18;
                         break;
                     case 2:
-                        stats = f.getResume().getSeason().getLeagueCup();
+                        competition = stats.getLeagueCup();
                         games = round / 18;
                         break;
                     case 3:
-                        stats = f.getResume().getSeason().getChampionsLeague();
+                        competition = stats.getChampionsLeague();
                         games = round / 8;
                         break;
                     default:
-                        stats = f.getResume().getSeason().getEuropaLeague();
+                        competition = stats.getEuropaLeague();
                         games = round / 8;
                         break;
                 }
 
-                if (stats.getMatches() > games) {
-                    ratings.put(f, stats.getRating());
-                    topTeam.put(f, stats.getRating());
+                if (competition.getMatches() > games) {
+                    ratings.put(f, competition.getRating());
+                    topTeam.put(f, competition.getRating());
                 }
 
-                motm.put(f, stats.getMotmAwards());
-                goals.put(f, stats.getGoals());
-                assists.put(f, stats.getAssists());
-                yellowCards.put(f, stats.getYellowCards());
-                redCards.put(f, stats.getRedCards());
+                motm.put(f, competition.getMotmAwards());
+                goals.put(f, competition.getGoals());
+                assists.put(f, competition.getAssists());
+                yellowCards.put(f, competition.getYellowCards());
+                redCards.put(f, competition.getRedCards());
 
                 if (f.getPosition() == GK) {
-                    cleanSheets.put(f, stats.getCleanSheets());
+                    cleanSheets.put(f, competition.getCleanSheets());
                 }
             }
         }
@@ -280,13 +282,13 @@ public class Printer {
             }
         }
 
-        topPlayers(ratings, "Top Players");
-        topPlayers(motm, "Most MOTM Awards");
-        topPlayers(goals, "Top Goalscorer");
-        topPlayers(assists, "Most Assists");
-        topPlayers(cleanSheets, "Most Clean Sheets");
-        topPlayers(yellowCards, "Most Yellow Cards");
-        topPlayers(redCards, "Most Red Cards");
+//        topPlayers(ratings, "Top Players");
+//        topPlayers(motm, "Most MOTM Awards");
+//        topPlayers(goals, "Top Goalscorer");
+//        topPlayers(assists, "Most Assists");
+//        topPlayers(cleanSheets, "Most Clean Sheets");
+//        topPlayers(yellowCards, "Most Yellow Cards");
+//        topPlayers(redCards, "Most Red Cards");
     }
 
     private static void topPlayers(Map<Footballer, Integer> map, final String label) {

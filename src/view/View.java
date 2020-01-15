@@ -98,14 +98,22 @@ public class View {
     private static int resultsWidth;
     private static int resultsHeight;
     private static int goalsY;
+    private static int historyGoalsX;
+    private static int historyGoalsY;
     private static int statsWidth;
     private static int statsHeight;
+    private static int historyStatsWidth;
+    private static int historyStatsHeight;
     private static int cleanSheetsX;
+    private static int historyCleanSheetsX;
     private static int assistsY;
+    private static int historyAssistsY;
     private static int standingsX;
     private static int standingsY;
+    private static int historyStandingsX;
     private static int standingsWidth;
     private static int standingsHeight;
+    private static int historyStandingsHeight;
     private static int gamesY;
     private static int gamesWidth;
     private static int gamesHeight;
@@ -119,6 +127,10 @@ public class View {
     private final JTable assistsTable = new JTable(new String[10][4], STATS);
     private final JTable ratingsTable = new JTable(new String[10][4], STATS);
     private final JTable cleanSheetsTable = new JTable(new String[10][4], STATS);
+    private final JTable historyGoalsTable = new JTable(new String[10][4], STATS);
+    private final JTable historyAssistsTable = new JTable(new String[10][4], STATS);
+    private final JTable historyRatingsTable = new JTable(new String[10][4], STATS);
+    private final JTable historyCleanSheetsTable = new JTable(new String[10][4], STATS);
 
     public View() {
         initialise();
@@ -178,6 +190,12 @@ public class View {
             trophiesTable.setValueAt("", i, 1);
             trophiesTable.setValueAt("", i, 2);
         }
+
+        playerStats(league, competition, false);
+        displayStats(historyGoalsTable, goals, false);
+        displayStats(historyAssistsTable, assists, false);
+        displayStats(historyRatingsTable, ratings, true);
+        displayStats(historyCleanSheetsTable, cleanSheets, false);
     }
 
     private void updateStats() {
@@ -210,7 +228,7 @@ public class View {
         if (competition.equals("League")) leagueView(league);
         else cupView(league, competition.equals("League Cup"), teams);
 
-        playerStats(league, competition.equals("League") ? 0 : competition.equals("National Cup") ? 1 : 2);
+        playerStats(league, competition.equals("League") ? 0 : competition.equals("National Cup") ? 1 : 2, true);
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
@@ -286,8 +304,8 @@ public class View {
         }
 
         System.out.println(continentalCupResults);
-        if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 3);
-        else playerStats(EUROPA_LEAGUE, 4);
+        if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 3, true);
+        else playerStats(EUROPA_LEAGUE, 4, true);
 
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
@@ -316,22 +334,6 @@ public class View {
         knockoutBox.setVisible(knockout);
         groupBox.setVisible(!knockout);
         standingsTable.setVisible(!knockout);
-    }
-
-    private static void setStatTables(final JTable table, final int x, final int y, final String label) {
-        table.setBounds(x, y, statsWidth, statsHeight);
-        table.setRowHeight(statsHeight / 15);
-        table.setEnabled(false);
-        table.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
-        table.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
-        setColumnWidths(table, statsWidth, 8, 40, 35, 17);
-
-        final JScrollPane scrollPane = new JScrollPane(table);
-        final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
-        titledBorder.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        scrollPane.setBorder(titledBorder);
-        scrollPane.setBounds(x, y, statsWidth, statsHeight);
-        currentSeason.add(scrollPane);
     }
 
     private void placeBoxes() {
@@ -373,6 +375,11 @@ public class View {
         setStatTables(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
         setStatTables(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
 
+        setHistoryStatTables(historyGoalsTable, historyGoalsX, historyGoalsY, "GOALS");
+        setHistoryStatTables(historyAssistsTable, historyGoalsX, historyAssistsY, "ASSISTS");
+        setHistoryStatTables(historyRatingsTable, historyCleanSheetsX, historyGoalsY, "RATINGS");
+        setHistoryStatTables(historyCleanSheetsTable, historyCleanSheetsX, historyAssistsY, "CLEAN SHEETS");
+
         standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
         standingsTable.setRowHeight(standingsHeight / 23);
         standingsTable.setEnabled(false);
@@ -385,7 +392,7 @@ public class View {
         standingsPane.setBorder(borderStandings);
         standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
 
-        trophiesTable.setBounds(standingsX / 2, standingsY, standingsWidth, 5 * standingsHeight / 4);
+        trophiesTable.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
         trophiesTable.setRowHeight(standingsHeight / 23);
         trophiesTable.setEnabled(false);
         trophiesTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
@@ -395,7 +402,7 @@ public class View {
         final TitledBorder borderTrophies = BorderFactory.createTitledBorder("TROPHIES");
         borderTrophies.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
         trophiesPane.setBorder(borderTrophies);
-        trophiesPane.setBounds(standingsX / 2, standingsY, standingsWidth, 5 * standingsHeight / 4);
+        trophiesPane.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
 
         gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         gamesTable.setRowHeight(statsHeight / 13);
@@ -413,6 +420,38 @@ public class View {
         currentSeason.add(standingsPane);
         currentSeason.add(gamesPane);
         history.add(trophiesPane);
+    }
+
+    private static void setStatTables(final JTable table, final int x, final int y, final String label) {
+        table.setBounds(x, y, statsWidth, statsHeight);
+        table.setRowHeight(statsHeight / 15);
+        table.setEnabled(false);
+        table.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
+        table.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        setColumnWidths(table, statsWidth, 8, 40, 35, 17);
+
+        final JScrollPane scrollPane = new JScrollPane(table);
+        final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
+        titledBorder.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
+        scrollPane.setBorder(titledBorder);
+        scrollPane.setBounds(x, y, statsWidth, statsHeight);
+        currentSeason.add(scrollPane);
+    }
+
+    private static void setHistoryStatTables(final JTable table, final int x, final int y, final String label) {
+        table.setBounds(x, y, historyStatsWidth, historyStatsHeight);
+        table.setRowHeight(historyStatsHeight / 13);
+        table.setEnabled(false);
+        table.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
+        table.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+        setColumnWidths(table, historyStatsWidth, 8, 40, 35, 17);
+
+        final JScrollPane scrollPane = new JScrollPane(table);
+        final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
+        titledBorder.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
+        scrollPane.setBorder(titledBorder);
+        scrollPane.setBounds(x, y, historyStatsWidth, historyStatsHeight);
+        history.add(scrollPane);
     }
 
     private void placeButtons() {
@@ -499,5 +538,14 @@ public class View {
         boxFontSize = height / 50;
         statsFontSize = statsHeight / 16;
         standingsFontSize = standingsHeight / 30;
+
+        historyStandingsX = width / 50;
+        historyStandingsHeight = 4 * height / 5;
+        historyGoalsX = 12 * width / 25;
+        historyGoalsY = height / 10;
+        historyStatsWidth = width / 4;
+        historyStatsHeight = 2 * height / 5;
+        historyCleanSheetsX = 37 * width / 50;
+        historyAssistsY = height / 2;
     }
 }
