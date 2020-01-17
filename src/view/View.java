@@ -5,6 +5,7 @@ import competition.France;
 import competition.Germany;
 import competition.Italy;
 import competition.Spain;
+import players.Footballer;
 import simulation.Data;
 import team.Club;
 
@@ -25,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -51,6 +53,7 @@ import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
 import static simulation.Printer.playerStats;
 import static simulation.Printer.ratings;
+import static simulation.Printer.topPlayers;
 import static view.Helper.displayStats;
 import static view.Helper.getInteger;
 import static view.Helper.insertStandingsEntry;
@@ -73,10 +76,12 @@ public class View {
     private static final String[] STAGES = {"Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"};
     private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
+    private static final String[] FOOTBALLERS = {"N", "FOOTBALLER", "AGE", "TEAM", "OVERALL", "POTENTIAL"};
     private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
 
     private static final JFrame frame = new JFrame("Gladiators");
     private static final JPanel currentSeason = new JPanel();
+    private static final JPanel footballers = new JPanel();
     private static final JPanel history = new JPanel();
     private static final JComboBox<String> nationBox = new JComboBox<>(LEAGUES);
     private static final JComboBox<String> competitionBox = new JComboBox<>(COMPETITIONS);
@@ -88,6 +93,7 @@ public class View {
     private static final JComboBox<String> historyCompetitionBox = new JComboBox<>(COMPETITIONS);
     private static final JLabel resultsLabel = new JLabel();
     private static final JTable standingsTable = new JTable(new String[20][10], STANDINGS);
+    private static final JTable footballersTable = new JTable(new String[100][6], FOOTBALLERS);
     private static final JTable trophiesTable = new JTable(new String[30][3], TROPHIES);
     private static final JTable gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
 
@@ -149,8 +155,35 @@ public class View {
         updateStats();
     }
 
+    private void footballers() {
+        currentSeason.setVisible(false);
+        history.setVisible(false);
+        footballers.setVisible(true);
+
+        final List<Footballer> topPlayers = topPlayers();
+        int row = 0;
+        for (final Footballer footballer : topPlayers) {
+            footballersTable.setValueAt(String.valueOf(row + 1), row, 0);
+            footballersTable.setValueAt(footballer.getName(), row, 1);
+            footballersTable.setValueAt(String.valueOf(footballer.getAge()), row, 2);
+            footballersTable.setValueAt(footballer.getTeam(), row, 3);
+            footballersTable.setValueAt(String.valueOf(footballer.getOverall()), row, 4);
+            footballersTable.setValueAt(String.valueOf(footballer.getPotential()), row++, 5);
+        }
+
+        for (int i = row; i < 100; i++) {
+            footballersTable.setValueAt("", i, 0);
+            footballersTable.setValueAt("", i, 1);
+            footballersTable.setValueAt("", i, 2);
+            footballersTable.setValueAt("", i, 3);
+            footballersTable.setValueAt("", i, 4);
+            footballersTable.setValueAt("", i, 5);
+        }
+    }
+
     private void history() {
         currentSeason.setVisible(false);
+        footballers.setVisible(false);
         history.setVisible(true);
 
         final String nation = String.valueOf(historyNationBox.getSelectedItem());
@@ -199,6 +232,7 @@ public class View {
     }
 
     private void updateStats() {
+        footballers.setVisible(false);
         history.setVisible(false);
         currentSeason.setVisible(true);
 
@@ -391,6 +425,20 @@ public class View {
         borderStandings.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
         standingsPane.setBorder(borderStandings);
         standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+        currentSeason.add(standingsPane);
+
+        footballersTable.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
+        footballersTable.setRowHeight(standingsHeight / 23);
+        footballersTable.setEnabled(false);
+        footballersTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
+        setColumnWidths(footballersTable, standingsWidth, 7, 25, 10, 30, 14, 14);
+
+        final JScrollPane footballersPane = new JScrollPane(footballersTable);
+        final TitledBorder borderFootballers = BorderFactory.createTitledBorder("FOOTBALLERS");
+        borderFootballers.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
+        footballersPane.setBorder(borderFootballers);
+        footballersPane.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
+        footballers.add(footballersPane);
 
         trophiesTable.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
         trophiesTable.setRowHeight(standingsHeight / 23);
@@ -403,6 +451,7 @@ public class View {
         borderTrophies.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
         trophiesPane.setBorder(borderTrophies);
         trophiesPane.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
+        history.add(trophiesPane);
 
         gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         gamesTable.setRowHeight(statsHeight / 13);
@@ -416,10 +465,7 @@ public class View {
         setColumnWidths(gamesTable, gamesWidth, 70, 30);
         final JScrollPane gamesPane = new JScrollPane(gamesTable);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
-
-        currentSeason.add(standingsPane);
         currentSeason.add(gamesPane);
-        history.add(trophiesPane);
     }
 
     private static void setStatTables(final JTable table, final int x, final int y, final String label) {
@@ -461,23 +507,48 @@ public class View {
         nextButton.addActionListener(e -> nextRound());
         currentSeason.add(nextButton);
 
+        final JButton footballersButton = new JButton("Footballers");
+        footballersButton.setBounds(3 * width / 4, 9 * height / 10, width / 10, height / 12);
+        footballersButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        footballersButton.addActionListener(e -> footballers());
+        currentSeason.add(footballersButton);
+
+        final JButton historyFootballersButton = new JButton("Footballers");
+        historyFootballersButton.setBounds(3 * width / 4, 9 * height / 10, width / 10, height / 12);
+        historyFootballersButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        historyFootballersButton.addActionListener(e -> footballers());
+        history.add(historyFootballersButton);
+
         final JButton historyButton = new JButton("History");
         historyButton.setBounds(7 * width / 8, 4 * height / 5, width / 12, height / 12);
         historyButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
         historyButton.addActionListener(e -> history());
         currentSeason.add(historyButton);
 
+        final JButton footballersHistoryButton = new JButton("History");
+        footballersHistoryButton.setBounds(7 * width / 8, 4 * height / 5, width / 12, height / 12);
+        footballersHistoryButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        footballersHistoryButton.addActionListener(e -> history());
+        footballers.add(footballersHistoryButton);
+
         final JButton currentButton = new JButton("Current");
         currentButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
         currentButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
         currentButton.addActionListener(e -> updateStats());
-        history.add(currentButton);
+        footballers.add(currentButton);
+
+        final JButton hisotryCurrentButton = new JButton("Current");
+        hisotryCurrentButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
+        hisotryCurrentButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        hisotryCurrentButton.addActionListener(e -> updateStats());
+        history.add(hisotryCurrentButton);
     }
 
     private void placeImages() {
         try {
             frame.setIconImage(ImageIO.read(getClass().getResource("/ball.jpg")));
             currentSeason.add(getImage("/current.jpg"));
+            footballers.add(getImage("/footballers.jpg"));
             history.add(getImage("/history.jpg"));
         } catch (final IOException e) {
             System.out.println("Exception thrown while extracting images! " + e);
@@ -511,6 +582,11 @@ public class View {
         currentSeason.setVisible(true);
         currentSeason.setSize(width, height);
         frame.getContentPane().add(currentSeason);
+
+        footballers.setLayout(null);
+        footballers.setVisible(false);
+        footballers.setSize(width, height);
+        frame.getContentPane().add(footballers);
 
         history.setLayout(null);
         history.setVisible(false);

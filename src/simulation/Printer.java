@@ -291,6 +291,20 @@ public class Printer {
 //        topPlayers(redCards, "Most Red Cards");
     }
 
+    public static List<Footballer> topPlayers() {
+        final Map<Footballer, Integer> players = new HashMap<>();
+        for (final Club[] league : LEAGUES) {
+            for (final Club club : league) {
+                for (final Footballer f : club.getFootballers()) {
+                    players.put(f, f.getOverall());
+                }
+            }
+        }
+
+        final Map<Footballer, Integer> sorted = sortMap(players);
+        return new ArrayList<>(sorted.keySet());
+    }
+
     private static void topPlayers(Map<Footballer, Integer> map, final String label) {
         System.out.println(label);
         final Map<Footballer, Integer> sorted = sortMap(map);
