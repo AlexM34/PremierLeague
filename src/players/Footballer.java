@@ -57,6 +57,10 @@ public class Footballer {
         this.age = age;
     }
 
+    public String getNationality() {
+        return nationality;
+    }
+
     public int getOverall() {
         return overall;
     }

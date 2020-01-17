@@ -25,6 +25,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ public class View {
     private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
     private static final String[] FOOTBALLERS = {"N", "FOOTBALLER", "AGE", "TEAM", "OVERALL", "POTENTIAL"};
+    private static final String[] RECORD = {"", ""};
     private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
 
     private static final JFrame frame = new JFrame("Gladiators");
@@ -94,6 +96,7 @@ public class View {
     private static final JLabel resultsLabel = new JLabel();
     private static final JTable standingsTable = new JTable(new String[20][10], STANDINGS);
     private static final JTable footballersTable = new JTable(new String[100][6], FOOTBALLERS);
+    private static final JTable footballerRecord = new JTable(new String[12][2], RECORD);
     private static final JTable trophiesTable = new JTable(new String[30][3], TROPHIES);
     private static final JTable gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
 
@@ -104,10 +107,13 @@ public class View {
     private static int resultsWidth;
     private static int resultsHeight;
     private static int goalsY;
+    private static int recordX;
     private static int historyGoalsX;
     private static int historyGoalsY;
     private static int statsWidth;
     private static int statsHeight;
+    private static int recordHeight;
+    private static int recordWidth;
     private static int historyStatsWidth;
     private static int historyStatsHeight;
     private static int cleanSheetsX;
@@ -138,6 +144,8 @@ public class View {
     private final JTable historyRatingsTable = new JTable(new String[10][4], STATS);
     private final JTable historyCleanSheetsTable = new JTable(new String[10][4], STATS);
 
+    private List<Footballer> topPlayers = new ArrayList<>();
+
     public View() {
         initialise();
         calculatePositions();
@@ -160,7 +168,7 @@ public class View {
         history.setVisible(false);
         footballers.setVisible(true);
 
-        final List<Footballer> topPlayers = topPlayers();
+        topPlayers = topPlayers();
         int row = 0;
         for (final Footballer footballer : topPlayers) {
             footballersTable.setValueAt(String.valueOf(row + 1), row, 0);
@@ -168,7 +176,9 @@ public class View {
             footballersTable.setValueAt(String.valueOf(footballer.getAge()), row, 2);
             footballersTable.setValueAt(footballer.getTeam(), row, 3);
             footballersTable.setValueAt(String.valueOf(footballer.getOverall()), row, 4);
-            footballersTable.setValueAt(String.valueOf(footballer.getPotential()), row++, 5);
+            footballersTable.setValueAt(String.valueOf(footballer.getPotential()), row, 5);
+
+            if (++row == 100) break;
         }
 
         for (int i = row; i < 100; i++) {
@@ -179,6 +189,9 @@ public class View {
             footballersTable.setValueAt("", i, 4);
             footballersTable.setValueAt("", i, 5);
         }
+
+        setTableValues(footballerRecord, "Name", "Age", "Nationality", "Overall", "Potential", "Team",
+                "Value", "Wage", "Position", "Number", "Finishing", "Vision");
     }
 
     private void history() {
@@ -429,8 +442,9 @@ public class View {
 
         footballersTable.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
         footballersTable.setRowHeight(standingsHeight / 23);
-        footballersTable.setEnabled(false);
         footballersTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
+        footballersTable.getSelectionModel().addListSelectionListener(e ->
+                playerRecord(topPlayers.get(footballersTable.getSelectedRow())));
         setColumnWidths(footballersTable, standingsWidth, 7, 25, 10, 30, 14, 14);
 
         final JScrollPane footballersPane = new JScrollPane(footballersTable);
@@ -439,6 +453,19 @@ public class View {
         footballersPane.setBorder(borderFootballers);
         footballersPane.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
         footballers.add(footballersPane);
+
+        footballerRecord.setBounds(recordX, standingsY, recordWidth, recordHeight);
+        footballerRecord.setRowHeight(standingsHeight / 12);
+        footballerRecord.setEnabled(false);
+        footballerRecord.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
+        setColumnWidths(footballerRecord, standingsWidth, 30, 70);
+
+        final JScrollPane recordPane = new JScrollPane(footballerRecord);
+        final TitledBorder borderRecord = BorderFactory.createTitledBorder("RECORD");
+        borderRecord.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
+        recordPane.setBorder(borderRecord);
+        recordPane.setBounds(recordX, standingsY, recordWidth, recordHeight);
+        footballers.add(recordPane);
 
         trophiesTable.setBounds(historyStandingsX, standingsY, standingsWidth, historyStandingsHeight);
         trophiesTable.setRowHeight(standingsHeight / 23);
@@ -466,6 +493,21 @@ public class View {
         final JScrollPane gamesPane = new JScrollPane(gamesTable);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         currentSeason.add(gamesPane);
+    }
+
+    private void playerRecord(final Footballer footballer) {
+        footballerRecord.setValueAt(footballer.getName(), 0, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getAge()), 1, 1);
+        footballerRecord.setValueAt(footballer.getNationality(), 2, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getOverall()), 3, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getPotential()), 4, 1);
+        footballerRecord.setValueAt(footballer.getTeam(), 5, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getValue()), 6, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getWage()), 7, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getPosition()), 8, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getNumber()), 9, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getFinishing()), 10, 1);
+        footballerRecord.setValueAt(String.valueOf(footballer.getVision()), 11, 1);
     }
 
     private static void setStatTables(final JTable table, final int x, final int y, final String label) {
@@ -537,11 +579,11 @@ public class View {
         currentButton.addActionListener(e -> updateStats());
         footballers.add(currentButton);
 
-        final JButton hisotryCurrentButton = new JButton("Current");
-        hisotryCurrentButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
-        hisotryCurrentButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        hisotryCurrentButton.addActionListener(e -> updateStats());
-        history.add(hisotryCurrentButton);
+        final JButton historyCurrentButton = new JButton("Current");
+        historyCurrentButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
+        historyCurrentButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        historyCurrentButton.addActionListener(e -> updateStats());
+        history.add(historyCurrentButton);
     }
 
     private void placeImages() {
@@ -614,6 +656,10 @@ public class View {
         boxFontSize = height / 50;
         statsFontSize = statsHeight / 16;
         standingsFontSize = standingsHeight / 30;
+
+        recordX = width / 2;
+        recordHeight = 2 * height / 3;
+        recordWidth = width / 5;
 
         historyStandingsX = width / 50;
         historyStandingsHeight = 4 * height / 5;
