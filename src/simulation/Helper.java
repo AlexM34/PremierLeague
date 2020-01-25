@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
+import static simulation.Match.report;
 import static simulation.Printer.offset;
 
 public class Helper {
@@ -62,8 +63,13 @@ public class Helper {
         return 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) + stats.getScored();
     }
 
-    static void appendScore(final StringBuilder scores, final Club home, final Club away, final int[] result) {
-        scores.append(home.getName()).append(" - ").append(away.getName()).append(" ")
-                .append(result[0]).append(":").append(result[1]).append("<br/>");
+    static void appendScore(final StringBuilder scores, final StringBuilder reports, final Club home,
+                            final Club away, final int[] result) {
+        final String score = home.getName() + " - " + away.getName() + " " + result[0] + ":" + result[1] + "<br/>";
+        scores.append(score);
+
+        final String teams = home.getName() + " vs " + away.getName() + "<br/>";
+        final String finalScore = "Final score: " + result[0] + ":" + result[1] + "<br/>" + "<br/>";
+        reports.append(teams).append(report).append(finalScore);
     }
 }

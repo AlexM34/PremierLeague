@@ -42,9 +42,6 @@ import static simulation.Transfer.transfers;
 public class Controller {
     private static final Scanner scanner = new Scanner(System.in);
 
-    private static final boolean userFlag = false;
-    private static final boolean standingsFlag = false;
-    static final boolean matchFlag = false;
     private static int year = 0;
     static int round = 0;
 
@@ -90,8 +87,6 @@ public class Controller {
             leagueCupResults.clear();
             nationalCupResults.clear();
             continentalCupResults.clear();
-
-            if (userFlag) pickTeam();
 
             for (final Club[] league : LEAGUES) {
                 final String leagueName = league[0].getLeague();
@@ -206,23 +201,18 @@ public class Controller {
     private static void leagueRound(final Club[] league, final int[][][] draw, final int round) {
         System.out.println(String.format("Round %d", round + 1));
         final StringBuilder scores = new StringBuilder();
+        final StringBuilder reports = new StringBuilder();
         for (int game = 0; game < league.length / 2; game++) {
             final int home = draw[round][game][0];
             final int away = draw[round][game][1];
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
             final int[] result = simulation(league[home], league[away], false, -1, -1, 0);
-            appendScore(scores, league[home], league[away], result);
+            appendScore(scores, reports, league[home], league[away], result);
         }
 
         leagueResults.put(league[0].getLeague() + (round + 1), scores.toString());
-        if (round < 2 * league.length - 3 && standingsFlag) {
-            System.out.println();
-            System.out.println(String.format("Standings after round %d:", round + 1));
-            standings(league);
-        }
-
-        System.out.println();
+        leagueResults.put("reports: " + league[0].getLeague() + (round + 1), reports.toString());
     }
 
     private static void groupRound(final String competition, final Club[] teams, final int round) {
@@ -231,14 +221,18 @@ public class Controller {
         for (int group = 0; group < groups; group++) {
             final String letter = String.valueOf((char) ('A' + group));
             System.out.println("GROUP " + letter);
+
             final StringBuilder scores = new StringBuilder(continentalCupResults.getOrDefault(
                     competition + letter, ""));
+            final StringBuilder reports = new StringBuilder(continentalCupResults.getOrDefault(
+                    "reports: " + competition + letter, ""));
 
             final Club[] clubs = new Club[4];
             for (int team = 0; team < 4; team++) clubs[team] = teams[groups * team + group];
             System.out.println();
             System.out.println("Matchday " + (round + 1));
             if (scores.length() > 0) scores.append("<br/>");
+            if (reports.length() > 0) reports.append("<br/>");
 
             for (int game = 0; game < 2; game++) {
                 final int home = draw[round][game][0];
@@ -246,7 +240,7 @@ public class Controller {
                 final int[] result = simulation(clubs[home], clubs[away],
                         false, -1, -1, 3);
 
-                appendScore(scores, clubs[home], clubs[away], result);
+                appendScore(scores, reports, clubs[home], clubs[away], result);
                 final int homeGoals = result[0];
                 final int awayGoals = result[1];
 
@@ -255,6 +249,7 @@ public class Controller {
             }
 
             continentalCupResults.put(competition + letter, scores.toString());
+            continentalCupResults.put("reports: " + competition + letter, reports.toString());
         }
     }
 
@@ -321,6 +316,7 @@ public class Controller {
         }
 
         results.put("new", "");
+        results.put("reports: new", "");
         final List<Club> draw = Arrays.asList(clubs);
         shuffle(draw);
 
@@ -332,6 +328,7 @@ public class Controller {
         }
 
         results.put(competition + count, results.remove("new"));
+        results.put("reports: " + competition + count, results.remove("reports: new"));
         return Arrays.copyOf(clubs, count / 2);
     }
 
@@ -346,12 +343,13 @@ public class Controller {
         secondGoals += result[1];
 
         final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
+        final StringBuilder reports = new StringBuilder(String.valueOf(results.get("reports: new")));
         if (games == 2 && scores.length() > 0) scores.append("<br/>");
-        appendScore(scores, first, second, result);
+        appendScore(scores, reports, first, second, result);
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
             result = simulation(second, first, true, replay ? -1 : secondGoals, replay ? -1 : firstGoals, type);
-            appendScore(scores, second, first, result);
+            appendScore(scores, reports, second, first, result);
 
             secondGoals += result[0];
             firstGoals += result[1];
@@ -363,6 +361,7 @@ public class Controller {
         }
 
         results.put("new", scores.toString());
+        results.put("reports: new", reports.toString());
         return secondGoals > firstGoals;
     }
 

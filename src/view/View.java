@@ -22,6 +22,8 @@ import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -144,13 +146,14 @@ public class View {
     private final JTable historyRatingsTable = new JTable(new String[10][4], STATS);
     private final JTable historyCleanSheetsTable = new JTable(new String[10][4], STATS);
 
-    private List<Footballer> topPlayers = new ArrayList<>();
+    private static String reportString = "";
+    private static List<Footballer> topPlayers = new ArrayList<>();
 
     public View() {
         initialise();
         calculatePositions();
         placeBoxes();
-        placeResults();
+        placeLabels();
         placeTables();
         placeButtons();
         placeImages();
@@ -161,6 +164,11 @@ public class View {
     private void nextRound() {
         for (int i = 0; i < 38; i++) proceed();
         updateStats();
+    }
+
+    private void changeReportType() {
+        updateStats();
+        reportString = reportString.equals("") ? "reports: " : "";
     }
 
     private void footballers() {
@@ -301,7 +309,8 @@ public class View {
         leagueStats(gamesTable, leagueName);
 
         final int round = getInteger(String.valueOf(roundBox.getSelectedItem()));
-        resultsLabel.setText("<html>" + leagueResults.getOrDefault(leagueName + round, "") + "</html>");
+        resultsLabel.setText("<html>" + leagueResults.getOrDefault(
+                reportString + leagueName + round, "") + "</html>");
         System.out.println(leagueResults.get(leagueName));
     }
 
@@ -311,11 +320,11 @@ public class View {
         final String leagueName = league[0].getLeague();
         if (leagueCup) {
             resultsLabel.setText("<html>" + leagueCupResults.getOrDefault(
-                    leagueName + teams, "") + "</html>");
+                    reportString + leagueName + teams, "") + "</html>");
             System.out.println(leagueCupResults.get(leagueName));
         } else {
             resultsLabel.setText("<html>" + nationalCupResults.getOrDefault(
-                    leagueName + teams, "") + "</html>");
+                    reportString + leagueName + teams, "") + "</html>");
             System.out.println(nationalCupResults.get(leagueName));
         }
     }
@@ -333,7 +342,7 @@ public class View {
         final int group = (int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A';
         if (String.valueOf(continentalBox.getSelectedItem()).equals("Knockout")) {
             resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
-                    competition + teams, "") + "</html>");
+                    reportString + competition + teams, "") + "</html>");
         } else if (!isChampionsLeague || group < 8) {
             final Club[] league = new Club[4];
             for (int team = 0; team < 4; team++) {
@@ -347,7 +356,7 @@ public class View {
             }
 
             resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
-                    competition + groupBox.getSelectedItem(), "") + "</html>");
+                    reportString + competition + groupBox.getSelectedItem(), "") + "</html>");
         }
 
         System.out.println(continentalCupResults);
@@ -404,12 +413,19 @@ public class View {
         else box.addActionListener(e -> history());
     }
 
-    private void placeResults() {
+    private void placeLabels() {
         resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
+        resultsLabel.setEnabled(true);
         resultsLabel.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
+        resultsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                changeReportType();
+            }
+        });
+
         final TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
         borderResults.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-
         final JScrollPane resultsPane = new JScrollPane(resultsLabel);
         resultsPane.setBorder(borderResults);
         resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
@@ -487,7 +503,7 @@ public class View {
         gamesTable.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         setTableValues(gamesTable, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
-                "Assists", "Yellow Cards", "Red Cards", "Average Ratings", "Clean Sheets");
+                "Assists", "Yellow Cards", "Red Cards", "Average Rating", "Clean Sheets");
 
         setColumnWidths(gamesTable, gamesWidth, 70, 30);
         final JScrollPane gamesPane = new JScrollPane(gamesTable);

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import static simulation.Controller.matchFlag;
 import static simulation.Data.FANS;
 import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.MIDFIELDER_1;
@@ -37,10 +36,13 @@ class Match {
     static List<Footballer> awayBench = new ArrayList<>();
     static int homeSubs;
     static int awaySubs;
+    static StringBuilder report;
 
     static int[] simulation(final Club home, final Club away, final boolean last, final int homeGoals,
                           final int awayGoals, final int type) {
         competition = type;
+        report = new StringBuilder();
+        
         if (competition == 0) leagueName = home.getLeague();
         final int[] result = simulateGame(home, away, last, homeGoals, awayGoals);
         FANS = 3;
@@ -73,12 +75,6 @@ class Match {
 
         if (home.getId() == USER || away.getId() == USER) style += USER_STYLE / 2 - 5;
 
-        if (matchFlag) {
-            System.out.println();
-            System.out.println(balance);
-            System.out.println(style);
-        }
-
         while (minute <= 90 + extra) {
             added = (minute % 45 == 0) ? 2 * minute / 45 : 0;
             stoppage = 0;
@@ -107,32 +103,27 @@ class Match {
                     }
                 }
 
-                if (random.nextInt(25) == 0) {
+                if (random.nextInt(40) == 0) {
                     final boolean t = random.nextBoolean();
                     final int p = random.nextInt(11);
                     final MatchStats footballer = (t ? homeSquad : awaySquad).get(p);
 
                     if (!footballer.isRedCarded()) {
+                        report.append(getMinute()).append(footballer.getFootballer().getName());
                         if (!footballer.isYellowCarded()) {
                             footballer.addYellowCard();
                             balance += (t ? -1 : 1);
-                            if (matchFlag) {
-                                System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
-                                        footballer.getFootballer().getName() + " gets a yellow card");
-                            }
+                            report.append(" gets a yellow card<br/>");
                         } else {
                             footballer.addRedCard();
                             balance += (t ? -10 : 10);
                             footballer.getFootballer().changeBan(1);
-                            if (matchFlag) {
-                                System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
-                                        footballer.getFootballer().getName() + " gets a second yellow card and he is ejected");
-                            }
+                            report.append(" gets a second yellow card and he is ejected<br/>");
 
                             if (p == 0) goalkeeperEjected(t);
                         }
                     }
-                } else if (random.nextInt(200) == 0) {
+                } else if (random.nextInt(300) == 0) {
                     final boolean t = random.nextBoolean();
                     final int p = random.nextInt(11);
                     final MatchStats footballer = (t ? homeSquad : awaySquad).get(p);
@@ -141,10 +132,7 @@ class Match {
                         footballer.addRedCard();
                         balance += (t ? -10 : 10);
                         footballer.getFootballer().changeBan(random.nextInt(5) == 0 ? 2 : 1);
-                        if (matchFlag) {
-                            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
-                                    footballer.getFootballer().getName() + " gets a red card");
-                        }
+                        report.append(getMinute()).append(footballer.getFootballer().getName()).append(" gets a red card<br/>");
 
                         if (p == 0) goalkeeperEjected(t);
                     }
@@ -160,7 +148,7 @@ class Match {
 
             if (minute == 90 && last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
                     homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
-                System.out.println("Extra time begins!");
+                report.append("Extra time begins!<br/>");
                 extra = 30;
             }
 
@@ -169,7 +157,7 @@ class Match {
 
         if (last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
                 homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
-            System.out.println("It's time for the penalty shootout!");
+            report.append("It's time for the penalty shootout!<br/>");
             final boolean homeWin = penaltyShootout(homeSquad, awaySquad);
             if (homeWin) homeGoals++;
             else awayGoals++;
@@ -197,10 +185,8 @@ class Match {
         final Footballer subbedIn = bench.get(0) != null ? bench.get(0) :
                 bench.stream().filter(Objects::nonNull).findFirst().orElse(GOALKEEPER_1);
 
-        if (matchFlag) {
-            System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " +
-                    subbedIn.getName() + " replaces " + subbedOut.getName());
-        }
+        report.append(getMinute()).append(subbedIn.getName()).append(" replaces ")
+                .append(subbedOut.getName()).append("<br/>");
 
         Competition season = getCompetition(subbedOut.getResume().getSeason(), competition);
         updateStats(season, squad.get(flop));
@@ -246,13 +232,13 @@ class Match {
         while(true) {
             while (homeSquad.get(currentHome) == null) currentHome = (currentHome + 10) % 11;
             homeGoals += penalty(homeSquad.get(currentHome), awaySquad.get(0));
-            System.out.println(homeGoals + "-" + awayGoals);
+            report.append(homeGoals).append("-").append(awayGoals).append("<br/>");
             if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
             currentHome = (currentHome + 10) % 11;
 
             while (awaySquad.get(currentAway) == null) currentAway = (currentAway + 10) % 11;
             awayGoals += penalty(awaySquad.get(currentAway), homeSquad.get(0));
-            System.out.println(homeGoals + "-" + awayGoals);
+            report.append(homeGoals).append("-").append(awayGoals).append("<br/>");
             if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
                     || taken >= 4 && homeGoals != awayGoals) break;
             currentAway = (currentAway + 10) % 11;
@@ -264,15 +250,18 @@ class Match {
     }
 
     private static int penalty(final MatchStats striker, final MatchStats goalkeeper) {
-        if (matchFlag) System.out.println(striker.getFootballer().getName() +
-                " steps up to take the penalty vs " + goalkeeper.getFootballer().getName());
+        report.append(striker.getFootballer().getName()).append(" steps up to take the penalty vs ")
+                .append(goalkeeper.getFootballer().getName()).append("<br/>");
         if (random.nextInt(100) < 70 + striker.getFootballer().getOverall() - goalkeeper.getFootballer().getOverall()) {
-            if (matchFlag) System.out.println("He scores with a great shot!");
+            report.append("He scores with a great shot! ");
             return 1;
-        }
-        else {
-            if (matchFlag) System.out.println("The goalkeeper makes a wonderful save!");
+        } else {
+            report.append("The goalkeeper makes a wonderful save! ");
             return 0;
         }
+    }
+
+    private static String getMinute() {
+        return minute + (stoppage != 0 ? "+" + stoppage : "") + "' ";
     }
 }

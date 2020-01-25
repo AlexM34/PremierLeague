@@ -12,9 +12,25 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static simulation.Controller.matchFlag;
-import static simulation.Data.*;
-import static simulation.Match.*;
+import static simulation.Data.DEFENDER_1;
+import static simulation.Data.DEFENDER_2;
+import static simulation.Data.FORWARD_1;
+import static simulation.Data.FORWARD_2;
+import static simulation.Data.GOALKEEPER_1;
+import static simulation.Data.MIDFIELDER_1;
+import static simulation.Data.MIDFIELDER_2;
+import static simulation.Data.USER_STYLE;
+import static simulation.Match.awayBench;
+import static simulation.Match.awaySquad;
+import static simulation.Match.awaySubs;
+import static simulation.Match.competition;
+import static simulation.Match.homeBench;
+import static simulation.Match.homeSquad;
+import static simulation.Match.homeSubs;
+import static simulation.Match.minute;
+import static simulation.Match.report;
+import static simulation.Match.stoppage;
+import static simulation.Match.updateStats;
 import static simulation.Rater.getCompetition;
 
 class Tactics {
@@ -166,9 +182,8 @@ class Tactics {
             final Footballer subbedIn = bench.get(player);
             if (subbedIn == null) continue;
             if (subbedOut.getPosition().getRole().equals(subbedIn.getPosition().getRole())) {
-                if (matchFlag) {
-                    System.out.println(minute + (stoppage != 0 ? "+" + stoppage : "") + "' " + subbedIn.getName() + " replaces " + subbedOut.getName());
-                }
+                report.append(minute).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
+                        .append(subbedIn.getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
 
                 Competition season = getCompetition(subbedOut.getResume().getSeason(), competition);
                 updateStats(season, squad.get(flop));
