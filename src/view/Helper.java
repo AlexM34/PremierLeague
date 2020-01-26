@@ -4,17 +4,25 @@ import players.Footballer;
 import simulation.Data;
 import team.League;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Random;
 
+import static java.awt.Image.SCALE_SMOOTH;
 import static simulation.Data.averageRatings;
 import static simulation.Data.awayWins;
 import static simulation.Data.draws;
@@ -23,9 +31,9 @@ import static simulation.Data.redCards;
 import static simulation.Data.scoredAway;
 import static simulation.Data.scoredHome;
 import static simulation.Data.yellowCards;
-import static view.View.decimalFormat;
 
 class Helper {
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
     private static int song = 0;
 
     static void playMusic() {
@@ -53,6 +61,19 @@ class Helper {
         } catch (final Exception e) {
             JOptionPane.showMessageDialog(null, e.getLocalizedMessage());
         }
+    }
+
+    static JLabel getImage(final String name, final int width, final int height) throws IOException {
+        final BufferedImage image = ImageIO.read(Helper.class.getResource(name));
+        final Image scaledInstance = image.getScaledInstance(width, height, SCALE_SMOOTH);
+        final ImageIcon icon = new ImageIcon(scaledInstance);
+
+        final JLabel label = new JLabel();
+        label.setIcon(icon);
+        label.setSize(width, height);
+        label.setLocation(0, 0);
+
+        return label;
     }
 
     static int getInteger(final String stringValue) {
