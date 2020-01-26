@@ -1,6 +1,5 @@
 package simulation;
 
-import players.Competition;
 import players.Footballer;
 import players.MatchStats;
 import team.Club;
@@ -17,9 +16,9 @@ import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
 import static simulation.Performance.goal;
 import static simulation.Rater.finalWhistle;
-import static simulation.Rater.getCompetition;
 import static simulation.Rater.kickoff;
 import static simulation.Rater.updateRatings;
+import static simulation.Rater.updateStats;
 import static simulation.Tactics.pickSquad;
 import static simulation.Tactics.substitute;
 
@@ -30,6 +29,7 @@ class Match {
     static String leagueName;
     static int minute = 1;
     static int stoppage = 0;
+
     static List<MatchStats> homeSquad = new ArrayList<>();
     static List<MatchStats> awaySquad = new ArrayList<>();
     static List<Footballer> homeBench = new ArrayList<>();
@@ -188,22 +188,12 @@ class Match {
         report.append(getMinute()).append(subbedIn.getName()).append(" replaces ")
                 .append(subbedOut.getName()).append("<br/>");
 
-        Competition season = getCompetition(subbedOut.getResume().getSeason(), competition);
-        updateStats(season, squad.get(flop));
+        updateStats(squad.get(flop));
         squad.set(flop, new MatchStats(subbedIn, minute));
         bench.set(0, null);
 
         if (isHome) homeSubs--;
         else awaySubs--;
-    }
-
-    static void updateStats(final Competition season, final MatchStats matchStats) {
-        season.addMatches(1);
-        season.addRating((int) matchStats.getRating() * 100, 1);
-        season.addGoals(matchStats.getGoals());
-        season.addAssists(matchStats.getAssists());
-        if (matchStats.isYellowCarded()) season.addYellowCards();
-        if (matchStats.isRedCarded()) season.addRedCards();
     }
 
     private static int getAttack(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {

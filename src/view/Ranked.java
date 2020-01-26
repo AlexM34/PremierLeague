@@ -123,6 +123,10 @@ class Ranked {
     }
 
     private static void playerRecord(final Footballer footballer) {
+        for (int row = 0; row < 12; row++) {
+            footballerRecord.setValueAt("", row, 0);
+        }
+
         footballerRecord.setValueAt(footballer.getName(), 0, 1);
         footballerRecord.setValueAt(String.valueOf(footballer.getAge()), 1, 1);
         footballerRecord.setValueAt(footballer.getNationality(), 2, 1);

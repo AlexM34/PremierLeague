@@ -133,11 +133,11 @@ public class Competition {
     }
 
     void update(final Competition competition) {
-        addMatches(competition.getMatches());
         addGoals(competition.getGoals());
         addAssists(competition.getAssists());
         addCleanSheets(competition.getCleanSheets());
         addRating(competition.getRating(), competition.getMatches());
+        addMatches(competition.getMatches());
         addMotmAwards(competition.getMotmAwards());
         addYellowCards();
         addRedCards();

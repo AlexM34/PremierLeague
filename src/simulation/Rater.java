@@ -23,6 +23,8 @@ import static simulation.Data.redCards;
 import static simulation.Data.scoredAway;
 import static simulation.Data.scoredHome;
 import static simulation.Data.yellowCards;
+import static simulation.Match.awaySquad;
+import static simulation.Match.homeSquad;
 import static simulation.Match.leagueName;
 import static simulation.Helper.sortMap;
 
@@ -52,10 +54,10 @@ class Rater {
         final int home = random.nextInt(5) + scale * 3 + 1;
         final int away = random.nextInt(5) - scale * 3 + 1;
 
-        for (int i = 0; i < home; i++) updateRating(Match.homeSquad, 0.1f);
-        for (int i = 0; i > home; i--) updateRating(Match.homeSquad, -0.1f);
-        for (int i = 0; i < away; i++) updateRating(Match.awaySquad, 0.1f);
-        for (int i = 0; i > away; i--) updateRating(Match.awaySquad, -0.1f);
+        for (int i = 0; i < home; i++) updateRating(homeSquad, 0.1f);
+        for (int i = 0; i > home; i--) updateRating(homeSquad, -0.1f);
+        for (int i = 0; i < away; i++) updateRating(awaySquad, 0.1f);
+        for (int i = 0; i > away; i--) updateRating(awaySquad, -0.1f);
     }
 
     private static void updateRating(final List<MatchStats> squad, final float change) {
@@ -69,17 +71,17 @@ class Rater {
     }
 
     static void finalWhistle(final Club home, final Club away, final int homeGoals, final int awayGoals) {
-        if (Match.homeSquad.get(0) != null && awayGoals == 0) getCompetition(Match.homeSquad.get(0)
+        if (homeSquad.get(0) != null && awayGoals == 0) getCompetition(homeSquad.get(0)
                 .getFootballer().getResume().getSeason(), Match.competition).addCleanSheets(1);
-        if (Match.awaySquad.get(0) != null && homeGoals == 0) getCompetition(Match.awaySquad.get(0)
+        if (awaySquad.get(0) != null && homeGoals == 0) getCompetition(awaySquad.get(0)
                 .getFootballer().getResume().getSeason(), Match.competition).addCleanSheets(1);
 
-        motmPlayer = Match.homeSquad.get(0);
+        motmPlayer = homeSquad.get(0);
         motmRating = 0;
 
         for (int player = 0; player < 11; player++) {
-            updateStats(Match.homeSquad.get(player));
-            updateStats(Match.awaySquad.get(player));
+            updateStats(homeSquad.get(player));
+            updateStats(awaySquad.get(player));
         }
 
         getCompetition(motmPlayer.getFootballer().getResume().getSeason(), Match.competition).addMotmAwards(1);
@@ -91,7 +93,7 @@ class Rater {
                 away.getName(), homeGoals, awayGoals, motmPlayer.getFootballer().getName(), motmRating));
     }
 
-    private static void updateStats(final MatchStats matchStats) {
+    static void updateStats(final MatchStats matchStats) {
         if (matchStats == null) return;
 
         if (matchStats.getRating() > motmRating) {
@@ -99,22 +101,21 @@ class Rater {
             motmRating = matchStats.getRating();
         }
 
-        final Competition homeStats = getCompetition(
-                matchStats.getFootballer().getResume().getSeason(), Match.competition);
+        final Competition stats = getCompetition(matchStats.getFootballer().getResume().getSeason(), Match.competition);
 
-        homeStats.addRating((int) matchStats.getRating() * 100, 1);
+        stats.addRating((int) matchStats.getRating() * 100, 1);
         averageRatings.merge(leagueName, matchStats.getRating(), Float::sum);
-        homeStats.addMatches(1);
-        homeStats.addGoals(matchStats.getGoals());
-        homeStats.addAssists(matchStats.getAssists());
+        stats.addMatches(1);
+        stats.addGoals(matchStats.getGoals());
+        stats.addAssists(matchStats.getAssists());
         assists.merge(leagueName, matchStats.getAssists(), Integer::sum);
         if (matchStats.isYellowCarded()) {
-            homeStats.addYellowCards();
+            stats.addYellowCards();
             yellowCards.merge(leagueName, 1, Integer::sum);
         }
 
         if (matchStats.isRedCarded()) {
-            homeStats.addRedCards();
+            stats.addRedCards();
             redCards.merge(leagueName, 1, Integer::sum);
         }
 

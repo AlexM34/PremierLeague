@@ -76,7 +76,7 @@ class Transfer {
             else return;
         }
 
-        if (2 * wanted < budget) {
+        if (1.5 * wanted < budget) {
             buying.changeBudget(-wanted);
             selling.changeBudget(wanted);
             selling.removeFootballer(footballer);
@@ -100,10 +100,10 @@ class Transfer {
         }
 
         switch (better) {
-            case 0: return footballer.getValue() * 1.2f;
-            case 1: return footballer.getValue() * 1f;
-            case 2: return footballer.getValue() * 0.8f;
-            case 3: return footballer.getValue() * 0.7f;
+            case 0: return footballer.getValue() * 1.4f;
+            case 1: return footballer.getValue() * 1.2f;
+            case 2: return footballer.getValue() * 1f;
+            case 3: return footballer.getValue() * 0.9f;
             default: return 0;
         }
     }
@@ -117,13 +117,13 @@ class Transfer {
             if (f.getPosition().getRole().equals(role) && f.getOverall() > potential) better++;
         }
 
-        if (sold.getOrDefault(selling, 0) > 5) return footballer.getValue() * 2.5f;
+        if (sold.getOrDefault(selling, 0) > 4) return footballer.getValue() * 2.5f;
 
         switch (better) {
             case 0: return random.nextInt(3) != 0 ? 0 : footballer.getValue() * 2f;
-            case 1: return footballer.getValue() * 1.6f;
-            case 2: return footballer.getValue() * 1.2f;
-            default: return footballer.getValue() * 1f;
+            case 1: return footballer.getValue() * 1.8f;
+            case 2: return footballer.getValue() * 1.4f;
+            default: return footballer.getValue() * 1.2f;
         }
     }
 }

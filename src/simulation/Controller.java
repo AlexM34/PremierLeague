@@ -60,7 +60,7 @@ public class Controller {
     public static final Map<String, String> nationalCupResults = new HashMap<>();
     public static final Map<String, String> continentalCupResults = new HashMap<>();
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         initialise();
         while(scanner.nextInt() != 0) {
             for (int i = 0; i < 38; i++) Controller.proceed();
@@ -68,7 +68,6 @@ public class Controller {
     }
 
     public static void initialise() {
-//        extractData();
         buildSquads();
         addDummies();
     }
@@ -189,8 +188,6 @@ public class Controller {
 
             knockoutPrizes(EUROPA_LEAGUE, true);
             knockoutPrizes(CHAMPIONS_LEAGUE, true);
-//            Printer.pickTeam(topTeam, false);
-//            voting(contenders);
             year++;
 
             progression();
@@ -264,8 +261,8 @@ public class Controller {
 
             final Map<Club, Integer> standing = new LinkedHashMap<>();
             for (int team = 0; team < 4; team++) {
-                final League groupStats = teams[4 * group + team].getSeason().getContinental().getGroup();
-                standing.put(teams[4 * group + team], getPerformance(groupStats));
+                final League groupStats = teams[groups * team + group].getSeason().getContinental().getGroup();
+                standing.put(teams[groups * team + group], getPerformance(groupStats));
             }
 
             System.out.println();
@@ -292,10 +289,9 @@ public class Controller {
         if (competition.equals(CHAMPIONS_LEAGUE_NAME)) {
             final Club[] europaLeagueTeams = new Club[32];
             System.arraycopy(continentalCup.get(EUROPA_LEAGUE_NAME), 0, europaLeagueTeams, 0, 24);
-            System.out.println("Third are..");
             thirds.forEach(t -> System.out.println(t.getName()));
+
             for (int team = 24; team < 32; team++) europaLeagueTeams[team] = thirds.remove(0);
-            System.out.println(thirds.size());
             for (int team = 0; team < 32; team++) System.out.println(europaLeagueTeams[team].getName());
             continentalCup.put(EUROPA_LEAGUE_NAME, europaLeagueTeams);
         }
@@ -370,7 +366,7 @@ public class Controller {
         while (true) {
             final int team = scanner.nextInt();
             if (team < 1 || team > 20) {
-                System.out.println("Wrong number.");
+                System.out.println("Wrong number");
                 continue;
             }
 

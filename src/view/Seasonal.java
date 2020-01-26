@@ -113,7 +113,6 @@ class Seasonal {
         calculatePositions(frameWidth, frameHeight);
 
         resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        resultsLabel.setEnabled(true);
         resultsLabel.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
         resultsLabel.addMouseListener(new MouseAdapter() {
             @Override

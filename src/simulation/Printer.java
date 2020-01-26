@@ -1,7 +1,5 @@
 package simulation;
 
-import competition.England;
-import competition.France;
 import players.Competition;
 import players.Footballer;
 import players.Statistics;
@@ -152,17 +150,6 @@ public class Printer {
         assists = sortMap(assists);
         ratings = sortMap(ratings);
         cleanSheets = sortMap(cleanSheets);
-
-//        System.out.println();
-//        topPlayers(ratings, "Top Players");
-//        topPlayers(motm, "Most MOTM Awards");
-//        topPlayers(goals, "Top Goalscorer");
-//        topPlayers(assists, "Most Assists");
-//        topPlayers(cleanSheets, "Most Clean Sheets");
-//        topPlayers(yellowCards, "Most Yellow Cards");
-//        topPlayers(redCards, "Most Red Cards");
-
-//        pickTeam(topTeam, type == 0);
     }
 
     public static Map<String, Integer> allTime(final Club[] league, final int competition) {
@@ -195,102 +182,6 @@ public class Printer {
         return sorted;
     }
 
-    static void allTimeStats(final Club[] league) {
-        final Map<String, Integer> leagues = new LinkedHashMap<>();
-        final Map<String, Integer> nationalCups = new LinkedHashMap<>();
-        final Map<String, Integer> leagueCups = new LinkedHashMap<>();
-
-        for (final Club club : league) {
-            leagues.put(club.getName(), club.getGlory().getLeague());
-            nationalCups.put(club.getName(), club.getGlory().getNationalCup());
-            leagueCups.put(club.getName(), club.getGlory().getLeagueCup());
-        }
-
-        final Map<String, Integer> sortedLeagues = sortMap(leagues);
-        final Map<String, Integer> sortedNationalCups = sortMap(nationalCups);
-        final Map<String, Integer> sortedLeagueCups = sortMap(leagueCups);
-
-        System.out.println();
-        System.out.println("League Winners");
-        for (int i = 0; i < sortedLeagues.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagues.keySet().toArray(new String[0])[i],
-                    sortedLeagues.values().toArray(new Integer[0])[i]));
-        }
-
-        System.out.println();
-        System.out.println("National Cup Winners");
-        for (int i = 0; i < sortedLeagueCups.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedNationalCups.keySet().toArray(new String[0])[i],
-                    sortedNationalCups.values().toArray(new Integer[0])[i]));
-        }
-
-        if (league[0].getLeague().equals(England.LEAGUE) || league[0].getLeague().equals(France.LEAGUE)) {
-            System.out.println();
-            System.out.println("League Cup Winners");
-            for (int i = 0; i < sortedLeagueCups.size(); i++) {
-                System.out.println(String.format("%2d. %-25s %d", i + 1, sortedLeagueCups.keySet().toArray(new String[0])[i],
-                        sortedLeagueCups.values().toArray(new Integer[0])[i]));
-            }
-        }
-    }
-
-    static void continentalStats() {
-        final Map<String, Integer> titles = new LinkedHashMap<>();
-
-        for (final Club[] league : LEAGUES) {
-            for (final Club club : league) {
-                if (club.getGlory().getChampionsLeague() > 0) titles.put(club.getName(), club.getGlory().getChampionsLeague());
-            }
-        }
-
-        final Map<String, Integer> sortedTitles = sortMap(titles);
-
-        System.out.println();
-        System.out.println("Champions League Winners");
-        for (int i = 0; i < sortedTitles.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1, sortedTitles.keySet().toArray(new String[0])[i],
-                    sortedTitles.values().toArray(new Integer[0])[i]));
-        }
-    }
-
-    public static void allTimePlayerStats(final Club[] league) {
-        ratings.clear();
-        motm.clear();
-        goals.clear();
-        assists.clear();
-        cleanSheets.clear();
-        yellowCards.clear();
-        redCards.clear();
-
-        for (final Club club : league) {
-            for (final Footballer f : club.getFootballers()) {
-                final Competition stats = f.getResume().getTotal().getLeague();
-
-                if (f.getResume().getTotal().getLeague().getMatches() > 100) {
-                    ratings.put(f, f.getResume().getTotal().getLeague().getRating());
-                }
-
-                motm.put(f, stats.getMotmAwards());
-                goals.put(f, stats.getGoals());
-                assists.put(f, stats.getAssists());
-                yellowCards.put(f, stats.getYellowCards());
-                redCards.put(f, stats.getRedCards());
-
-                if (f.getPosition() == GK) {
-                    cleanSheets.put(f, stats.getCleanSheets());
-                }
-            }
-        }
-
-//        topPlayers(ratings, "Top Players");
-//        topPlayers(motm, "Most MOTM Awards");
-//        topPlayers(goals, "Top Goalscorer");
-//        topPlayers(assists, "Most Assists");
-//        topPlayers(cleanSheets, "Most Clean Sheets");
-//        topPlayers(yellowCards, "Most Yellow Cards");
-//        topPlayers(redCards, "Most Red Cards");
-    }
-
     public static List<Footballer> topPlayers() {
         final Map<Footballer, Integer> players = new HashMap<>();
         for (final Club[] league : LEAGUES) {
@@ -305,7 +196,7 @@ public class Printer {
         return new ArrayList<>(sorted.keySet());
     }
 
-    private static void topPlayers(Map<Footballer, Integer> map, final String label) {
+    private static void topPlayers(final Map<Footballer, Integer> map, final String label) {
         System.out.println(label);
         final Map<Footballer, Integer> sorted = sortMap(map);
 

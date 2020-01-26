@@ -87,7 +87,7 @@ class Preseason {
                             improve(f);
                         }
                     }
-//                System.out.println(f.getName() + f.getOverall());
+                    System.out.println(f.getName() + " gets new overall of " + f.getOverall());
                 }
             }
         }
@@ -104,7 +104,6 @@ class Preseason {
             if (footballer.getAge() < 30 && random.nextInt(3) == 0) {
                 footballer.changePotential(1);
             }
-//            System.out.println(String.format("%s improves to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
         }
     }
 
@@ -114,7 +113,6 @@ class Preseason {
             if (footballer.getAge() >= 30 || random.nextInt(3) == 0) {
                 footballer.changePotential(-1);
             }
-//            System.out.println(String.format("%s declines to %d %d", footballer.getName(), footballer.getOverall(), footballer.getPotential()));
         }
     }
 
@@ -178,6 +176,5 @@ class Preseason {
                 club.getName(), value, wage, position, number, finishing, vision, resume);
 
         club.addFootballer(footballer);
-//        System.out.println(footballer + " is promoted to " + club.getName());
     }
 }

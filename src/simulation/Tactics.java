@@ -1,6 +1,5 @@
 package simulation;
 
-import players.Competition;
 import players.Footballer;
 import players.MatchStats;
 import team.Club;
@@ -23,15 +22,13 @@ import static simulation.Data.USER_STYLE;
 import static simulation.Match.awayBench;
 import static simulation.Match.awaySquad;
 import static simulation.Match.awaySubs;
-import static simulation.Match.competition;
 import static simulation.Match.homeBench;
 import static simulation.Match.homeSquad;
 import static simulation.Match.homeSubs;
 import static simulation.Match.minute;
 import static simulation.Match.report;
 import static simulation.Match.stoppage;
-import static simulation.Match.updateStats;
-import static simulation.Rater.getCompetition;
+import static simulation.Rater.updateStats;
 
 class Tactics {
     private static final Scanner scanner = new Scanner(System.in);
@@ -108,9 +105,6 @@ class Tactics {
 
         if (squad[0] == null) footballers.forEach(f1 -> System.out.println(f1.getPosition() + "" + f1.getCondition()));
 
-//        Arrays.stream(squad).forEach(System.out::println);
-//        Arrays.stream(bench).forEach(System.out::println);
-
         if (isHome) {
             homeSquad = Arrays.asList(squad);
             homeBench = Arrays.asList(bench);
@@ -185,8 +179,7 @@ class Tactics {
                 report.append(minute).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
                         .append(subbedIn.getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
 
-                Competition season = getCompetition(subbedOut.getResume().getSeason(), competition);
-                updateStats(season, squad.get(flop));
+                updateStats(squad.get(flop));
                 squad.set(flop, new MatchStats(subbedIn, minute));
                 bench.set(player, null);
 

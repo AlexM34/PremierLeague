@@ -35,8 +35,7 @@ public class MatchStats {
 
     public void changeRating(final float rating) {
         this.rating += rating;
-        this.rating = Math.max(this.rating, 0);
-        this.rating = Math.min(this.rating, 10);
+        this.rating = Math.min(10, Math.max(this.rating, 0));
     }
 
     public int getGoals() {
