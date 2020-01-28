@@ -75,30 +75,34 @@ class Performance {
     }
 
     private static int scoringChance(final Footballer footballer) {
+        final int overall = Math.max(1, footballer.getOverall() - 60);
+        final int finishing = Math.max(1, footballer.getFinishing() - 30);
         switch (footballer.getPosition().getRole()) {
             case Goalkeeper:
                 return 1;
             case Defender:
-                return footballer.getFinishing() * footballer.getOverall();
+                return overall * finishing;
             case Midfielder:
-                return footballer.getFinishing() * footballer.getOverall() * 2;
+                return overall * finishing * 2;
             case Forward:
-                return footballer.getFinishing() * footballer.getOverall() * 3;
+                return overall * finishing * 4;
         }
 
         return 0;
     }
 
     private static int assistingChance(final Footballer footballer) {
+        final int overall = Math.max(1, footballer.getOverall() - 60);
+        final int vision = Math.max(1, footballer.getVision() - 30);
         switch (footballer.getPosition().getRole()) {
             case Goalkeeper:
-                return footballer.getVision() * 10;
+                return 10;
             case Defender:
-                return footballer.getVision() * footballer.getOverall();
+                return overall * vision;
             case Midfielder:
-                return footballer.getVision() * footballer.getOverall() * 3;
+                return overall * vision * 5;
             case Forward:
-                return footballer.getVision() * footballer.getOverall() * 2;
+                return overall * vision * 3;
         }
 
         return 0;

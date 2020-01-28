@@ -87,7 +87,6 @@ class Preseason {
                             improve(f);
                         }
                     }
-                    System.out.println(f.getName() + " gets new overall of " + f.getOverall());
                 }
             }
         }

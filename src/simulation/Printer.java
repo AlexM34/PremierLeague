@@ -86,7 +86,16 @@ public class Printer {
                 footballer.getResume().getGlory().addLeague();
             }
 
+            reputationUpdate(sorted.keySet().toArray(new Club[0]));
             leaguePrizes(sorted.keySet().toArray(new Club[0]));
+        }
+    }
+
+    private static void reputationUpdate(final Club[] league) {
+        int performance = 95;
+        for (final Club club : league) {
+            club.changeReputation(performance);
+            performance -= 4;
         }
     }
 

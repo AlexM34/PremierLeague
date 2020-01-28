@@ -101,6 +101,7 @@ class Helper {
 
     static void setTableValues(final JTable table, final String... values) {
         for (int row = 0; row < values.length; row++) table.setValueAt(values[row], row, 0);
+        for (int row = 0; row < values.length; row++) table.setValueAt("", row, 1);
     }
 
     static void insertStandingsEntry(final JTable table, final String name, final League league, final int row) {

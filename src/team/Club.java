@@ -17,7 +17,7 @@ public class Club {
     private final String location;
     private final String league;
     private final Glory glory;
-    private final int reputation;
+    private int reputation;
     private final int value;
     private float budget;
     private final Owner owner;
@@ -61,6 +61,11 @@ public class Club {
 
     public int getReputation() {
         return reputation;
+    }
+
+    public void changeReputation(final int reputation) {
+        System.out.println("Reputation of " + this.name + " - from " + this.reputation + " with " + (reputation - this.reputation) / 3);
+        this.reputation += (reputation - this.reputation) / 3;
     }
 
     public float getBudget() {

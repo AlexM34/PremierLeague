@@ -34,7 +34,7 @@ class Transfer {
             buying = league[random.nextInt(league.length)];
             league = LEAGUES[random.nextInt(5)];
             selling = league[random.nextInt(league.length)];
-            if (buying == selling) continue;
+            if (buying == selling || selling.getReputation() - buying.getReputation() > 25) continue;
 
             negotiate(buying, selling);
             attempts++;
@@ -54,9 +54,11 @@ class Transfer {
     }
 
     private static void negotiate(final Club buying, final Club selling) {
+        if (random.nextInt(50) < selling.getReputation() - buying.getReputation()) return;
+
         float budget = buying.getBudget();
-        Footballer[] squad = selling.getFootballers().toArray(new Footballer[0]);
-        Footballer footballer = squad[random.nextInt(squad.length)];
+        final Footballer[] squad = selling.getFootballers().toArray(new Footballer[0]);
+        final Footballer footballer = squad[random.nextInt(squad.length)];
         if (footballer.getId() > 123450 && footballer.getId() < 123470) return;
 
         float offered = interest(buying, footballer);
