@@ -23,6 +23,7 @@ import static simulation.Data.redCards;
 import static simulation.Data.scoredAway;
 import static simulation.Data.scoredHome;
 import static simulation.Data.yellowCards;
+import static simulation.Helper.getCompetition;
 import static simulation.Match.awaySquad;
 import static simulation.Match.homeSquad;
 import static simulation.Match.leagueName;
@@ -125,6 +126,8 @@ class Rater {
     private static void updateLeague(final Club home, final Club away, final int homeGoals, final int awayGoals) {
         final League homeStats = home.getSeason().getLeague();
         final League awayStats = away.getSeason().getLeague();
+        homeStats.addFixture(away, homeGoals, awayGoals);
+        awayStats.addFixture(home, awayGoals, homeGoals);
 
         if (awayGoals == 0) {
             homeStats.addCleanSheet();
@@ -162,16 +165,6 @@ class Rater {
         scoredAway.merge(leagueName, awayGoals, Integer::sum);
         homeStats.addConceded(awayGoals);
         awayStats.addConceded(homeGoals);
-    }
-
-    static Competition getCompetition(final Statistics season, final int type) {
-        switch (type) {
-            case 0: return season.getLeague();
-            case 1: return season.getNationalCup();
-            case 2: return season.getLeagueCup();
-            case 3: return season.getChampionsLeague();
-            default: return season.getEuropaLeague();
-        }
     }
 
     private static void updateForm(final Club home, final Club away, final int homeGoals, final int awayGoals) {

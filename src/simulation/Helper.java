@@ -1,5 +1,7 @@
 package simulation;
 
+import players.Competition;
+import players.Statistics;
 import team.Club;
 import team.League;
 
@@ -13,7 +15,9 @@ import static simulation.Printer.offset;
 
 public class Helper {
 
-    static void groupGameOutcome(final League team, final int scored, final int conceded) {
+    static void groupGameOutcome(final League team, final Club opponent, final int scored, final int conceded) {
+        team.addFixture(opponent, scored, conceded);
+
         if (scored > conceded) {
             team.addPoints(3);
             team.addWin();
@@ -61,6 +65,16 @@ public class Helper {
 
     static int getPerformance(final League stats) {
         return 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) + stats.getScored();
+    }
+
+    static Competition getCompetition(final Statistics season, final int type) {
+        switch (type) {
+            case 0: return season.getLeague();
+            case 1: return season.getNationalCup();
+            case 2: return season.getLeagueCup();
+            case 3: return season.getChampionsLeague();
+            default: return season.getEuropaLeague();
+        }
     }
 
     static void appendScore(final StringBuilder scores, final StringBuilder reports, final Club home,

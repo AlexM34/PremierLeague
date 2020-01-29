@@ -1,8 +1,13 @@
 package team;
 
+import competition.Fixture;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class League {
+    private List<Fixture> fixtures;
     private int matches;
     private int points;
     private int wins;
@@ -13,6 +18,7 @@ public class League {
     private int cleanSheets;
 
     public League() {
+        this.fixtures = new ArrayList<>();
         this.matches = 0;
         this.points = 0;
         this.wins = 0;
@@ -21,6 +27,14 @@ public class League {
         this.scored = 0;
         this.conceded = 0;
         this.cleanSheets = 0;
+    }
+
+    public List<Fixture> getFixtures() {
+        return fixtures;
+    }
+
+    public void addFixture(final Club opponent, final int scored, final int conceded) {
+        fixtures.add(new Fixture(opponent, new int[]{scored, conceded}));
     }
 
     public int getMatches() {
@@ -95,18 +109,20 @@ public class League {
                 losses == league.losses &&
                 scored == league.scored &&
                 conceded == league.conceded &&
-                cleanSheets == league.cleanSheets;
+                cleanSheets == league.cleanSheets &&
+                fixtures.equals(league.fixtures);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(matches, points, wins, draws, losses, scored, conceded, cleanSheets);
+        return Objects.hash(fixtures, matches, points, wins, draws, losses, scored, conceded, cleanSheets);
     }
 
     @Override
     public String toString() {
         return "League{" +
-                "matches=" + matches +
+                "fixtures=" + fixtures +
+                ", matches=" + matches +
                 ", points=" + points +
                 ", wins=" + wins +
                 ", draws=" + draws +

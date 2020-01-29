@@ -1,11 +1,14 @@
 package simulation;
 
+import competition.Cup;
 import competition.England;
+import competition.Fixture;
 import competition.France;
 import competition.Spain;
 import players.Footballer;
 import team.Club;
 import team.League;
+import team.Season;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,6 +173,8 @@ public class Controller {
 
                 profits(league);
                 salaries(league);
+
+                Arrays.stream(league).forEach(Printer::review);
             }
 
             final Club europaLeagueWinner = continentalCup.get(EUROPA_LEAGUE_NAME)[0];
@@ -241,8 +246,8 @@ public class Controller {
                 final int homeGoals = result[0];
                 final int awayGoals = result[1];
 
-                groupGameOutcome(clubs[home].getSeason().getContinental().getGroup(), homeGoals, awayGoals);
-                groupGameOutcome(clubs[away].getSeason().getContinental().getGroup(), awayGoals, homeGoals);
+                groupGameOutcome(clubs[home].getSeason().getContinental().getGroup(), clubs[away], homeGoals, awayGoals);
+                groupGameOutcome(clubs[away].getSeason().getContinental().getGroup(), clubs[home], awayGoals, homeGoals);
             }
 
             continentalCupResults.put(competition + letter, scores.toString());
@@ -318,9 +323,11 @@ public class Controller {
 
         for (int team = 0; team < count / 2; team++) {
             if (knockoutFixture(draw.get(team), draw.get(count - team - 1), count > 2 ? games : 1,
-                    type, replay && count >= 8, count == 2, results)) {
+                    type, replay && count >= 8, count == 2, results, count)) {
                 clubs[team] = draw.get(count - team - 1);
-            } else clubs[team] = draw.get(team);
+            } else {
+                clubs[team] = draw.get(team);
+            }
         }
 
         results.put(competition + count, results.remove("new"));
@@ -329,7 +336,8 @@ public class Controller {
     }
 
     private static boolean knockoutFixture(final Club first, final Club second, final int games, final int type,
-                                           final boolean replay, final boolean neutral, final Map<String, String> results) {
+                                           final boolean replay, final boolean neutral,
+                                           final Map<String, String> results, final int teams) {
         int firstGoals = 0;
         int secondGoals = 0;
         if (neutral) FANS = 0;
@@ -356,9 +364,28 @@ public class Controller {
             }
         }
 
+        updateFixtures(first, second, firstGoals, secondGoals, type, teams);
         results.put("new", scores.toString());
         results.put("reports: new", reports.toString());
         return secondGoals > firstGoals;
+    }
+
+    private static void updateFixtures(final Club first, final Club second, final int firstGoals,
+                                       final int secondGoals, final int type, final int teams) {
+        getCup(first.getSeason(), type).getFixtures().add(new Fixture(second, new int[]{firstGoals, secondGoals}));
+        getCup(second.getSeason(), type).getFixtures().add(new Fixture(first, new int[]{secondGoals, firstGoals}));
+
+        getCup(first.getSeason(), type).setStage(String.valueOf(firstGoals > secondGoals ? teams / 2 : teams));
+        getCup(second.getSeason(), type).setStage(String.valueOf(secondGoals > firstGoals ? teams / 2 : teams));
+    }
+
+    private static Cup getCup(final Season season, final int type) {
+        switch (type) {
+            case 1: return season.getNationalCup();
+            case 2: return season.getLeagueCup();
+            case 3: case 4: return season.getContinental().getKnockout();
+            default: throw new NullPointerException("No cup exists!");
+        }
     }
 
     private static void pickTeam() {

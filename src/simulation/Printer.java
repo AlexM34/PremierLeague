@@ -7,6 +7,7 @@ import team.Club;
 import team.League;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -56,14 +57,6 @@ public class Printer {
             else break;
 
             limit++;
-        }
-
-        for (final Club team : championsLeagueTeams) {
-            team.getSeason().getContinental().setAlive(true);
-        }
-
-        for (final Club team : europaLeagueTeams) {
-            team.getSeason().getContinental().setAlive(true);
         }
     }
 
@@ -301,6 +294,32 @@ public class Printer {
             System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), count));
         }
 
+        System.out.println();
+    }
+
+    static void review(final Club club) {
+        System.out.println("Seasonal performance review of " + club.getName());
+        System.out.println("League");
+        club.getSeason().getLeague().getFixtures()
+                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+
+        System.out.println();
+        System.out.println("National Cup");
+        club.getSeason().getNationalCup().getFixtures()
+                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+
+        System.out.println();
+        System.out.println("League Cup");
+        club.getSeason().getLeagueCup().getFixtures()
+                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+
+        System.out.println();
+        System.out.println("Continental");
+        club.getSeason().getContinental().getGroup().getFixtures()
+                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+        System.out.println();
+        club.getSeason().getContinental().getKnockout().getFixtures()
+                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
         System.out.println();
     }
 }

@@ -1,12 +1,24 @@
 package competition;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Cup {
-    private boolean alive;
+    private final List<Fixture> fixtures;
+    private String stage;
 
     public Cup() {
-        this.alive = false;
+        this.fixtures = new ArrayList<>();
+        this.stage = "N/A";
+    }
+
+    public List<Fixture> getFixtures() {
+        return fixtures;
+    }
+
+    public void setStage(final String stage) {
+        this.stage = stage;
     }
 
     @Override
@@ -14,18 +26,20 @@ public class Cup {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Cup cup = (Cup) o;
-        return alive == cup.alive;
+        return fixtures.equals(cup.fixtures) &&
+                stage.equals(cup.stage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(alive);
+        return Objects.hash(fixtures, stage);
     }
 
     @Override
     public String toString() {
         return "Cup{" +
-                "alive=" + alive +
+                "rounds=" + fixtures +
+                ", stage='" + stage + '\'' +
                 '}';
     }
 }

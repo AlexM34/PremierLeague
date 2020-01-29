@@ -5,20 +5,20 @@ import team.League;
 import java.util.Objects;
 
 public class Continental {
-    private boolean alive;
     private final League group;
+    private final Cup knockout;
 
     public Continental() {
-        this.alive = false;
         this.group = new League();
-    }
-
-    public void setAlive(final boolean alive) {
-        this.alive = alive;
+        this.knockout = new Cup();
     }
 
     public League getGroup() {
         return group;
+    }
+
+    public Cup getKnockout() {
+        return knockout;
     }
 
     @Override
@@ -26,20 +26,20 @@ public class Continental {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Continental that = (Continental) o;
-        return alive == that.alive &&
-                group.equals(that.group);
+        return group.equals(that.group) &&
+                knockout.equals(that.knockout);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(alive, group);
+        return Objects.hash(group, knockout);
     }
 
     @Override
     public String toString() {
-        return "ChampionsLeague{" +
-                "alive=" + alive +
-                ", group=" + group +
+        return "Continental{" +
+                "group=" + group +
+                ", knockout=" + knockout +
                 '}';
     }
 }

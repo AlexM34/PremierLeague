@@ -26,6 +26,14 @@ public class Season {
         return league;
     }
 
+    public Cup getNationalCup() {
+        return nationalCup;
+    }
+
+    public Cup getLeagueCup() {
+        return leagueCup;
+    }
+
     public Continental getContinental() {
         return continental;
     }
