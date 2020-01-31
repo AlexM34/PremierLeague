@@ -1,7 +1,11 @@
 package simulation;
 
 import competition.Cup;
+import competition.England;
 import competition.Fixture;
+import competition.France;
+import competition.Spain;
+import players.Footballer;
 import team.Club;
 import team.Season;
 
@@ -11,16 +15,69 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.shuffle;
-import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
-import static simulation.Controller.EUROPA_LEAGUE_NAME;
-import static simulation.Controller.continentalCupResults;
-import static simulation.Controller.leagueCupResults;
-import static simulation.Controller.nationalCupResults;
 import static simulation.Data.FANS;
+import static simulation.Data.LEAGUES;
+import static simulation.Finance.knockoutPrizes;
+import static simulation.Finance.profits;
+import static simulation.Finance.salaries;
 import static simulation.Helper.appendScore;
+import static simulation.Helper.cup;
+import static simulation.League.CHAMPIONS_LEAGUE;
+import static simulation.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.League.EUROPA_LEAGUE;
+import static simulation.League.EUROPA_LEAGUE_NAME;
+import static simulation.League.continentalCup;
+import static simulation.League.continentalCupResults;
 import static simulation.Match.simulation;
 
 public class Knockout {
+    private static final Map<String, Club[]> leagueCup = new HashMap<>();
+    private static final Map<String, Club[]> nationalCup = new HashMap<>();
+    public static final Map<String, String> leagueCupResults = new HashMap<>();
+    public static final Map<String, String> nationalCupResults = new HashMap<>();
+
+    static void setupCups() {
+        leagueCup.clear();
+        nationalCup.clear();
+        leagueCupResults.clear();
+        nationalCupResults.clear();
+
+        for (final Club[] league : LEAGUES) {
+            final String leagueName = league[0].getLeague();
+            nationalCup.put(leagueName, cup(league));
+        }
+
+        for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
+            final String leagueName = league[0].getLeague();
+            leagueCup.put(leagueName, cup(league));
+        }
+    }
+
+    static void nationalCup() {
+        for (final Club[] league : LEAGUES) {
+            final String leagueName = league[0].getLeague();
+            nationalCup.put(leagueName, knockoutRound(nationalCup.get(leagueName),
+                    leagueName.equals(Spain.LEAGUE) ? 2 : 1, 1, leagueName.equals(England.LEAGUE)));
+        }
+    }
+
+    static void leagueCup() {
+        for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
+            final String leagueName = league[0].getLeague();
+            leagueCup.put(leagueName, knockoutRound(leagueCup.get(leagueName),
+                    1, 2, false));
+        }
+    }
+
+    static void championsLeague() {
+        continentalCup.put(CHAMPIONS_LEAGUE_NAME,
+                knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME), 2, 3, false));
+    }
+
+    static void europaLeague() {
+        continentalCup.put(EUROPA_LEAGUE_NAME,
+                knockoutRound(continentalCup.get(EUROPA_LEAGUE_NAME), 2, 4, false));
+    }
 
     static Club[] knockoutRound(final Club[] clubs, final int games, final int type, final boolean replay) {
         final int count = clubs.length;
@@ -86,6 +143,53 @@ public class Knockout {
         results.put("new", scores.toString());
         results.put("reports: new", reports.toString());
         return secondGoals > firstGoals;
+    }
+
+    static void announceCupWinners() {
+        for (final Club[] league : LEAGUES) {
+            final String leagueName = league[0].getLeague();
+            if (leagueCup.containsKey(leagueName)) {
+                final Club leagueCupWinner = leagueCup.get(leagueName)[0];
+                System.out.println(leagueCupWinner.getName() + " win the League Cup!");
+                leagueCupWinner.getGlory().addLeagueCup();
+                for (final Footballer footballer : leagueCupWinner.getFootballers()) {
+                    footballer.getResume().getGlory().addLeagueCup();
+                }
+
+                knockoutPrizes(leagueCup.get(leagueName), false);
+            }
+
+            final Club nationalCupWinner = nationalCup.get(leagueName)[0];
+            System.out.println(nationalCupWinner.getName() + " win the National Cup!");
+            nationalCupWinner.getGlory().addNationalCup();
+            for (final Footballer footballer : nationalCupWinner.getFootballers()) {
+                footballer.getResume().getGlory().addNationalCup();
+            }
+
+            knockoutPrizes(nationalCup.get(leagueName), false);
+
+            profits(league);
+            salaries(league);
+
+            Arrays.stream(league).forEach(Printer::review);
+        }
+
+        final Club europaLeagueWinner = continentalCup.get(EUROPA_LEAGUE_NAME)[0];
+        System.out.println(europaLeagueWinner.getName() + " win the Europa League!");
+        europaLeagueWinner.getGlory().addEuropaLeague();
+        for (final Footballer footballer : europaLeagueWinner.getFootballers()) {
+            footballer.getResume().getGlory().addEuropaLeague();
+        }
+
+        final Club championsLeagueWinner = continentalCup.get(CHAMPIONS_LEAGUE_NAME)[0];
+        System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
+        championsLeagueWinner.getGlory().addChampionsLeague();
+        for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
+            footballer.getResume().getGlory().addChampionsLeague();
+        }
+
+        knockoutPrizes(EUROPA_LEAGUE, true);
+        knockoutPrizes(CHAMPIONS_LEAGUE, true);
     }
 
     private static void updateFixtures(final Club first, final Club second, final int firstGoals,

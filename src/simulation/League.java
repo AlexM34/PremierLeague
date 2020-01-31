@@ -3,45 +3,100 @@ package simulation;
 import team.Club;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
-import static simulation.Controller.EUROPA_LEAGUE_NAME;
-import static simulation.Controller.continentalCup;
-import static simulation.Controller.continentalCupResults;
-import static simulation.Controller.continentalDraw;
-import static simulation.Controller.leagueResults;
+import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
+import static simulation.Draw.league;
 import static simulation.Draw.seededKnockout;
 import static simulation.Helper.appendScore;
 import static simulation.Helper.getPerformance;
 import static simulation.Helper.groupGameOutcome;
 import static simulation.Helper.sortMap;
 import static simulation.Match.simulation;
+import static simulation.Printer.pickContinentalTeams;
 import static simulation.Tactics.preMatch;
 
 public class League {
 
-    static void leagueRound(final Club[] league, final int[][][] draw, final int round) {
-        System.out.println(String.format("Round %d", round + 1));
+    public static final String CHAMPIONS_LEAGUE_NAME = "Champions League";
+    public static final String EUROPA_LEAGUE_NAME = "Europa League";
+    public static final Club[] CHAMPIONS_LEAGUE = new Club[32];
+    public static final Club[] EUROPA_LEAGUE = new Club[48];
+
+    private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
+    static final Map<String, int[][][]> continentalDraw = new HashMap<>();
+    static final Map<String, Club[]> continentalCup = new HashMap<>();
+    public static final Map<String, String> leagueResults = new HashMap<>();
+    public static final Map<String, String> continentalCupResults = new HashMap<>();
+    private static int leagueRound;
+    private static int championsLeagueRound;
+    private static int europaLeagueRound;
+
+    static void setupLeagues() {
+        leagueDraw.clear();
+        continentalDraw.clear();
+        continentalCup.clear();
+        leagueResults.clear();
+        continentalCupResults.clear();
+
+        pickContinentalTeams(CHAMPIONS_LEAGUE, EUROPA_LEAGUE);
+
+        for (final Club[] league : LEAGUES) {
+            final String leagueName = league[0].getLeague();
+            leagueDraw.put(leagueName, league(league.length));
+        }
+
+        continentalDraw.put(CHAMPIONS_LEAGUE_NAME, league(4));
+        continentalDraw.put(EUROPA_LEAGUE_NAME, league(4));
+        leagueRound = 0;
+        championsLeagueRound = 0;
+        europaLeagueRound = 0;
+    }
+
+    static void allLeagues() {
+        for (final Club[] league : LEAGUES) {
+            if (leagueRound < 34 || league.length > 18) leagueRound(league);
+        }
+
+        leagueRound++;
+    }
+
+    static void leagueRound(final Club[] league) {
+        System.out.println(String.format("Round %d", leagueRound + 1));
         final StringBuilder scores = new StringBuilder();
         final StringBuilder reports = new StringBuilder();
+        final int[][][] draw = leagueDraw.get(league[0].getLeague());
         for (int game = 0; game < league.length / 2; game++) {
-            final int home = draw[round][game][0];
-            final int away = draw[round][game][1];
+            final int home = draw[leagueRound][game][0];
+            final int away = draw[leagueRound][game][1];
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
             final int[] result = simulation(league[home], league[away], false, -1, -1, 0);
             appendScore(scores, reports, league[home], league[away], result);
         }
 
-        leagueResults.put(league[0].getLeague() + (round + 1), scores.toString());
-        leagueResults.put("reports: " + league[0].getLeague() + (round + 1), reports.toString());
+        leagueResults.put(league[0].getLeague() + (leagueRound + 1), scores.toString());
+        leagueResults.put("reports: " + league[0].getLeague() + (leagueRound + 1), reports.toString());
     }
 
-    static void groupRound(final String competition, final Club[] teams, final int round) {
+    static void groupRound(final boolean isChampionsLeague) {
+        final String competition;
+        final Club[] teams;
+        final int round;
+        if (isChampionsLeague) {
+            competition = CHAMPIONS_LEAGUE_NAME;
+            teams = CHAMPIONS_LEAGUE;
+            round = championsLeagueRound++;
+        } else {
+            competition = EUROPA_LEAGUE_NAME;
+            teams = EUROPA_LEAGUE;
+            round = europaLeagueRound++;
+        }
+
         final int groups = teams.length / 4;
         final int[][][] draw = continentalDraw.get(competition);
         for (int group = 0; group < groups; group++) {
@@ -77,6 +132,8 @@ public class League {
             continentalCupResults.put(competition + letter, scores.toString());
             continentalCupResults.put("reports: " + competition + letter, reports.toString());
         }
+
+        if (round == 5) concludeGroups(competition, teams);
     }
 
     static void concludeGroups(final String competition, final Club[] teams) {
@@ -117,14 +174,17 @@ public class League {
 
         if (competition.equals(CHAMPIONS_LEAGUE_NAME)) {
             final Club[] europaLeagueTeams = new Club[32];
-            System.arraycopy(continentalCup.get(EUROPA_LEAGUE_NAME), 0, europaLeagueTeams, 0, 24);
             thirds.forEach(t -> System.out.println(t.getName()));
 
-            for (int team = 24; team < 32; team++) europaLeagueTeams[team] = thirds.remove(0);
-            for (int team = 0; team < 32; team++) System.out.println(europaLeagueTeams[team].getName());
+            for (int team = 0; team < 8; team++) europaLeagueTeams[team] = thirds.remove(0);
             continentalCup.put(EUROPA_LEAGUE_NAME, europaLeagueTeams);
-        }
+            continentalCup.put(CHAMPIONS_LEAGUE_NAME, seededKnockout(advancing));
+        } else {
+            final Club[] europaLeagueTeams = continentalCup.get(EUROPA_LEAGUE_NAME);
+            System.arraycopy(advancing, 0, europaLeagueTeams, 8, 24);
+            for (int team = 0; team < 32; team++) System.out.println(europaLeagueTeams[team].getName());
 
-        continentalCup.put(competition, seededKnockout(advancing));
+            continentalCup.put(EUROPA_LEAGUE_NAME, seededKnockout(europaLeagueTeams));
+        }
     }
 }

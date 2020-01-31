@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static players.Position.GK;
-import static simulation.Controller.round;
+import static simulation.Controller.matchday;
 import static simulation.Data.LEAGUES;
 import static simulation.Finance.leaguePrizes;
 import static simulation.Helper.sortLeague;
@@ -111,23 +111,23 @@ public class Printer {
                 switch (type) {
                     case 0:
                         competition = stats.getLeague();
-                        games = round / 2;
+                        games = matchday / 2;
                         break;
                     case 1:
                         competition = stats.getNationalCup();
-                        games = round / 18;
+                        games = matchday / 18;
                         break;
                     case 2:
                         competition = stats.getLeagueCup();
-                        games = round / 18;
+                        games = matchday / 18;
                         break;
                     case 3:
                         competition = stats.getChampionsLeague();
-                        games = round / 8;
+                        games = matchday / 8;
                         break;
                     default:
                         competition = stats.getEuropaLeague();
-                        games = round / 8;
+                        games = matchday / 8;
                         break;
                 }
 

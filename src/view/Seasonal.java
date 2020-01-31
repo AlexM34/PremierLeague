@@ -24,16 +24,17 @@ import java.util.stream.IntStream;
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
 import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
-import static simulation.Controller.CHAMPIONS_LEAGUE;
-import static simulation.Controller.CHAMPIONS_LEAGUE_NAME;
-import static simulation.Controller.EUROPA_LEAGUE;
-import static simulation.Controller.EUROPA_LEAGUE_NAME;
-import static simulation.Controller.continentalCupResults;
-import static simulation.Controller.leagueCupResults;
-import static simulation.Controller.leagueResults;
-import static simulation.Controller.nationalCupResults;
+import static simulation.Controller.MATCHDAYS;
 import static simulation.Controller.proceed;
 import static simulation.Helper.sortLeague;
+import static simulation.Knockout.leagueCupResults;
+import static simulation.Knockout.nationalCupResults;
+import static simulation.League.CHAMPIONS_LEAGUE;
+import static simulation.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.League.EUROPA_LEAGUE;
+import static simulation.League.EUROPA_LEAGUE_NAME;
+import static simulation.League.continentalCupResults;
+import static simulation.League.leagueResults;
 import static simulation.Printer.assists;
 import static simulation.Printer.cleanSheets;
 import static simulation.Printer.goals;
@@ -209,7 +210,7 @@ class Seasonal {
     }
 
     private static void nextRound() {
-        for (int i = 0; i < 38; i++) proceed();
+        for (int i = 0; i < MATCHDAYS.size(); i++) proceed();
         update();
     }
 

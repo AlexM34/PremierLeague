@@ -51,7 +51,6 @@ class Ranked {
 
         footballersTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
         footballersTable.setRowHeight(standingsRowHeight);
-        footballersTable.setEnabled(false);
         footballersTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
         footballersTable.getSelectionModel().addListSelectionListener(e ->
                 playerRecord(topPlayers.get(footballersTable.getSelectedRow())));
