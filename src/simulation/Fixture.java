@@ -1,4 +1,4 @@
-package competition;
+package simulation;
 
 import team.Club;
 

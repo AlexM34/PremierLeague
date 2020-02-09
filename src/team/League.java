@@ -1,6 +1,6 @@
 package team;
 
-import competition.Fixture;
+import simulation.Fixture;
 
 import java.util.ArrayList;
 import java.util.List;

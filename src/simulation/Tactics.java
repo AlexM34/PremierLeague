@@ -26,7 +26,7 @@ import static simulation.Match.homeBench;
 import static simulation.Match.homeSquad;
 import static simulation.Match.homeSubs;
 import static simulation.Match.minute;
-import static simulation.Match.report;
+import static simulation.Match.gameReport;
 import static simulation.Match.stoppage;
 import static simulation.Rater.updateStats;
 
@@ -176,7 +176,7 @@ class Tactics {
             final Footballer subbedIn = bench.get(player);
             if (subbedIn == null) continue;
             if (subbedOut.getPosition().getRole().equals(subbedIn.getPosition().getRole())) {
-                report.append(minute).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
+                gameReport.append(minute).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
                         .append(subbedIn.getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
 
                 updateStats(squad.get(flop));

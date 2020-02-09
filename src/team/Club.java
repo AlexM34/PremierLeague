@@ -1,7 +1,7 @@
 package team;
 
-import competition.Continental;
-import competition.Cup;
+import simulation.Continental;
+import simulation.Cup;
 import players.Footballer;
 import players.Glory;
 

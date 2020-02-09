@@ -1,10 +1,10 @@
 package view;
 
-import competition.England;
-import competition.France;
-import competition.Germany;
-import competition.Italy;
-import competition.Spain;
+import leagues.England;
+import leagues.France;
+import leagues.Germany;
+import leagues.Italy;
+import leagues.Spain;
 import team.Club;
 
 import javax.swing.BorderFactory;

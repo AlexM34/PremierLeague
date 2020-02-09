@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static simulation.Match.report;
+import static simulation.Match.gameReport;
 import static simulation.Printer.offset;
 
 public class Helper {
@@ -84,6 +84,6 @@ public class Helper {
 
         final String teams = home.getName() + " vs " + away.getName() + "<br/>";
         final String finalScore = "Final score: " + result[0] + ":" + result[1] + "<br/>" + "<br/>";
-        reports.append(teams).append(report).append(finalScore);
+        reports.append(teams).append(gameReport).append(finalScore);
     }
 }

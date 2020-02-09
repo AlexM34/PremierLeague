@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static simulation.Competition.LEAGUE;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
 import static simulation.Draw.league;
@@ -16,7 +17,7 @@ import static simulation.Helper.appendScore;
 import static simulation.Helper.getPerformance;
 import static simulation.Helper.groupGameOutcome;
 import static simulation.Helper.sortMap;
-import static simulation.Match.simulation;
+import static simulation.Match.simulate;
 import static simulation.Printer.pickContinentalTeams;
 import static simulation.Tactics.preMatch;
 
@@ -75,7 +76,8 @@ public class League {
             final int away = draw[leagueRound][game][1];
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
-            final int[] result = simulation(league[home], league[away], false, -1, -1, 0);
+            final Report report = new Report(league[home], league[away], LEAGUE, -1, -1, false);
+            final int[] result = simulate(report);
             appendScore(scores, reports, league[home], league[away], result);
         }
 
@@ -118,8 +120,9 @@ public class League {
             for (int game = 0; game < 2; game++) {
                 final int home = draw[round][game][0];
                 final int away = draw[round][game][1];
-                final int[] result = simulation(clubs[home], clubs[away],
-                        false, -1, -1, 3);
+                final Report report = new Report(clubs[home], clubs[away], Competition.CHAMPIONS_LEAGUE,
+                        -1, -1, false);
+                final int[] result = simulate(report);
 
                 appendScore(scores, reports, clubs[home], clubs[away], result);
                 final int homeGoals = result[0];

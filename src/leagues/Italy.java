@@ -1,4 +1,4 @@
-package competition;
+package leagues;
 
 import players.Glory;
 import team.Club;

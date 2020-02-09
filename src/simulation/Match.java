@@ -36,23 +36,27 @@ class Match {
     static List<Footballer> awayBench = new ArrayList<>();
     static int homeSubs;
     static int awaySubs;
-    static StringBuilder report;
+    static StringBuilder gameReport;
 
-    static int[] simulation(final Club home, final Club away, final boolean last, final int homeGoals,
-                          final int awayGoals, final int type) {
-        competition = type;
-        report = new StringBuilder();
+    static int[] simulate(final Report report) {
+        competition = report.getCompetition().getType();
+        gameReport = report.getReport();
         
-        if (competition == 0) leagueName = home.getLeague();
-        final int[] result = simulateGame(home, away, last, homeGoals, awayGoals);
+        if (competition == 0) leagueName = report.getHome().getLeague();
+        final int[] result = simulateGame(report);
         FANS = 3;
 
-        finalWhistle(home, away, result[0], result[1]);
+        finalWhistle(report.getHome(), report.getAway(), result[0], result[1]);
         return result;
     }
 
-    private static int[] simulateGame(final Club home, final Club away, final boolean last,
-                                    final int aggregateHomeGoals, final int aggregateAwayGoals) {
+    private static int[] simulateGame(final Report report) {
+        final Club home = report.getHome();
+        final Club away = report.getAway();
+        final boolean last = report.isLast();
+        final int aggregateHomeGoals = report.getAggregateHomeGoals();
+        final int aggregateAwayGoals = report.getAggregateAwayGoals();
+
         kickoff(home, away);
         int homeGoals = 0;
         int awayGoals = 0;
@@ -185,7 +189,7 @@ class Match {
         final Footballer subbedIn = bench.get(0) != null ? bench.get(0) :
                 bench.stream().filter(Objects::nonNull).findFirst().orElse(GOALKEEPER_1);
 
-        report.append(getMinute()).append(subbedIn.getName()).append(" replaces ")
+        gameReport.append(getMinute()).append(subbedIn.getName()).append(" replaces ")
                 .append(subbedOut.getName()).append("<br/>");
 
         updateStats(squad.get(flop));
@@ -222,13 +226,13 @@ class Match {
         while(true) {
             while (homeSquad.get(currentHome) == null) currentHome = (currentHome + 10) % 11;
             homeGoals += penalty(homeSquad.get(currentHome), awaySquad.get(0));
-            report.append(homeGoals).append("-").append(awayGoals).append("<br/>");
+            gameReport.append(homeGoals).append("-").append(awayGoals).append("<br/>");
             if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
             currentHome = (currentHome + 10) % 11;
 
             while (awaySquad.get(currentAway) == null) currentAway = (currentAway + 10) % 11;
             awayGoals += penalty(awaySquad.get(currentAway), homeSquad.get(0));
-            report.append(homeGoals).append("-").append(awayGoals).append("<br/>");
+            gameReport.append(homeGoals).append("-").append(awayGoals).append("<br/>");
             if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
                     || taken >= 4 && homeGoals != awayGoals) break;
             currentAway = (currentAway + 10) % 11;
@@ -240,13 +244,13 @@ class Match {
     }
 
     private static int penalty(final MatchStats striker, final MatchStats goalkeeper) {
-        report.append(striker.getFootballer().getName()).append(" steps up to take the penalty vs ")
+        gameReport.append(striker.getFootballer().getName()).append(" steps up to take the penalty vs ")
                 .append(goalkeeper.getFootballer().getName()).append("<br/>");
         if (random.nextInt(100) < 70 + striker.getFootballer().getOverall() - goalkeeper.getFootballer().getOverall()) {
-            report.append("He scores with a great shot! ");
+            gameReport.append("He scores with a great shot! ");
             return 1;
         } else {
-            report.append("The goalkeeper makes a wonderful save! ");
+            gameReport.append("The goalkeeper makes a wonderful save! ");
             return 0;
         }
     }

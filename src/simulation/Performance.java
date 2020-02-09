@@ -6,7 +6,7 @@ import players.MatchStats;
 import java.util.List;
 import java.util.Random;
 
-import static simulation.Match.report;
+import static simulation.Match.gameReport;
 
 class Performance {
     private static final Random random = new Random();
@@ -40,7 +40,7 @@ class Performance {
             final List<MatchStats> opponent = isHome ? Match.awaySquad : Match.homeSquad;
             if (opponent.get(footballer).isRedCarded()) footballer = 0;
             opponent.get(footballer).changeRating(-1.5f);
-            report.append(Match.minute).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")
+            gameReport.append(Match.minute).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")
                     .append("' ").append("Own goal scored by ").append(opponent.get(footballer).getFootballer().getName())
                     .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
         }
@@ -60,7 +60,7 @@ class Performance {
                 }
             }
 
-            report.append(Match.minute).append(Match.stoppage != 0 ? "+" + Match.stoppage : "").append("' ")
+            gameReport.append(Match.minute).append(Match.stoppage != 0 ? "+" + Match.stoppage : "").append("' ")
                     .append(goalscorer.getName()).append(assistmaker != null ? " scores after a pass from "
                     + assistmaker.getName() : " scores after a solo run").append(". ").append(homeGoals).append("-")
                     .append(awayGoals).append("<br/>");
