@@ -19,14 +19,8 @@ import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.MIDFIELDER_2;
 import static simulation.Data.USER_STYLE;
-import static simulation.Match.awayBench;
-import static simulation.Match.awaySquad;
-import static simulation.Match.awaySubs;
-import static simulation.Match.homeBench;
-import static simulation.Match.homeSquad;
-import static simulation.Match.homeSubs;
-import static simulation.Match.minute;
 import static simulation.Match.gameReport;
+import static simulation.Match.minute;
 import static simulation.Match.stoppage;
 import static simulation.Rater.updateStats;
 
@@ -48,7 +42,7 @@ class Tactics {
         }
     }
 
-    static void pickSquad(final Club team, final boolean isHome) {
+    static List<Footballer[]> pickSquad(final Club team) {
         final List<Footballer> footballers = team.getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
@@ -57,7 +51,7 @@ class Tactics {
         final int defenders = formation.getDefenders();
         final int midfielders = formation.getMidfielders();
         final int forwards = formation.getForwards();
-        final MatchStats[] squad = new MatchStats[11];
+        final Footballer[] squad = new Footballer[11];
         final Footballer[] bench = new Footballer[7];
 
         int g = 1;
@@ -82,22 +76,22 @@ class Tactics {
 
             switch (footballer.getPosition().getRole()) {
                 case Goalkeeper:
-                    if (g > 0) squad[--g] = new MatchStats(footballer, minute);
+                    if (g > 0) squad[--g] = footballer;
                     else if (bg > 0) bench[--bg] = footballer;
                     break;
 
                 case Defender:
-                    if (d > 0) squad[d--] = new MatchStats(footballer, minute);
+                    if (d > 0) squad[d--] = footballer;
                     else if (bf > 0) bench[bf--] = footballer;
                     break;
 
                 case Midfielder:
-                    if (m > 0) squad[--m + defenders + 1] = new MatchStats(footballer, minute);
+                    if (m > 0) squad[--m + defenders + 1] = footballer;
                     else if (bf > 0) bench[bf--] = footballer;
                     break;
 
                 case Forward:
-                    if (f > 0) squad[--f + defenders + midfielders + 1] = new MatchStats(footballer, minute);
+                    if (f > 0) squad[--f + defenders + midfielders + 1] = footballer;
                     else if (bf > 0) bench[bf--] = footballer;
                     break;
             }
@@ -105,14 +99,7 @@ class Tactics {
 
         if (squad[0] == null) footballers.forEach(f1 -> System.out.println(f1.getPosition() + "" + f1.getCondition()));
 
-        if (isHome) {
-            homeSquad = Arrays.asList(squad);
-            homeBench = Arrays.asList(bench);
-        }
-        else {
-            awaySquad = Arrays.asList(squad);
-            awayBench = Arrays.asList(bench);
-        }
+        return Arrays.asList(squad, bench);
     }
 
     private static Formation pickFormation(final List<Footballer> footballers) {
@@ -156,9 +143,7 @@ class Tactics {
         return Formation.F5;
     }
 
-    static void substitute(final boolean isHome) {
-        final List<MatchStats> squad = isHome ? homeSquad : awaySquad;
-        final List<Footballer> bench = isHome ? homeBench : awayBench;
+    static void substitute(final List<MatchStats> squad, final List<Footballer> bench) {
         float worst = 10;
         int flop = 0;
 
@@ -182,9 +167,6 @@ class Tactics {
                 updateStats(squad.get(flop));
                 squad.set(flop, new MatchStats(subbedIn, minute));
                 bench.set(player, null);
-
-                if (isHome) homeSubs--;
-                else awaySubs--;
                 break;
             }
         }

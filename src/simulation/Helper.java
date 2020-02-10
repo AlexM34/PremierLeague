@@ -77,13 +77,17 @@ public class Helper {
         }
     }
 
-    static void appendScore(final StringBuilder scores, final StringBuilder reports, final Club home,
-                            final Club away, final int[] result) {
-        final String score = home.getName() + " - " + away.getName() + " " + result[0] + ":" + result[1] + "<br/>";
+    static void appendScore(final StringBuilder scores, final StringBuilder reports, final Report report) {
+        final String home = report.getHome().getName();
+        final String away = report.getAway().getName();
+        final int homeGoals = report.getHomeGoals();
+        final int awayGoals = report.getAwayGoals();
+
+        final String score = home + " - " + away + " " + homeGoals + ":" + awayGoals + "<br/>";
         scores.append(score);
 
-        final String teams = home.getName() + " vs " + away.getName() + "<br/>";
-        final String finalScore = "Final score: " + result[0] + ":" + result[1] + "<br/>" + "<br/>";
+        final String teams = home + " vs " + away + "<br/>";
+        final String finalScore = "Final score: " + homeGoals + ":" + awayGoals + "<br/>" + "<br/>";
         reports.append(teams).append(gameReport).append(finalScore);
     }
 }

@@ -24,10 +24,9 @@ import static simulation.Data.scoredAway;
 import static simulation.Data.scoredHome;
 import static simulation.Data.yellowCards;
 import static simulation.Helper.getCompetition;
-import static simulation.Match.awaySquad;
-import static simulation.Match.homeSquad;
-import static simulation.Match.leagueName;
 import static simulation.Helper.sortMap;
+import static simulation.Match.leagueName;
+import static simulation.Match.report;
 
 class Rater {
     private static final Random random = new Random();
@@ -55,10 +54,10 @@ class Rater {
         final int home = random.nextInt(5) + scale * 3 + 1;
         final int away = random.nextInt(5) - scale * 3 + 1;
 
-        for (int i = 0; i < home; i++) updateRating(homeSquad, 0.1f);
-        for (int i = 0; i > home; i--) updateRating(homeSquad, -0.1f);
-        for (int i = 0; i < away; i++) updateRating(awaySquad, 0.1f);
-        for (int i = 0; i > away; i--) updateRating(awaySquad, -0.1f);
+        for (int i = 0; i < home; i++) updateRating(report.getHomeSquad(), 0.1f);
+        for (int i = 0; i > home; i--) updateRating(report.getHomeSquad(), -0.1f);
+        for (int i = 0; i < away; i++) updateRating(report.getAwaySquad(), 0.1f);
+        for (int i = 0; i > away; i--) updateRating(report.getAwaySquad(), -0.1f);
     }
 
     private static void updateRating(final List<MatchStats> squad, final float change) {
@@ -71,18 +70,23 @@ class Rater {
         squad.get(player).changeRating(change * overall);
     }
 
-    static void finalWhistle(final Club home, final Club away, final int homeGoals, final int awayGoals) {
-        if (homeSquad.get(0) != null && awayGoals == 0) getCompetition(homeSquad.get(0)
+    static void finalWhistle() {
+        final Club home = report.getHome();
+        final Club away = report.getAway();
+        final int homeGoals = report.getHomeGoals();
+        final int awayGoals = report.getAwayGoals();
+
+        if (report.getHomeSquad().get(0) != null && awayGoals == 0) getCompetition(report.getHomeSquad().get(0)
                 .getFootballer().getResume().getSeason(), Match.competition).addCleanSheets(1);
-        if (awaySquad.get(0) != null && homeGoals == 0) getCompetition(awaySquad.get(0)
+        if (report.getAwaySquad().get(0) != null && homeGoals == 0) getCompetition(report.getAwaySquad().get(0)
                 .getFootballer().getResume().getSeason(), Match.competition).addCleanSheets(1);
 
-        motmPlayer = homeSquad.get(0);
+        motmPlayer = report.getHomeSquad().get(0);
         motmRating = 0;
 
         for (int player = 0; player < 11; player++) {
-            updateStats(homeSquad.get(player));
-            updateStats(awaySquad.get(player));
+            updateStats(report.getHomeSquad().get(player));
+            updateStats(report.getAwaySquad().get(player));
         }
 
         getCompetition(motmPlayer.getFootballer().getResume().getSeason(), Match.competition).addMotmAwards(1);

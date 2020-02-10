@@ -4,22 +4,17 @@ import players.Footballer;
 import players.MatchStats;
 import team.Club;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
 import static simulation.Data.FANS;
 import static simulation.Data.GOALKEEPER_1;
-import static simulation.Data.MIDFIELDER_1;
-import static simulation.Data.USER;
-import static simulation.Data.USER_STYLE;
 import static simulation.Performance.goal;
 import static simulation.Rater.finalWhistle;
 import static simulation.Rater.kickoff;
 import static simulation.Rater.updateRatings;
 import static simulation.Rater.updateStats;
-import static simulation.Tactics.pickSquad;
 import static simulation.Tactics.substitute;
 
 class Match {
@@ -29,28 +24,24 @@ class Match {
     static String leagueName;
     static int minute = 1;
     static int stoppage = 0;
-
-    static List<MatchStats> homeSquad = new ArrayList<>();
-    static List<MatchStats> awaySquad = new ArrayList<>();
-    static List<Footballer> homeBench = new ArrayList<>();
-    static List<Footballer> awayBench = new ArrayList<>();
     static int homeSubs;
     static int awaySubs;
+    static Report report;
     static StringBuilder gameReport;
 
-    static int[] simulate(final Report report) {
+    static void simulate(final Report report) {
         competition = report.getCompetition().getType();
+        Match.report = report;
         gameReport = report.getReport();
-        
+
         if (competition == 0) leagueName = report.getHome().getLeague();
-        final int[] result = simulateGame(report);
+        simulateGame();
         FANS = 3;
 
-        finalWhistle(report.getHome(), report.getAway(), result[0], result[1]);
-        return result;
+        finalWhistle();
     }
 
-    private static int[] simulateGame(final Report report) {
+    private static void simulateGame() {
         final Club home = report.getHome();
         final Club away = report.getAway();
         final boolean last = report.isLast();
@@ -58,100 +49,21 @@ class Match {
         final int aggregateAwayGoals = report.getAggregateAwayGoals();
 
         kickoff(home, away);
-        int homeGoals = 0;
-        int awayGoals = 0;
         minute = 1;
         int extra = 0;
         int added;
 
-        pickSquad(home, true);
-        pickSquad(away, false);
         homeSubs = 3;
         awaySubs = 3;
-
-        final int homeAttack = getAttack(homeSquad, awaySquad);
-        final int awayAttack = getAttack(awaySquad, homeSquad);
-        int balance = FANS + 6 * (homeAttack - awayAttack) / 7  +
-                (home.getSeason().getForm() - away.getSeason().getForm()) / 4 + 50;
-
-        int momentum = balance;
-        int style = (homeAttack + awayAttack) / 10 - 6;
-
-        if (home.getId() == USER || away.getId() == USER) style += USER_STYLE / 2 - 5;
 
         while (minute <= 90 + extra) {
             added = (minute % 45 == 0) ? 2 * minute / 45 : 0;
             stoppage = 0;
 
-            while (stoppage <= added) {
-                final int r = random.nextInt(1000);
-                if (r < 10 * momentum) {
-                    if (r < momentum + style - 41) {
-                        homeGoals++;
-                        goal(homeGoals, awayGoals, true);
-                        momentum = balance;
-                        updateRatings(3);
-                    } else if (r < 5 * momentum) {
-                        momentum++;
-                        updateRatings(1);
-                    }
-                } else {
-                    if (r > 940 + momentum - style) {
-                        awayGoals++;
-                        goal(homeGoals, awayGoals, false);
-                        momentum = balance;
-                        updateRatings(-3);
-                    } else if (r > 999 - 5 * momentum) {
-                        momentum--;
-                        updateRatings(-1);
-                    }
-                }
+            while (stoppage <= added) event();
 
-                if (random.nextInt(40) == 0) {
-                    final boolean t = random.nextBoolean();
-                    final int p = random.nextInt(11);
-                    final MatchStats footballer = (t ? homeSquad : awaySquad).get(p);
-
-                    if (!footballer.isRedCarded()) {
-                        report.append(getMinute()).append(footballer.getFootballer().getName());
-                        if (!footballer.isYellowCarded()) {
-                            footballer.addYellowCard();
-                            balance += (t ? -1 : 1);
-                            report.append(" gets a yellow card<br/>");
-                        } else {
-                            footballer.addRedCard();
-                            balance += (t ? -10 : 10);
-                            footballer.getFootballer().changeBan(1);
-                            report.append(" gets a second yellow card and he is ejected<br/>");
-
-                            if (p == 0) goalkeeperEjected(t);
-                        }
-                    }
-                } else if (random.nextInt(300) == 0) {
-                    final boolean t = random.nextBoolean();
-                    final int p = random.nextInt(11);
-                    final MatchStats footballer = (t ? homeSquad : awaySquad).get(p);
-
-                    if (!footballer.isRedCarded()) {
-                        footballer.addRedCard();
-                        balance += (t ? -10 : 10);
-                        footballer.getFootballer().changeBan(random.nextInt(5) == 0 ? 2 : 1);
-                        report.append(getMinute()).append(footballer.getFootballer().getName()).append(" gets a red card<br/>");
-
-                        if (p == 0) goalkeeperEjected(t);
-                    }
-                }
-
-                if (minute > 60) {
-                    if (homeSubs > 0 && random.nextInt(10) == 0) substitute(true);
-                    if (awaySubs > 0 && random.nextInt(10) == 0) substitute(false);
-                }
-
-                stoppage++;
-            }
-
-            if (minute == 90 && last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
-                    homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
+            if (minute == 90 && last && (aggregateHomeGoals == -1 && report.getHomeGoals() == report.getAwayGoals() ||
+                    report.getHomeGoals() == aggregateAwayGoals && report.getAwayGoals() == aggregateHomeGoals)) {
                 report.append("Extra time begins!<br/>");
                 extra = 30;
             }
@@ -159,20 +71,93 @@ class Match {
             minute++;
         }
 
-        if (last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
-                homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals)) {
+        if (last && (aggregateHomeGoals == -1 && report.getHomeGoals() == report.getAwayGoals() ||
+                report.getHomeGoals() == aggregateAwayGoals && report.getAwayGoals() == aggregateHomeGoals)) {
             report.append("It's time for the penalty shootout!<br/>");
-            final boolean homeWin = penaltyShootout(homeSquad, awaySquad);
-            if (homeWin) homeGoals++;
-            else awayGoals++;
+            final boolean homeWin = penaltyShootout(report.getHomeSquad(), report.getAwaySquad());
+            if (homeWin) report.addHomeGoal();
+            else report.addAwayGoal();
+        }
+    }
+
+    private static void event() {
+
+        final int r = random.nextInt(1000);
+        if (r < 10 * report.getMomentum()) {
+            if (r < report.getMomentum() + report.getStyle() - 41) {
+                report.addHomeGoal();
+                goal(report.getHomeGoals(), report.getAwayGoals(), true);
+                report.setMomentum(report.getBalance());
+                updateRatings(3);
+            } else if (r < 5 * report.getMomentum()) {
+                report.changeMomentum(1);
+                updateRatings(1);
+            }
+        } else {
+            if (r > 940 + report.getMomentum() - report.getStyle()) {
+                report.addAwayGoal();
+                goal(report.getHomeGoals(), report.getAwayGoals(), false);
+                report.setMomentum(report.getBalance());
+                updateRatings(-3);
+            } else if (r > 999 - 5 * report.getMomentum()) {
+                report.changeMomentum(-1);
+                updateRatings(-1);
+            }
         }
 
-        return new int[]{homeGoals, awayGoals};
+        if (random.nextInt(40) == 0) {
+            final boolean t = random.nextBoolean();
+            final int p = random.nextInt(11);
+            final MatchStats footballer = (t ? report.getHomeSquad() : report.getAwaySquad()).get(p);
+
+            if (!footballer.isRedCarded()) {
+                report.append(getMinute()).append(footballer.getFootballer().getName());
+                if (!footballer.isYellowCarded()) {
+                    footballer.addYellowCard();
+                    report.changeBalance(t ? -1 : 1);
+                    report.append(" gets a yellow card<br/>");
+                } else {
+                    footballer.addRedCard();
+                    report.changeBalance(t ? -10 : 10);
+                    footballer.getFootballer().changeBan(1);
+                    report.append(" gets a second yellow card and he is ejected<br/>");
+
+                    if (p == 0) goalkeeperEjected(t);
+                }
+            }
+        } else if (random.nextInt(300) == 0) {
+            final boolean t = random.nextBoolean();
+            final int p = random.nextInt(11);
+            final MatchStats footballer = (t ? report.getHomeSquad() : report.getAwaySquad()).get(p);
+
+            if (!footballer.isRedCarded()) {
+                footballer.addRedCard();
+                report.changeBalance(t ? -10 : 10);
+                footballer.getFootballer().changeBan(random.nextInt(5) == 0 ? 2 : 1);
+                report.append(getMinute()).append(footballer.getFootballer().getName()).append(" gets a red card<br/>");
+
+                if (p == 0) goalkeeperEjected(t);
+            }
+        }
+
+        if (minute > 60) {
+            if (homeSubs > 0 && random.nextInt(10) == 0) {
+                substitute(report.getHomeSquad(), report.getHomeBench());
+                homeSubs--;
+            }
+
+            if (awaySubs > 0 && random.nextInt(10) == 0) {
+                substitute(report.getAwaySquad(), report.getAwayBench());
+                awaySubs--;
+            }
+        }
+
+        stoppage++;
     }
 
     private static void goalkeeperEjected(final boolean isHome) {
-        final List<MatchStats> squad = isHome ? homeSquad : awaySquad;
-        final List<Footballer> bench = isHome ? homeBench : awayBench;
+        final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();
+        final List<Footballer> bench = isHome ? report.getHomeBench() : report.getAwayBench();
         float worst = 10;
         int flop = 5;
 
@@ -195,25 +180,6 @@ class Match {
         updateStats(squad.get(flop));
         squad.set(flop, new MatchStats(subbedIn, minute));
         bench.set(0, null);
-
-        if (isHome) homeSubs--;
-        else awaySubs--;
-    }
-
-    private static int getAttack(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {
-        int attack = 0;
-        int defence = 0;
-        for (MatchStats footballer : homeSquad) {
-            if (footballer == null) footballer = new MatchStats(MIDFIELDER_1, 0);
-            attack += footballer.getFootballer().getOverall() * footballer.getFootballer().getPosition().getAttackingDuty();
-        }
-
-        for (MatchStats footballer : awaySquad) {
-            if (footballer == null) footballer = new MatchStats(MIDFIELDER_1, 0);
-            defence += footballer.getFootballer().getOverall() * (5 - footballer.getFootballer().getPosition().getAttackingDuty());
-        }
-
-        return 50 * attack / defence;
     }
 
     private static boolean penaltyShootout(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {

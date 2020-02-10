@@ -41,53 +41,46 @@ public class Knockout {
         leagueCupResults.clear();
         nationalCupResults.clear();
 
-        for (final Club[] league : LEAGUES) {
-            final String leagueName = league[0].getLeague();
-            nationalCup.put(leagueName, cup(league));
-        }
+        for (final Club[] league : LEAGUES) nationalCup.put(league[0].getLeague(), cup(league));
 
         for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
-            final String leagueName = league[0].getLeague();
-            leagueCup.put(leagueName, cup(league));
+            leagueCup.put(league[0].getLeague(), cup(league));
         }
     }
 
     static void nationalCup() {
         for (final Club[] league : LEAGUES) {
             final String leagueName = league[0].getLeague();
-            nationalCup.put(leagueName, knockoutRound(nationalCup.get(leagueName),
-                    leagueName.equals(Spain.LEAGUE) ? 2 : 1, NATIONAL_CUP, leagueName.equals(England.LEAGUE)));
+            knockoutRound(nationalCup, leagueName, leagueName.equals(Spain.LEAGUE) ? 2 : 1,
+                    NATIONAL_CUP, leagueName.equals(England.LEAGUE));
         }
     }
 
     static void leagueCup() {
         for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
-            final String leagueName = league[0].getLeague();
-            leagueCup.put(leagueName, knockoutRound(leagueCup.get(leagueName),
-                    1, Competition.LEAGUE_CUP, false));
+            knockoutRound(leagueCup, league[0].getLeague(), 1, Competition.LEAGUE_CUP, false);
         }
     }
 
     static void championsLeague() {
-        continentalCup.put(CHAMPIONS_LEAGUE_NAME, knockoutRound(continentalCup.get(CHAMPIONS_LEAGUE_NAME),
-                2, Competition.CHAMPIONS_LEAGUE, false));
+        knockoutRound(continentalCup, CHAMPIONS_LEAGUE_NAME, 2, Competition.CHAMPIONS_LEAGUE, false);
     }
 
     static void europaLeague() {
-        continentalCup.put(EUROPA_LEAGUE_NAME, knockoutRound(continentalCup.get(EUROPA_LEAGUE_NAME),
-                2, Competition.EUROPA_LEAGUE, false));
+        knockoutRound(continentalCup, EUROPA_LEAGUE_NAME, 2, Competition.EUROPA_LEAGUE, false);
     }
 
-    static Club[] knockoutRound(final Club[] clubs, final int games, final Competition type, final boolean replay) {
+    static void knockoutRound(final Map<String, Club[]> cup, final String competition,
+                              final int games, final Competition type, final boolean replay) {
+        final Club[] clubs = cup.get(competition);
         final int count = clubs.length;
-        final String competition;
         final Map<String, String> results;
         switch (type) {
-            case NATIONAL_CUP: competition = clubs[0].getLeague(); results = nationalCupResults; break;
-            case LEAGUE_CUP: competition = clubs[0].getLeague(); results = leagueCupResults; break;
-            case CHAMPIONS_LEAGUE: competition = CHAMPIONS_LEAGUE_NAME; results = continentalCupResults; break;
-            case EUROPA_LEAGUE: competition = EUROPA_LEAGUE_NAME; results = continentalCupResults; break;
-            default: competition = ""; results = new HashMap<>(); break;
+            case NATIONAL_CUP: results = nationalCupResults; break;
+            case LEAGUE_CUP: results = leagueCupResults; break;
+            case CHAMPIONS_LEAGUE:
+            case EUROPA_LEAGUE: results = continentalCupResults; break;
+            default: results = new HashMap<>(); break;
         }
 
         results.put("new", "");
@@ -106,7 +99,7 @@ public class Knockout {
 
         results.put(competition + count, results.remove("new"));
         results.put("reports: " + competition + count, results.remove("reports: new"));
-        return Arrays.copyOf(clubs, count / 2);
+        cup.put(competition, Arrays.copyOf(clubs, count / 2));
     }
 
     private static boolean knockoutFixture(final Club first, final Club second, final int games, final Competition type,
@@ -117,26 +110,26 @@ public class Knockout {
         if (neutral) FANS = 0;
 
         final Report report = new Report(first, second, type, -1, -1, games == 1 && !replay);
-        int[] result = simulate(report);
-        firstGoals += result[0];
-        secondGoals += result[1];
+        simulate(report);
+        firstGoals += report.getHomeGoals();
+        secondGoals += report.getAwayGoals();
 
         final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
         final StringBuilder reports = new StringBuilder(String.valueOf(results.get("reports: new")));
         if (games == 2 && scores.length() > 0) scores.append("<br/>");
-        appendScore(scores, reports, first, second, result);
+        appendScore(scores, reports, report);
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
             final Report report2 = new Report(second, first, type,
                     replay ? -1 : secondGoals, replay ? -1 : firstGoals, true);
-            result = simulate(report2);
-            appendScore(scores, reports, second, first, result);
+            simulate(report2);
+            appendScore(scores, reports, report2);
 
-            secondGoals += result[0];
-            firstGoals += result[1];
+            secondGoals += report.getHomeGoals();
+            firstGoals += report.getAwayGoals();
 
             if (firstGoals == secondGoals) {
-                if (result[0] + result[1] > firstGoals) firstGoals++;
+                if (report.getHomeGoals() + report.getAwayGoals() > firstGoals) firstGoals++;
                 else secondGoals++;
             }
         }

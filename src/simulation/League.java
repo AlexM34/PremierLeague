@@ -77,8 +77,8 @@ public class League {
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
             final Report report = new Report(league[home], league[away], LEAGUE, -1, -1, false);
-            final int[] result = simulate(report);
-            appendScore(scores, reports, league[home], league[away], result);
+            simulate(report);
+            appendScore(scores, reports, report);
         }
 
         leagueResults.put(league[0].getLeague() + (leagueRound + 1), scores.toString());
@@ -122,11 +122,11 @@ public class League {
                 final int away = draw[round][game][1];
                 final Report report = new Report(clubs[home], clubs[away], Competition.CHAMPIONS_LEAGUE,
                         -1, -1, false);
-                final int[] result = simulate(report);
+                simulate(report);
 
-                appendScore(scores, reports, clubs[home], clubs[away], result);
-                final int homeGoals = result[0];
-                final int awayGoals = result[1];
+                appendScore(scores, reports, report);
+                final int homeGoals = report.getHomeGoals();
+                final int awayGoals = report.getAwayGoals();
 
                 groupGameOutcome(clubs[home].getSeason().getContinental().getGroup(), clubs[away], homeGoals, awayGoals);
                 groupGameOutcome(clubs[away].getSeason().getContinental().getGroup(), clubs[home], awayGoals, homeGoals);

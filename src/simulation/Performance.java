@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import static simulation.Match.gameReport;
+import static simulation.Match.report;
 
 class Performance {
     private static final Random random = new Random();
@@ -16,7 +17,7 @@ class Performance {
         int assisting = 20000;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
-        final List<MatchStats> squad = isHome ? Match.homeSquad : Match.awaySquad;
+        final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();
 
         for (int player = 0; player < 11; player++) {
             if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
@@ -37,7 +38,7 @@ class Performance {
 
         if (goalscorer == null) {
             int footballer = ownGoal();
-            final List<MatchStats> opponent = isHome ? Match.awaySquad : Match.homeSquad;
+            final List<MatchStats> opponent = isHome ? report.getAwaySquad() : report.getHomeSquad();
             if (opponent.get(footballer).isRedCarded()) footballer = 0;
             opponent.get(footballer).changeRating(-1.5f);
             gameReport.append(Match.minute).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")
