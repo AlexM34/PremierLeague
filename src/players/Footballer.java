@@ -142,6 +142,30 @@ public class Footballer {
         if (this.ban < 0) this.ban = 0;
     }
 
+    public int getScoringChance() {
+        final int overall = Math.max(1, this.overall - 60);
+        final int finishing = Math.max(1, this.finishing - 30);
+        switch (this.position.getRole()) {
+            case Goalkeeper: return 1;
+            case Defender: return overall * finishing;
+            case Midfielder: return overall * finishing * 2;
+            case Forward: return overall * finishing * 4;
+            default: return 0;
+        }
+    }
+
+    public int getAssistChance() {
+        final int overall = Math.max(1, this.overall - 60);
+        final int vision = Math.max(1, this.vision - 30);
+        switch (this.position.getRole()) {
+            case Goalkeeper: return 10;
+            case Defender: return overall * vision;
+            case Midfielder: return overall * vision * 5;
+            case Forward: return overall * vision * 3;
+            default: return 0;
+        }
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

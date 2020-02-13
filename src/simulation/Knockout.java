@@ -19,7 +19,6 @@ import static simulation.Data.LEAGUES;
 import static simulation.Finance.knockoutPrizes;
 import static simulation.Finance.profits;
 import static simulation.Finance.salaries;
-import static simulation.Helper.appendScore;
 import static simulation.Helper.cup;
 import static simulation.League.CHAMPIONS_LEAGUE;
 import static simulation.League.CHAMPIONS_LEAGUE_NAME;
@@ -88,9 +87,11 @@ public class Knockout {
         final List<Club> draw = Arrays.asList(clubs);
         shuffle(draw);
 
+        if (count == 2) FANS = 0;
         for (int team = 0; team < count / 2; team++) {
-            if (knockoutFixture(draw.get(team), draw.get(count - team - 1), count > 2 ? games : 1,
-                    type, replay && count >= 8, count == 2, results, count)) {
+            final Report report = new Report(draw.get(team), draw.get(count - team - 1), type,
+                    -1, -1, games == 1 && (!replay || count < 8));
+            if (knockoutFixture(report, games, replay, results, count)) {
                 clubs[team] = draw.get(count - team - 1);
             } else {
                 clubs[team] = draw.get(team);
@@ -102,14 +103,13 @@ public class Knockout {
         cup.put(competition, Arrays.copyOf(clubs, count / 2));
     }
 
-    private static boolean knockoutFixture(final Club first, final Club second, final int games, final Competition type,
-                                           final boolean replay, final boolean neutral,
+    private static boolean knockoutFixture(final Report report, final int games, final boolean replay,
                                            final Map<String, String> results, final int teams) {
+        final Club first = report.getHome();
+        final Club second = report.getAway();
         int firstGoals = 0;
         int secondGoals = 0;
-        if (neutral) FANS = 0;
 
-        final Report report = new Report(first, second, type, -1, -1, games == 1 && !replay);
         simulate(report);
         firstGoals += report.getHomeGoals();
         secondGoals += report.getAwayGoals();
@@ -117,13 +117,13 @@ public class Knockout {
         final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
         final StringBuilder reports = new StringBuilder(String.valueOf(results.get("reports: new")));
         if (games == 2 && scores.length() > 0) scores.append("<br/>");
-        appendScore(scores, reports, report);
+        report.appendScore(scores, reports);
 
         if (games == 2 || (replay && firstGoals == secondGoals)) {
-            final Report report2 = new Report(second, first, type,
+            final Report report2 = new Report(second, first, report.getCompetition(),
                     replay ? -1 : secondGoals, replay ? -1 : firstGoals, true);
             simulate(report2);
-            appendScore(scores, reports, report2);
+            report2.appendScore(scores, reports);
 
             secondGoals += report.getHomeGoals();
             firstGoals += report.getAwayGoals();
@@ -134,7 +134,7 @@ public class Knockout {
             }
         }
 
-        updateFixtures(first, second, firstGoals, secondGoals, type.getType(), teams);
+        updateFixtures(first, second, firstGoals, secondGoals, report.getCompetition().getType(), teams);
         results.put("new", scores.toString());
         results.put("reports: new", reports.toString());
         return secondGoals > firstGoals;

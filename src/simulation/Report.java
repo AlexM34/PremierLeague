@@ -149,6 +149,10 @@ public class Report {
         return momentum;
     }
 
+    void clearMomentum() {
+        this.momentum = balance;
+    }
+
     void setMomentum(final int momentum) {
         this.momentum = momentum;
     }
@@ -165,7 +169,21 @@ public class Report {
         return report;
     }
 
+    boolean isStillTied() {
+        return last && (aggregateHomeGoals == -1 && homeGoals == awayGoals ||
+                homeGoals == aggregateAwayGoals && awayGoals == aggregateHomeGoals);
+    }
+
     StringBuilder append(final String string) {
         return report.append(string);
+    }
+
+    void appendScore(final StringBuilder scores, final StringBuilder reports) {
+        final String score = home + " - " + away + " " + homeGoals + ":" + awayGoals + "<br/>";
+        scores.append(score);
+
+        final String teams = home + " vs " + away + "<br/>";
+        final String finalScore = "Final score: " + homeGoals + ":" + awayGoals + "<br/>" + "<br/>";
+        reports.append(teams).append(report).append(finalScore);
     }
 }

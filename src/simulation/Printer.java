@@ -142,9 +142,7 @@ public class Printer {
                 yellowCards.put(f, competition.getYellowCards());
                 redCards.put(f, competition.getRedCards());
 
-                if (f.getPosition() == GK) {
-                    cleanSheets.put(f, competition.getCleanSheets());
-                }
+                if (f.getPosition() == GK) cleanSheets.put(f, competition.getCleanSheets());
             }
         }
 
@@ -196,20 +194,6 @@ public class Printer {
 
         final Map<Footballer, Integer> sorted = sortMap(players);
         return new ArrayList<>(sorted.keySet());
-    }
-
-    private static void topPlayers(final Map<Footballer, Integer> map, final String label) {
-        System.out.println(label);
-        final Map<Footballer, Integer> sorted = sortMap(map);
-
-        for (int player = 0; player < 20 && player < sorted.size(); player++) {
-            final int value = sorted.values().toArray(new Integer[0])[player];
-            if (value == 0) break;
-            System.out.println(String.format("%2d. %-20s %2d", player + 1,
-                    sorted.keySet().toArray(new Footballer[0])[player].getName(),  value));
-        }
-
-        System.out.println();
     }
 
     static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {

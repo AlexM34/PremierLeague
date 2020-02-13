@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static simulation.Match.gameReport;
 import static simulation.Printer.offset;
 
 public class Helper {
@@ -75,19 +74,5 @@ public class Helper {
             case 3: return season.getChampionsLeague();
             default: return season.getEuropaLeague();
         }
-    }
-
-    static void appendScore(final StringBuilder scores, final StringBuilder reports, final Report report) {
-        final String home = report.getHome().getName();
-        final String away = report.getAway().getName();
-        final int homeGoals = report.getHomeGoals();
-        final int awayGoals = report.getAwayGoals();
-
-        final String score = home + " - " + away + " " + homeGoals + ":" + awayGoals + "<br/>";
-        scores.append(score);
-
-        final String teams = home + " vs " + away + "<br/>";
-        final String finalScore = "Final score: " + homeGoals + ":" + awayGoals + "<br/>" + "<br/>";
-        reports.append(teams).append(gameReport).append(finalScore);
     }
 }

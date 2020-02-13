@@ -13,7 +13,6 @@ import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
 import static simulation.Draw.league;
 import static simulation.Draw.seededKnockout;
-import static simulation.Helper.appendScore;
 import static simulation.Helper.getPerformance;
 import static simulation.Helper.groupGameOutcome;
 import static simulation.Helper.sortMap;
@@ -78,7 +77,7 @@ public class League {
             else if (away == USER) preMatch(league[home], false);
             final Report report = new Report(league[home], league[away], LEAGUE, -1, -1, false);
             simulate(report);
-            appendScore(scores, reports, report);
+            report.appendScore(scores, reports);
         }
 
         leagueResults.put(league[0].getLeague() + (leagueRound + 1), scores.toString());
@@ -124,7 +123,7 @@ public class League {
                         -1, -1, false);
                 simulate(report);
 
-                appendScore(scores, reports, report);
+                report.appendScore(scores, reports);
                 final int homeGoals = report.getHomeGoals();
                 final int awayGoals = report.getAwayGoals();
 

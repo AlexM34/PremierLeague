@@ -35,15 +35,15 @@ class Rater {
     private static float motmRating;
     private static final Map<Footballer, Integer> contenders = new HashMap<>();
 
-    static void kickoff(final Club home, final Club away) {
-        for (final Footballer f : home.getFootballers()) {
+    static void kickoff() {
+        for (final Footballer f : report.getHome().getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(13 + random.nextInt(3));
             }
             else f.changeCondition(12 + random.nextInt(3));
         }
 
-        for (final Footballer f : away.getFootballers()) {
+        for (final Footballer f : report.getAway().getFootballers()) {
             if (f.getPosition() == Position.GK) {
                 f.changeCondition(13 + random.nextInt(3));
             }
@@ -91,7 +91,11 @@ class Rater {
 
         getCompetition(motmPlayer.getFootballer().getResume().getSeason(), Match.competition).addMotmAwards(1);
 
-        if (Match.competition == 0) updateLeague(home, away, homeGoals, awayGoals);
+        if (Match.competition == 0) {
+            updateLeague(home, away, homeGoals, awayGoals, true);
+            updateLeague(away, home, awayGoals, homeGoals, false);
+        }
+
         updateForm(home, away, homeGoals, awayGoals);
 
         System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
@@ -127,48 +131,37 @@ class Rater {
         matchStats.getFootballer().changeCondition(-15);
     }
 
-    private static void updateLeague(final Club home, final Club away, final int homeGoals, final int awayGoals) {
-        final League homeStats = home.getSeason().getLeague();
-        final League awayStats = away.getSeason().getLeague();
-        homeStats.addFixture(away, homeGoals, awayGoals);
-        awayStats.addFixture(home, awayGoals, homeGoals);
+    private static void updateLeague(final Club team, final Club opponent, final int scored,
+                                     final int conceded, final boolean isHome) {
+        final League stats = team.getSeason().getLeague();
+        stats.addFixture(opponent, scored, conceded);
 
-        if (awayGoals == 0) {
-            homeStats.addCleanSheet();
+        if (conceded == 0) {
+            stats.addCleanSheet();
             cleanSheets.merge(leagueName, 1, Integer::sum);
         }
 
-        if (homeGoals == 0) {
-            awayStats.addCleanSheet();
-            cleanSheets.merge(leagueName, 1, Integer::sum);
-        }
-
-        if (homeGoals > awayGoals) {
+        if (scored > conceded) {
             homeWins.merge(leagueName, 1, Integer::sum);
-            homeStats.addPoints(3);
-            homeStats.addWin();
-            awayStats.addLoss();
-        } else if (homeGoals < awayGoals) {
+            stats.addPoints(3);
+            stats.addWin();
+        } else if (scored < conceded) {
             awayWins.merge(leagueName, 1, Integer::sum);
-            awayStats.addPoints(3);
-            awayStats.addWin();
-            homeStats.addLoss();
+            stats.addLoss();
         } else {
             draws.merge(leagueName, 1, Integer::sum);
-            homeStats.addPoints(1);
-            awayStats.addPoints(1);
-            homeStats.addDraw();
-            awayStats.addDraw();
+            stats.addPoints(1);
+            stats.addDraw();
         }
 
-        homeStats.addMatch();
-        awayStats.addMatch();
-        homeStats.addScored(homeGoals);
-        scoredHome.merge(leagueName, homeGoals, Integer::sum);
-        awayStats.addScored(awayGoals);
-        scoredAway.merge(leagueName, awayGoals, Integer::sum);
-        homeStats.addConceded(awayGoals);
-        awayStats.addConceded(homeGoals);
+        stats.addMatch();
+        stats.addScored(scored);
+        stats.addConceded(conceded);
+
+        if (isHome) {
+            scoredHome.merge(leagueName, scored, Integer::sum);
+            scoredAway.merge(leagueName, conceded, Integer::sum);
+        }
     }
 
     private static void updateForm(final Club home, final Club away, final int homeGoals, final int awayGoals) {
@@ -224,7 +217,7 @@ class Rater {
         contenders.clear();
 
         for (int i = 0; i < clubs.length; i++) {
-            for (Footballer footballer : clubs[i].getFootballers()) {
+            for (final Footballer footballer : clubs[i].getFootballers()) {
                 Statistics season = footballer.getResume().getSeason();
                 int matches = season.getLeague().getMatches() + season.getNationalCup().getMatches() * 2 +
                         season.getLeagueCup().getMatches() * 2 + season.getChampionsLeague().getMatches() * 5 +
