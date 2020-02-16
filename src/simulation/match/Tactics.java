@@ -1,4 +1,4 @@
-package simulation;
+package simulation.match;
 
 import player.Footballer;
 import player.MatchStats;
@@ -19,15 +19,15 @@ import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.MIDFIELDER_2;
 import static simulation.Data.USER_STYLE;
-import static simulation.Match.minute;
-import static simulation.Match.report;
-import static simulation.Match.stoppage;
-import static simulation.Match.updateStats;
+import static simulation.match.Match.minute;
+import static simulation.match.Match.report;
+import static simulation.match.Match.stoppage;
+import static simulation.match.Match.updateStats;
 
-class Tactics {
+public class Tactics {
     private static final Scanner scanner = new Scanner(System.in);
 
-    static void preMatch(final Club opponent, final boolean isHome) {
+    public static void preMatch(final Club opponent, final boolean isHome) {
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {

@@ -10,17 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static simulation.Postseason.offset;
+import static simulation.dynamics.Postseason.offset;
 
 public class Helper {
 
-    static Club[] cup(final Club[] league) {
-        final Club[] selected = new Club[16];
-        System.arraycopy(league, 0, selected, 0, 16);
-        return selected;
-    }
-
-    static <T> Map<T, Integer> sortMap(final Map<T, Integer> clubs) {
+    public static <T> Map<T, Integer> sortMap(final Map<T, Integer> clubs) {
         return clubs.entrySet().stream().sorted(
                 Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
@@ -45,11 +39,11 @@ public class Helper {
         return sortMap(standings);
     }
 
-    static int getPerformance(final League stats) {
+    public static int getPerformance(final League stats) {
         return 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) + stats.getScored();
     }
 
-    static Competition getCompetition(final Statistics season, final int type) {
+    public static Competition getCompetition(final Statistics season, final int type) {
         switch (type) {
             case 0: return season.getLeague();
             case 1: return season.getNationalCup();

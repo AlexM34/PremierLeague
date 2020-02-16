@@ -1,9 +1,12 @@
-package simulation;
+package simulation.dynamics;
 
 import player.Footballer;
 import player.Position;
 import player.Resume;
 import player.Statistics;
+import simulation.competition.Continental;
+import team.Cup;
+import simulation.Data;
 import team.Club;
 import team.League;
 import team.Season;
@@ -19,19 +22,19 @@ import java.util.Random;
 
 import static simulation.Data.LEAGUES;
 import static simulation.Helper.sortLeague;
-import static simulation.Match.leagueAssists;
-import static simulation.Match.leagueAverageRatings;
-import static simulation.Match.leagueRedCards;
-import static simulation.Match.leagueYellowCards;
+import static simulation.match.Match.leagueAssists;
+import static simulation.match.Match.leagueAverageRatings;
+import static simulation.match.Match.leagueRedCards;
+import static simulation.match.Match.leagueYellowCards;
 
-class Preseason {
+public class Preseason {
     private static final Random random = new Random();
     static int deals;
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
     private static int academy = 0;
 
-    static void prepare(final int year) {
+    public static void prepare(final int year) {
         League.clearLeagueStats();
         leagueAssists.clear();
         leagueYellowCards.clear();
@@ -57,7 +60,7 @@ class Preseason {
         System.out.println();
     }
 
-    static void progression() {
+    public static void progression() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 for (final Footballer f : club.getFootballers()) {
@@ -215,7 +218,7 @@ class Preseason {
         club.addFootballer(footballer);
     }
 
-    static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
+    public static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {
             final Map<Club, Integer> sorted = sortLeague(league, 0);

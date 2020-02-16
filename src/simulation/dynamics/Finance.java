@@ -1,4 +1,4 @@
-package simulation;
+package simulation.dynamics;
 
 import player.Footballer;
 import team.Club;

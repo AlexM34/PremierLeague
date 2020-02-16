@@ -1,4 +1,4 @@
-package simulation;
+package simulation.dynamics;
 
 import player.Footballer;
 import player.Position;
@@ -9,17 +9,17 @@ import java.util.Map;
 import java.util.Random;
 
 import static simulation.Data.LEAGUES;
-import static simulation.Preseason.academy;
-import static simulation.Preseason.deals;
-import static simulation.Preseason.sold;
-import static simulation.Preseason.transfers;
+import static simulation.dynamics.Preseason.academy;
+import static simulation.dynamics.Preseason.deals;
+import static simulation.dynamics.Preseason.sold;
+import static simulation.dynamics.Preseason.transfers;
 import static simulation.Helper.sortMap;
 
-class Transfer {
+public class Transfer {
     private static final Random random = new Random();
     private static Map<String, Integer> summary = new HashMap<>();
 
-    static void transfers() {
+    public static void transfers() {
         summary.clear();
         deals = 0;
         int attempts = 0;

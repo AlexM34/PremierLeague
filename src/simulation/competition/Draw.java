@@ -1,4 +1,4 @@
-package simulation;
+package simulation.competition;
 
 import team.Club;
 
@@ -7,7 +7,7 @@ import java.util.Random;
 class Draw {
     private static final Random random = new Random();
 
-    public static int[][][] league(final int teams) {
+    static int[][][] league(final int teams) {
         final int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
         final int[] draw = new int[teams];
         final boolean[] drawn = new boolean[teams];

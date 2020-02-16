@@ -17,34 +17,34 @@ import java.util.Scanner;
 
 public class Data {
     public static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
-    static Integer USER = -1;
-    static int USER_STYLE;
+    public static Integer USER = -1;
+    public static int USER_STYLE;
 
-    static final String[] SURNAMES = {"Johnson", "Smith", "Rodriguez", "Traore", "Taylor",  "Pelle",  "Dembele",
+    public static final String[] SURNAMES = {"Johnson", "Smith", "Rodriguez", "Traore", "Taylor",  "Pelle",  "Dembele",
             "Alba",  "Benitez", "Sterling",  "Martinez",  "Suarez",  "Jimenez",  "Muller",  "Gross",  "Cole"};
 
-    static final String[] NATIONS = {"France", "England", "Italy", "Spain", "Germany",  "Argentina",  "Brazil",
+    public static final String[] NATIONS = {"France", "England", "Italy", "Spain", "Germany",  "Argentina",  "Brazil",
             "Portugal",  "Netherlands", "Belgium",  "Colombia",  "Uruguay",  "Russia",  "Nigeria",  "Ukraine",  "Austria"};
 
-    static final Footballer GOALKEEPER_1 = new Footballer(123455, "Goalkeeper 1", 18, "", 60, 60,
+    public static final Footballer GOALKEEPER_1 = new Footballer(123455, "Goalkeeper 1", 18, "", 60, 60,
             "Dummy", 0, 0, Position.GK, 101, 20, 20, new Resume());
 
-    static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
+    public static final Footballer DEFENDER_1 = new Footballer(123456, "Defender 1", 18, "", 60, 60,
             "Dummy", 0, 0, Position.CB, 101, 20, 20, new Resume());
 
-    static final Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
+    public static final Footballer MIDFIELDER_1 = new Footballer(123457, "Midfielder 1", 18, "", 60, 60,
             "Dummy", 0, 0, Position.CM, 102, 20, 20, new Resume());
 
-    static final Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
+    public static final Footballer FORWARD_1 = new Footballer(123458, "Forward 1", 18, "", 60, 60,
             "Dummy", 0, 0, Position.ST, 103, 20, 20, new Resume());
 
-    static final Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
+    public static final Footballer DEFENDER_2 = new Footballer(123466, "Defender 2", 18, "", 60, 60,
             "Dummy", 0, 0, Position.CB, 104, 20, 20, new Resume());
 
-    static final Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
+    public static final Footballer MIDFIELDER_2 = new Footballer(123467, "Midfielder 2", 18, "", 60, 60,
             "Dummy", 0, 0, Position.CM, 105, 20, 20, new Resume());
 
-    static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
+    public static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
             "Dummy", 0, 0, Position.ST, 106, 20, 20, new Resume());
 
     static void extractData() {

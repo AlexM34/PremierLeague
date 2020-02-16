@@ -1,4 +1,4 @@
-package simulation;
+package simulation.match;
 
 import player.Competition;
 import player.Footballer;
@@ -14,12 +14,12 @@ import java.util.Random;
 
 import static simulation.Data.GOALKEEPER_1;
 import static simulation.Helper.getCompetition;
-import static simulation.Performance.goal;
-import static simulation.Tactics.substitute;
+import static simulation.match.Performance.goal;
+import static simulation.match.Tactics.substitute;
 
 public class Match {
     private static final Random random = new Random();
-    static int FANS = 3;
+    public static int FANS = 3;
 
     public static final Map<String, Integer> leagueAssists = new HashMap<>();
     public static final Map<String, Integer> leagueYellowCards = new HashMap<>();
@@ -36,7 +36,7 @@ public class Match {
     static int awaySubs;
     static Report report;
 
-    static void simulate(final Report report) {
+    public static void simulate(final Report report) {
         competition = report.getCompetition().getType();
         Match.report = report;
 

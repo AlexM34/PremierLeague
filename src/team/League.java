@@ -1,6 +1,6 @@
 package team;
 
-import simulation.Fixture;
+import simulation.match.Fixture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,7 +106,7 @@ public class League {
     }
 
     public void addMatch() {
-        this.matches += 1;
+        this.matches++;
     }
 
     public int getPoints() {

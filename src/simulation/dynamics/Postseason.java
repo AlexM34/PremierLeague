@@ -1,4 +1,4 @@
-package simulation;
+package simulation.dynamics;
 
 import player.Competition;
 import player.Footballer;
@@ -16,19 +16,19 @@ import java.util.Map;
 import static player.Position.GK;
 import static simulation.Controller.matchday;
 import static simulation.Data.LEAGUES;
-import static simulation.Finance.knockoutPrizes;
-import static simulation.Finance.leaguePrizes;
-import static simulation.Finance.profits;
-import static simulation.Finance.salaries;
 import static simulation.Helper.sortLeague;
 import static simulation.Helper.sortMap;
-import static simulation.League.CHAMPIONS_LEAGUE;
-import static simulation.League.CHAMPIONS_LEAGUE_NAME;
-import static simulation.League.EUROPA_LEAGUE;
-import static simulation.League.EUROPA_LEAGUE_NAME;
-import static simulation.League.continentalCup;
-import static simulation.Knockout.leagueCup;
-import static simulation.Knockout.nationalCup;
+import static simulation.competition.League.CHAMPIONS_LEAGUE;
+import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.competition.League.EUROPA_LEAGUE;
+import static simulation.competition.League.EUROPA_LEAGUE_NAME;
+import static simulation.competition.League.continentalCup;
+import static simulation.competition.Knockout.leagueCup;
+import static simulation.competition.Knockout.nationalCup;
+import static simulation.dynamics.Finance.knockoutPrizes;
+import static simulation.dynamics.Finance.leaguePrizes;
+import static simulation.dynamics.Finance.profits;
+import static simulation.dynamics.Finance.salaries;
 
 public class Postseason {
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
@@ -40,9 +40,9 @@ public class Postseason {
     private static final Map<Footballer, Integer> redCards = new LinkedHashMap<>();
     static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
 
-    static int offset;
+    public static int offset;
 
-    static void standings(final Club[] league) {
+    public static void standings(final Club[] league) {
         final Map<Club, Integer> sorted = sortLeague(league, 0);
 
         int position = 1;
@@ -178,7 +178,7 @@ public class Postseason {
         return new ArrayList<>(sorted.keySet());
     }
 
-    static void announceCupWinners() {
+    public static void announceCupWinners() {
         for (final Club[] league : LEAGUES) {
             final String leagueName = league[0].getLeague();
             if (leagueCup.containsKey(leagueName)) {

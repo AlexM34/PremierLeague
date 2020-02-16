@@ -1,5 +1,6 @@
-package simulation;
+package simulation.competition;
 
+import simulation.match.Report;
 import team.Club;
 
 import java.util.ArrayList;
@@ -8,16 +9,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static simulation.Competition.LEAGUE;
+import static simulation.competition.Competition.LEAGUE;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
-import static simulation.Draw.league;
-import static simulation.Draw.seededKnockout;
 import static simulation.Helper.getPerformance;
 import static simulation.Helper.sortMap;
-import static simulation.Match.simulate;
-import static simulation.Preseason.pickContinentalTeams;
-import static simulation.Tactics.preMatch;
+import static simulation.competition.Draw.league;
+import static simulation.competition.Draw.seededKnockout;
+import static simulation.dynamics.Preseason.pickContinentalTeams;
+import static simulation.match.Match.simulate;
+import static simulation.match.Tactics.preMatch;
 
 public class League {
 
@@ -28,14 +29,14 @@ public class League {
 
     private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
     static final Map<String, int[][][]> continentalDraw = new HashMap<>();
-    static final Map<String, Club[]> continentalCup = new HashMap<>();
+    public static final Map<String, Club[]> continentalCup = new HashMap<>();
     public static final Map<String, String> leagueResults = new HashMap<>();
     public static final Map<String, String> continentalCupResults = new HashMap<>();
     private static int leagueRound;
     private static int championsLeagueRound;
     private static int europaLeagueRound;
 
-    static void setupLeagues() {
+    public static void setupLeagues() {
         leagueDraw.clear();
         continentalDraw.clear();
         continentalCup.clear();
@@ -56,7 +57,7 @@ public class League {
         europaLeagueRound = 0;
     }
 
-    static void allLeagues() {
+    public static void allLeagues() {
         for (final Club[] league : LEAGUES) {
             if (leagueRound < 34 || league.length > 18) leagueRound(league);
         }
@@ -74,6 +75,7 @@ public class League {
             final int away = draw[leagueRound][game][1];
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
+
             final Report report = new Report(league[home], league[away], LEAGUE, -1, -1, false);
             simulate(report);
             report.appendScore(scores, reports);
@@ -83,7 +85,7 @@ public class League {
         leagueResults.put("reports: " + league[0].getLeague() + (leagueRound + 1), reports.toString());
     }
 
-    static void groupRound(final boolean isChampionsLeague) {
+    public static void groupRound(final boolean isChampionsLeague) {
         final String competition;
         final Club[] teams;
         final int round;

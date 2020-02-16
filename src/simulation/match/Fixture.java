@@ -1,4 +1,4 @@
-package simulation;
+package simulation.match;
 
 import team.Club;
 

@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.Random;
 
 import static java.awt.Image.SCALE_SMOOTH;
-import static simulation.Match.leagueAssists;
-import static simulation.Match.leagueAverageRatings;
-import static simulation.Match.leagueRedCards;
-import static simulation.Match.leagueYellowCards;
+import static simulation.match.Match.leagueAssists;
+import static simulation.match.Match.leagueAverageRatings;
+import static simulation.match.Match.leagueRedCards;
+import static simulation.match.Match.leagueYellowCards;
 
 class Helper {
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");

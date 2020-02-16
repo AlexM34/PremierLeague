@@ -1,4 +1,4 @@
-package simulation;
+package simulation.dynamics;
 
 import player.Footballer;
 import player.Statistics;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static simulation.Helper.sortMap;
-import static simulation.Postseason.topTeam;
+import static simulation.dynamics.Postseason.topTeam;
 
 public class Award {
     private static final Random random = new Random();

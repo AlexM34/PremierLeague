@@ -1,4 +1,4 @@
-package simulation;
+package simulation.match;
 
 import player.Footballer;
 import player.MatchStats;
@@ -6,7 +6,7 @@ import player.MatchStats;
 import java.util.List;
 import java.util.Random;
 
-import static simulation.Match.report;
+import static simulation.match.Match.report;
 
 class Performance {
     private static final Random random = new Random();
@@ -17,8 +17,8 @@ class Performance {
 
         final int homeGoals = report.getHomeGoals();
         final int awayGoals = report.getAwayGoals();
-        int scoring = 10000;
-        int assisting = 20000;
+        int scoring = 3000;
+        int assisting = 10000;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
         final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();

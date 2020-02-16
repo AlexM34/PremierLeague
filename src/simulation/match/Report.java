@@ -1,7 +1,8 @@
-package simulation;
+package simulation.match;
 
 import player.Footballer;
 import player.MatchStats;
+import simulation.competition.Competition;
 import team.Club;
 
 import java.util.Arrays;
@@ -11,8 +12,8 @@ import java.util.stream.Collectors;
 import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
-import static simulation.Match.FANS;
-import static simulation.Tactics.pickSquad;
+import static simulation.match.Match.FANS;
+import static simulation.match.Tactics.pickSquad;
 
 public class Report {
     private final Club home;
@@ -32,8 +33,8 @@ public class Report {
     private final int style;
     private final StringBuilder report;
 
-    Report(final Club home, final Club away, final Competition competition,
-           final int aggregateHomeGoals, final int aggregateAwayGoals, final boolean last) {
+    public Report(final Club home, final Club away, final Competition competition,
+                  final int aggregateHomeGoals, final int aggregateAwayGoals, final boolean last) {
         this.home = home;
         this.away = away;
         this.competition = competition;
@@ -81,15 +82,15 @@ public class Report {
         return 50 * attack / defence;
     }
 
-    Club getHome() {
+    public Club getHome() {
         return home;
     }
 
-    Club getAway() {
+    public Club getAway() {
         return away;
     }
 
-    Competition getCompetition() {
+    public Competition getCompetition() {
         return competition;
     }
 
@@ -97,7 +98,7 @@ public class Report {
         return last;
     }
 
-    int getHomeGoals() {
+    public int getHomeGoals() {
         return homeGoals;
     }
 
@@ -105,7 +106,7 @@ public class Report {
         homeGoals++;
     }
 
-    int getAwayGoals() {
+    public int getAwayGoals() {
         return awayGoals;
     }
 
@@ -178,7 +179,7 @@ public class Report {
         return report.append(string);
     }
 
-    void appendScore(final StringBuilder scores, final StringBuilder reports) {
+    public void appendScore(final StringBuilder scores, final StringBuilder reports) {
         final String score = home.getName() + " - " + away.getName() + " " + homeGoals + ":" + awayGoals + "<br/>";
         scores.append(score);
 

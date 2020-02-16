@@ -9,25 +9,25 @@ import java.util.Scanner;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.addDummies;
 import static simulation.Data.buildSquads;
-import static simulation.Knockout.championsLeague;
-import static simulation.Knockout.europaLeague;
-import static simulation.Knockout.leagueCup;
-import static simulation.Knockout.nationalCup;
-import static simulation.Knockout.setupCups;
-import static simulation.League.allLeagues;
-import static simulation.League.groupRound;
-import static simulation.League.setupLeagues;
-import static simulation.Postseason.announceCupWinners;
-import static simulation.Postseason.standings;
-import static simulation.Preseason.prepare;
-import static simulation.Preseason.progression;
-import static simulation.Transfer.transfers;
+import static simulation.competition.Knockout.championsLeague;
+import static simulation.competition.Knockout.europaLeague;
+import static simulation.competition.Knockout.leagueCupRound;
+import static simulation.competition.Knockout.nationalCupRound;
+import static simulation.competition.Knockout.setupCups;
+import static simulation.competition.League.allLeagues;
+import static simulation.competition.League.groupRound;
+import static simulation.competition.League.setupLeagues;
+import static simulation.dynamics.Postseason.announceCupWinners;
+import static simulation.dynamics.Postseason.standings;
+import static simulation.dynamics.Preseason.prepare;
+import static simulation.dynamics.Preseason.progression;
+import static simulation.dynamics.Transfer.transfers;
 
 public class Controller {
     private static final Scanner scanner = new Scanner(System.in);
 
     private static int year = 0;
-    static int matchday = 0;
+    public static int matchday = 0;
 
     public static final List<Integer> MATCHDAYS = Arrays.asList(-1, 0, 0, 0, 31, 41, 0, 0, 31, 41, 0, 0, 0, 31,
             41, 2, 0, 0, 1, 31, 41, 0, 0, 2, 0, 31, 41, 0, 0, 0, 31, 41, 0, 1, 0, 2, 0, 42, 0, 0, 32, 42, 0, 1,
@@ -50,8 +50,8 @@ public class Controller {
             case -2: completeSeason(); break;
             case -1: setupSeason(); break;
             case 0: allLeagues(); break;
-            case 1: nationalCup(); break;
-            case 2: leagueCup(); break;
+            case 1: nationalCupRound(); break;
+            case 2: leagueCupRound(); break;
             case 31: groupRound(true); break;
             case 32: championsLeague(); break;
             case 41: groupRound(false); break;

@@ -1,8 +1,12 @@
-package simulation;
+package simulation.competition;
 
 import league.England;
 import league.France;
 import league.Spain;
+import team.Cup;
+import simulation.match.Fixture;
+import simulation.match.Match;
+import simulation.match.Report;
 import team.Club;
 import team.Season;
 
@@ -12,14 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.shuffle;
-import static simulation.Competition.NATIONAL_CUP;
+import static simulation.competition.Competition.NATIONAL_CUP;
 import static simulation.Data.LEAGUES;
-import static simulation.Helper.cup;
-import static simulation.League.CHAMPIONS_LEAGUE_NAME;
-import static simulation.League.EUROPA_LEAGUE_NAME;
-import static simulation.League.continentalCup;
-import static simulation.League.continentalCupResults;
-import static simulation.Match.simulate;
+import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.competition.League.EUROPA_LEAGUE_NAME;
+import static simulation.competition.League.continentalCup;
+import static simulation.competition.League.continentalCupResults;
+import static simulation.match.Match.simulate;
 
 public class Knockout {
     public static final Map<String, Club[]> leagueCup = new HashMap<>();
@@ -27,20 +30,20 @@ public class Knockout {
     public static final Map<String, String> leagueCupResults = new HashMap<>();
     public static final Map<String, String> nationalCupResults = new HashMap<>();
 
-    static void setupCups() {
+    public static void setupCups() {
         leagueCup.clear();
         nationalCup.clear();
         leagueCupResults.clear();
         nationalCupResults.clear();
 
-        for (final Club[] league : LEAGUES) nationalCup.put(league[0].getLeague(), cup(league));
+        for (final Club[] league : LEAGUES) nationalCup.put(league[0].getLeague(), startCup(league));
 
         for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
-            leagueCup.put(league[0].getLeague(), cup(league));
+            leagueCup.put(league[0].getLeague(), startCup(league));
         }
     }
 
-    static void nationalCup() {
+    public static void nationalCupRound() {
         for (final Club[] league : LEAGUES) {
             final String leagueName = league[0].getLeague();
             knockoutRound(nationalCup, leagueName, leagueName.equals(Spain.LEAGUE) ? 2 : 1,
@@ -48,17 +51,17 @@ public class Knockout {
         }
     }
 
-    static void leagueCup() {
+    public static void leagueCupRound() {
         for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
             knockoutRound(leagueCup, league[0].getLeague(), 1, Competition.LEAGUE_CUP, false);
         }
     }
 
-    static void championsLeague() {
+    public static void championsLeague() {
         knockoutRound(continentalCup, CHAMPIONS_LEAGUE_NAME, 2, Competition.CHAMPIONS_LEAGUE, false);
     }
 
-    static void europaLeague() {
+    public static void europaLeague() {
         knockoutRound(continentalCup, EUROPA_LEAGUE_NAME, 2, Competition.EUROPA_LEAGUE, false);
     }
 
@@ -84,11 +87,7 @@ public class Knockout {
         for (int team = 0; team < count / 2; team++) {
             final Report report = new Report(draw.get(team), draw.get(count - team - 1), type,
                     -1, -1, games == 1 && (!replay || count < 8));
-            if (knockoutFixture(report, games, replay, results, count)) {
-                clubs[team] = draw.get(count - team - 1);
-            } else {
-                clubs[team] = draw.get(team);
-            }
+            clubs[team] = knockoutFixture(report, games, replay, results, count);
         }
 
         results.put(competition + count, results.remove("new"));
@@ -96,7 +95,7 @@ public class Knockout {
         cup.put(competition, Arrays.copyOf(clubs, count / 2));
     }
 
-    private static boolean knockoutFixture(final Report report, final int games, final boolean replay,
+    private static Club knockoutFixture(final Report report, final int games, final boolean replay,
                                            final Map<String, String> results, final int teams) {
         final Club first = report.getHome();
         final Club second = report.getAway();
@@ -112,17 +111,17 @@ public class Knockout {
         if (games == 2 && scores.length() > 0) scores.append("<br/>");
         report.appendScore(scores, reports);
 
-        if (games == 2 || (replay && firstGoals == secondGoals)) {
+        if ((games == 2 && teams > 2) || (replay && firstGoals == secondGoals)) {
             final Report report2 = new Report(second, first, report.getCompetition(),
                     replay ? -1 : secondGoals, replay ? -1 : firstGoals, true);
             simulate(report2);
             report2.appendScore(scores, reports);
 
-            secondGoals += report.getHomeGoals();
-            firstGoals += report.getAwayGoals();
+            secondGoals += report2.getHomeGoals();
+            firstGoals += report2.getAwayGoals();
 
             if (firstGoals == secondGoals) {
-                if (report.getHomeGoals() + report.getAwayGoals() > firstGoals) firstGoals++;
+                if (report.getAwayGoals() < report2.getAwayGoals()) firstGoals++;
                 else secondGoals++;
             }
         }
@@ -130,7 +129,7 @@ public class Knockout {
         updateFixtures(first, second, firstGoals, secondGoals, report.getCompetition().getType(), teams);
         results.put("new", scores.toString());
         results.put("reports: new", reports.toString());
-        return secondGoals > firstGoals;
+        return firstGoals > secondGoals ? first : second;
     }
 
     private static void updateFixtures(final Club first, final Club second, final int firstGoals,
@@ -142,6 +141,12 @@ public class Knockout {
 
         getCup(first.getSeason(), type).setStage(String.valueOf(firstGoals > secondGoals ? teams / 2 : teams));
         getCup(second.getSeason(), type).setStage(String.valueOf(secondGoals > firstGoals ? teams / 2 : teams));
+    }
+
+    public static Club[] startCup(final Club[] league) {
+        final Club[] selected = new Club[16];
+        System.arraycopy(league, 0, selected, 0, 16);
+        return selected;
     }
 
     private static Cup getCup(final Season season, final int type) {

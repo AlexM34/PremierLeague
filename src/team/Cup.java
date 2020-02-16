@@ -1,4 +1,6 @@
-package simulation;
+package team;
+
+import simulation.match.Fixture;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
-import static simulation.Postseason.topPlayers;
+import static simulation.dynamics.Postseason.topPlayers;
 import static view.Helper.getImage;
 import static view.Helper.setColumnWidths;
 import static view.Helper.setTableValues;
