@@ -1,17 +1,17 @@
 package simulation;
 
-import players.Footballer;
-import players.MatchStats;
+import player.Footballer;
+import player.MatchStats;
 import team.Club;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static simulation.Data.FANS;
 import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
+import static simulation.Match.FANS;
 import static simulation.Tactics.pickSquad;
 
 public class Report {
@@ -179,10 +179,10 @@ public class Report {
     }
 
     void appendScore(final StringBuilder scores, final StringBuilder reports) {
-        final String score = home + " - " + away + " " + homeGoals + ":" + awayGoals + "<br/>";
+        final String score = home.getName() + " - " + away.getName() + " " + homeGoals + ":" + awayGoals + "<br/>";
         scores.append(score);
 
-        final String teams = home + " vs " + away + "<br/>";
+        final String teams = home.getName() + " vs " + away.getName() + "<br/>";
         final String finalScore = "Final score: " + homeGoals + ":" + awayGoals + "<br/>" + "<br/>";
         reports.append(teams).append(report).append(finalScore);
     }

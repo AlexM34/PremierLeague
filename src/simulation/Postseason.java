@@ -1,30 +1,36 @@
 package simulation;
 
-import players.Competition;
-import players.Footballer;
-import players.Statistics;
+import player.Competition;
+import player.Footballer;
+import player.Statistics;
 import team.Club;
 import team.League;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import static players.Position.GK;
+import static player.Position.GK;
 import static simulation.Controller.matchday;
 import static simulation.Data.LEAGUES;
+import static simulation.Finance.knockoutPrizes;
 import static simulation.Finance.leaguePrizes;
+import static simulation.Finance.profits;
+import static simulation.Finance.salaries;
 import static simulation.Helper.sortLeague;
 import static simulation.Helper.sortMap;
+import static simulation.League.CHAMPIONS_LEAGUE;
+import static simulation.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.League.EUROPA_LEAGUE;
+import static simulation.League.EUROPA_LEAGUE_NAME;
+import static simulation.League.continentalCup;
+import static simulation.Knockout.leagueCup;
+import static simulation.Knockout.nationalCup;
 
-public class Printer {
-    private static final Random random = new Random();
-
+public class Postseason {
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
     public static Map<Footballer, Integer> assists = new LinkedHashMap<>();
@@ -32,33 +38,9 @@ public class Printer {
     private static final Map<Footballer, Integer> motm = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> yellowCards = new LinkedHashMap<>();
     private static final Map<Footballer, Integer> redCards = new LinkedHashMap<>();
-    private static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
+    static final Map<Footballer, Integer> topTeam = new LinkedHashMap<>();
 
     static int offset;
-
-    static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
-        final Map<Club, Integer> teams = new LinkedHashMap<>();
-        for (final Club[] league : LEAGUES) {
-            final Map<Club, Integer> sorted = sortLeague(league, 0);
-            int slots = 16;
-            for (final Club team : sorted.keySet()) {
-                teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5) + slots--);
-                if (slots == 0) break;
-            }
-        }
-
-        final List<Map.Entry<Club, Integer>> sorted = new ArrayList<>(teams.entrySet());
-        sorted.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
-        int limit = 0;
-
-        for (final Map.Entry<Club, Integer> clubIntegerEntry : sorted) {
-            if (limit < 32) System.out.println(championsLeagueTeams[limit] = clubIntegerEntry.getKey());
-            else if (limit < 80) System.out.println(europaLeagueTeams[limit - 32] = clubIntegerEntry.getKey());
-            else break;
-
-            limit++;
-        }
-    }
 
     static void standings(final Club[] league) {
         final Map<Club, Integer> sorted = sortLeague(league, 0);
@@ -196,89 +178,51 @@ public class Printer {
         return new ArrayList<>(sorted.keySet());
     }
 
-    static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
-        topTeam.clear();
-        int[] team = new int[11];
-        int goalkeepers = 1;
-        int defenders = 4;
-        int midfielders = 3;
-        int forwards = 3;
-
-        final Map<Footballer, Integer> sorted = sortMap(ratings);
-
-        for (int player = 0; player < sorted.size(); player++) {
-            switch (sorted.keySet().toArray(new Footballer[0])[player].getPosition().getRole()) {
-                case Goalkeeper:
-                    if (goalkeepers > 0) team[--goalkeepers] = player;
-                    break;
-                case Defender:
-                    if (defenders > 0) team[defenders--] = player;
-                    break;
-                case Midfielder:
-                    if (midfielders > 0) team[4 + midfielders--] = player;
-                    break;
-                case Forward:
-                    if (forwards > 0) team[7 + forwards--] = player;
-                    break;
-            }
-
-            if (goalkeepers + defenders + midfielders + forwards == 0) break;
-        }
-
-        System.out.println("TEAM OF THE SEASON");
-        for (int player = 0; player < 11; player++) {
-            Footballer footballer = sorted.keySet().toArray(new Footballer[0])[team[player]];
-            int rating = sorted.values().toArray(new Integer[0])[team[player]];
-
-            System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), rating));
-
-            if (isLeague) topTeam.put(footballer, rating);
-        }
-
-        System.out.println();
-    }
-
-    static void voting(final Map<Footballer, Integer> contenders) {
-        Footballer[] players = new Footballer[10];
-        int[] chance = new int[10];
-        int[] votes = new int[10];
-        int total = 0;
-        int current = 0;
-        for (Map.Entry<Footballer, Integer> entry : contenders.entrySet()) {
-            Footballer c = entry.getKey();
-            Integer p = entry.getValue();
-            System.out.println(c.getName() + " with " + p);
-
-            players[current] = c;
-            chance[current] = Math.max(p - 750, 1);
-            total += chance[current++];
-        }
-
-        for (int v = 0; v < 100; v++) {
-            int pick = random.nextInt(total);
-            for (int player = 0; player < 10; player++) {
-                pick -= chance[player];
-                if (pick < 0) {
-                    votes[player]++;
-                    break;
+    static void announceCupWinners() {
+        for (final Club[] league : LEAGUES) {
+            final String leagueName = league[0].getLeague();
+            if (leagueCup.containsKey(leagueName)) {
+                final Club leagueCupWinner = leagueCup.get(leagueName)[0];
+                System.out.println(leagueCupWinner.getName() + " win the League Cup!");
+                leagueCupWinner.getGlory().addLeagueCup();
+                for (final Footballer footballer : leagueCupWinner.getFootballers()) {
+                    footballer.getResume().getGlory().addLeagueCup();
                 }
+
+                knockoutPrizes(leagueCup.get(leagueName), false);
             }
+
+            final Club nationalCupWinner = nationalCup.get(leagueName)[0];
+            System.out.println(nationalCupWinner.getName() + " win the National Cup!");
+            nationalCupWinner.getGlory().addNationalCup();
+            for (final Footballer footballer : nationalCupWinner.getFootballers()) {
+                footballer.getResume().getGlory().addNationalCup();
+            }
+
+            knockoutPrizes(nationalCup.get(leagueName), false);
+
+            profits(league);
+            salaries(league);
+
+            Arrays.stream(league).forEach(Postseason::review);
         }
 
-        Map<Footballer, Integer> results = new HashMap<>();
-        for (int i = 0; i < 10; i++) results.put(players[i], votes[i]);
-
-        final Map<Footballer, Integer> sorted = sortMap(results);
-
-        System.out.println("FOOTBALLER OF THE YEAR");
-        for (int player = 0; player < 10; player++) {
-            Footballer footballer = sorted.keySet().toArray(new Footballer[0])[player];
-            int count = sorted.values().toArray(new Integer[0])[player];
-
-            System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), count));
+        final Club europaLeagueWinner = continentalCup.get(EUROPA_LEAGUE_NAME)[0];
+        System.out.println(europaLeagueWinner.getName() + " win the Europa League!");
+        europaLeagueWinner.getGlory().addEuropaLeague();
+        for (final Footballer footballer : europaLeagueWinner.getFootballers()) {
+            footballer.getResume().getGlory().addEuropaLeague();
         }
 
-        System.out.println();
+        final Club championsLeagueWinner = continentalCup.get(CHAMPIONS_LEAGUE_NAME)[0];
+        System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
+        championsLeagueWinner.getGlory().addChampionsLeague();
+        for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
+            footballer.getResume().getGlory().addChampionsLeague();
+        }
+
+        knockoutPrizes(EUROPA_LEAGUE, true);
+        knockoutPrizes(CHAMPIONS_LEAGUE, true);
     }
 
     static void review(final Club club) {

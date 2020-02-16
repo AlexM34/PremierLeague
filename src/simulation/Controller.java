@@ -9,8 +9,6 @@ import java.util.Scanner;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.addDummies;
 import static simulation.Data.buildSquads;
-import static simulation.Data.prepare;
-import static simulation.Knockout.announceCupWinners;
 import static simulation.Knockout.championsLeague;
 import static simulation.Knockout.europaLeague;
 import static simulation.Knockout.leagueCup;
@@ -19,8 +17,10 @@ import static simulation.Knockout.setupCups;
 import static simulation.League.allLeagues;
 import static simulation.League.groupRound;
 import static simulation.League.setupLeagues;
+import static simulation.Postseason.announceCupWinners;
+import static simulation.Postseason.standings;
+import static simulation.Preseason.prepare;
 import static simulation.Preseason.progression;
-import static simulation.Printer.standings;
 import static simulation.Transfer.transfers;
 
 public class Controller {

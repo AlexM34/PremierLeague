@@ -1,7 +1,7 @@
 package simulation;
 
-import players.Footballer;
-import players.MatchStats;
+import player.Footballer;
+import player.MatchStats;
 
 import java.util.List;
 import java.util.Random;

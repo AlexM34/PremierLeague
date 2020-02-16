@@ -1,7 +1,7 @@
 package simulation;
 
-import players.Footballer;
-import players.MatchStats;
+import player.Footballer;
+import player.MatchStats;
 import team.Club;
 import team.Formation;
 
@@ -22,7 +22,7 @@ import static simulation.Data.USER_STYLE;
 import static simulation.Match.minute;
 import static simulation.Match.report;
 import static simulation.Match.stoppage;
-import static simulation.Rater.updateStats;
+import static simulation.Match.updateStats;
 
 class Tactics {
     private static final Scanner scanner = new Scanner(System.in);

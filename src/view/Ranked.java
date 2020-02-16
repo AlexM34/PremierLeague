@@ -1,6 +1,6 @@
 package view;
 
-import players.Footballer;
+import player.Footballer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
-import static simulation.Printer.topPlayers;
+import static simulation.Postseason.topPlayers;
 import static view.Helper.getImage;
 import static view.Helper.setColumnWidths;
 import static view.Helper.setTableValues;

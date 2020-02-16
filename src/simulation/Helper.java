@@ -1,7 +1,7 @@
 package simulation;
 
-import players.Competition;
-import players.Statistics;
+import player.Competition;
+import player.Statistics;
 import team.Club;
 import team.League;
 
@@ -10,26 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static simulation.Printer.offset;
+import static simulation.Postseason.offset;
 
 public class Helper {
-
-    static void groupGameOutcome(final League team, final Club opponent, final int scored, final int conceded) {
-        team.addFixture(opponent, scored, conceded);
-
-        if (scored > conceded) {
-            team.addPoints(3);
-            team.addWin();
-        } else if (scored == conceded) {
-            team.addPoints(1);
-            team.addDraw();
-        } else team.addLoss();
-
-        team.addMatch();
-        team.addScored(scored);
-        team.addConceded(conceded);
-        if (conceded == 0) team.addCleanSheet();
-    }
 
     static Club[] cup(final Club[] league) {
         final Club[] selected = new Club[16];

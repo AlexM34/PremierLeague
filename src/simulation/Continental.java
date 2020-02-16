@@ -9,7 +9,7 @@ public class Continental {
     private final Cup knockout;
 
     public Continental() {
-        this.group = new League();
+        this.group = new League("Continental");
         this.knockout = new Cup();
     }
 

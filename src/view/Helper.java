@@ -1,7 +1,6 @@
 package view;
 
-import players.Footballer;
-import simulation.Data;
+import player.Footballer;
 import team.League;
 
 import javax.imageio.ImageIO;
@@ -23,14 +22,10 @@ import java.util.Map;
 import java.util.Random;
 
 import static java.awt.Image.SCALE_SMOOTH;
-import static simulation.Data.averageRatings;
-import static simulation.Data.awayWins;
-import static simulation.Data.draws;
-import static simulation.Data.homeWins;
-import static simulation.Data.redCards;
-import static simulation.Data.scoredAway;
-import static simulation.Data.scoredHome;
-import static simulation.Data.yellowCards;
+import static simulation.Match.leagueAssists;
+import static simulation.Match.leagueAverageRatings;
+import static simulation.Match.leagueRedCards;
+import static simulation.Match.leagueYellowCards;
 
 class Helper {
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
@@ -142,19 +137,17 @@ class Helper {
     }
 
     static void leagueStats(final JTable table, final String leagueName) {
-        final int games = homeWins.getOrDefault(leagueName, 0)
-                + draws.getOrDefault(leagueName, 0) + awayWins.getOrDefault(leagueName, 0);
-
-        table.setValueAt(String.valueOf(games), 0, 1);
-        table.setValueAt(String.valueOf(homeWins.getOrDefault(leagueName, 0)), 1, 1);
-        table.setValueAt(String.valueOf(draws.getOrDefault(leagueName, 0)), 2, 1);
-        table.setValueAt(String.valueOf(awayWins.getOrDefault(leagueName, 0)), 3, 1);
-        table.setValueAt(String.valueOf(scoredHome.getOrDefault(leagueName, 0)), 4, 1);
-        table.setValueAt(String.valueOf(scoredAway.getOrDefault(leagueName, 0)), 5, 1);
-        table.setValueAt(String.valueOf(Data.assists.getOrDefault(leagueName, 0)), 6, 1);
-        table.setValueAt(String.valueOf(yellowCards.getOrDefault(leagueName, 0)), 7, 1);
-        table.setValueAt(String.valueOf(redCards.getOrDefault(leagueName, 0)), 8, 1);
-        table.setValueAt(decimalFormat.format(averageRatings.getOrDefault(leagueName, 0.0f) / (games * 22)), 9, 1);
-        table.setValueAt(String.valueOf(Data.cleanSheets.getOrDefault(leagueName, 0)), 10, 1);
+        table.setValueAt(String.valueOf(League.getLeagueGames(leagueName)), 0, 1);
+        table.setValueAt(League.getLeagueHomeWins(leagueName), 1, 1);
+        table.setValueAt(League.getLeagueDraws(leagueName), 2, 1);
+        table.setValueAt(League.getLeagueAwayWins(leagueName), 3, 1);
+        table.setValueAt(League.getLeagueScoredHome(leagueName), 4, 1);
+        table.setValueAt(League.getLeagueScoredAway(leagueName), 5, 1);
+        table.setValueAt(String.valueOf(leagueAssists.getOrDefault(leagueName, 0)), 6, 1);
+        table.setValueAt(String.valueOf(leagueYellowCards.getOrDefault(leagueName, 0)), 7, 1);
+        table.setValueAt(String.valueOf(leagueRedCards.getOrDefault(leagueName, 0)), 8, 1);
+        table.setValueAt(decimalFormat.format(leagueAverageRatings.getOrDefault(leagueName, 0.0f) /
+                (League.getLeagueGames(leagueName) * 22)), 9, 1);
+        table.setValueAt(League.getLeagueCleanSheets(leagueName), 10, 1);
     }
 }

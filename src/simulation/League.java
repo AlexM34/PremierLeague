@@ -14,10 +14,9 @@ import static simulation.Data.USER;
 import static simulation.Draw.league;
 import static simulation.Draw.seededKnockout;
 import static simulation.Helper.getPerformance;
-import static simulation.Helper.groupGameOutcome;
 import static simulation.Helper.sortMap;
 import static simulation.Match.simulate;
-import static simulation.Printer.pickContinentalTeams;
+import static simulation.Preseason.pickContinentalTeams;
 import static simulation.Tactics.preMatch;
 
 public class League {
@@ -127,8 +126,10 @@ public class League {
                 final int homeGoals = report.getHomeGoals();
                 final int awayGoals = report.getAwayGoals();
 
-                groupGameOutcome(clubs[home].getSeason().getContinental().getGroup(), clubs[away], homeGoals, awayGoals);
-                groupGameOutcome(clubs[away].getSeason().getContinental().getGroup(), clubs[home], awayGoals, homeGoals);
+                clubs[home].getSeason().getContinental().getGroup().addFixture(clubs[away],
+                        true, homeGoals, awayGoals);
+                clubs[away].getSeason().getContinental().getGroup().addFixture(clubs[home],
+                        false, awayGoals, homeGoals);
             }
 
             continentalCupResults.put(competition + letter, scores.toString());

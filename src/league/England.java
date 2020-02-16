@@ -1,6 +1,6 @@
-package leagues;
+package league;
 
-import players.Glory;
+import player.Glory;
 import team.Club;
 import team.Coach;
 import team.Formation;

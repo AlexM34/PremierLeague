@@ -1,7 +1,7 @@
 package simulation;
 
-import players.Footballer;
-import players.Position;
+import player.Footballer;
+import player.Position;
 import team.Club;
 
 import java.util.HashMap;

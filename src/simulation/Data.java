@@ -1,38 +1,22 @@
 package simulation;
 
-import leagues.England;
-import leagues.France;
-import leagues.Germany;
-import leagues.Italy;
-import leagues.Spain;
-import players.Footballer;
-import players.Position;
-import players.Resume;
-import players.Statistics;
+import league.England;
+import league.France;
+import league.Germany;
+import league.Italy;
+import league.Spain;
+import player.Footballer;
+import player.Position;
+import player.Resume;
 import team.Club;
-import team.League;
-import team.Season;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Data {
     public static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
-    public static final Map<String, Integer> homeWins = new HashMap<>();
-    public static final Map<String, Integer> draws = new HashMap<>();
-    public static final Map<String, Integer> awayWins = new HashMap<>();
-    public static final Map<String, Integer> scoredHome = new HashMap<>();
-    public static final Map<String, Integer> scoredAway = new HashMap<>();
-    public static final Map<String, Integer> assists = new HashMap<>();
-    public static final Map<String, Integer> yellowCards = new HashMap<>();
-    public static final Map<String, Integer> redCards = new HashMap<>();
-    public static final Map<String, Float> averageRatings = new HashMap<>();
-    public static final Map<String, Integer> cleanSheets = new HashMap<>();
-    static int FANS = 3;
     static Integer USER = -1;
     static int USER_STYLE;
 
@@ -148,35 +132,5 @@ public class Data {
                 club.addFootballer(FORWARD_2);
             }
         }
-    }
-
-    static void prepare(final int year) {
-        homeWins.clear();
-        draws.clear();
-        awayWins.clear();
-        scoredHome.clear();
-        scoredAway.clear();
-        assists.clear();
-        yellowCards.clear();
-        redCards.clear();
-        averageRatings.clear();
-        cleanSheets.clear();
-
-        System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
-        for (final Club[] league : LEAGUES) {
-            for (final Club club : league) {
-                club.setSeason(new Season(new League(), new Cup(), new Cup(), new Continental(), 100, 100));
-
-                for (final Footballer f : club.getFootballers()) {
-                    final Statistics career = f.getResume().getTotal();
-                    final Statistics season = f.getResume().getSeason();
-
-                    career.update(season);
-                    season.clear();
-                }
-            }
-        }
-
-        System.out.println();
     }
 }

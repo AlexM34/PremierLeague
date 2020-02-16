@@ -1,6 +1,6 @@
 package simulation;
 
-import players.Footballer;
+import player.Footballer;
 import team.Club;
 
 class Finance {

@@ -2,8 +2,8 @@ package team;
 
 import simulation.Continental;
 import simulation.Cup;
-import players.Footballer;
-import players.Glory;
+import player.Footballer;
+import player.Glory;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class Club {
         this.owner = owner;
         this.coach = coach;
         this.footballers = new HashSet<>();
-        this.season = new Season(new League(), new Cup(), new Cup(), new Continental(), 100, 100);
+        this.season = new Season(new League(league), new Cup(), new Cup(), new Continental(), 100, 100);
     }
 
     public int getId() {

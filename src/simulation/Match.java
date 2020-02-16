@@ -1,23 +1,32 @@
 package simulation;
 
-import players.Footballer;
-import players.MatchStats;
+import player.Competition;
+import player.Footballer;
+import player.MatchStats;
+import player.Position;
+import team.Club;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-import static simulation.Data.FANS;
 import static simulation.Data.GOALKEEPER_1;
+import static simulation.Helper.getCompetition;
 import static simulation.Performance.goal;
-import static simulation.Rater.finalWhistle;
-import static simulation.Rater.kickoff;
-import static simulation.Rater.updateRatings;
-import static simulation.Rater.updateStats;
 import static simulation.Tactics.substitute;
 
-class Match {
+public class Match {
     private static final Random random = new Random();
+    static int FANS = 3;
+
+    public static final Map<String, Integer> leagueAssists = new HashMap<>();
+    public static final Map<String, Integer> leagueYellowCards = new HashMap<>();
+    public static final Map<String, Integer> leagueRedCards = new HashMap<>();
+    public static final Map<String, Float> leagueAverageRatings = new HashMap<>();
+    private static MatchStats motmPlayer;
+    private static float motmRating;
 
     static int competition = 0;
     static String leagueName;
@@ -68,8 +77,19 @@ class Match {
         }
     }
 
-    private static void event() {
+    static void kickoff() {
+        for (final Footballer f : report.getHome().getFootballers()) {
+            if (f.getPosition() == Position.GK) f.changeCondition(13 + random.nextInt(3));
+            else f.changeCondition(12 + random.nextInt(3));
+        }
 
+        for (final Footballer f : report.getAway().getFootballers()) {
+            if (f.getPosition() == Position.GK) f.changeCondition(13 + random.nextInt(3));
+            else f.changeCondition(12 + random.nextInt(3));
+        }
+    }
+
+    private static void event() {
         final int r = random.nextInt(1000);
         if (r < 10 * report.getMomentum()) {
             if (r < report.getMomentum() + report.getStyle() - 41) {
@@ -210,6 +230,120 @@ class Match {
             report.append("The goalkeeper makes a wonderful save! ");
             return 0;
         }
+    }
+
+    static void finalWhistle() {
+        final Club home = report.getHome();
+        final Club away = report.getAway();
+        final int homeGoals = report.getHomeGoals();
+        final int awayGoals = report.getAwayGoals();
+
+        if (report.getHomeSquad().get(0) != null && awayGoals == 0) getCompetition(report.getHomeSquad().get(0)
+                .getFootballer().getResume().getSeason(), competition).addCleanSheets(1);
+        if (report.getAwaySquad().get(0) != null && homeGoals == 0) getCompetition(report.getAwaySquad().get(0)
+                .getFootballer().getResume().getSeason(), competition).addCleanSheets(1);
+
+        motmPlayer = report.getHomeSquad().get(0);
+        motmRating = 0;
+
+        for (int player = 0; player < 11; player++) {
+            updateStats(report.getHomeSquad().get(player));
+            updateStats(report.getAwaySquad().get(player));
+        }
+
+        getCompetition(motmPlayer.getFootballer().getResume().getSeason(), competition).addMotmAwards(1);
+        if (competition == 0) updateLeague(home, away, homeGoals, awayGoals);
+        updateForm();
+
+        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
+                away.getName(), homeGoals, awayGoals, motmPlayer.getFootballer().getName(), motmRating));
+    }
+
+    static void updateStats(final MatchStats matchStats) {
+        if (matchStats == null) return;
+
+        if (matchStats.getRating() > motmRating) {
+            motmPlayer = matchStats;
+            motmRating = matchStats.getRating();
+        }
+
+        final Competition stats = getCompetition(matchStats.getFootballer().getResume().getSeason(), competition);
+
+        stats.addRating((int) matchStats.getRating() * 100, 1);
+        if (competition == 0) leagueAverageRatings.merge(leagueName, matchStats.getRating(), Float::sum);
+        stats.addMatches(1);
+        stats.addGoals(matchStats.getGoals());
+        stats.addAssists(matchStats.getAssists());
+        if (competition == 0) leagueAssists.merge(leagueName, matchStats.getAssists(), Integer::sum);
+        if (matchStats.isYellowCarded()) {
+            stats.addYellowCards();
+            if (competition == 0) leagueYellowCards.merge(leagueName, 1, Integer::sum);
+        }
+
+        if (matchStats.isRedCarded()) {
+            stats.addRedCards();
+            if (competition == 0) leagueRedCards.merge(leagueName, 1, Integer::sum);
+        }
+
+        matchStats.getFootballer().changeCondition(-15);
+    }
+
+    private static void updateLeague(final Club home, final Club away, final int homeGoals, final int awayGoals) {
+        home.getSeason().getLeague().addFixture(away, true, homeGoals, awayGoals);
+        away.getSeason().getLeague().addFixture(home, false, awayGoals, homeGoals);
+    }
+
+    private static void updateForm() {
+        final int homeGoals = report.getHomeGoals();
+        final int awayGoals = report.getAwayGoals();
+        final int homeForm = report.getHome().getSeason().getForm();
+        final int awayForm = report.getAway().getSeason().getForm();
+
+        if (homeGoals > awayGoals) {
+            if (homeGoals - awayGoals > 2) modifyForm(1);
+
+            if (homeForm < awayForm + 10) {
+                if (homeForm < awayForm) modifyForm(3);
+                else modifyForm(1);
+            }
+
+        } else if (homeGoals < awayGoals) {
+            if (awayGoals - homeGoals > 2) modifyForm(-1);
+
+            if (awayForm < homeForm + 10) {
+                if (awayForm < homeForm) modifyForm(-3);
+                else modifyForm(-1);
+            }
+
+        } else {
+            if (homeForm < awayForm) modifyForm(2);
+            else if (awayForm < homeForm) modifyForm(-2);
+        }
+    }
+
+    private static void modifyForm(final int homeChange) {
+        report.getHome().getSeason().changeForm(homeChange);
+        report.getAway().getSeason().changeForm(-homeChange);
+    }
+
+    static void updateRatings(final int scale) {
+        final int home = random.nextInt(5) + scale * 3 + 1;
+        final int away = random.nextInt(5) - scale * 3 + 1;
+
+        for (int i = 0; i < home; i++) updateRating(report.getHomeSquad(), 0.1f);
+        for (int i = 0; i > home; i--) updateRating(report.getHomeSquad(), -0.1f);
+        for (int i = 0; i < away; i++) updateRating(report.getAwaySquad(), 0.1f);
+        for (int i = 0; i > away; i--) updateRating(report.getAwaySquad(), -0.1f);
+    }
+
+    private static void updateRating(final List<MatchStats> squad, final float change) {
+        final int player = random.nextInt(11);
+        if (squad.get(player) == null) return;
+        float overall = (float) squad.get(player).getFootballer().getOverall() *
+                squad.get(player).getFootballer().getOverall() / 6000;
+
+        if (change < 0) overall = 1 / overall;
+        squad.get(player).changeRating(change * overall);
     }
 
     private static String getMinute() {

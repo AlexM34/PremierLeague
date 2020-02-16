@@ -1,16 +1,28 @@
 package simulation;
 
-import players.Footballer;
-import players.Position;
-import players.Resume;
+import player.Footballer;
+import player.Position;
+import player.Resume;
+import player.Statistics;
 import team.Club;
+import team.League;
+import team.Season;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import static simulation.Data.LEAGUES;
+import static simulation.Helper.sortLeague;
+import static simulation.Match.leagueAssists;
+import static simulation.Match.leagueAverageRatings;
+import static simulation.Match.leagueRedCards;
+import static simulation.Match.leagueYellowCards;
 
 class Preseason {
     private static final Random random = new Random();
@@ -18,6 +30,32 @@ class Preseason {
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
     private static int academy = 0;
+
+    static void prepare(final int year) {
+        League.clearLeagueStats();
+        leagueAssists.clear();
+        leagueYellowCards.clear();
+        leagueRedCards.clear();
+        leagueAverageRatings.clear();
+
+        System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
+        for (final Club[] league : LEAGUES) {
+            for (final Club club : league) {
+                club.setSeason(new Season(new League(club.getLeague()), new Cup(), new Cup(),
+                        new Continental(), 100, 100));
+
+                for (final Footballer f : club.getFootballers()) {
+                    final Statistics career = f.getResume().getTotal();
+                    final Statistics season = f.getResume().getSeason();
+
+                    career.update(season);
+                    season.clear();
+                }
+            }
+        }
+
+        System.out.println();
+    }
 
     static void progression() {
         for (final Club[] league : LEAGUES) {
@@ -175,5 +213,29 @@ class Preseason {
                 club.getName(), value, wage, position, number, finishing, vision, resume);
 
         club.addFootballer(footballer);
+    }
+
+    static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
+        final Map<Club, Integer> teams = new LinkedHashMap<>();
+        for (final Club[] league : LEAGUES) {
+            final Map<Club, Integer> sorted = sortLeague(league, 0);
+            int slots = 16;
+            for (final Club team : sorted.keySet()) {
+                teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5) + slots--);
+                if (slots == 0) break;
+            }
+        }
+
+        final List<Map.Entry<Club, Integer>> sorted = new ArrayList<>(teams.entrySet());
+        sorted.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+        int limit = 0;
+
+        for (final Map.Entry<Club, Integer> clubIntegerEntry : sorted) {
+            if (limit < 32) System.out.println(championsLeagueTeams[limit] = clubIntegerEntry.getKey());
+            else if (limit < 80) System.out.println(europaLeagueTeams[limit - 32] = clubIntegerEntry.getKey());
+            else break;
+
+            limit++;
+        }
     }
 }

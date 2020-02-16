@@ -1,10 +1,10 @@
 package view;
 
-import leagues.England;
-import leagues.France;
-import leagues.Germany;
-import leagues.Italy;
-import leagues.Spain;
+import league.England;
+import league.France;
+import league.Germany;
+import league.Italy;
+import league.Spain;
 import simulation.Data;
 import team.Club;
 
@@ -24,12 +24,12 @@ import static java.awt.Font.PLAIN;
 import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
 import static simulation.League.CHAMPIONS_LEAGUE_NAME;
 import static simulation.League.EUROPA_LEAGUE_NAME;
-import static simulation.Printer.allTime;
-import static simulation.Printer.assists;
-import static simulation.Printer.cleanSheets;
-import static simulation.Printer.goals;
-import static simulation.Printer.playerStats;
-import static simulation.Printer.ratings;
+import static simulation.Postseason.allTime;
+import static simulation.Postseason.assists;
+import static simulation.Postseason.cleanSheets;
+import static simulation.Postseason.goals;
+import static simulation.Postseason.playerStats;
+import static simulation.Postseason.ratings;
 import static view.Helper.displayStats;
 import static view.Helper.getImage;
 import static view.Helper.setColumnWidths;
