@@ -1,10 +1,6 @@
 package view;
 
-import league.England;
-import league.France;
-import league.Germany;
-import league.Italy;
-import league.Spain;
+import league.LeagueManager;
 import team.Club;
 
 import javax.swing.BorderFactory;
@@ -15,6 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -24,6 +21,7 @@ import java.util.stream.IntStream;
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
 import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
+import static league.LeagueManager.getClubs;
 import static simulation.Controller.MATCHDAYS;
 import static simulation.Controller.proceed;
 import static simulation.Helper.sortLeague;
@@ -54,8 +52,6 @@ import static view.View.seasonalView;
 class Seasonal {
     private static final String FONT_NAME = "Times New Roman";
     private static final int FONT_SIZE = 22;
-    private static final String[] LEAGUES = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE,
-            CHAMPIONS_LEAGUE_NAME, EUROPA_LEAGUE_NAME};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
     private static final String[] PHASES = {"Group Stage", "Knockout"};
     private static final String[] ROUNDS = IntStream.range(1, 39).mapToObj(String::valueOf).toArray(String[]::new);
@@ -63,7 +59,7 @@ class Seasonal {
     private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
     private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
-    private static final JComboBox<String> nationBox = new JComboBox<>(LEAGUES);
+    private static final JComboBox<String> nationBox = new JComboBox<>(LeagueManager.getLeagues());
     private static final JComboBox<String> competitionBox = new JComboBox<>(COMPETITIONS);
     private static final JComboBox<String> continentalBox = new JComboBox<>(PHASES);
     private static final JComboBox<String> roundBox = new JComboBox<>(ROUNDS);
@@ -104,6 +100,13 @@ class Seasonal {
     private static int shortBoxWidth;
     private static int boxHeight;
     private static int boxFontSize;
+    private static int nextButtonX;
+    private static int nextButtonY;
+    private static int nextButtonWidth;
+    private static int nextButtonHeight;
+    private static int rankedButtonX;
+    private static int rankedButtonWidth;
+    private static int historicalButtonY;
 
     private static final JTable goalsTable = new JTable(new String[10][4], STATS);
     private static final JTable assistsTable = new JTable(new String[10][4], STATS);
@@ -112,35 +115,15 @@ class Seasonal {
 
     static void setup(final int frameWidth, final int frameHeight) {
         calculatePositions(frameWidth, frameHeight);
+        setResults();
+        placeBoxes();
+        setPlayerTables();
+        setTeamTables();
+        setButtons();
+        loadImage();
+    }
 
-        resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        resultsLabel.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
-        resultsLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(final MouseEvent e) {
-                changeReportType();
-            }
-        });
-
-        final TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
-        borderResults.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        final JScrollPane resultsPane = new JScrollPane(resultsLabel);
-        resultsPane.setBorder(borderResults);
-        resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        seasonalView.add(resultsPane);
-
-        placeBox(nationBox, firstBoxX, longBoxWidth);
-        placeBox(competitionBox, secondBoxX, shortBoxWidth);
-        placeBox(continentalBox, secondBoxX, shortBoxWidth);
-        placeBox(roundBox, thirdBoxX, shortBoxWidth);
-        placeBox(knockoutBox, thirdBoxX, shortBoxWidth);
-        placeBox(groupBox, thirdBoxX, shortBoxWidth);
-
-        setStatTables(goalsTable, resultsX, goalsY, "GOALS");
-        setStatTables(assistsTable, resultsX, assistsY, "ASSISTS");
-        setStatTables(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
-        setStatTables(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
-
+    private static void setTeamTables() {
         standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
         standingsTable.setRowHeight(standingsRowHeight);
         standingsTable.setEnabled(false);
@@ -167,33 +150,58 @@ class Seasonal {
         final JScrollPane gamesPane = new JScrollPane(gamesTable);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         seasonalView.add(gamesPane);
+    }
 
-        final JButton nextButton = new JButton("Next");
-        nextButton.setBounds(7 * width / 8, 9 * height / 10, width / 12, height / 12);
-        nextButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        nextButton.addActionListener(e -> nextRound());
-        seasonalView.add(nextButton);
+    private static void setResults() {
+        resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
+        resultsLabel.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
+        resultsLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                changeReportType();
+            }
+        });
 
-        final JButton rankedButton = new JButton("Rankings");
-        rankedButton.setBounds(3 * width / 4, 9 * height / 10, width / 10, height / 12);
-        rankedButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        rankedButton.addActionListener(e -> rankedView());
-        seasonalView.add(rankedButton);
+        final TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
+        borderResults.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
+        final JScrollPane resultsPane = new JScrollPane(resultsLabel);
+        resultsPane.setBorder(borderResults);
+        resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
+        seasonalView.add(resultsPane);
+    }
 
-        final JButton historicalButton = new JButton("History");
-        historicalButton.setBounds(7 * width / 8, 4 * height / 5, width / 12, height / 12);
-        historicalButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        historicalButton.addActionListener(e -> historyView());
-        seasonalView.add(historicalButton);
+    private static void setButtons() {
+        addButton("Next", nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, e -> nextRound());
+        addButton("Rankings", rankedButtonX, nextButtonY, rankedButtonWidth, nextButtonHeight, e -> rankedView());
+        addButton("History", nextButtonX, historicalButtonY, nextButtonWidth, nextButtonHeight, e -> historyView());
+    }
 
+    private static void addButton(final String name, final int x, final int y,
+                                  final int width, final int height, final ActionListener action) {
+
+        final JButton button = new JButton(name);
+        button.setBounds(x, y, width, height);
+        button.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
+        button.addActionListener(action);
+        seasonalView.add(button);
+    }
+
+    private static void loadImage() {
         try {
             seasonalView.add(getImage("/current.jpg", width, height));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.out.println("Exception thrown while extracting images! " + e);
         }
     }
 
-    private static void setStatTables(final JTable table, final int x, final int y, final String label) {
+    private static void setPlayerTables() {
+        setStatTable(goalsTable, resultsX, goalsY, "GOALS");
+        setStatTable(assistsTable, resultsX, assistsY, "ASSISTS");
+        setStatTable(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
+        setStatTable(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
+    }
+
+    private static void setStatTable(final JTable table, final int x, final int y, final String label) {
         table.setBounds(x, y, statsWidth, statsHeight);
         table.setRowHeight(statsRowHeight);
         table.setEnabled(false);
@@ -231,26 +239,17 @@ class Seasonal {
             default: teams = 1; break;
         }
 
-        final Club[] league;
+        final Club[] league = getClubs(String.valueOf(nationBox.getSelectedItem()));
         switch (String.valueOf(nationBox.getSelectedItem())) {
-            case England.LEAGUE: league = England.CLUBS; break;
-            case Spain.LEAGUE: league = Spain.CLUBS; break;
-            case Germany.LEAGUE: league = Germany.CLUBS; break;
-            case Italy.LEAGUE: league = Italy.CLUBS; break;
-            case France.LEAGUE: league = France.CLUBS; break;
             case CHAMPIONS_LEAGUE_NAME: continentalView(CHAMPIONS_LEAGUE_NAME, teams); return;
-            case EUROPA_LEAGUE_NAME: continentalView(EUROPA_LEAGUE_NAME, teams);
-            default: return;
+            case EUROPA_LEAGUE_NAME: continentalView(EUROPA_LEAGUE_NAME, teams); return;
         }
 
         if (competition.equals("League")) leagueView(league);
         else cupView(league, competition.equals("League Cup"), teams);
 
         playerStats(league, competition.equals("League") ? 0 : competition.equals("National Cup") ? 1 : 2, true);
-        displayStats(goalsTable, goals, false);
-        displayStats(assistsTable, assists, false);
-        displayStats(ratingsTable, ratings, true);
-        displayStats(cleanSheetsTable, cleanSheets, false);
+        displayPlayerStats();
     }
 
     private static void leagueView(final Club[] league) {
@@ -326,6 +325,10 @@ class Seasonal {
         if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 3, true);
         else playerStats(EUROPA_LEAGUE, 4, true);
 
+        displayPlayerStats();
+    }
+
+    private static void displayPlayerStats() {
         displayStats(goalsTable, goals, false);
         displayStats(assistsTable, assists, false);
         displayStats(ratingsTable, ratings, true);
@@ -338,21 +341,21 @@ class Seasonal {
         roundBox.setVisible(competition == 0);
         gamesTable.setVisible(competition == 0);
 
-        final boolean knockout;
-        switch (competition) {
-            case 0:
-                knockout = false;
-                break;
-            case 1:
-                knockout = true;
-                break;
-            default:
-                knockout = String.valueOf(continentalBox.getSelectedItem()).equals("Knockout");
-        }
+        final boolean knockout = competition == 1 ||
+                (competition != 0 && String.valueOf(continentalBox.getSelectedItem()).equals("Knockout"));
 
         knockoutBox.setVisible(knockout);
         groupBox.setVisible(!knockout);
         standingsTable.setVisible(!knockout);
+    }
+
+    private static void placeBoxes() {
+        placeBox(nationBox, firstBoxX, longBoxWidth);
+        placeBox(competitionBox, secondBoxX, shortBoxWidth);
+        placeBox(continentalBox, secondBoxX, shortBoxWidth);
+        placeBox(roundBox, thirdBoxX, shortBoxWidth);
+        placeBox(knockoutBox, thirdBoxX, shortBoxWidth);
+        placeBox(groupBox, thirdBoxX, shortBoxWidth);
     }
 
     private static void placeBox(final JComboBox<String> box, final int x, final int width) {
@@ -393,5 +396,13 @@ class Seasonal {
         shortBoxWidth = width / 11;
         boxHeight = height / 16;
         boxFontSize = height / 50;
+        nextButtonX = 7 * width / 8;
+        nextButtonY = 9 * height / 10;
+        nextButtonWidth = width / 12;
+        nextButtonHeight = height / 12;
+        nextButtonHeight = height / 12;
+        rankedButtonX = 3 * width / 4;
+        rankedButtonWidth = width / 10;
+        historicalButtonY = 4 * height / 5;
     }
 }

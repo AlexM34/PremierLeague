@@ -96,4 +96,12 @@ public class Italy {
     public static final Club[] CLUBS = {MILAN, JUVENTUS, INTER, NAPOLI, ROMA, LAZIO, ATALANTA, TORINO,
             SAMPDORIA, SASSUOLO, BOLOGNA, CAGLIARI, PARMA, FIORENTINA, UDINESE, BRESCIA, SPAL,
             GENOA, LECCE, VERONA};
+
+    public static String getLeague() {
+        return LEAGUE;
+    }
+
+    public static Club[] getClubs() {
+        return CLUBS;
+    }
 }

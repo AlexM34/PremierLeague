@@ -29,7 +29,7 @@ public class Glory {
     }
 
     public void addLeague() {
-        this.league += 1;
+        this.league++;
     }
 
     public int getNationalCup() {
@@ -37,7 +37,7 @@ public class Glory {
     }
 
     public void addNationalCup() {
-        this.nationalCup += 1;
+        this.nationalCup++;
     }
 
     public int getLeagueCup() {
@@ -45,7 +45,7 @@ public class Glory {
     }
 
     public void addLeagueCup() {
-        this.leagueCup += 1;
+        this.leagueCup++;
     }
 
     public int getChampionsLeague() {
@@ -53,7 +53,7 @@ public class Glory {
     }
 
     public void addChampionsLeague() {
-        this.championsLeague += 1;
+        this.championsLeague++;
     }
 
     public int getEuropaLeague() {
@@ -61,7 +61,7 @@ public class Glory {
     }
 
     public void addEuropaLeague() {
-        this.europaLeague += 1;
+        this.europaLeague++;
     }
 
     @Override

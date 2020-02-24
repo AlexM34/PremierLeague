@@ -1,11 +1,6 @@
 package view;
 
-import league.England;
-import league.France;
-import league.Germany;
-import league.Italy;
-import league.Spain;
-import simulation.Data;
+import league.LeagueManager;
 import team.Club;
 
 import javax.swing.BorderFactory;
@@ -16,37 +11,34 @@ import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import java.awt.Font;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
 import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
+import static league.LeagueManager.getClubs;
 import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
 import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 import static simulation.dynamics.Postseason.allTime;
-import static simulation.dynamics.Postseason.assists;
-import static simulation.dynamics.Postseason.cleanSheets;
-import static simulation.dynamics.Postseason.goals;
 import static simulation.dynamics.Postseason.playerStats;
+import static simulation.dynamics.Postseason.goals;
+import static simulation.dynamics.Postseason.assists;
 import static simulation.dynamics.Postseason.ratings;
+import static simulation.dynamics.Postseason.cleanSheets;
 import static view.Helper.displayStats;
 import static view.Helper.getImage;
 import static view.Helper.setColumnWidths;
-import static view.View.seasonalView;
-import static view.View.rankedView;
 import static view.View.historicalView;
+import static view.View.rankedView;
+import static view.View.seasonalView;
 
 class Historical {
     private static final String FONT_NAME = "Times New Roman";
     private static final int FONT_SIZE = 22;
     private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
     private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
-
-    private static final String[] LEAGUES = {England.LEAGUE, Spain.LEAGUE, Germany.LEAGUE, Italy.LEAGUE, France.LEAGUE,
-            CHAMPIONS_LEAGUE_NAME, EUROPA_LEAGUE_NAME};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
-    private static final JComboBox<String> nationBox = new JComboBox<>(LEAGUES);
+    private static final JComboBox<String> nationBox = new JComboBox<>(LeagueManager.getLeagues());
     private static final JComboBox<String> competitionBox = new JComboBox<>(COMPETITIONS);
     private static final JTable trophiesTable = new JTable(new String[30][3], TROPHIES);
 
@@ -126,16 +118,7 @@ class Historical {
         if (international) competitionBox.setVisible(false);
         else competitionBox.setVisible(true);
 
-        final Club[] league;
-        switch (nation) {
-            case England.LEAGUE: league = England.CLUBS; break;
-            case Spain.LEAGUE: league = Spain.CLUBS; break;
-            case Germany.LEAGUE: league = Germany.CLUBS; break;
-            case Italy.LEAGUE: league = Italy.CLUBS; break;
-            case France.LEAGUE: league = France.CLUBS; break;
-            default: league = Arrays.stream(Data.LEAGUES).flatMap(Arrays::stream).toArray(Club[]::new);
-        }
-
+        final Club[] league = getClubs(nation);
         int competition;
         switch(String.valueOf(competitionBox.getSelectedItem())) {
             case "League": competition = 0; break;

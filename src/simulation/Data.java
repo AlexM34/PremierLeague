@@ -1,10 +1,6 @@
 package simulation;
 
-import league.England;
-import league.France;
-import league.Germany;
-import league.Italy;
-import league.Spain;
+import league.LeagueManager;
 import player.Footballer;
 import player.Position;
 import player.Resume;
@@ -16,7 +12,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Data {
-    public static final Club[][] LEAGUES = {England.CLUBS, Spain.CLUBS, Germany.CLUBS, Italy.CLUBS, France.CLUBS};
+    public static final Club[][] LEAGUES = LeagueManager.getAllClubs();
     public static Integer USER = -1;
     public static int USER_STYLE;
 

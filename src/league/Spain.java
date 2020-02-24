@@ -93,7 +93,15 @@ public class Spain {
             new Glory(0, 0, 0, 1, 0, 0, 0, 0),
             49, 100, 6, OWNER, COACH);
 
-    public static final Club[] CLUBS = {BARCELONA, REAL_MADRID, ATLETICO_MADRID, VALENCIA, SEVILLA, ATHLETIC_BILBAO, GETAFE, ESPANYOL,
-            REAL_SOCIEDAD, REAL_BETIS, ALAVES, EIBAR, LEGANES, VILLARREAL, LEVANTE, VALLADOLID, CELTA_VIGO,
-            OSASUNA, GRANADA, MALLORCA};
+    public static final Club[] CLUBS = {BARCELONA, REAL_MADRID, ATLETICO_MADRID, VALENCIA, SEVILLA, ATHLETIC_BILBAO,
+            GETAFE, ESPANYOL, REAL_SOCIEDAD, REAL_BETIS, ALAVES, EIBAR, LEGANES, VILLARREAL, LEVANTE, VALLADOLID,
+            CELTA_VIGO, OSASUNA, GRANADA, MALLORCA};
+
+    public static String getLeague() {
+        return LEAGUE;
+    }
+
+    public static Club[] getClubs() {
+        return CLUBS;
+    }
 }

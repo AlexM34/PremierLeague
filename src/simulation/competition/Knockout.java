@@ -1,13 +1,11 @@
 package simulation.competition;
 
-import league.England;
-import league.France;
-import league.Spain;
-import team.Cup;
+import league.LeagueManager;
 import simulation.match.Fixture;
 import simulation.match.Match;
 import simulation.match.Report;
 import team.Club;
+import team.Cup;
 import team.Season;
 
 import java.util.Arrays;
@@ -16,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.shuffle;
-import static simulation.competition.Competition.NATIONAL_CUP;
 import static simulation.Data.LEAGUES;
+import static simulation.competition.Competition.NATIONAL_CUP;
 import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
 import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 import static simulation.competition.League.continentalCup;
@@ -38,7 +36,7 @@ public class Knockout {
 
         for (final Club[] league : LEAGUES) nationalCup.put(league[0].getLeague(), startCup(league));
 
-        for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
+        for (final Club[] league : LeagueManager.getLeagueCupClubs()) {
             leagueCup.put(league[0].getLeague(), startCup(league));
         }
     }
@@ -46,13 +44,13 @@ public class Knockout {
     public static void nationalCupRound() {
         for (final Club[] league : LEAGUES) {
             final String leagueName = league[0].getLeague();
-            knockoutRound(nationalCup, leagueName, leagueName.equals(Spain.LEAGUE) ? 2 : 1,
-                    NATIONAL_CUP, leagueName.equals(England.LEAGUE));
+            knockoutRound(nationalCup, leagueName, LeagueManager.getNationalCupGames(leagueName),
+                    NATIONAL_CUP, LeagueManager.isReplayed(leagueName));
         }
     }
 
     public static void leagueCupRound() {
-        for (final Club[] league : new Club[][]{England.CLUBS, France.CLUBS}) {
+        for (final Club[] league : LeagueManager.getLeagueCupClubs()) {
             knockoutRound(leagueCup, league[0].getLeague(), 1, Competition.LEAGUE_CUP, false);
         }
     }

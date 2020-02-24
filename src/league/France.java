@@ -4,8 +4,8 @@ import player.Glory;
 import team.Club;
 import team.Coach;
 import team.Formation;
-import team.Stadium;
 import team.Owner;
+import team.Stadium;
 
 public class France {
     public static final String LEAGUE = "Ligue 1";
@@ -96,4 +96,12 @@ public class France {
     public static final Club[] CLUBS = {LYON, PSG, MARSEILLE, SAINT_ETIENNE, LILLE, MONTPELLIER, NICE, REIMS,
             NIMES, RENNES, STRASBOURG, NANTES, BORDEAUX, ANGERS, AMIENS, TOULOUSE, MONACO,
             DIJON, BREST, METZ};
+
+    public static String getLeague() {
+        return LEAGUE;
+    }
+
+    public static Club[] getClubs() {
+        return CLUBS;
+    }
 }
