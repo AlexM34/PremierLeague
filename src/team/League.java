@@ -17,7 +17,7 @@ public class League {
     public static final Map<String, Integer> leagueCleanSheets = new HashMap<>();
 
     private final String leagueName;
-    private List<Fixture> fixtures;
+    private final List<Fixture> fixtures;
     private int matches;
     private int points;
     private int wins;
@@ -77,10 +77,6 @@ public class League {
 
     public static String getLeagueCleanSheets(final String leagueName) {
         return String.valueOf(leagueCleanSheets.getOrDefault(leagueName, 0));
-    }
-
-    String getLeagueName() {
-        return leagueName;
     }
 
     public List<Fixture> getFixtures() {

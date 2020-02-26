@@ -52,8 +52,8 @@ class Seasonal extends View {
     private static final String[] ROUNDS = IntStream.rangeClosed(1, 38)
             .mapToObj(String::valueOf).toArray(String[]::new);
     private static final String[] STAGES = Arrays.stream(Stage.values()).map(Stage::getName).toArray(String[]::new);
-    private static final String[] GROUPS = IntStream.rangeClosed('A', 'Z')
-            .mapToObj(String::valueOf).toArray(String[]::new);
+    private static final String[] GROUPS = IntStream.rangeClosed('A', 'L')
+            .mapToObj(x -> String.valueOf((char) x)).toArray(String[]::new);
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
 
     private static final JComboBox<String> NATION_BOX = new JComboBox<>(LeagueManager.getLeagues());
@@ -111,7 +111,8 @@ class Seasonal extends View {
     }
 
     private static void setTeamTables() {
-        final JScrollPane trophiesPane = createTeamPane(STANDINGS_TABLE, "STANDINGS", 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
+        final JScrollPane trophiesPane = createTeamPane(STANDINGS_TABLE, "STANDINGS",
+                6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
         seasonalView.add(trophiesPane);
 
         GAMES_TABLE.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);

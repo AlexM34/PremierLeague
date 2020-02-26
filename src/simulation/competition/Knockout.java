@@ -65,6 +65,7 @@ public class Knockout {
 
     static void knockoutRound(final Map<String, Club[]> cup, final String competition,
                               final int games, final Competition type, final boolean replay) {
+
         final Club[] clubs = cup.get(competition);
         final int count = clubs.length;
         final Map<String, String> results;
@@ -81,10 +82,11 @@ public class Knockout {
         final List<Club> draw = Arrays.asList(clubs);
         shuffle(draw);
 
-        if (count == 2) Match.FANS = 0;
+        if (count == 2) Match.fans = 0;
         for (int team = 0; team < count / 2; team++) {
             final Report report = new Report(draw.get(team), draw.get(count - team - 1), type,
-                    -1, -1, games == 1 && (!replay || count < 8));
+                    -1, -1,
+                    (games == 1 && (!replay || count < 8)) || count == 2);
             clubs[team] = knockoutFixture(report, games, replay, results, count);
         }
 
@@ -95,6 +97,7 @@ public class Knockout {
 
     private static Club knockoutFixture(final Report report, final int games, final boolean replay,
                                            final Map<String, String> results, final int teams) {
+
         final Club first = report.getHome();
         final Club second = report.getAway();
         int firstGoals = 0;
@@ -132,6 +135,7 @@ public class Knockout {
 
     private static void updateFixtures(final Club first, final Club second, final int firstGoals,
                                        final int secondGoals, final int type, final int teams) {
+
         getCup(first.getSeason(), type).getFixtures().add(
                 new Fixture(second, true, new int[]{firstGoals, secondGoals}));
         getCup(second.getSeason(), type).getFixtures().add(

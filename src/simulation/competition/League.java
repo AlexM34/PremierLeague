@@ -1,5 +1,6 @@
 package simulation.competition;
 
+import player.MatchStats;
 import simulation.match.Report;
 import team.Club;
 
@@ -9,11 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static simulation.competition.Competition.LEAGUE;
 import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
 import static simulation.Helper.getPerformance;
 import static simulation.Helper.sortMap;
+import static simulation.competition.Competition.LEAGUE;
 import static simulation.competition.Draw.league;
 import static simulation.competition.Draw.seededKnockout;
 import static simulation.dynamics.Preseason.pickContinentalTeams;
@@ -32,6 +33,11 @@ public class League {
     public static final Map<String, Club[]> continentalCup = new HashMap<>();
     public static final Map<String, String> leagueResults = new HashMap<>();
     public static final Map<String, String> continentalCupResults = new HashMap<>();
+    public static final Map<String, Integer> leagueAssists = new HashMap<>();
+    public static final Map<String, Integer> leagueYellowCards = new HashMap<>();
+    public static final Map<String, Integer> leagueRedCards = new HashMap<>();
+    public static final Map<String, Float> leagueAverageRatings = new HashMap<>();
+
     private static int leagueRound;
     private static int championsLeagueRound;
     private static int europaLeagueRound;
@@ -42,6 +48,10 @@ public class League {
         continentalCup.clear();
         leagueResults.clear();
         continentalCupResults.clear();
+        leagueAssists.clear();
+        leagueYellowCards.clear();
+        leagueRedCards.clear();
+        leagueAverageRatings.clear();
 
         pickContinentalTeams(CHAMPIONS_LEAGUE, EUROPA_LEAGUE);
 
@@ -184,12 +194,22 @@ public class League {
             for (int team = 0; team < 8; team++) europaLeagueTeams[team] = thirds.remove(0);
             continentalCup.put(EUROPA_LEAGUE_NAME, europaLeagueTeams);
             continentalCup.put(CHAMPIONS_LEAGUE_NAME, seededKnockout(advancing));
+
         } else {
             final Club[] europaLeagueTeams = continentalCup.get(EUROPA_LEAGUE_NAME);
             System.arraycopy(advancing, 0, europaLeagueTeams, 8, 24);
             for (int team = 0; team < 32; team++) System.out.println(europaLeagueTeams[team].getName());
 
             continentalCup.put(EUROPA_LEAGUE_NAME, seededKnockout(europaLeagueTeams));
+        }
+    }
+
+    public static void updateLeagueStats(final String leagueName, final List<MatchStats> squad) {
+        for (final MatchStats footballer : squad) {
+            leagueAverageRatings.merge(leagueName, footballer.getRating(), Float::sum);
+            leagueAssists.merge(leagueName, footballer.getAssists(), Integer::sum);
+            leagueYellowCards.merge(leagueName, footballer.isYellowCarded() ? 1 : 0, Integer::sum);
+            leagueRedCards.merge(leagueName, footballer.isRedCarded() ? 1 : 0, Integer::sum);
         }
     }
 }

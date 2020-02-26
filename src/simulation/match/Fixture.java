@@ -20,10 +20,6 @@ public class Fixture {
         return opponent;
     }
 
-    boolean isHome() {
-        return isHome;
-    }
-
     public int[] getScore() {
         return score;
     }

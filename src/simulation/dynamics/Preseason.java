@@ -22,10 +22,6 @@ import java.util.Random;
 
 import static simulation.Data.LEAGUES;
 import static simulation.Helper.sortLeague;
-import static simulation.match.Match.leagueAssists;
-import static simulation.match.Match.leagueAverageRatings;
-import static simulation.match.Match.leagueRedCards;
-import static simulation.match.Match.leagueYellowCards;
 
 public class Preseason {
     private static final Random random = new Random();
@@ -36,10 +32,6 @@ public class Preseason {
 
     public static void prepare(final int year) {
         League.clearLeagueStats();
-        leagueAssists.clear();
-        leagueYellowCards.clear();
-        leagueRedCards.clear();
-        leagueAverageRatings.clear();
 
         System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
         for (final Club[] league : LEAGUES) {
@@ -66,20 +58,18 @@ public class Preseason {
                 for (final Footballer f : club.getFootballers()) {
                     if (f.getNumber() > 100) continue;
                     f.changeCondition(100);
-                    int r = random.nextInt(2);
-                    if (r == 0) {
+
+                    if (random.nextInt(2) == 0) {
                         if (f.getResume().getSeason().getLeague().getRating() > 750) {
                             improve(f);
                         } else if (f.getResume().getSeason().getLeague().getRating() < 650) {
                             decline(f);
                         }
                     }
-                    r = random.nextInt(6);
-                    if (r == 0) {
-                        improve(f);
-                    } else if (r == 1) {
-                        decline(f);
-                    }
+
+                    final int r = random.nextInt(6);
+                    if (r == 0) improve(f);
+                    else if (r == 1) decline(f);
 
                     f.setAge(f.getAge() + 1);
 
@@ -89,16 +79,14 @@ public class Preseason {
                             break;
                         }
 
-                        r = random.nextInt(2);
-                        if (r == 0) {
+                        if (random.nextInt(2) == 0) {
                             decline(f);
                             decline(f);
                         }
                     }
 
                     if (f.getAge() > 30) {
-                        r = random.nextInt(2);
-                        if (r == 0) {
+                        if (random.nextInt(2) == 0) {
                             decline(f);
                             decline(f);
                         }
@@ -106,24 +94,21 @@ public class Preseason {
 
                     if (f.getAge() < 20) {
                         improve(f);
-                        r = random.nextInt(2);
-                        if (r == 0) {
+                        if (random.nextInt(2) == 0) {
                             improve(f);
                             improve(f);
                         }
                     }
 
                     if (f.getAge() < 25) {
-                        r = random.nextInt(3);
-                        if (r == 0) {
+                        if (random.nextInt(3) == 0) {
                             improve(f);
                             improve(f);
                         }
                     }
 
                     if (f.getOverall() + 10 < f.getPotential()) {
-                        r = random.nextInt(2);
-                        if (r == 0) {
+                        if (random.nextInt(2) == 0) {
                             improve(f);
                             improve(f);
                         }
@@ -163,10 +148,11 @@ public class Preseason {
         int midfielders = 0;
         int forwards = 0;
 
-        for (Club[] league : LEAGUES) {
-            for (Club club : league) {
+        for (final Club[] league : LEAGUES) {
+            for (final Club club : league) {
                 youngster(club, null);
                 youngster(club, null);
+
                 for (Footballer footballer : club.getFootballers()) {
                     switch (footballer.getPosition().getRole()) {
                         case Goalkeeper: goalkeepers++; break;
@@ -201,19 +187,18 @@ public class Preseason {
                 Data.SURNAMES[random.nextInt(Data.SURNAMES.length)] + (academy - 1);
         final int age = 17 + random.nextInt(3);
         final String nationality = Data.NATIONS[random.nextInt(Data.NATIONS.length)];
-        int overall = 60 + random.nextInt(10);
-        int potential = overall + random.nextInt(15) + 10;
-        long value = 3;
-        long wage = 1;
+        final int overall = 60 + random.nextInt(10);
+        final int potential = overall + random.nextInt(15) + 10;
+        final long value = 3;
+        final long wage = 1;
         final Position.Role finalRole = role;
-        Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
-        Position position = (Position) positions[random.nextInt(positions.length)];
-        int number = random.nextInt(97) + 2;
-        int finishing = overall + 10 * position.getAttackingDuty() - 50;
-        int vision = overall + 10 - (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
-        Resume resume = new Resume();
+        final Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
+        final Position position = (Position) positions[random.nextInt(positions.length)];
+        final int number = random.nextInt(97) + 2;
+        final int finishing = overall + 10 * position.getAttackingDuty() - 50;
+        final int vision = overall + 10 - (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
         final Footballer footballer = new Footballer(id, name, age, nationality, overall, potential,
-                club.getName(), value, wage, position, number, finishing, vision, resume);
+                club.getName(), value, wage, position, number, finishing, vision, new Resume());
 
         club.addFootballer(footballer);
     }

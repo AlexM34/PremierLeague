@@ -7,7 +7,7 @@ public enum Competition {
         this.type = type;
     }
 
-    private int type;
+    private final int type;
 
     public int getType() {
         return type;

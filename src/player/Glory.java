@@ -8,9 +8,9 @@ public class Glory {
     private int leagueCup;
     private int championsLeague;
     private int europaLeague;
-    private int nationalSuperCup;
-    private int continentalSuperCup;
-    private int worldChampionship;
+    private final int nationalSuperCup;
+    private final int continentalSuperCup;
+    private final int worldChampionship;
 
     public Glory(final int championsLeague, final int europaLeague, final int league, final int nationalCup, final int leagueCup,
                  final int nationalSuperCup, final int continentalSuperCup, final int worldChampionship) {

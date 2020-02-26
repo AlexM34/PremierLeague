@@ -22,7 +22,6 @@ import static simulation.Data.USER_STYLE;
 import static simulation.match.Match.minute;
 import static simulation.match.Match.report;
 import static simulation.match.Match.stoppage;
-import static simulation.match.Match.updateStats;
 
 public class Tactics {
     private static final Scanner scanner = new Scanner(System.in);
@@ -60,6 +59,7 @@ public class Tactics {
         int f = forwards;
         int bg = 1;
         int bf = 6;
+
         GOALKEEPER_1.changeCondition(100);
         DEFENDER_1.changeCondition(100);
         MIDFIELDER_1.changeCondition(100);
@@ -67,6 +67,7 @@ public class Tactics {
         DEFENDER_2.changeCondition(100);
         MIDFIELDER_2.changeCondition(100);
         FORWARD_2.changeCondition(100);
+
         for (final Footballer footballer : footballers) {
             if (footballer.getPosition() == null || footballer.getCondition() < 70
                     || footballer.getBan() > 0) {
@@ -143,7 +144,9 @@ public class Tactics {
         return Formation.F5;
     }
 
-    static void substitute(final List<MatchStats> squad, final List<Footballer> bench) {
+    static void substitute(final boolean isHome) {
+        final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();
+        final List<Footballer> bench = isHome ? report.getHomeBench() : report.getAwayBench();
         float worst = 10;
         int flop = 0;
 
@@ -164,7 +167,7 @@ public class Tactics {
                 report.append(String.valueOf(minute)).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
                         .append(subbedIn.getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
 
-                updateStats(squad.get(flop));
+                report.updateStats(squad.get(flop));
                 squad.set(flop, new MatchStats(subbedIn, minute));
                 bench.set(player, null);
                 break;

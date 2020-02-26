@@ -12,10 +12,10 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-import static simulation.match.Match.leagueAssists;
-import static simulation.match.Match.leagueAverageRatings;
-import static simulation.match.Match.leagueRedCards;
-import static simulation.match.Match.leagueYellowCards;
+import static simulation.competition.League.leagueAssists;
+import static simulation.competition.League.leagueAverageRatings;
+import static simulation.competition.League.leagueRedCards;
+import static simulation.competition.League.leagueYellowCards;
 
 class Helper {
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");

@@ -1,7 +1,5 @@
 package simulation;
 
-import player.Competition;
-import player.Statistics;
 import team.Club;
 import team.League;
 
@@ -41,15 +39,5 @@ public class Helper {
 
     public static int getPerformance(final League stats) {
         return 10000 * stats.getPoints() + 100 * (stats.getScored() - stats.getConceded()) + stats.getScored();
-    }
-
-    public static Competition getCompetition(final Statistics season, final int type) {
-        switch (type) {
-            case 0: return season.getLeague();
-            case 1: return season.getNationalCup();
-            case 2: return season.getLeagueCup();
-            case 3: return season.getChampionsLeague();
-            default: return season.getEuropaLeague();
-        }
     }
 }
