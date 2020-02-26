@@ -1,4 +1,4 @@
-import view.View;
+import view.ViewManager;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -11,6 +11,6 @@ class Gladiators {
             e.printStackTrace();
         }
 
-        SwingUtilities.invokeLater(View::new);
+        SwingUtilities.invokeLater(ViewManager::new);
     }
 }

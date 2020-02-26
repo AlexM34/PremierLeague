@@ -14,7 +14,7 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -38,36 +38,38 @@ import static simulation.dynamics.Postseason.cleanSheets;
 import static simulation.dynamics.Postseason.goals;
 import static simulation.dynamics.Postseason.playerStats;
 import static simulation.dynamics.Postseason.ratings;
-import static view.Helper.displayStats;
-import static view.Helper.getImage;
 import static view.Helper.getInteger;
 import static view.Helper.insertStandingsEntry;
 import static view.Helper.leagueStats;
-import static view.Helper.setColumnWidths;
-import static view.Helper.setTableValues;
-import static view.View.historyView;
-import static view.View.rankedView;
-import static view.View.seasonalView;
+import static view.ViewManager.historicalView;
+import static view.ViewManager.rankedView;
+import static view.ViewManager.seasonalView;
 
-class Seasonal {
-    private static final String FONT_NAME = "Times New Roman";
-    private static final int FONT_SIZE = 22;
+class Seasonal extends View {
+    private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
     private static final String[] PHASES = {"Group Stage", "Knockout"};
-    private static final String[] ROUNDS = IntStream.range(1, 39).mapToObj(String::valueOf).toArray(String[]::new);
-    private static final String[] STAGES = {"Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"};
-    private static final String[] GROUPS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
-    private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
+    private static final String[] ROUNDS = IntStream.rangeClosed(1, 38)
+            .mapToObj(String::valueOf).toArray(String[]::new);
+    private static final String[] STAGES = Arrays.stream(Stage.values()).map(Stage::getName).toArray(String[]::new);
+    private static final String[] GROUPS = IntStream.rangeClosed('A', 'Z')
+            .mapToObj(String::valueOf).toArray(String[]::new);
     private static final String[] STANDINGS = {"N", "TEAM", "G", "W", "D", "L", "GS", "GA", "GD", "P"};
-    private static final JComboBox<String> nationBox = new JComboBox<>(LeagueManager.getLeagues());
-    private static final JComboBox<String> competitionBox = new JComboBox<>(COMPETITIONS);
-    private static final JComboBox<String> continentalBox = new JComboBox<>(PHASES);
-    private static final JComboBox<String> roundBox = new JComboBox<>(ROUNDS);
-    private static final JComboBox<String> knockoutBox = new JComboBox<>(STAGES);
-    private static final JComboBox<String> groupBox = new JComboBox<>(GROUPS);
-    private static final JLabel resultsLabel = new JLabel();
-    private static final JTable standingsTable = new JTable(new String[20][10], STANDINGS);
-    private static final JTable gamesTable = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
+
+    private static final JComboBox<String> NATION_BOX = new JComboBox<>(LeagueManager.getLeagues());
+    private static final JComboBox<String> COMPETITION_BOX = new JComboBox<>(COMPETITIONS);
+    private static final JComboBox<String> CONTINENTAL_BOX = new JComboBox<>(PHASES);
+    private static final JComboBox<String> ROUND_BOX = new JComboBox<>(ROUNDS);
+    private static final JComboBox<String> KNOCKOUT_BOX = new JComboBox<>(STAGES);
+    private static final JComboBox<String> GROUP_BOX = new JComboBox<>(GROUPS);
+
+    private static final JLabel RESULTS_LABEL = new JLabel();
+    private static final JTable STANDINGS_TABLE = new JTable(new String[20][10], STANDINGS);
+    private static final JTable GAMES_TABLE = new JTable(new String[11][10], new String[]{"STATS", "COUNT"});
+    private static final JTable GOALS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable ASSISTS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable RATINGS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable CLEAN_SHEETS_TABLE = new JTable(new String[10][4], STATS);
 
     private static String reportString = "";
     private static int width;
@@ -79,16 +81,6 @@ class Seasonal {
     private static int goalsY;
     private static int assistsY;
     private static int cleanSheetsX;
-    private static int statsWidth;
-    private static int statsRowHeight;
-    private static int statsHeight;
-    private static int statsFontSize;
-    private static int standingsX;
-    private static int standingsY;
-    private static int standingsWidth;
-    private static int standingsHeight;
-    private static int standingsRowHeight;
-    private static int standingsFontSize;
     private static int gamesY;
     private static int gamesWidth;
     private static int gamesHeight;
@@ -103,15 +95,10 @@ class Seasonal {
     private static int nextButtonX;
     private static int nextButtonY;
     private static int nextButtonWidth;
-    private static int nextButtonHeight;
+    private static int buttonHeight;
     private static int rankedButtonX;
     private static int rankedButtonWidth;
     private static int historicalButtonY;
-
-    private static final JTable goalsTable = new JTable(new String[10][4], STATS);
-    private static final JTable assistsTable = new JTable(new String[10][4], STATS);
-    private static final JTable ratingsTable = new JTable(new String[10][4], STATS);
-    private static final JTable cleanSheetsTable = new JTable(new String[10][4], STATS);
 
     static void setup(final int frameWidth, final int frameHeight) {
         calculatePositions(frameWidth, frameHeight);
@@ -124,38 +111,28 @@ class Seasonal {
     }
 
     private static void setTeamTables() {
-        standingsTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
-        standingsTable.setRowHeight(standingsRowHeight);
-        standingsTable.setEnabled(false);
-        standingsTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
-        setColumnWidths(standingsTable, standingsWidth, 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
+        final JScrollPane trophiesPane = createTeamPane(STANDINGS_TABLE, "STANDINGS", 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
+        seasonalView.add(trophiesPane);
 
-        final JScrollPane standingsPane = new JScrollPane(standingsTable);
-        final TitledBorder borderStandings = BorderFactory.createTitledBorder("STANDINGS");
-        borderStandings.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        standingsPane.setBorder(borderStandings);
-        standingsPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
-        seasonalView.add(standingsPane);
+        GAMES_TABLE.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
+        GAMES_TABLE.setRowHeight(statsRowHeight);
+        GAMES_TABLE.setEnabled(false);
+        GAMES_TABLE.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
+        GAMES_TABLE.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
-        gamesTable.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
-        gamesTable.setRowHeight(statsRowHeight);
-        gamesTable.setEnabled(false);
-        gamesTable.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
-        gamesTable.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
-
-        setTableValues(gamesTable, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
+        setTableValues(GAMES_TABLE, "Games", "Home Wins", "Draws", "Away Wins", "Home Goals", "Away Goals",
                 "Assists", "Yellow Cards", "Red Cards", "Average Rating", "Clean Sheets");
 
-        setColumnWidths(gamesTable, gamesWidth, 70, 30);
-        final JScrollPane gamesPane = new JScrollPane(gamesTable);
+        setColumnWidths(GAMES_TABLE, gamesWidth, 70, 30);
+        final JScrollPane gamesPane = new JScrollPane(GAMES_TABLE);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         seasonalView.add(gamesPane);
     }
 
     private static void setResults() {
-        resultsLabel.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
-        resultsLabel.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
-        resultsLabel.addMouseListener(new MouseAdapter() {
+        RESULTS_LABEL.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
+        RESULTS_LABEL.setFont(new Font(FONT_NAME, PLAIN, resultsHeight / 14));
+        RESULTS_LABEL.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
                 changeReportType();
@@ -164,57 +141,39 @@ class Seasonal {
 
         final TitledBorder borderResults = BorderFactory.createTitledBorder("RESULTS");
         borderResults.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        final JScrollPane resultsPane = new JScrollPane(resultsLabel);
+        final JScrollPane resultsPane = new JScrollPane(RESULTS_LABEL);
         resultsPane.setBorder(borderResults);
         resultsPane.setBounds(resultsX, resultsY, resultsWidth, resultsHeight);
         seasonalView.add(resultsPane);
     }
 
     private static void setButtons() {
-        addButton("Next", nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, e -> nextRound());
-        addButton("Rankings", rankedButtonX, nextButtonY, rankedButtonWidth, nextButtonHeight, e -> rankedView());
-        addButton("History", nextButtonX, historicalButtonY, nextButtonWidth, nextButtonHeight, e -> historyView());
+        addButton("Next", nextButtonX, nextButtonY, nextButtonWidth, buttonHeight, e -> nextRound());
+        addButton("Rankings", rankedButtonX, nextButtonY, rankedButtonWidth, buttonHeight, e -> rankedView());
+        addButton("History", nextButtonX, historicalButtonY, nextButtonWidth, buttonHeight, e -> historicalView());
     }
 
     private static void addButton(final String name, final int x, final int y,
                                   final int width, final int height, final ActionListener action) {
 
-        final JButton button = new JButton(name);
-        button.setBounds(x, y, width, height);
-        button.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        button.addActionListener(action);
+        final JButton button = createButton(name, x, y, width, height, action);
         seasonalView.add(button);
     }
 
     private static void loadImage() {
-        try {
-            seasonalView.add(getImage("/current.jpg", width, height));
-        } catch (final IOException e) {
-            System.out.println("Exception thrown while extracting images! " + e);
-        }
+        seasonalView.add(getImage("/current.jpg", width, height));
     }
 
     private static void setPlayerTables() {
-        setStatTable(goalsTable, resultsX, goalsY, "GOALS");
-        setStatTable(assistsTable, resultsX, assistsY, "ASSISTS");
-        setStatTable(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
-        setStatTable(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
+        addStatsPane(GOALS_TABLE, resultsX, goalsY, "GOALS");
+        addStatsPane(ASSISTS_TABLE, resultsX, assistsY, "ASSISTS");
+        addStatsPane(RATINGS_TABLE, cleanSheetsX, goalsY, "RATINGS");
+        addStatsPane(CLEAN_SHEETS_TABLE, cleanSheetsX, assistsY, "CLEAN SHEETS");
     }
 
-    private static void setStatTable(final JTable table, final int x, final int y, final String label) {
-        table.setBounds(x, y, statsWidth, statsHeight);
-        table.setRowHeight(statsRowHeight);
-        table.setEnabled(false);
-        table.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
-        table.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
-        setColumnWidths(table, statsWidth, 8, 40, 35, 17);
-
-        final JScrollPane scrollPane = new JScrollPane(table);
-        final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
-        titledBorder.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        scrollPane.setBorder(titledBorder);
-        scrollPane.setBounds(x, y, statsWidth, statsHeight);
-        seasonalView.add(scrollPane);
+    private static void addStatsPane(final JTable table, final int x, final int y, final String label) {
+        final JScrollPane pane = createStatsPane(table, x, y, label);
+        seasonalView.add(pane);
     }
 
     private static void nextRound() {
@@ -228,28 +187,30 @@ class Seasonal {
     }
 
     static void update() {
-        final String competition = String.valueOf(competitionBox.getSelectedItem());
-        final int teams;
-        switch (String.valueOf(knockoutBox.getSelectedItem())) {
-            case "Round of 32": teams = 32; break;
-            case "Round of 16": teams = 16; break;
-            case "Quarter-finals": teams = 8; break;
-            case "Semi-finals": teams = 4; break;
-            case "Final": teams = 2; break;
-            default: teams = 1; break;
+        final String competition = String.valueOf(COMPETITION_BOX.getSelectedItem());
+        final int teams = Stage.getTeams(String.valueOf(KNOCKOUT_BOX.getSelectedItem()));
+
+        final String nation = String.valueOf(NATION_BOX.getSelectedItem());
+        final boolean international = nation.equals(CHAMPIONS_LEAGUE_NAME) || nation.equals(EUROPA_LEAGUE_NAME);
+        if (international) {
+            continentalView(nation, teams);
+            return;
         }
 
-        final Club[] league = getClubs(String.valueOf(nationBox.getSelectedItem()));
-        switch (String.valueOf(nationBox.getSelectedItem())) {
-            case CHAMPIONS_LEAGUE_NAME: continentalView(CHAMPIONS_LEAGUE_NAME, teams); return;
-            case EUROPA_LEAGUE_NAME: continentalView(EUROPA_LEAGUE_NAME, teams); return;
-        }
+        final Club[] league = getClubs(String.valueOf(NATION_BOX.getSelectedItem()));
 
         if (competition.equals("League")) leagueView(league);
         else cupView(league, competition.equals("League Cup"), teams);
 
         playerStats(league, competition.equals("League") ? 0 : competition.equals("National Cup") ? 1 : 2, true);
         displayPlayerStats();
+    }
+
+    static void displayPlayerStats() {
+        displayStats(GOALS_TABLE, goals, false);
+        displayStats(ASSISTS_TABLE, assists, false);
+        displayStats(RATINGS_TABLE, ratings, true);
+        displayStats(CLEAN_SHEETS_TABLE, cleanSheets, false);
     }
 
     private static void leagueView(final Club[] league) {
@@ -259,19 +220,19 @@ class Seasonal {
         final Map<Club, Integer> sorted = sortLeague(league, 0);
         int row = 0;
         for (final Club team : sorted.keySet()) {
-            insertStandingsEntry(standingsTable, team.getName(), team.getSeason().getLeague(), row++);
+            insertStandingsEntry(STANDINGS_TABLE, team.getName(), team.getSeason().getLeague(), row++);
         }
 
         for (int i = row; i < 20; i++) {
-            for (int j = 0; j < standingsTable.getColumnCount(); j++) {
-                standingsTable.setValueAt("", i, j);
+            for (int j = 0; j < STANDINGS_TABLE.getColumnCount(); j++) {
+                STANDINGS_TABLE.setValueAt("", i, j);
             }
         }
 
-        leagueStats(gamesTable, leagueName);
+        leagueStats(GAMES_TABLE, leagueName);
 
-        final int round = getInteger(String.valueOf(roundBox.getSelectedItem()));
-        resultsLabel.setText("<html>" + leagueResults.getOrDefault(
+        final int round = getInteger(String.valueOf(ROUND_BOX.getSelectedItem()));
+        RESULTS_LABEL.setText("<html>" + leagueResults.getOrDefault(
                 reportString + leagueName + round, "") + "</html>");
         System.out.println(leagueResults.get(leagueName));
     }
@@ -281,11 +242,11 @@ class Seasonal {
 
         final String leagueName = league[0].getLeague();
         if (leagueCup) {
-            resultsLabel.setText("<html>" + leagueCupResults.getOrDefault(
+            RESULTS_LABEL.setText("<html>" + leagueCupResults.getOrDefault(
                     reportString + leagueName + teams, "") + "</html>");
             System.out.println(leagueCupResults.get(leagueName));
         } else {
-            resultsLabel.setText("<html>" + nationalCupResults.getOrDefault(
+            RESULTS_LABEL.setText("<html>" + nationalCupResults.getOrDefault(
                     reportString + leagueName + teams, "") + "</html>");
             System.out.println(nationalCupResults.get(leagueName));
         }
@@ -295,15 +256,15 @@ class Seasonal {
         boxVisibility(2);
 
         for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < standingsTable.getColumnCount(); j++) {
-                standingsTable.setValueAt("", i, j);
+            for (int j = 0; j < STANDINGS_TABLE.getColumnCount(); j++) {
+                STANDINGS_TABLE.setValueAt("", i, j);
             }
         }
 
         final boolean isChampionsLeague = competition.equals(CHAMPIONS_LEAGUE_NAME);
-        final int group = (int) String.valueOf(groupBox.getSelectedItem()).charAt(0) - 'A';
-        if (String.valueOf(continentalBox.getSelectedItem()).equals("Knockout")) {
-            resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
+        final int group = (int) String.valueOf(GROUP_BOX.getSelectedItem()).charAt(0) - 'A';
+        if (String.valueOf(CONTINENTAL_BOX.getSelectedItem()).equals("Knockout")) {
+            RESULTS_LABEL.setText("<html>" + continentalCupResults.getOrDefault(
                     reportString + competition + teams, "") + "</html>");
         } else if (!isChampionsLeague || group < 8) {
             final Club[] league = new Club[4];
@@ -314,11 +275,11 @@ class Seasonal {
             final Map<Club, Integer> sorted = sortLeague(league, 3);
             int row = 0;
             for (final Club team : sorted.keySet()) {
-                insertStandingsEntry(standingsTable, team.getName(), team.getSeason().getContinental().getGroup(), row++);
+                insertStandingsEntry(STANDINGS_TABLE, team.getName(), team.getSeason().getContinental().getGroup(), row++);
             }
 
-            resultsLabel.setText("<html>" + continentalCupResults.getOrDefault(
-                    reportString + competition + groupBox.getSelectedItem(), "") + "</html>");
+            RESULTS_LABEL.setText("<html>" + continentalCupResults.getOrDefault(
+                    reportString + competition + GROUP_BOX.getSelectedItem(), "") + "</html>");
         }
 
         System.out.println(continentalCupResults);
@@ -328,34 +289,27 @@ class Seasonal {
         displayPlayerStats();
     }
 
-    private static void displayPlayerStats() {
-        displayStats(goalsTable, goals, false);
-        displayStats(assistsTable, assists, false);
-        displayStats(ratingsTable, ratings, true);
-        displayStats(cleanSheetsTable, cleanSheets, false);
-    }
-
     private static void boxVisibility(final int competition) {
-        competitionBox.setVisible(competition != 2);
-        continentalBox.setVisible(competition == 2);
-        roundBox.setVisible(competition == 0);
-        gamesTable.setVisible(competition == 0);
+        COMPETITION_BOX.setVisible(competition != 2);
+        CONTINENTAL_BOX.setVisible(competition == 2);
+        ROUND_BOX.setVisible(competition == 0);
+        GAMES_TABLE.setVisible(competition == 0);
 
         final boolean knockout = competition == 1 ||
-                (competition != 0 && String.valueOf(continentalBox.getSelectedItem()).equals("Knockout"));
+                (competition != 0 && String.valueOf(CONTINENTAL_BOX.getSelectedItem()).equals("Knockout"));
 
-        knockoutBox.setVisible(knockout);
-        groupBox.setVisible(!knockout);
-        standingsTable.setVisible(!knockout);
+        KNOCKOUT_BOX.setVisible(knockout);
+        GROUP_BOX.setVisible(!knockout);
+        STANDINGS_TABLE.setVisible(!knockout);
     }
 
     private static void placeBoxes() {
-        placeBox(nationBox, firstBoxX, longBoxWidth);
-        placeBox(competitionBox, secondBoxX, shortBoxWidth);
-        placeBox(continentalBox, secondBoxX, shortBoxWidth);
-        placeBox(roundBox, thirdBoxX, shortBoxWidth);
-        placeBox(knockoutBox, thirdBoxX, shortBoxWidth);
-        placeBox(groupBox, thirdBoxX, shortBoxWidth);
+        placeBox(NATION_BOX, firstBoxX, longBoxWidth);
+        placeBox(COMPETITION_BOX, secondBoxX, shortBoxWidth);
+        placeBox(CONTINENTAL_BOX, secondBoxX, shortBoxWidth);
+        placeBox(ROUND_BOX, thirdBoxX, shortBoxWidth);
+        placeBox(KNOCKOUT_BOX, thirdBoxX, shortBoxWidth);
+        placeBox(GROUP_BOX, thirdBoxX, shortBoxWidth);
     }
 
     private static void placeBox(final JComboBox<String> box, final int x, final int width) {
@@ -399,8 +353,8 @@ class Seasonal {
         nextButtonX = 7 * width / 8;
         nextButtonY = 9 * height / 10;
         nextButtonWidth = width / 12;
-        nextButtonHeight = height / 12;
-        nextButtonHeight = height / 12;
+        buttonHeight = height / 12;
+        buttonHeight = height / 12;
         rankedButtonX = 3 * width / 4;
         rankedButtonWidth = width / 10;
         historicalButtonY = 4 * height / 5;

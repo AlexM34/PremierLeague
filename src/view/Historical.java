@@ -3,44 +3,40 @@ package view;
 import league.LeagueManager;
 import team.Club;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.TitledBorder;
 import java.awt.Font;
-import java.io.IOException;
+import java.awt.event.ActionListener;
 import java.util.Map;
 
-import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
-import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
 import static league.LeagueManager.getClubs;
 import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
 import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 import static simulation.dynamics.Postseason.allTime;
-import static simulation.dynamics.Postseason.playerStats;
-import static simulation.dynamics.Postseason.goals;
 import static simulation.dynamics.Postseason.assists;
-import static simulation.dynamics.Postseason.ratings;
 import static simulation.dynamics.Postseason.cleanSheets;
-import static view.Helper.displayStats;
-import static view.Helper.getImage;
-import static view.Helper.setColumnWidths;
-import static view.View.historicalView;
-import static view.View.rankedView;
-import static view.View.seasonalView;
+import static simulation.dynamics.Postseason.goals;
+import static simulation.dynamics.Postseason.playerStats;
+import static simulation.dynamics.Postseason.ratings;
+import static view.ViewManager.historicalView;
+import static view.ViewManager.rankedView;
+import static view.ViewManager.seasonalView;
 
-class Historical {
-    private static final String FONT_NAME = "Times New Roman";
-    private static final int FONT_SIZE = 22;
+class Historical extends View {
     private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
-    private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
-    private static final JComboBox<String> nationBox = new JComboBox<>(LeagueManager.getLeagues());
-    private static final JComboBox<String> competitionBox = new JComboBox<>(COMPETITIONS);
-    private static final JTable trophiesTable = new JTable(new String[30][3], TROPHIES);
+    private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
+
+    private static final JComboBox<String> NATION_BOX = new JComboBox<>(LeagueManager.getLeagues());
+    private static final JComboBox<String> COMPETITION_BOX = new JComboBox<>(COMPETITIONS);
+    private static final JTable GOALS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable ASSISTS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable RATINGS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable CLEAN_SHEETS_TABLE = new JTable(new String[10][4], STATS);
+    private static final JTable TROPHIES_TABLE = new JTable(new String[30][3], TROPHIES);
 
     private static int width;
     private static int height;
@@ -48,79 +44,76 @@ class Historical {
     private static int goalsY;
     private static int assistsY;
     private static int cleanSheetsX;
-    private static int statsWidth;
-    private static int statsHeight;
-    private static int statsRowHeight;
-    private static int statsFontSize;
-    private static int standingsX;
-    private static int standingsY;
-    private static int standingsWidth;
-    private static int standingsHeight;
-    private static int standingsRowHeight;
-    private static int standingsFontSize;
+    private static int firstBoxX;
+    private static int secondBoxX;
     private static int boxY;
+    private static int longBoxWidth;
+    private static int shortBoxWidth;
     private static int boxHeight;
     private static int boxFontSize;
+    private static int seasonsButtonX;
+    private static int rankingsButtonX;
     private static int buttonY;
+    private static int seasonsButtonWidth;
+    private static int rankingsButtonWidth;
     private static int buttonHeight;
-
-    private static final JTable goalsTable = new JTable(new String[10][4], STATS);
-    private static final JTable assistsTable = new JTable(new String[10][4], STATS);
-    private static final JTable ratingsTable = new JTable(new String[10][4], STATS);
-    private static final JTable cleanSheetsTable = new JTable(new String[10][4], STATS);
 
     static void setup(final int frameWidth, final int frameHeight) {
         calculatePositions(frameWidth, frameHeight);
+        placeBoxes();
+        setPlayerTables();
+        setTrophiesTable();
+        setButtons();
+        loadImage();
+    }
 
-        placeBox(nationBox, 17 * width / 40, width / 9);
-        placeBox(competitionBox, 23 * width / 40, width / 11);
+    private static void placeBoxes() {
+        placeBox(NATION_BOX, firstBoxX, longBoxWidth);
+        placeBox(COMPETITION_BOX, secondBoxX, shortBoxWidth);
+    }
 
-        setStatsTable(goalsTable, goalsX, goalsY, "GOALS");
-        setStatsTable(assistsTable, goalsX, assistsY, "ASSISTS");
-        setStatsTable(ratingsTable, cleanSheetsX, goalsY, "RATINGS");
-        setStatsTable(cleanSheetsTable, cleanSheetsX, assistsY, "CLEAN SHEETS");
+    private static void setPlayerTables() {
+        addStatsPane(GOALS_TABLE, goalsX, goalsY, "GOALS");
+        addStatsPane(ASSISTS_TABLE, goalsX, assistsY, "ASSISTS");
+        addStatsPane(RATINGS_TABLE, cleanSheetsX, goalsY, "RATINGS");
+        addStatsPane(CLEAN_SHEETS_TABLE, cleanSheetsX, assistsY, "CLEAN SHEETS");
+    }
 
-        trophiesTable.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
-        trophiesTable.setRowHeight(standingsRowHeight);
-        trophiesTable.setEnabled(false);
-        trophiesTable.setFont(new Font(FONT_NAME, PLAIN, standingsFontSize));
-        setColumnWidths(trophiesTable, standingsWidth, 7, 60, 33);
+    private static void addStatsPane(final JTable table, final int x, final int y, final String label) {
+        final JScrollPane pane = createStatsPane(table, x, y, label);
+        historicalView.add(pane);
+    }
 
-        final JScrollPane trophiesPane = new JScrollPane(trophiesTable);
-        final TitledBorder borderTrophies = BorderFactory.createTitledBorder("TROPHIES");
-        borderTrophies.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        trophiesPane.setBorder(borderTrophies);
-        trophiesPane.setBounds(standingsX, standingsY, standingsWidth, standingsHeight);
+    private static void setTrophiesTable() {
+        final JScrollPane trophiesPane = createTeamPane(TROPHIES_TABLE, "TROPHIES", 7, 60, 33);
         historicalView.add(trophiesPane);
+    }
 
-        final JButton seasonalButton = new JButton("Season");
-        seasonalButton.setBounds(7 * width / 8, buttonY, width / 12, buttonHeight);
-        seasonalButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        seasonalButton.addActionListener(e -> seasonalView());
-        historicalView.add(seasonalButton);
+    private static void setButtons() {
+        addButton("Season", seasonsButtonX, buttonY, seasonsButtonWidth, buttonHeight, e -> seasonalView());
+        addButton("Rankings", rankingsButtonX, buttonY, rankingsButtonWidth, buttonHeight, e -> rankedView());
+    }
 
-        final JButton rankedButton = new JButton("Rankings");
-        rankedButton.setBounds(3 * width / 4, 9 * height / 10, width / 10, buttonHeight);
-        rankedButton.setFont(new Font(FONT_NAME, PLAIN, FONT_SIZE));
-        rankedButton.addActionListener(e -> rankedView());
-        historicalView.add(rankedButton);
+    private static void addButton(final String name, final int x, final int y,
+                                  final int width, final int height, final ActionListener action) {
 
-        try {
-            historicalView.add(getImage("/history.jpg", width, height));
-        } catch (final IOException e) {
-            System.out.println("Exception thrown while extracting images! " + e);
-        }
+        final JButton button = createButton(name, x, y, width, height, action);
+        historicalView.add(button);
+    }
+
+    private static void loadImage() {
+        historicalView.add(getImage("/history.jpg", width, height));
     }
 
     static void update() {
-        final String nation = String.valueOf(nationBox.getSelectedItem());
+        final String nation = String.valueOf(NATION_BOX.getSelectedItem());
         final boolean international = nation.equals(CHAMPIONS_LEAGUE_NAME) || nation.equals(EUROPA_LEAGUE_NAME);
-        if (international) competitionBox.setVisible(false);
-        else competitionBox.setVisible(true);
+        if (international) COMPETITION_BOX.setVisible(false);
+        else COMPETITION_BOX.setVisible(true);
 
         final Club[] league = getClubs(nation);
         int competition;
-        switch(String.valueOf(competitionBox.getSelectedItem())) {
+        switch(String.valueOf(COMPETITION_BOX.getSelectedItem())) {
             case "League": competition = 0; break;
             case "National Cup": competition = 1; break;
             case "League Cup": competition = 2; break;
@@ -131,38 +124,26 @@ class Historical {
         final Map<String, Integer> winners = allTime(league, competition);
         int row = 0;
         for (final String club : winners.keySet()) {
-            trophiesTable.setValueAt(String.valueOf(row + 1), row, 0);
-            trophiesTable.setValueAt(club, row, 1);
-            trophiesTable.setValueAt(String.valueOf(winners.get(club)), row++, 2);
+            TROPHIES_TABLE.setValueAt(String.valueOf(row + 1), row, 0);
+            TROPHIES_TABLE.setValueAt(club, row, 1);
+            TROPHIES_TABLE.setValueAt(String.valueOf(winners.get(club)), row++, 2);
         }
 
         for (int i = row; i < 30; i++) {
-            trophiesTable.setValueAt("", i, 0);
-            trophiesTable.setValueAt("", i, 1);
-            trophiesTable.setValueAt("", i, 2);
+            TROPHIES_TABLE.setValueAt("", i, 0);
+            TROPHIES_TABLE.setValueAt("", i, 1);
+            TROPHIES_TABLE.setValueAt("", i, 2);
         }
 
         playerStats(league, competition, false);
-        displayStats(goalsTable, goals, false);
-        displayStats(assistsTable, assists, false);
-        displayStats(ratingsTable, ratings, true);
-        displayStats(cleanSheetsTable, cleanSheets, false);
+        displayPlayerStats();
     }
 
-    private static void setStatsTable(final JTable table, final int x, final int y, final String label) {
-        table.setBounds(x, y, statsWidth, statsHeight);
-        table.setRowHeight(statsRowHeight);
-        table.setEnabled(false);
-        table.setFont(new Font(FONT_NAME, PLAIN, statsFontSize));
-        table.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
-        setColumnWidths(table, statsWidth, 8, 40, 35, 17);
-
-        final JScrollPane scrollPane = new JScrollPane(table);
-        final TitledBorder titledBorder = BorderFactory.createTitledBorder(label);
-        titledBorder.setTitleFont(new Font(FONT_NAME, ITALIC, FONT_SIZE));
-        scrollPane.setBorder(titledBorder);
-        scrollPane.setBounds(x, y, statsWidth, statsHeight);
-        historicalView.add(scrollPane);
+    static void displayPlayerStats() {
+        displayStats(GOALS_TABLE, goals, false);
+        displayStats(ASSISTS_TABLE, assists, false);
+        displayStats(RATINGS_TABLE, ratings, true);
+        displayStats(CLEAN_SHEETS_TABLE, cleanSheets, false);
     }
 
     private static void placeBox(final JComboBox<String> box, final int x, final int width) {
@@ -189,10 +170,18 @@ class Historical {
         standingsHeight = 4 * height / 5;
         standingsRowHeight = standingsHeight / 25;
         standingsFontSize = standingsHeight / 40;
+        firstBoxX = 17 * width / 40;
+        secondBoxX = 23 * width / 40;
         boxY = height / 80;
+        longBoxWidth = width / 9;
+        shortBoxWidth = width / 11;
         boxHeight = height / 16;
         boxFontSize = boxHeight / 3;
+        seasonsButtonX = 7 * width / 8;
+        rankingsButtonX = 3 * width / 4;
         buttonY = 9 * height / 10;
+        seasonsButtonWidth = width / 12;
+        rankingsButtonWidth = width / 10;
         buttonHeight = height / 12;
     }
 }
