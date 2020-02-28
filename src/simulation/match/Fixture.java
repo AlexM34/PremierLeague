@@ -43,10 +43,10 @@ public class Fixture {
 
     @Override
     public String toString() {
-        return "Fixture{" +
-                "opponent=" + opponent +
-                ", isHome=" + isHome +
-                ", score=" + Arrays.toString(score) +
-                '}';
+        return (score[0] > score[1] ? "Win" : score[0] < score[1] ? "Loss" : "Draw") +
+                ": " + (isHome ? "H" : "A") +
+                " vs " + opponent.getName() +
+                " " + (isHome ? score[0] : score[1]) +
+                ":" + (isHome ? score[1] : score[0]);
     }
 }

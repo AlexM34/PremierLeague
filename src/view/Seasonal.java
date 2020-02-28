@@ -1,6 +1,7 @@
 package view;
 
 import league.LeagueManager;
+import simulation.match.Fixture;
 import team.Club;
 
 import javax.swing.BorderFactory;
@@ -14,9 +15,13 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
@@ -71,6 +76,7 @@ class Seasonal extends View {
     private static final JTable RATINGS_TABLE = new JTable(new String[10][4], STATS);
     private static final JTable CLEAN_SHEETS_TABLE = new JTable(new String[10][4], STATS);
 
+    private static List<Club> sortedLeague = new ArrayList<>();
     private static String reportString = "";
     private static int width;
     private static int height;
@@ -113,6 +119,9 @@ class Seasonal extends View {
     private static void setTeamTables() {
         final JScrollPane trophiesPane = createTeamPane(STANDINGS_TABLE, "STANDINGS",
                 6, 38, 7, 7, 7, 7, 7, 7, 7, 7);
+        STANDINGS_TABLE.setEnabled(true);
+        STANDINGS_TABLE.getSelectionModel().addListSelectionListener(e ->
+                showTeamPerformance(STANDINGS_TABLE.getSelectedRow()));
         seasonalView.add(trophiesPane);
 
         GAMES_TABLE.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
@@ -128,6 +137,32 @@ class Seasonal extends View {
         final JScrollPane gamesPane = new JScrollPane(GAMES_TABLE);
         gamesPane.setBounds(standingsX, gamesY, gamesWidth, gamesHeight);
         seasonalView.add(gamesPane);
+    }
+
+    private static void showTeamPerformance(int team) {
+        final Club club = sortedLeague.get(team);
+
+        final String results = getFixtures(club).stream().map(Fixture::toString)
+                .collect(Collectors.joining("<br/>"));
+        RESULTS_LABEL.setText("<html>" + results + "</html>");
+    }
+
+    private static List<Fixture> getFixtures(final Club club) {
+        if (String.valueOf(NATION_BOX.getSelectedItem()).equals("Champions League") ||
+                String.valueOf(NATION_BOX.getSelectedItem()).equals("Europa League")) {
+
+            return Stream.concat(club.getSeason().getContinental().getGroup().getFixtures().stream(),
+                    club.getSeason().getContinental().getKnockout().getFixtures().stream())
+                    .collect(Collectors.toList());
+        }
+
+        switch (String.valueOf(COMPETITION_BOX.getSelectedItem())) {
+            case "League": return club.getSeason().getLeague().getFixtures();
+            case "National Cup": return club.getSeason().getNationalCup().getFixtures();
+            case "League Cup": return club.getSeason().getLeagueCup().getFixtures();
+        }
+
+        return Collections.emptyList();
     }
 
     private static void setResults() {
@@ -218,9 +253,9 @@ class Seasonal extends View {
         boxVisibility(0);
 
         final String leagueName = league[0].getLeague();
-        final Map<Club, Integer> sorted = sortLeague(league, 0);
+        sortedLeague = sortLeague(league, 0);
         int row = 0;
-        for (final Club team : sorted.keySet()) {
+        for (final Club team : sortedLeague) {
             insertStandingsEntry(STANDINGS_TABLE, team.getName(), team.getSeason().getLeague(), row++);
         }
 
@@ -273,9 +308,9 @@ class Seasonal extends View {
                 league[team] = isChampionsLeague ? CHAMPIONS_LEAGUE[8 * team + group] : EUROPA_LEAGUE[12 * team + group];
             }
 
-            final Map<Club, Integer> sorted = sortLeague(league, 3);
+            sortedLeague = sortLeague(league, 3);
             int row = 0;
-            for (final Club team : sorted.keySet()) {
+            for (final Club team : sortedLeague) {
                 insertStandingsEntry(STANDINGS_TABLE, team.getName(), team.getSeason().getContinental().getGroup(), row++);
             }
 

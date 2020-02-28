@@ -43,26 +43,26 @@ public class Postseason {
     public static int offset;
 
     public static void standings(final Club[] league) {
-        final Map<Club, Integer> sorted = sortLeague(league, 0);
+        final List<Club> sorted = sortLeague(league, 0);
 
         int position = 1;
         System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
-        for (final Club team : sorted.keySet()) {
+        for (final Club team : sorted) {
             final League stats = team.getSeason().getLeague();
             System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d", position++,
                     team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),  stats.getLosses(),
                     stats.getScored(), stats.getConceded(), stats.getPoints()));
         }
 
-        final Club first = sorted.keySet().toArray(new Club[0])[0];
+        final Club first = sorted.get(0);
         if (first.getSeason().getLeague().getMatches() == 2 * league.length - 2) {
             first.getGlory().addLeague();
             for (final Footballer footballer : first.getFootballers()) {
                 footballer.getResume().getGlory().addLeague();
             }
 
-            reputationUpdate(sorted.keySet().toArray(new Club[0]));
-            leaguePrizes(sorted.keySet().toArray(new Club[0]));
+            reputationUpdate(sorted.toArray(new Club[0]));
+            leaguePrizes(sorted.toArray(new Club[0]));
         }
     }
 

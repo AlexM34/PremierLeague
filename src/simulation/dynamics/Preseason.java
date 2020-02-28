@@ -206,9 +206,9 @@ public class Preseason {
     public static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
         final Map<Club, Integer> teams = new LinkedHashMap<>();
         for (final Club[] league : LEAGUES) {
-            final Map<Club, Integer> sorted = sortLeague(league, 0);
+            final List<Club> sorted = sortLeague(league, 0);
             int slots = 16;
-            for (final Club team : sorted.keySet()) {
+            for (final Club team : sorted) {
                 teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5) + slots--);
                 if (slots == 0) break;
             }
