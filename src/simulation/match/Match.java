@@ -3,11 +3,11 @@ package simulation.match;
 import player.Footballer;
 import player.MatchStats;
 import player.Position;
+import simulation.Simulator;
 import simulation.competition.Competition;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import static simulation.Data.GOALKEEPER_1;
 import static simulation.competition.League.updateLeagueStats;
@@ -15,8 +15,6 @@ import static simulation.match.Performance.goal;
 import static simulation.match.Tactics.substitute;
 
 public class Match {
-    private static final Random random = new Random();
-
     public static int fans = 3;
     static int minute = 1;
     static int stoppage = 0;
@@ -70,18 +68,18 @@ public class Match {
 
     static void kickoff() {
         for (final Footballer f : report.getHome().getFootballers()) {
-            if (f.getPosition() == Position.GK) f.changeCondition(13 + random.nextInt(3));
-            else f.changeCondition(12 + random.nextInt(3));
+            if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
+            else f.changeCondition(12 + Simulator.getInt(3));
         }
 
         for (final Footballer f : report.getAway().getFootballers()) {
-            if (f.getPosition() == Position.GK) f.changeCondition(13 + random.nextInt(3));
-            else f.changeCondition(12 + random.nextInt(3));
+            if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
+            else f.changeCondition(12 + Simulator.getInt(3));
         }
     }
 
     private static void event() {
-        final int r = random.nextInt(1000);
+        final int r = Simulator.getInt(1000);
         if (r < 10 * report.getMomentum()) {
             if (r < report.getMomentum() + report.getStyle() - 41) {
                 goal(true);
@@ -100,16 +98,16 @@ public class Match {
             }
         }
 
-        if (random.nextInt(40) == 0) yellowCardEvent();
-        else if (random.nextInt(300) == 0) redCardEvent();
+        if (Simulator.isSatisfied(1, 40)) yellowCardEvent();
+        else if (Simulator.isSatisfied(1, 300)) redCardEvent();
 
         if (minute > 60) {
-            if (homeSubs > 0 && random.nextInt(10) == 0) {
+            if (homeSubs > 0 && Simulator.getInt(10) == 0) {
                 substitute(true);
                 homeSubs--;
             }
 
-            if (awaySubs > 0 && random.nextInt(10) == 0) {
+            if (awaySubs > 0 && Simulator.isSatisfied(10)) {
                 substitute(false);
                 awaySubs--;
             }
@@ -119,8 +117,8 @@ public class Match {
     }
 
     private static void yellowCardEvent() {
-        final boolean t = random.nextBoolean();
-        final int p = random.nextInt(11);
+        final boolean t = Simulator.getBoolean();
+        final int p = Simulator.getInt(11);
         final MatchStats footballer = (t ? report.getHomeSquad() : report.getAwaySquad()).get(p);
 
         if (!footballer.isRedCarded()) {
@@ -141,14 +139,14 @@ public class Match {
     }
 
     private static void redCardEvent() {
-        final boolean t = random.nextBoolean();
-        final int p = random.nextInt(11);
+        final boolean t = Simulator.getBoolean();
+        final int p = Simulator.getInt(11);
         final MatchStats footballer = (t ? report.getHomeSquad() : report.getAwaySquad()).get(p);
 
         if (!footballer.isRedCarded()) {
             footballer.addRedCard();
             report.changeBalance(t ? -10 : 10);
-            footballer.getFootballer().changeBan(random.nextInt(5) == 0 ? 2 : 1);
+            footballer.getFootballer().changeBan(Simulator.getInt(5) == 0 ? 2 : 1);
             report.append(getMinute()).append(footballer.getFootballer().getName()).append(" gets a red card<br/>");
 
             if (p == 0) goalkeeperEjected(t);
@@ -192,13 +190,13 @@ public class Match {
         int taken = 0;
 
         while(true) {
-            while (homeSquad.get(currentHome) == null) currentHome = (currentHome + 10) % 11;
+            while (homeSquad.get(currentHome).isRedCarded()) currentHome = (currentHome + 10) % 11;
             homeGoals += penalty(homeSquad.get(currentHome), awaySquad.get(0));
             report.append(String.valueOf(homeGoals)).append("-").append(awayGoals).append("<br/>");
             if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
             currentHome = (currentHome + 10) % 11;
 
-            while (awaySquad.get(currentAway) == null) currentAway = (currentAway + 10) % 11;
+            while (awaySquad.get(currentAway).isRedCarded()) currentAway = (currentAway + 10) % 11;
             awayGoals += penalty(awaySquad.get(currentAway), homeSquad.get(0));
             report.append(String.valueOf(homeGoals)).append("-").append(awayGoals).append("<br/>");
             if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
@@ -214,7 +212,9 @@ public class Match {
     private static int penalty(final MatchStats striker, final MatchStats goalkeeper) {
         report.append(striker.getFootballer().getName()).append(" steps up to take the penalty vs ")
                 .append(goalkeeper.getFootballer().getName()).append("<br/>");
-        if (random.nextInt(100) < 70 + striker.getFootballer().getOverall() - goalkeeper.getFootballer().getOverall()) {
+        if (Simulator.isSatisfied(70 + striker.getFootballer().getOverall() -
+                goalkeeper.getFootballer().getOverall())) {
+
             report.append("He scores with a great shot! ");
             return 1;
         } else {
@@ -224,8 +224,8 @@ public class Match {
     }
 
     static void updateRatings(final int scale) {
-        final int home = random.nextInt(5) + scale * 3 + 1;
-        final int away = random.nextInt(5) - scale * 3 + 1;
+        final int home = Simulator.getInt(5) + scale * 3 + 1;
+        final int away = Simulator.getInt(5) - scale * 3 + 1;
 
         for (int i = 0; i < home; i++) updateRating(report.getHomeSquad(), 0.1f);
         for (int i = 0; i > home; i--) updateRating(report.getHomeSquad(), -0.1f);
@@ -234,7 +234,7 @@ public class Match {
     }
 
     private static void updateRating(final List<MatchStats> squad, final float change) {
-        final int player = random.nextInt(11);
+        final int player = Simulator.getInt(11);
         if (squad.get(player) == null) return;
         float overall = (float) squad.get(player).getFootballer().getOverall() *
                 squad.get(player).getFootballer().getOverall() / 6000;

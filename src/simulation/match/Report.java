@@ -50,12 +50,12 @@ public class Report {
 
         final List<Footballer[]> homeSelection = pickSquad(home);
         this.homeSquad = Arrays.stream(homeSelection.get(0))
-                .map(f -> new MatchStats(f, 0)).collect(Collectors.toList());
+                .map(f -> new MatchStats(f, 1)).collect(Collectors.toList());
         this.homeBench = Arrays.asList(homeSelection.get(1));
 
         final List<Footballer[]> awaySelection = pickSquad(away);
         this.awaySquad = Arrays.stream(awaySelection.get(0))
-                .map(f -> new MatchStats(f, 0)).collect(Collectors.toList());
+                .map(f -> new MatchStats(f, 1)).collect(Collectors.toList());
         this.awayBench = Arrays.asList(awaySelection.get(1));
 
         this.motmPlayer = new MatchStats(null, -1);

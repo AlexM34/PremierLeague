@@ -1,18 +1,15 @@
 package simulation.competition;
 
+import simulation.Simulator;
 import team.Club;
 
-import java.util.Random;
-
 class Draw {
-    private static final Random random = new Random();
-
     static int[][][] league(final int teams) {
         final int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
         final int[] draw = new int[teams];
         final boolean[] drawn = new boolean[teams];
         for (int team = 0; team < teams; team++) {
-            int r = random.nextInt(teams - team);
+            int r = Simulator.getInt(teams - team);
             int current = 0;
 
             while (true) {
@@ -63,7 +60,7 @@ class Draw {
         final Club[] draw = new Club[teams];
         final boolean[] drawn = new boolean[teams];
         for (int team = 0; team < teams; team++) {
-            int r = random.nextInt(teams / 2 - team / 2);
+            int r = Simulator.getInt(teams / 2 - team / 2);
             int current = team % 2 == 0 ? 8 : 0;
 
             while (true) {

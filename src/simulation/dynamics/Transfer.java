@@ -2,21 +2,20 @@ package simulation.dynamics;
 
 import player.Footballer;
 import player.Position;
+import simulation.Simulator;
 import team.Club;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import static simulation.Data.LEAGUES;
+import static simulation.Helper.sortMap;
 import static simulation.dynamics.Preseason.academy;
 import static simulation.dynamics.Preseason.deals;
 import static simulation.dynamics.Preseason.sold;
 import static simulation.dynamics.Preseason.transfers;
-import static simulation.Helper.sortMap;
 
 public class Transfer {
-    private static final Random random = new Random();
     private static Map<String, Integer> summary = new HashMap<>();
 
     public static void transfers() {
@@ -30,10 +29,10 @@ public class Transfer {
         sold.clear();
 
         while (attempts < 10000) {
-            league = LEAGUES[random.nextInt(5)];
-            buying = league[random.nextInt(league.length)];
-            league = LEAGUES[random.nextInt(5)];
-            selling = league[random.nextInt(league.length)];
+            league = LEAGUES[Simulator.getInt(5)];
+            buying = league[Simulator.getInt(league.length)];
+            league = LEAGUES[Simulator.getInt(5)];
+            selling = league[Simulator.getInt(league.length)];
             if (buying == selling || selling.getReputation() - buying.getReputation() > 25) continue;
 
             negotiate(buying, selling);
@@ -54,11 +53,11 @@ public class Transfer {
     }
 
     private static void negotiate(final Club buying, final Club selling) {
-        if (random.nextInt(50) < selling.getReputation() - buying.getReputation()) return;
+        if (Simulator.isSatisfied(selling.getReputation() - buying.getReputation(), 50)) return;
 
         float budget = buying.getBudget();
         final Footballer[] squad = selling.getFootballers().toArray(new Footballer[0]);
-        final Footballer footballer = squad[random.nextInt(squad.length)];
+        final Footballer footballer = squad[Simulator.getInt(squad.length)];
         if (footballer.getId() > 123450 && footballer.getId() < 123470) return;
 
         float offered = interest(buying, footballer);
@@ -67,8 +66,8 @@ public class Transfer {
         if (wanted == 0) return;
 
         while (offered < wanted) {
-            if (random.nextInt(3) != 0) {
-                if (random.nextInt(4) != 0) {
+            if (Simulator.isSatisfied(67)) {
+                if (Simulator.isSatisfied(75)) {
                     offered *= 1.1f;
                 } else {
                     wanted /= 1.1f;
@@ -122,7 +121,7 @@ public class Transfer {
         if (sold.getOrDefault(selling, 0) > 4) return footballer.getValue() * 2.5f;
 
         switch (better) {
-            case 0: return random.nextInt(3) != 0 ? 0 : footballer.getValue() * 2f;
+            case 0: return Simulator.isSatisfied(67) ? 0 : footballer.getValue() * 2f;
             case 1: return footballer.getValue() * 1.8f;
             case 2: return footballer.getValue() * 1.4f;
             default: return footballer.getValue() * 1.2f;

@@ -2,15 +2,13 @@ package simulation.match;
 
 import player.Footballer;
 import player.MatchStats;
+import simulation.Simulator;
 
 import java.util.List;
-import java.util.Random;
 
 import static simulation.match.Match.report;
 
 class Performance {
-    private static final Random random = new Random();
-
     static void goal(final boolean isHome) {
         if (isHome) report.addHomeGoal();
         else report.addAwayGoal();
@@ -29,7 +27,7 @@ class Performance {
             assisting += squad.get(player).getFootballer().getAssistChance();
         }
 
-        int r = random.nextInt(scoring);
+        int r = Simulator.getInt(scoring);
         for (int player = 0; player < 11; player++) {
             if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
             r -= squad.get(player).getFootballer().getScoringChance();
@@ -50,7 +48,7 @@ class Performance {
                     .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
         }
         else {
-            r = random.nextInt(assisting);
+            r = Simulator.getInt(assisting);
             for (int player = 0; player < 11; player++) {
                 if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
                 r -= squad.get(player).getFootballer().getAssistChance();
@@ -65,19 +63,19 @@ class Performance {
                 }
             }
 
-            report.append(String.valueOf(Match.minute)).append(Match.stoppage != 0 ? "+" + Match.stoppage : "").append("' ")
-                    .append(goalscorer.getName()).append(assistmaker != null ? " scores after a pass from "
-                    + assistmaker.getName() : " scores after a solo run").append(". ").append(homeGoals).append("-")
-                    .append(awayGoals).append("<br/>");
+            report.append(String.valueOf(Match.minute)).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")
+                    .append("' ").append(goalscorer.getName()).append(assistmaker != null
+                    ? " scores after a pass from " + assistmaker.getName() : " scores after a solo run")
+                    .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
         }
 
         report.clearMomentum();
     }
 
     private static int ownGoal() {
-        if (random.nextInt(10) < 2) return 0;
-        if (random.nextInt(5) < 3) return 1 + random.nextInt(4);
-        if (random.nextInt(10) < 7) return 5 + random.nextInt(3);
-        return 8 + random.nextInt(3);
+        if (Simulator.isSatisfied(20)) return 0;
+        if (Simulator.isSatisfied(60)) return 1 + Simulator.getInt(4);
+        if (Simulator.isSatisfied(70)) return 5 + Simulator.getInt(3);
+        return 8 + Simulator.getInt(3);
     }
 }

@@ -1,5 +1,6 @@
 package view;
 
+import simulation.Simulator;
 import team.League;
 
 import javax.sound.sampled.AudioInputStream;
@@ -10,7 +11,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.Random;
 
 import static simulation.competition.League.leagueAssists;
 import static simulation.competition.League.leagueAverageRatings;
@@ -24,7 +24,7 @@ class Helper {
     static void playMusic() {
         int r;
         do {
-            r = new Random().nextInt(5) + 1;
+            r = Simulator.getInt(5) + 1;
         } while (r == song);
 
         song = r;

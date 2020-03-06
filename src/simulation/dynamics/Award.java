@@ -2,18 +2,16 @@ package simulation.dynamics;
 
 import player.Footballer;
 import player.Statistics;
+import simulation.Simulator;
 import team.Club;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import static simulation.Helper.sortMap;
 import static simulation.dynamics.Postseason.topTeam;
 
 public class Award {
-    private static final Random random = new Random();
-
     private static final Map<Footballer, Integer> contenders = new HashMap<>();
 
     static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
@@ -75,7 +73,7 @@ public class Award {
         }
 
         for (int v = 0; v < 100; v++) {
-            int pick = random.nextInt(total);
+            int pick = Simulator.getInt(total);
             for (int player = 0; player < 10; player++) {
                 pick -= chance[player];
                 if (pick < 0) {

@@ -4,10 +4,11 @@ import player.Footballer;
 import player.Position;
 import player.Resume;
 import player.Statistics;
-import simulation.competition.Continental;
-import team.Cup;
 import simulation.Data;
+import simulation.Simulator;
+import simulation.competition.Continental;
 import team.Club;
+import team.Cup;
 import team.League;
 import team.Season;
 
@@ -18,13 +19,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static simulation.Data.LEAGUES;
 import static simulation.Helper.sortLeague;
 
 public class Preseason {
-    private static final Random random = new Random();
     static int deals;
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
@@ -59,7 +58,7 @@ public class Preseason {
                     if (f.getNumber() > 100) continue;
                     f.changeCondition(100);
 
-                    if (random.nextInt(2) == 0) {
+                    if (Simulator.isSatisfied(50)) {
                         if (f.getResume().getSeason().getLeague().getRating() > 750) {
                             improve(f);
                         } else if (f.getResume().getSeason().getLeague().getRating() < 650) {
@@ -67,26 +66,26 @@ public class Preseason {
                         }
                     }
 
-                    final int r = random.nextInt(6);
+                    final int r = Simulator.getInt(6);
                     if (r == 0) improve(f);
                     else if (r == 1) decline(f);
 
                     f.setAge(f.getAge() + 1);
 
                     if (f.getAge() > 34) {
-                        if (random.nextInt(42 - Math.min(f.getAge(), 41)) == 0) {
+                        if (Simulator.isSatisfied(1, 42 - Math.min(f.getAge(), 41))) {
                             retire(f, club);
                             break;
                         }
 
-                        if (random.nextInt(2) == 0) {
+                        if (Simulator.isSatisfied(50)) {
                             decline(f);
                             decline(f);
                         }
                     }
 
                     if (f.getAge() > 30) {
-                        if (random.nextInt(2) == 0) {
+                        if (Simulator.isSatisfied(50)) {
                             decline(f);
                             decline(f);
                         }
@@ -94,21 +93,21 @@ public class Preseason {
 
                     if (f.getAge() < 20) {
                         improve(f);
-                        if (random.nextInt(2) == 0) {
+                        if (Simulator.isSatisfied(50)) {
                             improve(f);
                             improve(f);
                         }
                     }
 
                     if (f.getAge() < 25) {
-                        if (random.nextInt(3) == 0) {
+                        if (Simulator.isSatisfied(33)) {
                             improve(f);
                             improve(f);
                         }
                     }
 
                     if (f.getOverall() + 10 < f.getPotential()) {
-                        if (random.nextInt(2) == 0) {
+                        if (Simulator.isSatisfied(50)) {
                             improve(f);
                             improve(f);
                         }
@@ -126,7 +125,7 @@ public class Preseason {
     private static void improve(final Footballer footballer) {
         if (footballer.getOverall() < footballer.getPotential() && footballer.getOverall() < 100) {
             footballer.changeOverall(1);
-            if (footballer.getAge() < 30 && random.nextInt(3) == 0) {
+            if (footballer.getAge() < 30 && Simulator.isSatisfied(33)) {
                 footballer.changePotential(1);
             }
         }
@@ -135,7 +134,7 @@ public class Preseason {
     private static void decline(final Footballer footballer) {
         if (footballer.getOverall() > 0) {
             footballer.changeOverall(-1);
-            if (footballer.getAge() >= 30 || random.nextInt(3) == 0) {
+            if (footballer.getAge() >= 30 || Simulator.isSatisfied(33)) {
                 footballer.changePotential(-1);
             }
         }
@@ -174,7 +173,7 @@ public class Preseason {
 
     private static void youngster(final Club club, Position.Role role) {
         if (role == null) {
-            switch (random.nextInt(4)) {
+            switch (Simulator.getInt(4)) {
                 case 0: role = Position.Role.Goalkeeper; break;
                 case 1: role = Position.Role.Defender; break;
                 case 2: role = Position.Role.Midfielder; break;
@@ -183,18 +182,18 @@ public class Preseason {
         }
 
         final int id = 1000000 + academy++;
-        final String name = (char) ('A' + random.nextInt(26)) + ". " +
-                Data.SURNAMES[random.nextInt(Data.SURNAMES.length)] + (academy - 1);
-        final int age = 17 + random.nextInt(3);
-        final String nationality = Data.NATIONS[random.nextInt(Data.NATIONS.length)];
-        final int overall = 60 + random.nextInt(10);
-        final int potential = overall + random.nextInt(15) + 10;
+        final String name = (char) ('A' + Simulator.getInt(26)) + ". " +
+                Data.SURNAMES[Simulator.getInt(Data.SURNAMES.length)] + (academy - 1);
+        final int age = 17 + Simulator.getInt(3);
+        final String nationality = Data.NATIONS[Simulator.getInt(Data.NATIONS.length)];
+        final int overall = 60 + Simulator.getInt(10);
+        final int potential = overall + Simulator.getInt(15) + 10;
         final long value = 3;
         final long wage = 1;
         final Position.Role finalRole = role;
         final Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
-        final Position position = (Position) positions[random.nextInt(positions.length)];
-        final int number = random.nextInt(97) + 2;
+        final Position position = (Position) positions[Simulator.getInt(positions.length)];
+        final int number = Simulator.getInt(97) + 2;
         final int finishing = overall + 10 * position.getAttackingDuty() - 50;
         final int vision = overall + 10 - (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
         final Footballer footballer = new Footballer(id, name, age, nationality, overall, potential,
@@ -209,7 +208,7 @@ public class Preseason {
             final List<Club> sorted = sortLeague(league, 0);
             int slots = 16;
             for (final Club team : sorted) {
-                teams.put(team, team.getSeason().getLeague().getPoints() + random.nextInt(5) + slots--);
+                teams.put(team, team.getSeason().getLeague().getPoints() + Simulator.getInt(5) + slots--);
                 if (slots == 0) break;
             }
         }
