@@ -27,7 +27,7 @@ import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
 import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
 import static league.LeagueManager.getClubs;
-import static simulation.Controller.MATCHDAYS;
+import static simulation.Controller.getTotalMatchdays;
 import static simulation.Controller.proceed;
 import static simulation.Helper.sortLeague;
 import static simulation.competition.Knockout.leagueCupResults;
@@ -213,7 +213,7 @@ class Seasonal extends View {
     }
 
     private static void nextRound() {
-        for (int i = 0; i < MATCHDAYS.size(); i++) proceed();
+        for (int i = 0; i < getTotalMatchdays(); i++) proceed();
         update();
     }
 

@@ -24,19 +24,18 @@ import static simulation.dynamics.Preseason.progression;
 import static simulation.dynamics.Transfer.transfers;
 
 public class Controller {
-    private static final Scanner scanner = new Scanner(System.in);
-
-    private static int year = 0;
-    public static int matchday = 0;
-
-    public static final List<Integer> MATCHDAYS = Arrays.asList(-1, 0, 0, 0, 31, 41, 0, 0, 31, 41, 0, 0, 0, 31,
+    private static final Scanner SCANNER = new Scanner(System.in);
+    private static final List<Integer> MATCHDAYS = Arrays.asList(-1, 0, 0, 0, 31, 41, 0, 0, 31, 41, 0, 0, 0, 31,
             41, 2, 0, 0, 1, 31, 41, 0, 0, 2, 0, 31, 41, 0, 0, 0, 31, 41, 0, 1, 0, 2, 0, 42, 0, 0, 32, 42, 0, 1,
             0, 0, 0, 32, 42, 0, 2, 0, 0, 42, 0, 0, 32, 0, 0, 1, 0, 0, 0, 0, 0, 0, 42, 32, -2);
 
+    private static int year = 0;
+    private static int matchday = 0;
+
     public static void main(final String[] args) {
         initialise();
-        while(scanner.nextInt() != 0) {
-            for (int i = 0; i < MATCHDAYS.size(); i++) Controller.proceed();
+        while(SCANNER.nextInt() != 0) {
+            for (int i = 0; i < getTotalMatchdays(); i++) Controller.proceed();
         }
     }
 
@@ -59,6 +58,14 @@ public class Controller {
         }
 
         matchday++;
+    }
+
+    public static int getMatchday() {
+        return matchday;
+    }
+
+    public static int getTotalMatchdays() {
+        return MATCHDAYS.size();
     }
 
     private static void setupSeason() {

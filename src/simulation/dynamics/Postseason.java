@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 import static player.Position.GK;
-import static simulation.Controller.matchday;
+import static simulation.Controller.getMatchday;
 import static simulation.Data.LEAGUES;
 import static simulation.Helper.sortLeague;
 import static simulation.Helper.sortMap;
+import static simulation.competition.Knockout.leagueCup;
+import static simulation.competition.Knockout.nationalCup;
 import static simulation.competition.League.CHAMPIONS_LEAGUE;
 import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
 import static simulation.competition.League.EUROPA_LEAGUE;
 import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 import static simulation.competition.League.continentalCup;
-import static simulation.competition.Knockout.leagueCup;
-import static simulation.competition.Knockout.nationalCup;
 import static simulation.dynamics.Finance.knockoutPrizes;
 import static simulation.dynamics.Finance.leaguePrizes;
-import static simulation.dynamics.Finance.profits;
+import static simulation.dynamics.Finance.merchandise;
 import static simulation.dynamics.Finance.salaries;
 
 public class Postseason {
@@ -93,23 +93,23 @@ public class Postseason {
                 switch (type) {
                     case 0:
                         competition = stats.getLeague();
-                        games = matchday / 2;
+                        games = getMatchday() / 2;
                         break;
                     case 1:
                         competition = stats.getNationalCup();
-                        games = matchday / 18;
+                        games = getMatchday() / 18;
                         break;
                     case 2:
                         competition = stats.getLeagueCup();
-                        games = matchday / 18;
+                        games = getMatchday() / 18;
                         break;
                     case 3:
                         competition = stats.getChampionsLeague();
-                        games = matchday / 8;
+                        games = getMatchday() / 8;
                         break;
                     default:
                         competition = stats.getEuropaLeague();
-                        games = matchday / 8;
+                        games = getMatchday() / 8;
                         break;
                 }
 
@@ -201,7 +201,7 @@ public class Postseason {
 
             knockoutPrizes(nationalCup.get(leagueName), false);
 
-            profits(league);
+            merchandise(league);
             salaries(league);
 
             Arrays.stream(league).forEach(Postseason::review);

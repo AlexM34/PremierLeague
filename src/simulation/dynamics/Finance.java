@@ -26,14 +26,14 @@ class Finance {
         }
     }
 
-    static void profits(final Club[] league) {
+    static void merchandise(final Club[] league) {
         for (final Club club : league) club.changeBudget((float) club.getReputation() * club.getReputation() / 500);
     }
 
     static void salaries(final Club[] league) {
-        for (Club club : league) {
+        for (final Club club : league) {
             System.out.println(club.getName() + " has before " + club.getBudget());
-            for (Footballer footballer : club.getFootballers()) club.changeBudget(-footballer.getWage() / 80000);
+            for (final Footballer footballer : club.getFootballers()) club.changeBudget(-footballer.getWage() / 80000);
             System.out.println(club.getName() + " has after " + club.getBudget());
         }
     }

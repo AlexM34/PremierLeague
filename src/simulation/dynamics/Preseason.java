@@ -171,7 +171,11 @@ public class Preseason {
         System.out.println(academy + " youngsters promoted");
     }
 
-    private static void youngster(final Club club, Position.Role role) {
+    static void youngster(final Club club, Position.Role role) {
+        club.addFootballer(generateFootballer(club.getName(), role));
+    }
+
+    private static Footballer generateFootballer(final String clubName, Position.Role role) {
         if (role == null) {
             switch (Simulator.getInt(4)) {
                 case 0: role = Position.Role.Goalkeeper; break;
@@ -189,17 +193,16 @@ public class Preseason {
         final int overall = 60 + Simulator.getInt(10);
         final int potential = overall + Simulator.getInt(15) + 10;
         final long value = 3;
-        final long wage = 1;
+        final long wage = 10000 * (1 + Simulator.getInt(5));
         final Position.Role finalRole = role;
         final Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
         final Position position = (Position) positions[Simulator.getInt(positions.length)];
         final int number = Simulator.getInt(97) + 2;
         final int finishing = overall + 10 * position.getAttackingDuty() - 50;
         final int vision = overall + 10 - (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
-        final Footballer footballer = new Footballer(id, name, age, nationality, overall, potential,
-                club.getName(), value, wage, position, number, finishing, vision, new Resume());
 
-        club.addFootballer(footballer);
+        return new Footballer(id, name, age, nationality, overall, potential,
+                clubName, value, wage, position, number, finishing, vision, new Resume());
     }
 
     public static void pickContinentalTeams(final Club[] championsLeagueTeams, final Club[] europaLeagueTeams) {
