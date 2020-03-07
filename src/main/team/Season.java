@@ -12,13 +12,13 @@ public class Season {
     private int form;
     private final int morale;
 
-    public Season(final League league, final Cup nationalCup, final Cup leagueCup, final Continental continental, final int form, final int morale) {
-        this.league = league;
-        this.nationalCup = nationalCup;
-        this.leagueCup = leagueCup;
-        this.continental = continental;
-        this.form = form;
-        this.morale = morale;
+    public Season(final String leagueName) {
+        this.league = new League(leagueName);
+        this.nationalCup = new Cup();
+        this.leagueCup = new Cup();
+        this.continental = new Continental();
+        this.form = 10;
+        this.morale = 50;
     }
 
     public League getLeague() {

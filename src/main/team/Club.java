@@ -1,6 +1,5 @@
 package main.team;
 
-import main.simulation.competition.Continental;
 import main.player.Footballer;
 import main.player.Glory;
 
@@ -24,8 +23,9 @@ public class Club {
     private final Set<Footballer> footballers;
     private Season season;
 
-    public Club(final int id, final String name, final int established, final Stadium stadium, final String location, final String league, final Glory glory,
-                final int reputation, final int value, final float budget, final Owner owner, final Coach coach) {
+    public Club(final int id, final String name, final int established, final Stadium stadium, final String location,
+                final String league, final Glory glory, final int reputation, final int value, final float budget,
+                final Owner owner, final Coach coach) {
         this.id = id;
         this.name = name;
         this.established = established;
@@ -39,7 +39,7 @@ public class Club {
         this.owner = owner;
         this.coach = coach;
         this.footballers = new HashSet<>();
-        this.season = new Season(new League(league), new Cup(), new Cup(), new Continental(), 100, 100);
+        this.season = new Season(league);
     }
 
     public int getId() {

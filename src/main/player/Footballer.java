@@ -1,5 +1,7 @@
 package main.player;
 
+import main.simulation.Simulator;
+
 import java.util.Objects;
 
 public class Footballer {
@@ -53,8 +55,49 @@ public class Footballer {
         return age;
     }
 
-    public void setAge(final int age) {
-        this.age = age;
+    public void increaseAge() {
+        age++;
+
+        if (this.number > 100) return;
+        this.changeCondition(100);
+
+        if (Simulator.isSatisfied(50)) {
+            final int rating = resume.getSeason().getLeague().getRating();
+            if (rating > 750) improve(1);
+            else if (rating < 650) decline(1);
+        }
+
+        final int r = Simulator.getInt(6);
+        if (r == 0) improve(1);
+        else if (r == 1) decline(1);
+
+        if (overall + 10 < potential && Simulator.isSatisfied(50)) improve(2);
+
+        if (age < 20) improve(1 + Simulator.getInt(3));
+
+        if (age < 25 && Simulator.isSatisfied(33)) improve(2);
+
+        if (age > 30 && Simulator.isSatisfied(50)) decline(2);
+
+        if (age > 34) {
+            if (Simulator.isSatisfied(50)) decline(2);
+            if (Simulator.isSatisfied(1, 42 - Math.min(age, 41))) retire();
+        }
+    }
+
+    private void improve(final int change) {
+        this.changeOverall(change);
+        if (age < 30 && Simulator.isSatisfied(33)) this.changePotential(change);
+    }
+
+    private void decline(final int change) {
+        this.changeOverall(-change);
+        if (age >= 30 || Simulator.isSatisfied(33)) this.changePotential(-change);
+    }
+
+    private void retire() {
+        System.out.println(name+ "(" + age + ") retires at " + name);
+        team = "";
     }
 
     public String getNationality() {
@@ -66,7 +109,8 @@ public class Footballer {
     }
 
     public void changeOverall(final int change) {
-        this.overall += change;
+        overall += change;
+        overall = Math.max(50, Math.min(99, Math.min(overall, potential)));
     }
 
     public int getPotential() {
@@ -88,10 +132,13 @@ public class Footballer {
     public long getValue() {
         int overall = getOverall() - 70;
         overall = overall > 4 ? overall * overall * overall / 100 : 1;
+
         float age = getAge() != 28 ? (float) Math.sqrt(Math.abs(28 - getAge())) : 1;
         age = getAge() < 28 ? age : 1 / age;
+
         float position = getPosition().getAttackingDuty() + 1;
         position = (float) Math.sqrt(position);
+
         float potential = (float) (getPotential() - getOverall()) / 3;
         potential = potential > 1 ? (float) Math.sqrt(potential) : 1;
 
