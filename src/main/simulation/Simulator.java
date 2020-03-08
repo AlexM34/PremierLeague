@@ -3,6 +3,7 @@ package main.simulation;
 import java.util.Random;
 
 public class Simulator {
+
     private static final Random RANDOM = new Random();
 
     public static boolean getBoolean() {

@@ -36,7 +36,7 @@ public class HelperTest {
 
     @Test
     void sortGroup() {
-        final int maxPoints = 114;
+        final int maxPoints = 18;
         final Club[] league = England.getClubs();
         Arrays.stream(league).forEach(club ->
                 club.getSeason().getContinental().getGroup().addPoints(random.nextInt(maxPoints)));
