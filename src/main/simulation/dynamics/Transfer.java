@@ -31,8 +31,10 @@ public class Transfer {
         while (attempts < 10000) {
             league = LEAGUES[Simulator.getInt(5)];
             buying = league[Simulator.getInt(league.length)];
+
             league = LEAGUES[Simulator.getInt(5)];
             selling = league[Simulator.getInt(league.length)];
+
             if (buying == selling || selling.getReputation() - buying.getReputation() > 25) continue;
 
             negotiate(buying, selling);

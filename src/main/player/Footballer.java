@@ -96,7 +96,7 @@ public class Footballer {
     }
 
     private void retire() {
-        System.out.println(name+ "(" + age + ") retires at " + name);
+        System.out.println(name + "(" + age + ") retires at " + team);
         team = "";
     }
 
@@ -218,10 +218,7 @@ public class Footballer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Footballer that = (Footballer) o;
-        return id == that.id &&
-                name.equals(that.name) &&
-                age == that.age &&
-                nationality.equals(that.nationality);
+        return id == that.id;
     }
 
     @Override

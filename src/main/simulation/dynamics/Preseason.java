@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static main.simulation.Data.LEAGUES;
 import static main.simulation.Helper.sortLeague;
@@ -24,6 +26,7 @@ import static main.simulation.Helper.sortLeague;
 public class Preseason {
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
+    public static final List<Footballer> retired = new ArrayList<>();
     static int deals;
     private static int academy = 0;
 
@@ -51,10 +54,16 @@ public class Preseason {
     public static void progression() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
-                for (Footballer footballer : club.getFootballers()) {
+                final Set<Footballer> retiring = new HashSet<>();
+                for (final Footballer footballer : club.getFootballers()) {
                     footballer.increaseAge();
 
-                    if (footballer.getTeam().equals("")) club.removeFootballer(footballer);
+                    if (footballer.getTeam().equals("")) retiring.add(footballer);
+                }
+
+                for (final Footballer footballer : retiring) {
+                    club.removeFootballer(footballer);
+                    retired.add(footballer);
                 }
             }
         }

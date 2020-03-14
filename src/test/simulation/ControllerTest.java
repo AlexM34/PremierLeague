@@ -1,4 +1,4 @@
-package test.simulation;
+package simulation;
 
 import org.junit.jupiter.api.Test;
 import main.simulation.Controller;

@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Data {
-    public static final Club[][] LEAGUES = LeagueManager.getAllClubs();
+    public static final Club[][] LEAGUES = LeagueManager.getAllLeagues();
     public static Integer USER = -1;
     public static int USER_STYLE;
 

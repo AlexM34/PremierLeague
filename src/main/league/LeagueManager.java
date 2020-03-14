@@ -22,11 +22,11 @@ public class LeagueManager {
             case "Bundesliga": return Germany.getClubs();
             case "Serie A": return Italy.getClubs();
             case "Ligue 1": return France.getClubs();
-            default: return Arrays.stream(getAllClubs()).flatMap(Arrays::stream).toArray(Club[]::new);
+            default: return Arrays.stream(getAllLeagues()).flatMap(Arrays::stream).toArray(Club[]::new);
         }
     }
 
-    public static Club[][] getAllClubs() {
+    public static Club[][] getAllLeagues() {
         return new Club[][]{England.getClubs(), Spain.getClubs(), Germany.getClubs(),
                 Italy.getClubs(), France.getClubs()};
     }
