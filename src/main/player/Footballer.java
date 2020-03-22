@@ -1,6 +1,6 @@
-package main.player;
+package player;
 
-import main.simulation.Simulator;
+import simulation.Simulator;
 
 import java.util.Objects;
 

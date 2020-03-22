@@ -1,9 +1,9 @@
-package main.simulation.match;
+package simulation.match;
 
-import main.player.Footballer;
-import main.player.MatchStats;
-import main.team.Club;
-import main.team.Formation;
+import player.Footballer;
+import player.MatchStats;
+import team.Club;
+import team.Formation;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,24 +11,24 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static main.simulation.Data.DEFENDER_1;
-import static main.simulation.Data.DEFENDER_2;
-import static main.simulation.Data.FORWARD_1;
-import static main.simulation.Data.FORWARD_2;
-import static main.simulation.Data.GOALKEEPER_1;
-import static main.simulation.Data.MIDFIELDER_1;
-import static main.simulation.Data.MIDFIELDER_2;
-import static main.simulation.Data.USER_STYLE;
-import static main.simulation.match.Match.minute;
-import static main.simulation.match.Match.report;
-import static main.simulation.match.Match.stoppage;
+import static simulation.Data.DEFENDER_1;
+import static simulation.Data.DEFENDER_2;
+import static simulation.Data.FORWARD_1;
+import static simulation.Data.FORWARD_2;
+import static simulation.Data.GOALKEEPER_1;
+import static simulation.Data.MIDFIELDER_1;
+import static simulation.Data.MIDFIELDER_2;
+import static simulation.Data.USER_STYLE;
+import static simulation.match.Match.minute;
+import static simulation.match.Match.report;
+import static simulation.match.Match.stoppage;
 
 public class Tactics {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void preMatch(final Club opponent, final boolean isHome) {
         System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
-        System.out.println("Pick how offensive the main.team should be from 0 to 20");
+        System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
             final int attack = scanner.nextInt();
             if(attack < 0 || attack > 20) {

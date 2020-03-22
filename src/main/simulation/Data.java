@@ -1,10 +1,10 @@
-package main.simulation;
+package simulation;
 
-import main.league.LeagueManager;
-import main.player.Footballer;
-import main.player.Position;
-import main.player.Resume;
-import main.team.Club;
+import league.LeagueManager;
+import player.Footballer;
+import player.Position;
+import player.Resume;
+import team.Club;
 
 import java.io.File;
 import java.io.FileWriter;

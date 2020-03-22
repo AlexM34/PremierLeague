@@ -1,7 +1,7 @@
-package main.simulation.competition;
+package simulation.competition;
 
-import main.team.Cup;
-import main.team.League;
+import team.Cup;
+import team.League;
 
 import java.util.Objects;
 

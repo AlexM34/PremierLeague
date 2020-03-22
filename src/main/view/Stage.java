@@ -1,4 +1,4 @@
-package main.view;
+package view;
 
 import java.util.Arrays;
 import java.util.Optional;

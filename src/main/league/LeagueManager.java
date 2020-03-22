@@ -1,12 +1,12 @@
-package main.league;
+package league;
 
-import main.team.Club;
+import team.Club;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static main.simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
-import static main.simulation.competition.League.EUROPA_LEAGUE_NAME;
+import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 
 public class LeagueManager {
 

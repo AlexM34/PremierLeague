@@ -1,6 +1,6 @@
-package main.team;
+package team;
 
-import main.simulation.competition.Continental;
+import simulation.competition.Continental;
 
 import java.util.Objects;
 

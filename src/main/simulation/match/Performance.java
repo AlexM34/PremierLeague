@@ -1,12 +1,12 @@
-package main.simulation.match;
+package simulation.match;
 
-import main.player.Footballer;
-import main.player.MatchStats;
-import main.simulation.Simulator;
+import player.Footballer;
+import player.MatchStats;
+import simulation.Simulator;
 
 import java.util.List;
 
-import static main.simulation.match.Match.report;
+import static simulation.match.Match.report;
 
 class Performance {
     static void goal(final boolean isHome) {

@@ -1,18 +1,18 @@
-package main.simulation.match;
+package simulation.match;
 
-import main.player.Footballer;
-import main.player.MatchStats;
-import main.player.Position;
-import main.simulation.Simulator;
-import main.simulation.competition.Competition;
+import player.Footballer;
+import player.MatchStats;
+import player.Position;
+import simulation.Simulator;
+import simulation.competition.Competition;
 
 import java.util.List;
 import java.util.Objects;
 
-import static main.simulation.Data.GOALKEEPER_1;
-import static main.simulation.competition.League.updateLeagueStats;
-import static main.simulation.match.Performance.goal;
-import static main.simulation.match.Tactics.substitute;
+import static simulation.Data.GOALKEEPER_1;
+import static simulation.competition.League.updateLeagueStats;
+import static simulation.match.Performance.goal;
+import static simulation.match.Tactics.substitute;
 
 public class Match {
     public static int fans = 3;

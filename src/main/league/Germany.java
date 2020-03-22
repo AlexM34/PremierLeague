@@ -1,11 +1,11 @@
-package main.league;
+package league;
 
-import main.player.Glory;
-import main.team.Club;
-import main.team.Coach;
-import main.team.Formation;
-import main.team.Owner;
-import main.team.Stadium;
+import player.Glory;
+import team.Club;
+import team.Coach;
+import team.Formation;
+import team.Owner;
+import team.Stadium;
 
 public class Germany {
     public static final String LEAGUE = "Bundesliga";

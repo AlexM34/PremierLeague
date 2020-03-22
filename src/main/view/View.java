@@ -1,6 +1,6 @@
-package main.view;
+package view;
 
-import main.player.Footballer;
+import player.Footballer;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;

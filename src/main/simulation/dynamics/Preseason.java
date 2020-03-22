@@ -1,14 +1,14 @@
-package main.simulation.dynamics;
+package simulation.dynamics;
 
-import main.player.Footballer;
-import main.player.Position;
-import main.player.Resume;
-import main.player.Statistics;
-import main.simulation.Data;
-import main.simulation.Simulator;
-import main.team.Club;
-import main.team.League;
-import main.team.Season;
+import player.Footballer;
+import player.Position;
+import player.Resume;
+import player.Statistics;
+import simulation.Data;
+import simulation.Simulator;
+import team.Club;
+import team.League;
+import team.Season;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static main.simulation.Data.LEAGUES;
-import static main.simulation.Helper.sortLeague;
+import static simulation.Data.LEAGUES;
+import static simulation.Helper.sortLeague;
 
 public class Preseason {
     static final Map<Footballer, Club> transfers = new HashMap<>();
@@ -54,6 +54,7 @@ public class Preseason {
     public static void progression() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
+                System.out.println(club.getName());
                 final Set<Footballer> retiring = new HashSet<>();
                 for (final Footballer footballer : club.getFootballers()) {
                     footballer.increaseAge();

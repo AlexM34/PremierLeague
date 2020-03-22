@@ -1,6 +1,6 @@
-package main.team;
+package team;
 
-import main.simulation.match.Fixture;
+import simulation.match.Fixture;
 
 import java.util.ArrayList;
 import java.util.HashMap;

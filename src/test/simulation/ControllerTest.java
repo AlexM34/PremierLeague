@@ -1,7 +1,6 @@
 package simulation;
 
 import org.junit.jupiter.api.Test;
-import main.simulation.Controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

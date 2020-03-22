@@ -1,12 +1,12 @@
-package main.simulation.competition;
+package simulation.competition;
 
-import main.league.LeagueManager;
-import main.simulation.match.Fixture;
-import main.simulation.match.Match;
-import main.simulation.match.Report;
-import main.team.Club;
-import main.team.Cup;
-import main.team.Season;
+import league.LeagueManager;
+import simulation.match.Fixture;
+import simulation.match.Match;
+import simulation.match.Report;
+import team.Club;
+import team.Cup;
+import team.Season;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.shuffle;
-import static main.simulation.Data.LEAGUES;
-import static main.simulation.competition.Competition.NATIONAL_CUP;
-import static main.simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
-import static main.simulation.competition.League.EUROPA_LEAGUE_NAME;
-import static main.simulation.competition.League.continentalCup;
-import static main.simulation.competition.League.continentalCupResults;
-import static main.simulation.match.Match.simulate;
+import static simulation.Data.LEAGUES;
+import static simulation.competition.Competition.NATIONAL_CUP;
+import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.competition.League.EUROPA_LEAGUE_NAME;
+import static simulation.competition.League.continentalCup;
+import static simulation.competition.League.continentalCupResults;
+import static simulation.match.Match.simulate;
 
 public class Knockout {
     public static final Map<String, Club[]> leagueCup = new HashMap<>();

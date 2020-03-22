@@ -1,10 +1,10 @@
 package helpers;
 
-import main.player.Footballer;
-import main.player.Position;
-import main.player.Resume;
-import main.simulation.Data;
-import main.simulation.Simulator;
+import player.Footballer;
+import player.Position;
+import player.Resume;
+import simulation.Data;
+import simulation.Simulator;
 
 import java.util.Arrays;
 

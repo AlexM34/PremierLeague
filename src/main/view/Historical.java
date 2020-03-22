@@ -1,7 +1,7 @@
-package main.view;
+package view;
 
-import main.league.LeagueManager;
-import main.team.Club;
+import league.LeagueManager;
+import team.Club;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -12,18 +12,18 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 
 import static java.awt.Font.PLAIN;
-import static main.league.LeagueManager.getClubs;
-import static main.simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
-import static main.simulation.competition.League.EUROPA_LEAGUE_NAME;
-import static main.simulation.dynamics.Postseason.allTime;
-import static main.simulation.dynamics.Postseason.assists;
-import static main.simulation.dynamics.Postseason.cleanSheets;
-import static main.simulation.dynamics.Postseason.goals;
-import static main.simulation.dynamics.Postseason.playerStats;
-import static main.simulation.dynamics.Postseason.ratings;
-import static main.view.ViewManager.historicalView;
-import static main.view.ViewManager.rankedView;
-import static main.view.ViewManager.seasonalView;
+import static league.LeagueManager.getClubs;
+import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.competition.League.EUROPA_LEAGUE_NAME;
+import static simulation.dynamics.Postseason.allTime;
+import static simulation.dynamics.Postseason.assists;
+import static simulation.dynamics.Postseason.cleanSheets;
+import static simulation.dynamics.Postseason.goals;
+import static simulation.dynamics.Postseason.playerStats;
+import static simulation.dynamics.Postseason.ratings;
+import static view.ViewManager.historicalView;
+import static view.ViewManager.rankedView;
+import static view.ViewManager.seasonalView;
 
 class Historical extends View {
     private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};

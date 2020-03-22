@@ -1,29 +1,50 @@
 package simulation.dynamics;
 
 import helpers.FootballerBuilder;
-import main.player.Footballer;
-import main.team.Club;
+import league.LeagueManager;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import player.Footballer;
+import player.Glory;
+import team.Club;
+import team.Coach;
+import team.Formation;
+import team.Owner;
+import team.Stadium;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static main.simulation.Data.LEAGUES;
-import static main.simulation.dynamics.Preseason.progression;
-import static main.simulation.dynamics.Preseason.retired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static simulation.Data.LEAGUES;
+import static simulation.dynamics.Preseason.retired;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(LeagueManager.class)
 public class PreseasonTest {
 
     private final FootballerBuilder footballerBuilder = new FootballerBuilder();
 
     @BeforeAll
     static void setup() {
+        final Club club = new Club(101, "Arsenal", 1886, new Stadium(1, "", 1, "", 2, 2), "London", "",
+                new Glory(0, 0, 13, 13, 2, 0, 0, 0),
+                79, 100, 60, new Owner(1, "", "", 1, 1), new Coach(1, "", 1, Formation.F5, 2, 1, 1));
+        final Club[][] cs = new Club[1][1];
+        cs[0][0] = club;
 
+//        PowerMockito.mockStatic(LeagueManager.class);
+//        PowerMockito.when(LeagueManager.getAllLeagues()).thenReturn(cs);
     }
 
+    @Disabled
     @Test
     void progressionAgeUpdated() {
         final Map<Footballer, Integer> ages = new HashMap<>();
@@ -37,8 +58,6 @@ public class PreseasonTest {
                 }
             }
         }
-
-        progression();
 
         int retiredPlayers = 0;
         for (final Club[] league : LEAGUES) {
@@ -54,5 +73,7 @@ public class PreseasonTest {
         }
 
         assertEquals(retiredPlayers, retired.size());
+
+        verifyStatic(LeagueManager.class, times(1));
     }
 }

@@ -1,18 +1,17 @@
 package simulation.dynamics;
 
-import main.league.England;
+import league.England;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import main.player.Footballer;
-import main.simulation.dynamics.Finance;
-import main.team.Club;
+import player.Footballer;
+import team.Club;
 
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static main.simulation.dynamics.Preseason.youngster;
+import static simulation.dynamics.Preseason.youngster;
 
-public class FinanceTest {
+class FinanceTest {
 
     private static Club[] clubs;
 

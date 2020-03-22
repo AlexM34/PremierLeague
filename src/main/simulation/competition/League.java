@@ -1,8 +1,8 @@
-package main.simulation.competition;
+package simulation.competition;
 
-import main.player.MatchStats;
-import main.simulation.match.Report;
-import main.team.Club;
+import player.MatchStats;
+import simulation.match.Report;
+import team.Club;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +10,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static main.simulation.Data.LEAGUES;
-import static main.simulation.Data.USER;
-import static main.simulation.Helper.getPerformance;
-import static main.simulation.Helper.sortMap;
-import static main.simulation.competition.Competition.LEAGUE;
-import static main.simulation.competition.Draw.league;
-import static main.simulation.competition.Draw.seededKnockout;
-import static main.simulation.dynamics.Preseason.pickContinentalTeams;
-import static main.simulation.match.Match.simulate;
-import static main.simulation.match.Tactics.preMatch;
+import static simulation.Data.LEAGUES;
+import static simulation.Data.USER;
+import static simulation.Helper.getPerformance;
+import static simulation.Helper.sortMap;
+import static simulation.competition.Competition.LEAGUE;
+import static simulation.competition.Draw.league;
+import static simulation.competition.Draw.seededKnockout;
+import static simulation.dynamics.Preseason.pickContinentalTeams;
+import static simulation.match.Match.simulate;
+import static simulation.match.Tactics.preMatch;
 
 public class League {
 
@@ -162,7 +162,7 @@ public class League {
 
             final Map<Club, Integer> standing = new LinkedHashMap<>();
             for (int team = 0; team < 4; team++) {
-                final main.team.League groupStats = teams[groups * team + group].getSeason().getContinental().getGroup();
+                final team.League groupStats = teams[groups * team + group].getSeason().getContinental().getGroup();
                 standing.put(teams[groups * team + group], getPerformance(groupStats));
             }
 
@@ -175,7 +175,7 @@ public class League {
             final Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
             for (int team = 0; team < sorted.size(); team++) {
                 final Club club = rankedTeams[team];
-                final main.team.League groupStats = club.getSeason().getContinental().getGroup();
+                final team.League groupStats = club.getSeason().getContinental().getGroup();
 
                 System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %2d:%-2d %2d", team + 1, club.getName(),
                         groupStats.getMatches(), groupStats.getWins(), groupStats.getDraws(), groupStats.getLosses(),

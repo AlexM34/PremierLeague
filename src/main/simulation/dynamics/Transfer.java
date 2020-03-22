@@ -1,19 +1,19 @@
-package main.simulation.dynamics;
+package simulation.dynamics;
 
-import main.player.Footballer;
-import main.player.Position;
-import main.simulation.Simulator;
-import main.team.Club;
+import player.Footballer;
+import player.Position;
+import simulation.Simulator;
+import team.Club;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static main.simulation.Data.LEAGUES;
-import static main.simulation.Helper.sortMap;
-import static main.simulation.dynamics.Preseason.academy;
-import static main.simulation.dynamics.Preseason.deals;
-import static main.simulation.dynamics.Preseason.sold;
-import static main.simulation.dynamics.Preseason.transfers;
+import static simulation.Data.LEAGUES;
+import static simulation.Helper.sortMap;
+import static simulation.dynamics.Preseason.academy;
+import static simulation.dynamics.Preseason.deals;
+import static simulation.dynamics.Preseason.sold;
+import static simulation.dynamics.Preseason.transfers;
 
 public class Transfer {
     private static Map<String, Integer> summary = new HashMap<>();

@@ -1,4 +1,4 @@
-package main.player;
+package player;
 
 public enum Position {
     GK(Role.Goalkeeper, 0),

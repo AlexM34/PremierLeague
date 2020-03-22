@@ -1,27 +1,27 @@
-package main.simulation;
+package simulation;
 
-import main.team.Club;
+import team.Club;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import static main.simulation.Data.LEAGUES;
-import static main.simulation.Data.addDummies;
-import static main.simulation.Data.buildSquads;
-import static main.simulation.competition.Knockout.championsLeague;
-import static main.simulation.competition.Knockout.europaLeague;
-import static main.simulation.competition.Knockout.leagueCupRound;
-import static main.simulation.competition.Knockout.nationalCupRound;
-import static main.simulation.competition.Knockout.setupCups;
-import static main.simulation.competition.League.allLeagues;
-import static main.simulation.competition.League.groupRound;
-import static main.simulation.competition.League.setupLeagues;
-import static main.simulation.dynamics.Postseason.announceCupWinners;
-import static main.simulation.dynamics.Postseason.standings;
-import static main.simulation.dynamics.Preseason.prepare;
-import static main.simulation.dynamics.Preseason.progression;
-import static main.simulation.dynamics.Transfer.transfers;
+import static simulation.Data.LEAGUES;
+import static simulation.Data.addDummies;
+import static simulation.Data.buildSquads;
+import static simulation.competition.Knockout.championsLeague;
+import static simulation.competition.Knockout.europaLeague;
+import static simulation.competition.Knockout.leagueCupRound;
+import static simulation.competition.Knockout.nationalCupRound;
+import static simulation.competition.Knockout.setupCups;
+import static simulation.competition.League.allLeagues;
+import static simulation.competition.League.groupRound;
+import static simulation.competition.League.setupLeagues;
+import static simulation.dynamics.Postseason.announceCupWinners;
+import static simulation.dynamics.Postseason.standings;
+import static simulation.dynamics.Preseason.prepare;
+import static simulation.dynamics.Preseason.progression;
+import static simulation.dynamics.Transfer.transfers;
 
 public class Controller {
     private static final Scanner SCANNER = new Scanner(System.in);

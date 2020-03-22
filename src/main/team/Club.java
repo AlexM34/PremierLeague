@@ -1,7 +1,7 @@
-package main.team;
+package team;
 
-import main.player.Footballer;
-import main.player.Glory;
+import player.Footballer;
+import player.Glory;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -121,7 +121,7 @@ public class Club {
                 ", established=" + established +
                 ", stadium=" + stadium +
                 ", location='" + location + '\'' +
-                ", main.league='" + league + '\'' +
+                ", league='" + league + '\'' +
                 '}';
     }
 }

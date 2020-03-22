@@ -1,7 +1,7 @@
-package main.simulation.competition;
+package simulation.competition;
 
-import main.simulation.Simulator;
-import main.team.Club;
+import simulation.Simulator;
+import team.Club;
 
 class Draw {
     static int[][][] league(final int teams) {

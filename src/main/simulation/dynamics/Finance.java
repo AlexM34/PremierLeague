@@ -1,7 +1,7 @@
-package main.simulation.dynamics;
+package simulation.dynamics;
 
-import main.player.Footballer;
-import main.team.Club;
+import player.Footballer;
+import team.Club;
 
 public class Finance {
 

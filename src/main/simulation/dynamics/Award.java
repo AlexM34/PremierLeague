@@ -1,15 +1,15 @@
-package main.simulation.dynamics;
+package simulation.dynamics;
 
-import main.player.Footballer;
-import main.player.Statistics;
-import main.simulation.Simulator;
-import main.team.Club;
+import player.Footballer;
+import player.Statistics;
+import simulation.Simulator;
+import team.Club;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static main.simulation.Helper.sortMap;
-import static main.simulation.dynamics.Postseason.topTeam;
+import static simulation.Helper.sortMap;
+import static simulation.dynamics.Postseason.topTeam;
 
 public class Award {
     private static final Map<Footballer, Integer> contenders = new HashMap<>();

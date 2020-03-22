@@ -1,7 +1,7 @@
-package main.view;
+package view;
 
-import main.simulation.Simulator;
-import main.team.League;
+import simulation.Simulator;
+import team.League;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,10 +12,10 @@ import javax.swing.JTable;
 import java.net.URL;
 import java.text.DecimalFormat;
 
-import static main.simulation.competition.League.leagueAssists;
-import static main.simulation.competition.League.leagueAverageRatings;
-import static main.simulation.competition.League.leagueRedCards;
-import static main.simulation.competition.League.leagueYellowCards;
+import static simulation.competition.League.leagueAssists;
+import static simulation.competition.League.leagueAverageRatings;
+import static simulation.competition.League.leagueRedCards;
+import static simulation.competition.League.leagueYellowCards;
 
 class Helper {
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");

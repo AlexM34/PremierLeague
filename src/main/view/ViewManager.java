@@ -1,4 +1,4 @@
-package main.view;
+package view;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import static main.simulation.Controller.initialise;
-import static main.view.Helper.playMusic;
+import static simulation.Controller.initialise;
+import static view.Helper.playMusic;
 
 public class ViewManager {
     private static final JFrame frame = new JFrame("Gladiators");

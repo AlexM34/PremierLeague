@@ -1,14 +1,13 @@
 package simulation;
 
-import main.simulation.Simulator;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SimulatorTest {
+class SimulatorTest {
 
     private final Random random = new Random();
     private final int iterations = 100000;
@@ -79,5 +78,4 @@ public class SimulatorTest {
         assertTrue(count > iterations * (chance * 24 / 25 - 1) / limit);
         assertTrue(count < iterations * (chance * 26 / 25 + 1) / limit);
     }
-
 }

@@ -6,3 +6,5 @@
 /out/
 /data/
 /.idea/
+/.gradle/
+/build/

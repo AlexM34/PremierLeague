@@ -1,4 +1,4 @@
-package main.team;
+package team;
 
 public enum Formation {
     F1(541, Type.ParkTheBus),

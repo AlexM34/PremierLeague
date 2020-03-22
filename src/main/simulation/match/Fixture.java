@@ -1,6 +1,6 @@
-package main.simulation.match;
+package simulation.match;
 
-import main.team.Club;
+import team.Club;
 
 import java.util.Arrays;
 import java.util.Objects;

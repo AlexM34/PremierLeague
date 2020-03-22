@@ -1,6 +1,6 @@
 package main;
 
-import main.view.ViewManager;
+import view.ViewManager;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;

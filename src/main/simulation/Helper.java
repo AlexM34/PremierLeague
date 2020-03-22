@@ -1,7 +1,7 @@
-package main.simulation;
+package simulation;
 
-import main.team.Club;
-import main.team.League;
+import team.Club;
+import team.League;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static main.simulation.dynamics.Postseason.offset;
+import static simulation.dynamics.Postseason.offset;
 
 public class Helper {
 

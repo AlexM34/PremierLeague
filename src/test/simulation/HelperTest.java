@@ -1,10 +1,9 @@
 package simulation;
 
-import main.league.England;
-import main.simulation.Helper;
-import main.team.Club;
-import main.team.League;
+import league.England;
 import org.junit.jupiter.api.Test;
+import team.Club;
+import team.League;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +14,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HelperTest {
+class HelperTest {
 
     private final Random random = new Random();
 

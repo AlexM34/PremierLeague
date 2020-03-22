@@ -1,20 +1,20 @@
-package main.simulation.match;
+package simulation.match;
 
-import main.player.Footballer;
-import main.player.MatchStats;
-import main.player.Statistics;
-import main.simulation.competition.Competition;
-import main.team.Club;
+import player.Footballer;
+import player.MatchStats;
+import player.Statistics;
+import simulation.competition.Competition;
+import team.Club;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static main.simulation.Data.MIDFIELDER_1;
-import static main.simulation.Data.USER;
-import static main.simulation.Data.USER_STYLE;
-import static main.simulation.match.Match.fans;
-import static main.simulation.match.Tactics.pickSquad;
+import static simulation.Data.MIDFIELDER_1;
+import static simulation.Data.USER;
+import static simulation.Data.USER_STYLE;
+import static simulation.match.Match.fans;
+import static simulation.match.Tactics.pickSquad;
 
 public class Report {
     private final Club home;
@@ -192,7 +192,7 @@ public class Report {
                 away.getName(), homeGoals, awayGoals, motmPlayer.getFootballer().getName(), motmRating));
     }
 
-    private static main.player.Competition getCompetition(final Statistics season, final int type) {
+    private static player.Competition getCompetition(final Statistics season, final int type) {
         switch (type) {
             case 0: return season.getLeague();
             case 1: return season.getNationalCup();
@@ -210,7 +210,7 @@ public class Report {
             motmRating = matchStats.getRating();
         }
 
-        final main.player.Competition stats = getCompetition(
+        final player.Competition stats = getCompetition(
                 matchStats.getFootballer().getResume().getSeason(), competition.getType());
 
         stats.addRating((int) matchStats.getRating() * 100, 1);
