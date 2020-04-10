@@ -4,7 +4,7 @@
 *.wav
 
 /out/
-/data/
+/src/main/resources/data/
 /.idea/
 /.gradle/
 /build/
