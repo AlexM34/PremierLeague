@@ -20,9 +20,7 @@ import static simulation.Helper.sortLeague;
 import static simulation.Helper.sortMap;
 import static simulation.competition.Knockout.leagueCup;
 import static simulation.competition.Knockout.nationalCup;
-import static simulation.competition.League.CHAMPIONS_LEAGUE;
 import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
-import static simulation.competition.League.EUROPA_LEAGUE;
 import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 import static simulation.competition.League.continentalCup;
 import static simulation.dynamics.Finance.knockoutPrizes;
@@ -44,25 +42,34 @@ public class Postseason {
 
     public static void standings(final Club[] league) {
         final List<Club> sorted = sortLeague(league, 0);
+        printStandings(sorted);
+        finaliseLeague(sorted);
+    }
 
+    private static void printStandings(final List<Club> league) {
         int position = 1;
         System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
-        for (final Club team : sorted) {
+        for (final Club team : league) {
             final League stats = team.getSeason().getLeague();
             System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d",
                     position++, team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),
                     stats.getLosses(), stats.getScored(), stats.getConceded(), stats.getPoints()));
         }
+    }
 
-        final Club first = sorted.get(0);
-        if (first.getSeason().getLeague().getMatches() == 2 * league.length - 2) {
-            first.getGlory().addLeague();
-            for (final Footballer footballer : first.getFootballers()) {
-                footballer.getResume().getGlory().addLeague();
-            }
+    private static void finaliseLeague(final List<Club> league) {
+        final Club first = league.get(0);
+        if (first.getSeason().getLeague().getMatches() == 2 * league.size() - 2) {
+            giveTrophy(first);
+            reputationUpdate(league.toArray(new Club[0]));
+            leaguePrizes(league.toArray(new Club[0]));
+        }
+    }
 
-            reputationUpdate(sorted.toArray(new Club[0]));
-            leaguePrizes(sorted.toArray(new Club[0]));
+    private static void giveTrophy(final Club champion) {
+        champion.getGlory().addLeague();
+        for (final Footballer footballer : champion.getFootballers()) {
+            footballer.getResume().getGlory().addLeague();
         }
     }
 
@@ -75,6 +82,52 @@ public class Postseason {
     }
 
     public static void playerStats(final Club[] league, final int type, final boolean seasonal) {
+        clearStats();
+
+        Arrays.stream(league).forEach(club -> club.getFootballers()
+                .forEach(footballer -> addStats(footballer, type, seasonal)));
+
+        sortStats();
+    }
+
+    private static void addStats(final Footballer f, final int type, final boolean seasonal) {
+        final Statistics stats = seasonal ? f.getResume().getSeason() : f.getResume().getTotal();
+        final Competition competition = getCompetition(stats, type);
+        final int minGames;
+
+        switch (type) {
+            case 0: minGames = getMatchday() / 4; break;
+            case 1: case 2: minGames = getMatchday() / 30; break;
+            case 3: case 4: minGames = getMatchday() / 12; break;
+            default: minGames = 0;
+        }
+
+        if (competition.getMatches() > minGames) {
+            ratings.put(f, competition.getRating());
+            topTeam.put(f, competition.getRating());
+        }
+
+        motm.put(f, competition.getMotmAwards());
+        goals.put(f, competition.getGoals());
+        assists.put(f, competition.getAssists());
+        yellowCards.put(f, competition.getYellowCards());
+        redCards.put(f, competition.getRedCards());
+
+        if (f.getPosition() == GK) cleanSheets.put(f, competition.getCleanSheets());
+    }
+
+    private static Competition getCompetition(final Statistics stats, final int type) {
+        switch (type) {
+            case 0: return stats.getLeague();
+            case 1: return stats.getNationalCup();
+            case 2: return stats.getLeagueCup();
+            case 3: return stats.getChampionsLeague();
+            case 4: return stats.getEuropaLeague();
+            default: throw new IllegalArgumentException("Illegal competition type!");
+        }
+    }
+
+    private static void clearStats() {
         ratings.clear();
         motm.clear();
         goals.clear();
@@ -83,51 +136,9 @@ public class Postseason {
         yellowCards.clear();
         redCards.clear();
         topTeam.clear();
+    }
 
-        for (final Club club : league) {
-            for (final Footballer f : club.getFootballers()) {
-                final Statistics stats = seasonal ? f.getResume().getSeason() : f.getResume().getTotal();
-                final Competition competition;
-                final int games;
-
-                switch (type) {
-                    case 0:
-                        competition = stats.getLeague();
-                        games = getMatchday() / 2;
-                        break;
-                    case 1:
-                        competition = stats.getNationalCup();
-                        games = getMatchday() / 18;
-                        break;
-                    case 2:
-                        competition = stats.getLeagueCup();
-                        games = getMatchday() / 18;
-                        break;
-                    case 3:
-                        competition = stats.getChampionsLeague();
-                        games = getMatchday() / 8;
-                        break;
-                    default:
-                        competition = stats.getEuropaLeague();
-                        games = getMatchday() / 8;
-                        break;
-                }
-
-                if (competition.getMatches() > games) {
-                    ratings.put(f, competition.getRating());
-                    topTeam.put(f, competition.getRating());
-                }
-
-                motm.put(f, competition.getMotmAwards());
-                goals.put(f, competition.getGoals());
-                assists.put(f, competition.getAssists());
-                yellowCards.put(f, competition.getYellowCards());
-                redCards.put(f, competition.getRedCards());
-
-                if (f.getPosition() == GK) cleanSheets.put(f, competition.getCleanSheets());
-            }
-        }
-
+    private static void sortStats() {
         goals = sortMap(goals);
         assists = sortMap(assists);
         ratings = sortMap(ratings);
@@ -148,8 +159,7 @@ public class Postseason {
                 default: cups = 0; break;
             }
 
-            if (cups == 0) continue;
-            winners.put(club.getName(), cups);
+            if (cups > 0) winners.put(club.getName(), cups);
         }
 
         final Map<String, Integer> sorted = sortMap(winners);
@@ -166,13 +176,8 @@ public class Postseason {
 
     public static List<Footballer> topPlayers() {
         final Map<Footballer, Integer> players = new HashMap<>();
-        for (final Club[] league : LEAGUES) {
-            for (final Club club : league) {
-                for (final Footballer f : club.getFootballers()) {
-                    players.put(f, f.getOverall());
-                }
-            }
-        }
+        Arrays.stream(LEAGUES).forEach(league -> Arrays.stream(league)
+                .forEach(club -> club.getFootballers().forEach(f -> players.put(f, f.getOverall()))));
 
         final Map<Footballer, Integer> sorted = sortMap(players);
         return new ArrayList<>(sorted.keySet());
@@ -181,25 +186,9 @@ public class Postseason {
     public static void announceCupWinners() {
         for (final Club[] league : LEAGUES) {
             final String leagueName = league[0].getLeague();
-            if (leagueCup.containsKey(leagueName)) {
-                final Club leagueCupWinner = leagueCup.get(leagueName)[0];
-                System.out.println(leagueCupWinner.getName() + " win the League Cup!");
-                leagueCupWinner.getGlory().addLeagueCup();
-                for (final Footballer footballer : leagueCupWinner.getFootballers()) {
-                    footballer.getResume().getGlory().addLeagueCup();
-                }
+            if (leagueCup.containsKey(leagueName)) giveCupTrophy(leagueCup, leagueName, 2);
 
-                knockoutPrizes(leagueCup.get(leagueName), false);
-            }
-
-            final Club nationalCupWinner = nationalCup.get(leagueName)[0];
-            System.out.println(nationalCupWinner.getName() + " win the National Cup!");
-            nationalCupWinner.getGlory().addNationalCup();
-            for (final Footballer footballer : nationalCupWinner.getFootballers()) {
-                footballer.getResume().getGlory().addNationalCup();
-            }
-
-            knockoutPrizes(nationalCup.get(leagueName), false);
+            giveCupTrophy(nationalCup, leagueName, 1);
 
             merchandise(league);
             salaries(league);
@@ -207,40 +196,86 @@ public class Postseason {
             Arrays.stream(league).forEach(Postseason::review);
         }
 
-        final Club europaLeagueWinner = continentalCup.get(EUROPA_LEAGUE_NAME)[0];
-        System.out.println(europaLeagueWinner.getName() + " win the Europa League!");
-        europaLeagueWinner.getGlory().addEuropaLeague();
-        for (final Footballer footballer : europaLeagueWinner.getFootballers()) {
-            footballer.getResume().getGlory().addEuropaLeague();
-        }
+        giveCupTrophy(continentalCup, EUROPA_LEAGUE_NAME, 4);
+        giveCupTrophy(continentalCup, CHAMPIONS_LEAGUE_NAME, 3);
+    }
 
-        final Club championsLeagueWinner = continentalCup.get(CHAMPIONS_LEAGUE_NAME)[0];
-        System.out.println(championsLeagueWinner.getName() + " win the Champions League!");
-        championsLeagueWinner.getGlory().addChampionsLeague();
-        for (final Footballer footballer : championsLeagueWinner.getFootballers()) {
+    private static void giveCupTrophy(final Map<String, Club[]> cup, final String leagueName, final int competition) {
+        final Club champion = cup.get(leagueName)[0];
+        addCup(champion, competition);
+        knockoutPrizes(cup.get(leagueName), competition > 2);
+    }
+
+    private static void addCup(final Club champion, final int competition) {
+        switch(competition) {
+            case 1: addLeagueCup(champion); break;
+            case 2: addNationalCup(champion); break;
+            case 3: addChampionsLeague(champion); break;
+            case 4: addEuropaLeague(champion);
+        }
+    }
+
+    private static void addLeagueCup(final Club champion) {
+        System.out.println(champion.getName() + " win the League Cup!");
+        champion.getGlory().addLeagueCup();
+        for (final Footballer footballer : champion.getFootballers()) {
+            footballer.getResume().getGlory().addLeagueCup();
+        }
+    }
+
+    private static void addNationalCup(final Club champion) {
+        System.out.println(champion.getName() + " win the National Cup!");
+        champion.getGlory().addNationalCup();
+        for (final Footballer footballer : champion.getFootballers()) {
+            footballer.getResume().getGlory().addNationalCup();
+        }
+    }
+
+    private static void addChampionsLeague(final Club champion) {
+        System.out.println(champion.getName() + " win the Champions League!");
+        champion.getGlory().addChampionsLeague();
+        for (final Footballer footballer : champion.getFootballers()) {
             footballer.getResume().getGlory().addChampionsLeague();
         }
+    }
 
-        knockoutPrizes(EUROPA_LEAGUE, true);
-        knockoutPrizes(CHAMPIONS_LEAGUE, true);
+    private static void addEuropaLeague(final Club champion) {
+        System.out.println(champion.getName() + " win the Europa League!");
+        champion.getGlory().addEuropaLeague();
+        for (final Footballer footballer : champion.getFootballers()) {
+            footballer.getResume().getGlory().addEuropaLeague();
+        }
     }
 
     static void review(final Club club) {
         System.out.println("Seasonal performance review of " + club.getName());
+        leagueReview(club);
+        nationalCupReview(club);
+        leagueCupReview(club);
+        continentalReview(club);
+    }
+
+    private static void leagueReview(final Club club) {
         System.out.println("League");
         club.getSeason().getLeague().getFixtures()
                 .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+    }
 
+    private static void nationalCupReview(final Club club) {
         System.out.println();
         System.out.println("National Cup");
         club.getSeason().getNationalCup().getFixtures()
                 .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+    }
 
+    private static void leagueCupReview(final Club club) {
         System.out.println();
         System.out.println("League Cup");
         club.getSeason().getLeagueCup().getFixtures()
                 .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+    }
 
+    private static void continentalReview(final Club club) {
         System.out.println();
         System.out.println("Continental");
         club.getSeason().getContinental().getGroup().getFixtures()
