@@ -4,16 +4,16 @@ import java.util.Objects;
 
 public class MatchStats {
     private final Footballer footballer;
-    private final int started;
+    private int started;
     private float rating;
     private int goals;
     private int assists;
     private boolean yellowCarded;
     private boolean redCarded;
 
-    public MatchStats(final Footballer footballer, final int started) {
+    public MatchStats(final Footballer footballer) {
         this.footballer = footballer;
-        this.started = started;
+        this.started = -1;
         this.rating = 6;
         this.goals = 0;
         this.assists = 0;
@@ -27,6 +27,10 @@ public class MatchStats {
 
     public int getStarted() {
         return started;
+    }
+
+    public void setStarted(final int started) {
+        this.started = started;
     }
 
     public float getRating() {

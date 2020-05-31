@@ -31,8 +31,8 @@ public class Match {
 
         if (report.getCompetition() == Competition.LEAGUE) {
             final String leagueName = report.getHome().getLeague();
-            updateLeagueStats(leagueName, report.getHomeSquad());
-            updateLeagueStats(leagueName, report.getAwaySquad());
+            updateLeagueStats(leagueName, report.getHomeLineup().getSquad());
+            updateLeagueStats(leagueName, report.getAwayLineup().getSquad());
         }
     }
 
@@ -68,14 +68,20 @@ public class Match {
 
     static void kickoff() {
         for (final Footballer f : report.getHome().getFootballers()) {
+            System.out.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
             if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
             else f.changeCondition(12 + Simulator.getInt(3));
         }
 
+        System.out.println();
         for (final Footballer f : report.getAway().getFootballers()) {
+            System.out.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
             if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
             else f.changeCondition(12 + Simulator.getInt(3));
         }
+
+        report.getHomeLineup().getSquad().forEach(stats -> stats.setStarted(0));
+        report.getAwayLineup().getSquad().forEach(stats -> stats.setStarted(0));
     }
 
     private static void event() {
@@ -119,7 +125,8 @@ public class Match {
     private static void yellowCardEvent() {
         final boolean t = Simulator.getBoolean();
         final int p = Simulator.getInt(11);
-        final MatchStats footballer = (t ? report.getHomeSquad() : report.getAwaySquad()).get(p);
+        final MatchStats footballer = (t ? report.getHomeLineup() : report.getAwayLineup())
+                .getSquad().get(p);
 
         if (!footballer.isRedCarded()) {
             report.append(getMinute()).append(footballer.getFootballer().getName());
@@ -141,7 +148,8 @@ public class Match {
     private static void redCardEvent() {
         final boolean t = Simulator.getBoolean();
         final int p = Simulator.getInt(11);
-        final MatchStats footballer = (t ? report.getHomeSquad() : report.getAwaySquad()).get(p);
+        final MatchStats footballer = (t ? report.getHomeLineup() : report.getAwayLineup())
+                .getSquad().get(p);
 
         if (!footballer.isRedCarded()) {
             footballer.addRedCard();
@@ -154,8 +162,9 @@ public class Match {
     }
 
     private static void goalkeeperEjected(final boolean isHome) {
-        final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();
-        final List<Footballer> bench = isHome ? report.getHomeBench() : report.getAwayBench();
+        final Lineup lineup = isHome ? report.getHomeLineup() : report.getAwayLineup();
+        final List<MatchStats> squad = lineup.getSquad();
+        final List<MatchStats> bench = lineup.getBench();
         float worst = 10;
         int flop = 5;
 
@@ -169,20 +178,21 @@ public class Match {
         }
 
         final Footballer subbedOut = squad.get(flop).getFootballer();
-        final Footballer subbedIn = bench.get(0) != null ? bench.get(0) :
-                bench.stream().filter(Objects::nonNull).findFirst().orElse(GOALKEEPER_1);
+        final MatchStats subbedIn = bench.get(0) != null ? bench.get(0) :
+                bench.stream().filter(Objects::nonNull).findFirst().orElse(new MatchStats(GOALKEEPER_1));
 
-        report.append(getMinute()).append(subbedIn.getName()).append(" replaces ")
+        report.append(getMinute()).append(subbedIn.getFootballer().getName()).append(" replaces ")
                 .append(subbedOut.getName()).append("<br/>");
 
         report.updateStats(squad.get(flop));
-        squad.set(flop, new MatchStats(subbedIn, minute));
+        subbedIn.setStarted(minute);
+        squad.set(flop, subbedIn);
         bench.set(0, null);
     }
 
     private static boolean penaltyShootout() {
-        final List<MatchStats> homeSquad = report.getHomeSquad();
-        final List<MatchStats> awaySquad = report.getAwaySquad();
+        final List<MatchStats> homeSquad = report.getHomeLineup().getSquad();
+        final List<MatchStats> awaySquad = report.getAwayLineup().getSquad();
         int homeGoals = 0;
         int awayGoals = 0;
         int currentHome = 10;
@@ -227,10 +237,10 @@ public class Match {
         final int home = Simulator.getInt(5) + scale * 3 + 1;
         final int away = Simulator.getInt(5) - scale * 3 + 1;
 
-        for (int i = 0; i < home; i++) updateRating(report.getHomeSquad(), 0.1f);
-        for (int i = 0; i > home; i--) updateRating(report.getHomeSquad(), -0.1f);
-        for (int i = 0; i < away; i++) updateRating(report.getAwaySquad(), 0.1f);
-        for (int i = 0; i > away; i--) updateRating(report.getAwaySquad(), -0.1f);
+        for (int i = 0; i < home; i++) updateRating(report.getHomeLineup().getSquad(), 0.1f);
+        for (int i = 0; i > home; i--) updateRating(report.getHomeLineup().getSquad(), -0.1f);
+        for (int i = 0; i < away; i++) updateRating(report.getAwayLineup().getSquad(), 0.1f);
+        for (int i = 0; i > away; i--) updateRating(report.getAwayLineup().getSquad(), -0.1f);
     }
 
     private static void updateRating(final List<MatchStats> squad, final float change) {

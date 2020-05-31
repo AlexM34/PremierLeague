@@ -5,7 +5,6 @@ import player.MatchStats;
 import team.Club;
 import team.Formation;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -31,7 +30,7 @@ public class Tactics {
         System.out.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
             final int attack = scanner.nextInt();
-            if(attack < 0 || attack > 20) {
+            if (attack < 0 || attack > 20) {
                 System.out.println("Wrong attack value!");
                 continue;
             }
@@ -41,25 +40,28 @@ public class Tactics {
         }
     }
 
-    static List<Footballer[]> pickSquad(final Club team) {
+    static Lineup pickSquad(final Club team) {
         final List<Footballer> footballers = team.getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 
+        refreshDummies();
         final Formation formation = pickFormation(footballers);
-        final int defenders = formation.getDefenders();
-        final int midfielders = formation.getMidfielders();
-        final int forwards = formation.getForwards();
-        final Footballer[] squad = new Footballer[11];
-        final Footballer[] bench = new Footballer[7];
+        final Lineup lineup = new Lineup(formation);
+        for (final Footballer footballer : footballers) {
+            if (!footballer.canPlay()) {
+                footballer.changeBan(-1);
+                continue;
+            }
 
-        int g = 1;
-        int d = defenders;
-        int m = midfielders;
-        int f = forwards;
-        int bg = 1;
-        int bf = 6;
+            lineup.add(footballer);
+        }
 
+        lineup.print();
+        return lineup;
+    }
+
+    private static void refreshDummies() {
         GOALKEEPER_1.changeCondition(100);
         DEFENDER_1.changeCondition(100);
         MIDFIELDER_1.changeCondition(100);
@@ -67,40 +69,6 @@ public class Tactics {
         DEFENDER_2.changeCondition(100);
         MIDFIELDER_2.changeCondition(100);
         FORWARD_2.changeCondition(100);
-
-        for (final Footballer footballer : footballers) {
-            if (footballer.getPosition() == null || footballer.getCondition() < 70
-                    || footballer.getBan() > 0) {
-                footballer.changeBan(-1);
-                continue;
-            }
-
-            switch (footballer.getPosition().getRole()) {
-                case Goalkeeper:
-                    if (g > 0) squad[--g] = footballer;
-                    else if (bg > 0) bench[--bg] = footballer;
-                    break;
-
-                case Defender:
-                    if (d > 0) squad[d--] = footballer;
-                    else if (bf > 0) bench[bf--] = footballer;
-                    break;
-
-                case Midfielder:
-                    if (m > 0) squad[--m + defenders + 1] = footballer;
-                    else if (bf > 0) bench[bf--] = footballer;
-                    break;
-
-                case Forward:
-                    if (f > 0) squad[--f + defenders + midfielders + 1] = footballer;
-                    else if (bf > 0) bench[bf--] = footballer;
-                    break;
-            }
-        }
-
-        if (squad[0] == null) footballers.forEach(f1 -> System.out.println(f1.getPosition() + "" + f1.getCondition()));
-
-        return Arrays.asList(squad, bench);
     }
 
     private static Formation pickFormation(final List<Footballer> footballers) {
@@ -145,8 +113,9 @@ public class Tactics {
     }
 
     static void substitute(final boolean isHome) {
-        final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();
-        final List<Footballer> bench = isHome ? report.getHomeBench() : report.getAwayBench();
+        final Lineup lineup = isHome ? report.getHomeLineup() : report.getAwayLineup();
+        final List<MatchStats> squad = lineup.getSquad();
+        final List<MatchStats> bench = lineup.getBench();
         float worst = 10;
         int flop = 0;
 
@@ -161,14 +130,15 @@ public class Tactics {
 
         final Footballer subbedOut = squad.get(flop).getFootballer();
         for (int player = 0; player < bench.size(); player++) {
-            final Footballer subbedIn = bench.get(player);
+            final MatchStats subbedIn = bench.get(player);
             if (subbedIn == null) continue;
-            if (subbedOut.getPosition().getRole().equals(subbedIn.getPosition().getRole())) {
+            if (subbedOut.getPosition().getRole().equals(subbedIn.getFootballer().getPosition().getRole())) {
                 report.append(String.valueOf(minute)).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
-                        .append(subbedIn.getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
+                        .append(subbedIn.getFootballer().getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
 
                 report.updateStats(squad.get(flop));
-                squad.set(flop, new MatchStats(subbedIn, minute));
+                subbedIn.setStarted(minute);
+                squad.set(flop, subbedIn);
                 bench.set(player, null);
                 break;
             }

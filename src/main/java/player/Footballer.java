@@ -185,8 +185,11 @@ public class Footballer {
     }
 
     public void changeBan(final int ban) {
-        this.ban += ban;
-        if (this.ban < 0) this.ban = 0;
+        this.ban = Math.max(0, this.ban + ban);
+    }
+
+    public boolean canPlay() {
+        return this.position != null && this.condition > 70 && this.ban == 0;
     }
 
     public int getScoringChance() {

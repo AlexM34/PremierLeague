@@ -19,7 +19,8 @@ class Performance {
         int assisting = 10000;
         Footballer goalscorer = null;
         Footballer assistmaker = null;
-        final List<MatchStats> squad = isHome ? report.getHomeSquad() : report.getAwaySquad();
+        final List<MatchStats> squad = (isHome ? report.getHomeLineup() : report.getAwayLineup())
+                .getSquad();
 
         for (int player = 0; player < 11; player++) {
             if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
@@ -40,7 +41,8 @@ class Performance {
 
         if (goalscorer == null) {
             int footballer = ownGoal();
-            final List<MatchStats> opponent = isHome ? report.getAwaySquad() : report.getHomeSquad();
+            final List<MatchStats> opponent = (isHome ? report.getAwayLineup() : report.getHomeLineup())
+                    .getSquad();
             if (opponent.get(footballer).isRedCarded()) footballer = 0;
             opponent.get(footballer).changeRating(-1.5f);
             report.append(String.valueOf(Match.minute)).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")

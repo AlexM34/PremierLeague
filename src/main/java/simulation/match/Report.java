@@ -1,16 +1,10 @@
 package simulation.match;
 
-import player.Footballer;
 import player.MatchStats;
 import player.Statistics;
 import simulation.competition.Competition;
 import team.Club;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
 import static simulation.match.Match.fans;
@@ -21,14 +15,12 @@ public class Report {
     private final Club away;
     private final Competition competition;
     private final boolean last;
+    private final Lineup homeLineup;
+    private final Lineup awayLineup;
     private int homeGoals;
     private int awayGoals;
     private final int aggregateHomeGoals;
     private final int aggregateAwayGoals;
-    private final List<MatchStats> homeSquad;
-    private final List<Footballer> homeBench;
-    private final List<MatchStats> awaySquad;
-    private final List<Footballer> awayBench;
     private MatchStats motmPlayer;
     private float motmRating;
     private int balance;
@@ -48,21 +40,13 @@ public class Report {
         this.aggregateAwayGoals = aggregateAwayGoals;
         this.report = new StringBuilder();
 
-        final List<Footballer[]> homeSelection = pickSquad(home);
-        this.homeSquad = Arrays.stream(homeSelection.get(0))
-                .map(f -> new MatchStats(f, 1)).collect(Collectors.toList());
-        this.homeBench = Arrays.asList(homeSelection.get(1));
-
-        final List<Footballer[]> awaySelection = pickSquad(away);
-        this.awaySquad = Arrays.stream(awaySelection.get(0))
-                .map(f -> new MatchStats(f, 1)).collect(Collectors.toList());
-        this.awayBench = Arrays.asList(awaySelection.get(1));
-
-        this.motmPlayer = new MatchStats(null, -1);
+        this.homeLineup = pickSquad(home);
+        this.awayLineup = pickSquad(away);
+        this.motmPlayer = new MatchStats(null);
         this.motmRating = 0;
 
-        final int homeAttack = getAttack(homeSquad, awaySquad);
-        final int awayAttack = getAttack(awaySquad, homeSquad);
+        final int homeAttack = getAttack(true);
+        final int awayAttack = getAttack(false);
 
         balance = fans + 6 * (homeAttack - awayAttack) / 7  +
                 (home.getSeason().getForm() - away.getSeason().getForm()) / 4 + 50;
@@ -72,16 +56,17 @@ public class Report {
         else style = (homeAttack + awayAttack) / 10 - 6;
     }
 
-    private int getAttack(final List<MatchStats> homeSquad, final List<MatchStats> awaySquad) {
+    private int getAttack(final boolean isHome) {
         int attack = 0;
         int defence = 0;
-        for (MatchStats footballer : homeSquad) {
-            if (footballer == null) footballer = new MatchStats(MIDFIELDER_1, 0);
+        final Lineup team = isHome ? homeLineup : awayLineup;
+        final Lineup opponent = isHome ? awayLineup : homeLineup;
+
+        for (final MatchStats footballer : team.getSquad()) {
             attack += footballer.getFootballer().getOverall() * footballer.getFootballer().getPosition().getAttackingDuty();
         }
 
-        for (MatchStats footballer : awaySquad) {
-            if (footballer == null) footballer = new MatchStats(MIDFIELDER_1, 0);
+        for (final MatchStats footballer : opponent.getSquad()) {
             defence += footballer.getFootballer().getOverall() * (5 - footballer.getFootballer().getPosition().getAttackingDuty());
         }
 
@@ -116,20 +101,12 @@ public class Report {
         awayGoals++;
     }
 
-    List<MatchStats> getHomeSquad() {
-        return homeSquad;
+    Lineup getHomeLineup() {
+        return homeLineup;
     }
 
-    List<Footballer> getHomeBench() {
-        return homeBench;
-    }
-
-    List<MatchStats> getAwaySquad() {
-        return awaySquad;
-    }
-
-    List<Footballer> getAwayBench() {
-        return awayBench;
+    Lineup getAwayLineup() {
+        return awayLineup;
     }
 
     void changeBalance(final int change) {
@@ -171,15 +148,15 @@ public class Report {
     }
 
     public void finalWhistle() {
-        if (homeSquad.get(0) != null && awayGoals == 0) getCompetition(homeSquad.get(0)
-                .getFootballer().getResume().getSeason(), competition.getType()).addCleanSheets(1);
+        if (homeLineup.getPlayer(0) != null && awayGoals == 0) getCompetition(homeLineup.getPlayer(0)
+                .getResume().getSeason(), competition.getType()).addCleanSheets(1);
 
-        if (awaySquad.get(0) != null && homeGoals == 0) getCompetition(awaySquad.get(0)
-                .getFootballer().getResume().getSeason(), competition.getType()).addCleanSheets(1);
+        if (awayLineup.getPlayer(0) != null && homeGoals == 0) getCompetition(awayLineup.getPlayer(0)
+                .getResume().getSeason(), competition.getType()).addCleanSheets(1);
 
         for (int player = 0; player < 11; player++) {
-            updateStats(homeSquad.get(player));
-            updateStats(awaySquad.get(player));
+            updateStats(homeLineup.getStats(player));
+            updateStats(awayLineup.getStats(player));
         }
 
         getCompetition(motmPlayer.getFootballer().getResume().getSeason(),
