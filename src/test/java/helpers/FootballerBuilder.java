@@ -21,14 +21,24 @@ public class FootballerBuilder {
             Data.SURNAMES[Simulator.getInt(Data.SURNAMES.length)];
     private final int age = 17 + Simulator.getInt(20);
     private final String nationality = Data.NATIONS[Simulator.getInt(Data.NATIONS.length)];
-    private final int overall = 60 + Simulator.getInt(30);
+    private int overall = 60 + Simulator.getInt(30);
     private final int potential = overall + Simulator.getInt(10);
     private final long wage = 10000 * (1 + Simulator.getInt(5));
     private final Position position = (Position) POSITIONS[Simulator.getInt(POSITIONS.length)];
     private final int number = Simulator.getInt(99) + 1;
-    private final int finishing = overall + 10 * position.getAttackingDuty() - 50;
+    private int finishing = overall + 10 * position.getAttackingDuty() - 50;
     private final int vision = overall + 10 -
             (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
+
+    public FootballerBuilder withOverall(final int overall) {
+        this.overall = overall;
+        return this;
+    }
+
+    public FootballerBuilder withFinishing(final int finishing) {
+        this.finishing = finishing;
+        return this;
+    }
 
     public Footballer build() {
 

@@ -9,8 +9,9 @@ public class Penalty {
         report.append(striker.getName()).append(" steps up to take the penalty against ")
                 .append(goalkeeper.getName()).append("<br/>");
 
-        if (Simulator.isSatisfied(70 + striker.getOverall() -
-                goalkeeper.getOverall())) {
+        final int percentage = calculateChance(striker, goalkeeper);
+
+        if (Simulator.isSatisfied(percentage)) {
 
             report.append("He scores with a great shot! ");
             return 1;
@@ -19,5 +20,12 @@ public class Penalty {
             report.append("The goalkeeper makes a wonderful save! ");
             return 0;
         }
+    }
+
+    static int calculateChance(final Footballer striker, final Footballer goalkeeper) {
+        final int attack = striker.getOverall() + striker.getFinishing() / 3;
+        final int defence = 40 + goalkeeper.getOverall() / 3;
+
+        return Math.max(30, Math.min(90, 50 * attack / defence));
     }
 }
