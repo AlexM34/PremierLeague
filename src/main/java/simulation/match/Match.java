@@ -58,9 +58,7 @@ public class Match {
         }
 
         if (report.isStillTied()) {
-            report.append("It's time for the penalty shootout!<br/>");
-
-            final boolean homeWin = penaltyShootout();
+            final boolean homeWin = new Shootout(report).isHomeWin();
             if (homeWin) report.addHomeGoal();
             else report.addAwayGoal();
         }
@@ -190,67 +188,27 @@ public class Match {
         bench.set(0, null);
     }
 
-    private static boolean penaltyShootout() {
-        final List<MatchStats> homeSquad = report.getHomeLineup().getSquad();
-        final List<MatchStats> awaySquad = report.getAwayLineup().getSquad();
-        int homeGoals = 0;
-        int awayGoals = 0;
-        int currentHome = 10;
-        int currentAway = 10;
-        int taken = 0;
-
-        while(true) {
-            while (homeSquad.get(currentHome).isRedCarded()) currentHome = (currentHome + 10) % 11;
-            homeGoals += penalty(homeSquad.get(currentHome), awaySquad.get(0));
-            report.append(String.valueOf(homeGoals)).append("-").append(awayGoals).append("<br/>");
-            if (taken < 5 && (homeGoals > awayGoals + 5 - taken || homeGoals + 4 - taken < awayGoals)) break;
-            currentHome = (currentHome + 10) % 11;
-
-            while (awaySquad.get(currentAway).isRedCarded()) currentAway = (currentAway + 10) % 11;
-            awayGoals += penalty(awaySquad.get(currentAway), homeSquad.get(0));
-            report.append(String.valueOf(homeGoals)).append("-").append(awayGoals).append("<br/>");
-            if (taken < 4 && (awayGoals > homeGoals + 4 - taken || awayGoals + 4 - taken < homeGoals)
-                    || taken >= 4 && homeGoals != awayGoals) break;
-            currentAway = (currentAway + 10) % 11;
-
-            taken++;
-        }
-
-        return homeGoals > awayGoals;
-    }
-
-    private static int penalty(final MatchStats striker, final MatchStats goalkeeper) {
-        report.append(striker.getFootballer().getName()).append(" steps up to take the penalty vs ")
-                .append(goalkeeper.getFootballer().getName()).append("<br/>");
-        if (Simulator.isSatisfied(70 + striker.getFootballer().getOverall() -
-                goalkeeper.getFootballer().getOverall())) {
-
-            report.append("He scores with a great shot! ");
-            return 1;
-        } else {
-            report.append("The goalkeeper makes a wonderful save! ");
-            return 0;
-        }
-    }
-
     static void updateRatings(final int scale) {
-        final int home = Simulator.getInt(5) + scale * 3 + 1;
-        final int away = Simulator.getInt(5) - scale * 3 + 1;
+        final float homeScale = Simulator.getInt(5) + scale * 3 + 1;
+        updateRating(report.getHomeLineup().getSquad(), homeScale);
 
-        for (int i = 0; i < home; i++) updateRating(report.getHomeLineup().getSquad(), 0.1f);
-        for (int i = 0; i > home; i--) updateRating(report.getHomeLineup().getSquad(), -0.1f);
-        for (int i = 0; i < away; i++) updateRating(report.getAwayLineup().getSquad(), 0.1f);
-        for (int i = 0; i > away; i--) updateRating(report.getAwayLineup().getSquad(), -0.1f);
+        final float awayScale = Simulator.getInt(5) - scale * 3 + 1;
+        updateRating(report.getAwayLineup().getSquad(), awayScale);
     }
 
     private static void updateRating(final List<MatchStats> squad, final float change) {
-        final int player = Simulator.getInt(11);
-        if (squad.get(player) == null) return;
-        float overall = (float) squad.get(player).getFootballer().getOverall() *
-                squad.get(player).getFootballer().getOverall() / 6000;
+        final int sign = change > 0 ? 1 : -1;
 
-        if (change < 0) overall = 1 / overall;
-        squad.get(player).changeRating(change * overall);
+        for (int i = 0; i < Math.abs(change); i++) {
+            final int player = Simulator.getInt(11);
+            if (squad.get(player) == null) continue;
+
+            float overall = (float) squad.get(player).getFootballer().getOverall() *
+                    squad.get(player).getFootballer().getOverall() / 6000;
+
+            if (sign < 0) overall = 1 / overall;
+            squad.get(player).changeRating(0.1f * sign * overall);
+        }
     }
 
     private static String getMinute() {

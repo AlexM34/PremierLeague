@@ -148,11 +148,15 @@ public class Report {
     }
 
     public void finalWhistle() {
-        if (homeLineup.getPlayer(0) != null && awayGoals == 0) getCompetition(homeLineup.getPlayer(0)
+        if (homeLineup.getStats(0).getFootballer() != null && awayGoals == 0) {
+            getCompetition(homeLineup.getStats(0).getFootballer()
                 .getResume().getSeason(), competition.getType()).addCleanSheets(1);
+        }
 
-        if (awayLineup.getPlayer(0) != null && homeGoals == 0) getCompetition(awayLineup.getPlayer(0)
-                .getResume().getSeason(), competition.getType()).addCleanSheets(1);
+        if (awayLineup.getStats(0).getFootballer() != null && homeGoals == 0) {
+            getCompetition(awayLineup.getStats(0).getFootballer()
+                 .getResume().getSeason(), competition.getType()).addCleanSheets(1);
+        }
 
         for (int player = 0; player < 11; player++) {
             updateStats(homeLineup.getStats(player));

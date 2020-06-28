@@ -41,10 +41,6 @@ public class Lineup {
         System.out.println();
     }
 
-    Footballer getPlayer(final int index) {
-        return this.squad.getSelection().get(index).getFootballer();
-    }
-
     MatchStats getStats(final int index) {
         return this.squad.getSelection().get(index);
     }
