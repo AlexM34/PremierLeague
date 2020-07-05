@@ -34,7 +34,7 @@ class Performance {
             r -= squad.get(player).getFootballer().getScoringChance();
             if (r < 0) {
                 goalscorer = squad.get(player).getFootballer();
-                squad.get(player).addGoals();
+                squad.get(player).addGoal();
                 break;
             }
         }
@@ -59,7 +59,7 @@ class Performance {
                     if (assistmaker.equals(goalscorer)) {
                         assistmaker = null;
                         squad.get(player).changeRating(0.25f);
-                    } else squad.get(player).addAssists();
+                    } else squad.get(player).addAssist();
 
                     break;
                 }

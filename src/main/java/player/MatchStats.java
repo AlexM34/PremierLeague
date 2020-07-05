@@ -3,6 +3,7 @@ package player;
 import java.util.Objects;
 
 public class MatchStats {
+
     private final Footballer footballer;
     private int started;
     private float rating;
@@ -39,20 +40,20 @@ public class MatchStats {
 
     public void changeRating(final float rating) {
         this.rating += rating;
-        this.rating = Math.min(10, Math.max(this.rating, 0));
+        this.rating = Math.min(10, Math.max(this.rating, 4));
     }
 
     public int getGoals() {
         return goals;
     }
 
-    public void addGoals() {
+    public void addGoal() {
         this.goals += 1;
         this.rating += 1.25;
         if (this.getFootballer().getPosition().getAttackingDuty() < 5) {
             this.rating += 0.25;
             if (this.getFootballer().getPosition().getAttackingDuty() < 3) {
-                this.rating += 0.5;
+                this.rating += 0.25;
             }
         }
     }
@@ -61,13 +62,13 @@ public class MatchStats {
         return assists;
     }
 
-    public void addAssists() {
+    public void addAssist() {
         this.assists += 1;
         this.rating += 1;
         if (this.getFootballer().getPosition().getAttackingDuty() < 5) {
             this.rating += 0.25;
             if (this.getFootballer().getPosition().getAttackingDuty() < 3) {
-                this.rating += 0.5;
+                this.rating += 0.25;
             }
         }
     }
