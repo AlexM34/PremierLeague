@@ -3,6 +3,7 @@ package team;
 import java.util.Objects;
 
 public class Coach {
+
     private final int id;
     private final String name;
     private final int overall;
@@ -22,21 +23,21 @@ public class Coach {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Coach)) return false;
         final Coach coach = (Coach) o;
         return id == coach.id &&
                 overall == coach.overall &&
                 style == coach.style &&
                 attack == coach.attack &&
                 defence == coach.defence &&
-                name.equals(coach.name) &&
-                formation == coach.formation;
+                formation == coach.formation &&
+                Objects.equals(name, coach.name);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(id, name, overall, formation, style, attack, defence);
     }
 

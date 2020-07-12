@@ -10,6 +10,7 @@ import java.util.Set;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Club {
+
     private final int id;
     private final String name;
     private final int established;
@@ -98,21 +99,30 @@ public class Club {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Club)) return false;
         final Club club = (Club) o;
         return id == club.id &&
                 established == club.established &&
-                name.equals(club.name) &&
-                stadium.equals(club.stadium) &&
-                location.equals(club.location) &&
-                league.equals(club.league);
+                reputation == club.reputation &&
+                value == club.value &&
+                Float.compare(club.budget, budget) == 0 &&
+                Objects.equals(name, club.name) &&
+                Objects.equals(stadium, club.stadium) &&
+                Objects.equals(location, club.location) &&
+                Objects.equals(league, club.league) &&
+                Objects.equals(glory, club.glory) &&
+                Objects.equals(owner, club.owner) &&
+                Objects.equals(coach, club.coach) &&
+                Objects.equals(footballers, club.footballers) &&
+                Objects.equals(season, club.season);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, established, stadium, location, league);
+    public final int hashCode() {
+        return Objects.hash(id, name, established, stadium, location, league, glory,
+                reputation, value, budget, owner, coach, footballers, season);
     }
 
     @Override

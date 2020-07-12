@@ -22,16 +22,16 @@ public class Continental {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Continental)) return false;
         final Continental that = (Continental) o;
-        return group.equals(that.group) &&
-                knockout.equals(that.knockout);
+        return Objects.equals(group, that.group) &&
+                Objects.equals(knockout, that.knockout);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(group, knockout);
     }
 

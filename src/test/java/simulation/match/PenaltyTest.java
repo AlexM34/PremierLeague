@@ -1,6 +1,6 @@
 package simulation.match;
 
-import helpers.FootballerBuilder;
+import builders.FootballerBuilder;
 import org.junit.jupiter.api.Test;
 import player.Footballer;
 

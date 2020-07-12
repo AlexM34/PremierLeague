@@ -1,6 +1,6 @@
 package simulation.dynamics;
 
-import helpers.FootballerBuilder;
+import builders.FootballerBuilder;
 import league.LeagueManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;

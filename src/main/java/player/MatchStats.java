@@ -92,9 +92,9 @@ public class MatchStats {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof MatchStats)) return false;
         final MatchStats that = (MatchStats) o;
         return started == that.started &&
                 Float.compare(that.rating, rating) == 0 &&
@@ -102,11 +102,11 @@ public class MatchStats {
                 assists == that.assists &&
                 yellowCarded == that.yellowCarded &&
                 redCarded == that.redCarded &&
-                footballer.equals(that.footballer);
+                Objects.equals(footballer, that.footballer);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(footballer, started, rating, goals, assists, yellowCarded, redCarded);
     }
 

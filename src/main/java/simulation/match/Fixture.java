@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Fixture {
+
     private final Club opponent;
     private final boolean isHome;
     private final int[] score;
@@ -25,17 +26,17 @@ public class Fixture {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Fixture)) return false;
         final Fixture fixture = (Fixture) o;
         return isHome == fixture.isHome &&
-                opponent.equals(fixture.opponent) &&
+                Objects.equals(opponent, fixture.opponent) &&
                 Arrays.equals(score, fixture.score);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int result = Objects.hash(opponent, isHome);
         result = 31 * result + Arrays.hashCode(score);
         return result;

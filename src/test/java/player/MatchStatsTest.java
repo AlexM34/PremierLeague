@@ -1,6 +1,8 @@
 package player;
 
-import helpers.FootballerBuilder;
+import builders.FootballerBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,6 +95,13 @@ class MatchStatsTest {
         matchStats.addRedCard();
         assertTrue(matchStats.isRedCarded());
         assertEquals(4, matchStats.getRating());
+    }
+
+    @Test
+    void equalsVerifier() {
+        EqualsVerifier.forClass(MatchStats.class)
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 
     private void setup(final Footballer footballer) {

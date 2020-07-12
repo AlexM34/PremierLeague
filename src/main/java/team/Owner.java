@@ -3,6 +3,7 @@ package team;
 import java.util.Objects;
 
 public class Owner {
+
     private final int id;
     private final String name;
     private final String nationality;
@@ -18,19 +19,19 @@ public class Owner {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Owner)) return false;
         final Owner owner = (Owner) o;
         return id == owner.id &&
                 wealth == owner.wealth &&
                 ambition == owner.ambition &&
-                name.equals(owner.name) &&
-                nationality.equals(owner.nationality);
+                Objects.equals(name, owner.name) &&
+                Objects.equals(nationality, owner.nationality);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(id, name, nationality, wealth, ambition);
     }
 

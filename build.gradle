@@ -13,6 +13,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     testImplementation 'org.powermock:powermock-module-junit4:1.7.4'
     testImplementation 'org.powermock:powermock-api-mockito2:1.7.4'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.4.1'
 }
 
 test {

@@ -20,20 +20,20 @@ public class Stadium {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Stadium)) return false;
         final Stadium stadium = (Stadium) o;
         return id == stadium.id &&
                 built == stadium.built &&
                 capacity == stadium.capacity &&
                 reputation == stadium.reputation &&
-                name.equals(stadium.name) &&
-                location.equals(stadium.location);
+                Objects.equals(name, stadium.name) &&
+                Objects.equals(location, stadium.location);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(id, name, built, location, capacity, reputation);
     }
 

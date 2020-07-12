@@ -3,6 +3,7 @@ package player;
 import java.util.Objects;
 
 public class Glory {
+
     private int league;
     private int nationalCup;
     private int leagueCup;
@@ -65,9 +66,9 @@ public class Glory {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Glory)) return false;
         final Glory glory = (Glory) o;
         return league == glory.league &&
                 nationalCup == glory.nationalCup &&
@@ -80,8 +81,9 @@ public class Glory {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(league, nationalCup, leagueCup, championsLeague, europaLeague, nationalSuperCup, continentalSuperCup, worldChampionship);
+    public final int hashCode() {
+        return Objects.hash(league, nationalCup, leagueCup, championsLeague, europaLeague,
+                nationalSuperCup, continentalSuperCup, worldChampionship);
     }
 
     @Override

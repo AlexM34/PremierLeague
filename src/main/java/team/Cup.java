@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Cup {
+
     private final List<Fixture> fixtures;
     private String stage;
 
@@ -24,16 +25,16 @@ public class Cup {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Cup)) return false;
         final Cup cup = (Cup) o;
-        return fixtures.equals(cup.fixtures) &&
-                stage.equals(cup.stage);
+        return Objects.equals(fixtures, cup.fixtures) &&
+                Objects.equals(stage, cup.stage);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(fixtures, stage);
     }
 

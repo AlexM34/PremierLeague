@@ -3,6 +3,7 @@ package player;
 import java.util.Objects;
 
 public class Resume {
+
     private final Glory glory;
     private final Statistics total;
     private final Statistics season;
@@ -26,17 +27,17 @@ public class Resume {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Resume)) return false;
         final Resume resume = (Resume) o;
-        return glory.equals(resume.glory) &&
-                total.equals(resume.total) &&
-                season.equals(resume.season);
+        return Objects.equals(glory, resume.glory) &&
+                Objects.equals(total, resume.total) &&
+                Objects.equals(season, resume.season);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(glory, total, season);
     }
 
