@@ -41,7 +41,7 @@ public class Cup {
     @Override
     public String toString() {
         return "Cup{" +
-                "rounds=" + fixtures +
+                "fixtures=" + fixtures +
                 ", stage='" + stage + '\'' +
                 '}';
     }

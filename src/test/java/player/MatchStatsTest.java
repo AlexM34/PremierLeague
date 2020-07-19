@@ -1,6 +1,7 @@
 package player;
 
 import builders.FootballerBuilder;
+import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
@@ -102,6 +103,11 @@ class MatchStatsTest {
         EqualsVerifier.forClass(MatchStats.class)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .verify();
+    }
+
+    @Test
+    void toStringVerifier() {
+        ToStringVerifier.forClass(MatchStats.class).verify();
     }
 
     private void setup(final Footballer footballer) {

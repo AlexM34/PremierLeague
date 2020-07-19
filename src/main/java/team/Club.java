@@ -134,6 +134,14 @@ public class Club {
                 ", stadium=" + stadium +
                 ", location='" + location + '\'' +
                 ", league='" + league + '\'' +
+                ", glory=" + glory +
+                ", reputation=" + reputation +
+                ", value=" + value +
+                ", budget=" + budget +
+                ", owner=" + owner +
+                ", coach=" + coach +
+                ", footballers=" + footballers +
+                ", season=" + season +
                 '}';
     }
 }
