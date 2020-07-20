@@ -195,13 +195,11 @@ public class Report {
                 matchStats.getFootballer().getResume().getSeason(), competition.getType());
 
         stats.addRating((int) matchStats.getRating() * 100, 1);
-
-        stats.addMatches(1);
         stats.addGoals(matchStats.getGoals());
         stats.addAssists(matchStats.getAssists());
 
-        if (matchStats.isYellowCarded()) stats.addYellowCards();
-        if (matchStats.isRedCarded()) stats.addRedCards();
+        if (matchStats.isYellowCarded()) stats.addYellowCards(1);
+        if (matchStats.isRedCarded()) stats.addRedCards(1);
 
         matchStats.getFootballer().changeCondition(-15);
     }

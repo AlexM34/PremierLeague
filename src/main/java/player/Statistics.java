@@ -54,19 +54,19 @@ public class Statistics {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Statistics)) return false;
         final Statistics that = (Statistics) o;
-        return league.equals(that.league) &&
-                nationalCup.equals(that.nationalCup) &&
-                leagueCup.equals(that.leagueCup) &&
-                championsLeague.equals(that.championsLeague) &&
-                europaLeague.equals(that.europaLeague);
+        return Objects.equals(league, that.league) &&
+                Objects.equals(nationalCup, that.nationalCup) &&
+                Objects.equals(leagueCup, that.leagueCup) &&
+                Objects.equals(championsLeague, that.championsLeague) &&
+                Objects.equals(europaLeague, that.europaLeague);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(league, nationalCup, leagueCup, championsLeague, europaLeague);
     }
 

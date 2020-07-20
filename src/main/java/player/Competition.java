@@ -13,6 +13,10 @@ public class Competition {
     private int redCards;
 
     Competition() {
+        clear();
+    }
+
+    void clear() {
         this.matches = 0;
         this.goals = 0;
         this.assists = 0;
@@ -27,20 +31,8 @@ public class Competition {
         return matches;
     }
 
-    private void clearMatches() {
-        this.matches = 0;
-    }
-
-    public void addMatches(final int matches) {
-        this.matches += matches;
-    }
-
     public int getGoals() {
         return goals;
-    }
-
-    private void clearGoals() {
-        this.goals = 0;
     }
 
     public void addGoals(final int goals) {
@@ -51,20 +43,12 @@ public class Competition {
         return assists;
     }
 
-    private void clearAssists() {
-        this.assists = 0;
-    }
-
     public void addAssists(final int assists) {
         this.assists += assists;
     }
 
     public int getCleanSheets() {
         return cleanSheets;
-    }
-
-    private void clearCleanSheets() {
-        this.cleanSheets = 0;
     }
 
     public void addCleanSheets(final int cleanSheets) {
@@ -75,22 +59,15 @@ public class Competition {
         return rating;
     }
 
-    private void clearRating() {
-        this.rating = 0;
-    }
-
     public void addRating(final int rating, final int matches) {
         if (matches > 0) {
             this.rating = (this.rating * this.matches + rating * matches) / (this.matches + matches);
+            this.matches += matches;
         }
     }
 
     public int getMotmAwards() {
         return motmAwards;
-    }
-
-    private void clearMotmAwards() {
-        this.motmAwards = 0;
     }
 
     public void addMotmAwards(final int motmAwards) {
@@ -101,35 +78,16 @@ public class Competition {
         return yellowCards;
     }
 
-    private void clearYellowCards() {
-        this.yellowCards = 0;
-    }
-
-    public void addYellowCards() {
-        this.yellowCards += 1;
+    public void addYellowCards(final int yellowCards) {
+        this.yellowCards += yellowCards;
     }
 
     public int getRedCards() {
         return redCards;
     }
 
-    private void clearRedCards() {
-        this.redCards = 0;
-    }
-
-    public void addRedCards() {
-        this.redCards += 1;
-    }
-
-    void clear() {
-        clearMatches();
-        clearGoals();
-        clearAssists();
-        clearCleanSheets();
-        clearRating();
-        clearMotmAwards();
-        clearYellowCards();
-        clearRedCards();
+    public void addRedCards(final int redCards) {
+        this.redCards += redCards;
     }
 
     void update(final Competition competition) {
@@ -137,16 +95,15 @@ public class Competition {
         addAssists(competition.getAssists());
         addCleanSheets(competition.getCleanSheets());
         addRating(competition.getRating(), competition.getMatches());
-        addMatches(competition.getMatches());
         addMotmAwards(competition.getMotmAwards());
-        addYellowCards();
-        addRedCards();
+        addYellowCards(competition.getYellowCards());
+        addRedCards(competition.getRedCards());
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Competition)) return false;
         final Competition statistics = (Competition) o;
         return matches == statistics.matches &&
                 goals == statistics.goals &&
@@ -159,7 +116,7 @@ public class Competition {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(matches, goals, assists, cleanSheets, rating, motmAwards, yellowCards, redCards);
     }
 
@@ -176,4 +133,5 @@ public class Competition {
                 ", redCards=" + redCards +
                 '}';
     }
+
 }
