@@ -9,12 +9,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class League {
-    public static final Map<String, Integer> leagueHomeWins = new HashMap<>();
-    public static final Map<String, Integer> leagueDraws = new HashMap<>();
-    public static final Map<String, Integer> leagueAwayWins = new HashMap<>();
-    public static final Map<String, Integer> leagueScoredHome = new HashMap<>();
-    public static final Map<String, Integer> leagueScoredAway = new HashMap<>();
-    public static final Map<String, Integer> leagueCleanSheets = new HashMap<>();
+
+    private static final Map<String, Integer> leagueHomeWins = new HashMap<>();
+    private static final Map<String, Integer> leagueDraws = new HashMap<>();
+    private static final Map<String, Integer> leagueAwayWins = new HashMap<>();
+    private static final Map<String, Integer> leagueScoredHome = new HashMap<>();
+    private static final Map<String, Integer> leagueScoredAway = new HashMap<>();
+    private static final Map<String, Integer> leagueCleanSheets = new HashMap<>();
 
     private final String leagueName;
     private final List<Fixture> fixtures;
@@ -119,9 +120,10 @@ public class League {
 
     public void addWin(final boolean isHome) {
         this.wins += 1;
+        this.addPoints(3);
+
         if (isHome) leagueHomeWins.merge(leagueName, 1, Integer::sum);
         else leagueAwayWins.merge(leagueName, 1, Integer::sum);
-        this.addPoints(3);
     }
 
     public int getDraws() {
@@ -130,8 +132,9 @@ public class League {
 
     public void addDraw(final boolean isHome) {
         this.draws++;
-        if (isHome) leagueDraws.merge(leagueName, 1, Integer::sum);
         this.addPoints(1);
+
+        if (isHome) leagueDraws.merge(leagueName, 1, Integer::sum);
     }
 
     public int getLosses() {
@@ -148,6 +151,7 @@ public class League {
 
     public void addScored(final int goals, final boolean isHome) {
         this.scored += goals;
+
         if (isHome) leagueScoredHome.merge(leagueName, goals, Integer::sum);
         else leagueScoredAway.merge(leagueName, goals, Integer::sum);
     }
@@ -160,15 +164,19 @@ public class League {
         this.conceded += goals;
     }
 
+    public int getCleanSheets() {
+        return cleanSheets;
+    }
+
     public void addCleanSheet() {
         this.cleanSheets++;
         leagueCleanSheets.merge(leagueName, 1, Integer::sum);
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof League)) return false;
         final League league = (League) o;
         return matches == league.matches &&
                 points == league.points &&
@@ -178,18 +186,21 @@ public class League {
                 scored == league.scored &&
                 conceded == league.conceded &&
                 cleanSheets == league.cleanSheets &&
-                fixtures.equals(league.fixtures);
+                Objects.equals(leagueName, league.leagueName) &&
+                Objects.equals(fixtures, league.fixtures);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(fixtures, matches, points, wins, draws, losses, scored, conceded, cleanSheets);
+    public final int hashCode() {
+        return Objects.hash(leagueName, fixtures, matches, points, wins,
+                draws, losses, scored, conceded, cleanSheets);
     }
 
     @Override
     public String toString() {
         return "League{" +
-                "fixtures=" + fixtures +
+                "leagueName='" + leagueName + '\'' +
+                ", fixtures=" + fixtures +
                 ", matches=" + matches +
                 ", points=" + points +
                 ", wins=" + wins +
@@ -200,4 +211,5 @@ public class League {
                 ", cleanSheets=" + cleanSheets +
                 '}';
     }
+
 }

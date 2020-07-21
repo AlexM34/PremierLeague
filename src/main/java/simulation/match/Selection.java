@@ -29,6 +29,10 @@ public class Selection {
         this.available.put(Position.Role.Forward, forwards);
     }
 
+    List<MatchStats> getSelection() {
+        return selection;
+    }
+
     boolean add(final Footballer footballer) {
         final Position.Role role = footballer.getPosition().getRole();
         final int available = this.available.get(role);
@@ -48,9 +52,5 @@ public class Selection {
 
         this.selection.add(index, new MatchStats(footballer));
         return true;
-    }
-
-    List<MatchStats> getSelection() {
-        return selection;
     }
 }

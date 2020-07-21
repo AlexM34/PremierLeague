@@ -28,6 +28,10 @@ public class Lineup {
         return bench.getSelection();
     }
 
+    MatchStats getStats(final int index) {
+        return this.squad.getSelection().get(index);
+    }
+
     void print() {
         System.out.println();
         System.out.println("SQUAD");
@@ -39,9 +43,5 @@ public class Lineup {
         bench.getSelection().forEach(x ->
                 System.out.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
         System.out.println();
-    }
-
-    MatchStats getStats(final int index) {
-        return this.squad.getSelection().get(index);
     }
 }
