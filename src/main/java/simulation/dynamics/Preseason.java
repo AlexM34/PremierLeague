@@ -57,7 +57,7 @@ public class Preseason {
                 System.out.println(club.getName());
                 final Set<Footballer> retiring = new HashSet<>();
                 for (final Footballer footballer : club.getFootballers()) {
-                    footballer.increaseAge();
+                    footballer.incrementAge();
 
                     if (footballer.getTeam().equals("")) retiring.add(footballer);
                 }

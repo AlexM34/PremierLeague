@@ -5,6 +5,7 @@ import simulation.Simulator;
 import java.util.Objects;
 
 public class Footballer {
+
     private final int id;
     private final String name;
     private int age;
@@ -55,7 +56,7 @@ public class Footballer {
         return age;
     }
 
-    public void increaseAge() {
+    public void incrementAge() {
         age++;
 
         if (this.number > 100) return;
@@ -86,8 +87,8 @@ public class Footballer {
     }
 
     private void improve(final int change) {
-        this.changeOverall(change);
         if (age < 30 && Simulator.isSatisfied(33)) this.changePotential(change);
+        this.changeOverall(change);
     }
 
     private void decline(final int change) {
@@ -109,8 +110,7 @@ public class Footballer {
     }
 
     public void changeOverall(final int change) {
-        overall += change;
-        overall = Math.max(50, Math.min(99, Math.min(overall, potential)));
+        overall = Math.min(99, Math.max(50, Math.min(potential, overall + change)));
     }
 
     public int getPotential() {
@@ -118,7 +118,7 @@ public class Footballer {
     }
 
     public void changePotential(final int change) {
-        this.potential += change;
+        this.potential = Math.min(99, Math.max(50, Math.max(overall, potential + change)));
     }
 
     public String getTeam() {
@@ -130,16 +130,16 @@ public class Footballer {
     }
 
     public long getValue() {
-        int overall = getOverall() - 70;
-        overall = overall > 4 ? overall * overall * overall / 100 : 1;
+        float overall = (float) (this.overall - 70) / 3;
+        overall = overall > 1 ? overall * overall : 1;
 
-        float age = getAge() != 28 ? (float) Math.sqrt(Math.abs(28 - getAge())) : 1;
-        age = getAge() < 28 ? age : 1 / age;
+        float age = (float) Math.cbrt(Math.abs(28 - this.age) + 1);
+        age = this.age < 28 ? age : 1 / age;
 
-        float position = getPosition().getAttackingDuty() + 1;
+        float position = this.position.getAttackingDuty() + 3;
         position = (float) Math.sqrt(position);
 
-        float potential = (float) (getPotential() - getOverall()) / 3;
+        float potential = (float) (this.potential - this.overall) / 2;
         potential = potential > 1 ? (float) Math.sqrt(potential) : 1;
 
         value = (long) (overall * age * position * potential);
@@ -175,17 +175,15 @@ public class Footballer {
     }
 
     public void changeCondition(final int change) {
-        this.condition += change;
-        if (this.condition > 100) this.condition = 100;
-        else if (this.condition < 0) this.condition = 0;
+        this.condition = Math.min(100, Math.max(50, this.condition + change));
     }
 
     public int getBan() {
         return ban;
     }
 
-    public void changeBan(final int ban) {
-        this.ban = Math.max(0, this.ban + ban);
+    public void changeBan(final int change) {
+        this.ban = Math.max(0, this.ban + change);
     }
 
     public boolean canPlay() {
@@ -193,40 +191,56 @@ public class Footballer {
     }
 
     public int getScoringChance() {
-        final int overall = Math.max(1, this.overall - 60);
-        final int finishing = Math.max(1, this.finishing - 30);
-        switch (this.position.getRole()) {
-            case Goalkeeper: return 1;
-            case Defender: return overall * finishing;
-            case Midfielder: return overall * finishing * 2;
-            case Forward: return overall * finishing * 4;
-            default: return 0;
-        }
+        final int overall = Math.max(1, this.overall / 2 - 30);
+        final int finishing = Math.max(1, this.finishing / 3 - 15);
+        final int position = this.position.getAttackingDuty();
+
+        return (overall * overall + finishing * finishing + position * position) * position;
     }
 
     public int getAssistChance() {
-        final int overall = Math.max(1, this.overall - 60);
-        final int vision = Math.max(1, this.vision - 30);
-        switch (this.position.getRole()) {
-            case Goalkeeper: return 10;
-            case Defender: return overall * vision;
-            case Midfielder: return overall * vision * 5;
-            case Forward: return overall * vision * 3;
+        final int overall = Math.max(1, this.overall / 2 - 30);
+        final int vision = Math.max(1, this.vision / 3 - 15);
+        final int position;
+        switch (this.position.getAttackingDuty()) {
+            case 0: position = 1; break;
+            case 1: position = 2; break;
+            case 2: position = 5; break;
+            case 3: position = 9; break;
+            case 4: position = 11; break;
+            case 5: position = 8; break;
             default: return 0;
         }
+
+        return (overall * overall + vision * vision + position * position) * position;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Footballer)) return false;
         final Footballer that = (Footballer) o;
-        return id == that.id;
+        return id == that.id &&
+                age == that.age &&
+                overall == that.overall &&
+                potential == that.potential &&
+                value == that.value &&
+                wage == that.wage &&
+                number == that.number &&
+                finishing == that.finishing &&
+                vision == that.vision &&
+                condition == that.condition &&
+                ban == that.ban &&
+                position == that.position &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(nationality, that.nationality) &&
+                Objects.equals(team, that.team) &&
+                Objects.equals(resume, that.resume);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, nationality);
+    public final int hashCode() {
+        return Objects.hash(id, name, age, nationality, overall, potential, team, value, wage, position, number, finishing, vision, resume, condition, ban);
     }
 
     @Override
@@ -236,6 +250,18 @@ public class Footballer {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", nationality='" + nationality + '\'' +
+                ", overall=" + overall +
+                ", potential=" + potential +
+                ", team='" + team + '\'' +
+                ", value=" + value +
+                ", wage=" + wage +
+                ", position=" + position +
+                ", number=" + number +
+                ", finishing=" + finishing +
+                ", vision=" + vision +
+                ", resume=" + resume +
+                ", condition=" + condition +
+                ", ban=" + ban +
                 '}';
     }
 }

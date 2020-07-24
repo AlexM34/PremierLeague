@@ -5,6 +5,7 @@ import simulation.competition.Continental;
 import java.util.Objects;
 
 public class Season {
+
     private final League league;
     private final Cup nationalCup;
     private final Cup leagueCup;
@@ -42,26 +43,24 @@ public class Season {
     }
 
     public void changeForm(final int change) {
-        this.form += change;
-        if (this.form > 20) this.form = 20;
-        else if (this.form < 0) this.form = 0;
+        this.form = Math.min(20, Math.max(1, this.form + change));
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Season)) return false;
         final Season season = (Season) o;
         return form == season.form &&
                 morale == season.morale &&
-                league.equals(season.league) &&
+                Objects.equals(league, season.league) &&
                 Objects.equals(nationalCup, season.nationalCup) &&
                 Objects.equals(leagueCup, season.leagueCup) &&
                 Objects.equals(continental, season.continental);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(league, nationalCup, leagueCup, continental, form, morale);
     }
 
@@ -71,9 +70,10 @@ public class Season {
                 "main.league=" + league +
                 ", nationalCup=" + nationalCup +
                 ", leagueCup=" + leagueCup +
-                ", championsLeague=" + continental +
+                ", continental=" + continental +
                 ", form=" + form +
                 ", morale=" + morale +
                 '}';
     }
+
 }

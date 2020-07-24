@@ -52,7 +52,8 @@ class CompetitionTest {
     @Test
     void equalsVerifier() {
         EqualsVerifier.forClass(Competition.class)
-                .suppress(Warning.NONFINAL_FIELDS).verify();
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 
     @Test

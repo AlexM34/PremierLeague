@@ -19,19 +19,29 @@ public class FootballerBuilder {
     private final int id = Simulator.getInt(100000);
     private final String name = (char) ('A' + Simulator.getInt(26)) + ". " +
             Data.SURNAMES[Simulator.getInt(Data.SURNAMES.length)];
-    private final int age = 17 + Simulator.getInt(20);
+    private int age = 17 + Simulator.getInt(20);
     private final String nationality = Data.NATIONS[Simulator.getInt(Data.NATIONS.length)];
     private int overall = 60 + Simulator.getInt(30);
-    private final int potential = overall + Simulator.getInt(10);
+    private int potential = overall + Simulator.getInt(10);
     private final long wage = 10000 * (1 + Simulator.getInt(5));
     private Position position = (Position) POSITIONS[Simulator.getInt(POSITIONS.length)];
     private final int number = Simulator.getInt(99) + 1;
     private int finishing = overall + 10 * position.getAttackingDuty() - 50;
-    private final int vision = overall + 10 -
+    private int vision = overall + 10 -
             (3 - position.getAttackingDuty()) * (3 - position.getAttackingDuty()) * 5;
+
+    public FootballerBuilder withAge(final int age) {
+        this.age = age;
+        return this;
+    }
 
     public FootballerBuilder withOverall(final int overall) {
         this.overall = overall;
+        return this;
+    }
+
+    public FootballerBuilder withPotential(final int potential) {
+        this.potential = potential;
         return this;
     }
 
@@ -42,6 +52,11 @@ public class FootballerBuilder {
 
     public FootballerBuilder withFinishing(final int finishing) {
         this.finishing = finishing;
+        return this;
+    }
+
+    public FootballerBuilder withVision(final int vision) {
+        this.vision = vision;
         return this;
     }
 
