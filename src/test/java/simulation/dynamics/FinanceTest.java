@@ -1,5 +1,8 @@
 package simulation.dynamics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static simulation.dynamics.Preseason.youngster;
+
 import league.England;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,9 +10,6 @@ import player.Footballer;
 import team.Club;
 
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static simulation.dynamics.Preseason.youngster;
 
 class FinanceTest {
 

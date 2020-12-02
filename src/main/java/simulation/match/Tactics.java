@@ -1,5 +1,14 @@
 package simulation.match;
 
+import static simulation.Data.DEFENDER_1;
+import static simulation.Data.DEFENDER_2;
+import static simulation.Data.FORWARD_1;
+import static simulation.Data.FORWARD_2;
+import static simulation.Data.GOALKEEPER_1;
+import static simulation.Data.MIDFIELDER_1;
+import static simulation.Data.MIDFIELDER_2;
+import static simulation.Data.USER_STYLE;
+
 import player.Footballer;
 import player.MatchStats;
 import team.Club;
@@ -9,18 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-
-import static simulation.Data.DEFENDER_1;
-import static simulation.Data.DEFENDER_2;
-import static simulation.Data.FORWARD_1;
-import static simulation.Data.FORWARD_2;
-import static simulation.Data.GOALKEEPER_1;
-import static simulation.Data.MIDFIELDER_1;
-import static simulation.Data.MIDFIELDER_2;
-import static simulation.Data.USER_STYLE;
-import static simulation.match.Match.minute;
-import static simulation.match.Match.report;
-import static simulation.match.Match.stoppage;
 
 public class Tactics {
     private static final Scanner scanner = new Scanner(System.in);
@@ -112,7 +109,7 @@ public class Tactics {
         return Formation.F5;
     }
 
-    static void substitute(final boolean isHome) {
+    static void substitute(final Report report, final int minute, final int stoppage, final boolean isHome) {
         final Lineup lineup = isHome ? report.getHomeLineup() : report.getAwayLineup();
         final List<MatchStats> squad = lineup.getSquad();
         final List<MatchStats> bench = lineup.getBench();

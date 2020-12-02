@@ -1,13 +1,17 @@
 package simulation.dynamics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static simulation.Data.LEAGUES;
+import static simulation.dynamics.Preseason.retired;
+
 import builders.FootballerBuilder;
 import league.LeagueManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import player.Footballer;
 import player.Glory;
 import team.Club;
@@ -19,16 +23,7 @@ import team.Stadium;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static simulation.Data.LEAGUES;
-import static simulation.dynamics.Preseason.retired;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(LeagueManager.class)
-public class PreseasonTest {
+class PreseasonTest {
 
     private final FootballerBuilder footballerBuilder = new FootballerBuilder();
 

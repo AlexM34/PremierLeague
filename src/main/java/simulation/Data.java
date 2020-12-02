@@ -1,5 +1,7 @@
 package simulation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import league.LeagueManager;
 import player.Footballer;
 import player.Position;
@@ -11,9 +13,8 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class Data {
+
     public static final Club[][] LEAGUES = LeagueManager.getAllLeagues();
     public static Integer USER = -1;
     public static int USER_STYLE;

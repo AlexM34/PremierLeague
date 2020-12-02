@@ -1,5 +1,8 @@
 package simulation.dynamics;
 
+import static simulation.Data.LEAGUES;
+import static simulation.Helper.sortLeague;
+
 import player.Footballer;
 import player.Position;
 import player.Resume;
@@ -20,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static simulation.Data.LEAGUES;
-import static simulation.Helper.sortLeague;
-
 public class Preseason {
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
@@ -33,7 +33,7 @@ public class Preseason {
     public static void prepare(final int year) {
         League.clearLeagueStats();
 
-        System.out.println(String.format("Season %d-%d begins!", 2019 + year, 2020 + year));
+        System.out.printf("Season %d-%d begins!%n", 2019 + year, 2020 + year);
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 club.setSeason(new Season(club.getLeague()));

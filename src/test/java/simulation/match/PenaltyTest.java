@@ -1,12 +1,12 @@
 package simulation.match;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import builders.FootballerBuilder;
 import org.junit.jupiter.api.Test;
 import player.Footballer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class PenaltyTest {
+class PenaltyTest {
 
     @Test
     void calculateChanceMin() {

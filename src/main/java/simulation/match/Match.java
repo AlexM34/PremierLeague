@@ -1,32 +1,52 @@
 package simulation.match;
 
-import player.Footballer;
-import player.MatchStats;
-import player.Position;
-import simulation.Simulator;
-import simulation.competition.Competition;
-
-import java.util.List;
-import java.util.Objects;
-
 import static simulation.Data.GOALKEEPER_1;
 import static simulation.competition.League.updateLeagueStats;
 import static simulation.match.Performance.goal;
 import static simulation.match.Tactics.substitute;
 
-public class Match {
-    public static int fans = 3;
-    static int minute = 1;
-    static int stoppage = 0;
-    static int homeSubs;
-    static int awaySubs;
-    static Report report;
+import player.Footballer;
+import player.MatchStats;
+import player.Position;
+import simulation.Simulator;
+import simulation.competition.Competition;
+import team.Club;
 
-    public static void simulate(final Report report) {
-        Match.report = report;
+import java.util.List;
+import java.util.Objects;
+
+public class Match {
+
+    public static int fans = 3;
+    private final Club home;
+    private final Club away;
+    private final Competition competition;
+    private final boolean last;
+    private final int aggregateHomeGoals;
+    private final int aggregateAwayGoals;
+    private final Report report;
+
+    private int minute = 1;
+    private int stoppage = 0;
+    private int homeSubs;
+    private int awaySubs;
+
+    public Match(final Club home, final Club away, final Competition competition,
+                 final int aggregateHomeGoals, final int aggregateAwayGoals, final boolean last) {
+        this.home = home;
+        this.away = away;
+        this.competition = competition;
+        this.last = last;
+        this.aggregateHomeGoals = aggregateHomeGoals;
+        this.aggregateAwayGoals = aggregateAwayGoals;
+        fans = 3;
+
+        report = new Report(home, away, competition, aggregateHomeGoals, aggregateAwayGoals, last);
+    }
+
+    public Report simulate() {
 
         simulateGame();
-        fans = 3;
         report.finalWhistle();
 
         if (report.getCompetition() == Competition.LEAGUE) {
@@ -34,9 +54,11 @@ public class Match {
             updateLeagueStats(leagueName, report.getHomeLineup().getSquad());
             updateLeagueStats(leagueName, report.getAwayLineup().getSquad());
         }
+
+        return report;
     }
 
-    private static void simulateGame() {
+    private void simulateGame() {
         kickoff();
         minute = 0;
         int extra = 0;
@@ -64,7 +86,7 @@ public class Match {
         }
     }
 
-    static void kickoff() {
+    void kickoff() {
         for (final Footballer f : report.getHome().getFootballers()) {
             System.out.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
             if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
@@ -82,11 +104,11 @@ public class Match {
         report.getAwayLineup().getSquad().forEach(stats -> stats.setStarted(0));
     }
 
-    private static void event() {
+    private void event() {
         final int r = Simulator.getInt(1000);
         if (r < 10 * report.getMomentum()) {
             if (r < report.getMomentum() + report.getStyle() - 41) {
-                goal(true);
+                goal(report, minute, stoppage, true);
                 updateRatings(3);
             } else if (r < 5 * report.getMomentum()) {
                 report.changeMomentum(1);
@@ -94,7 +116,7 @@ public class Match {
             }
         } else {
             if (r > 940 + report.getMomentum() - report.getStyle()) {
-                goal(false);
+                goal(report, minute, stoppage, false);
                 updateRatings(-3);
             } else if (r > 999 - 5 * report.getMomentum()) {
                 report.changeMomentum(-1);
@@ -107,12 +129,12 @@ public class Match {
 
         if (minute > 60) {
             if (homeSubs > 0 && Simulator.getInt(10) == 0) {
-                substitute(true);
+                substitute(report, minute, stoppage, true);
                 homeSubs--;
             }
 
             if (awaySubs > 0 && Simulator.isSatisfied(10)) {
-                substitute(false);
+                substitute(report, minute, stoppage, false);
                 awaySubs--;
             }
         }
@@ -120,7 +142,7 @@ public class Match {
         stoppage++;
     }
 
-    private static void yellowCardEvent() {
+    private void yellowCardEvent() {
         final boolean t = Simulator.getBoolean();
         final int p = Simulator.getInt(11);
         final MatchStats footballer = (t ? report.getHomeLineup() : report.getAwayLineup())
@@ -143,7 +165,7 @@ public class Match {
         }
     }
 
-    private static void redCardEvent() {
+    private void redCardEvent() {
         final boolean t = Simulator.getBoolean();
         final int p = Simulator.getInt(11);
         final MatchStats footballer = (t ? report.getHomeLineup() : report.getAwayLineup())
@@ -159,7 +181,7 @@ public class Match {
         }
     }
 
-    private static void goalkeeperEjected(final boolean isHome) {
+    private void goalkeeperEjected(final boolean isHome) {
         final Lineup lineup = isHome ? report.getHomeLineup() : report.getAwayLineup();
         final List<MatchStats> squad = lineup.getSquad();
         final List<MatchStats> bench = lineup.getBench();
@@ -188,7 +210,7 @@ public class Match {
         bench.set(0, null);
     }
 
-    static void updateRatings(final int scale) {
+    void updateRatings(final int scale) {
         final float homeScale = Simulator.getInt(5) + scale * 3 + 1;
         updateRating(report.getHomeLineup().getSquad(), homeScale);
 
@@ -196,7 +218,7 @@ public class Match {
         updateRating(report.getAwayLineup().getSquad(), awayScale);
     }
 
-    private static void updateRating(final List<MatchStats> squad, final float change) {
+    private void updateRating(final List<MatchStats> squad, final float change) {
         final int sign = change > 0 ? 1 : -1;
 
         for (int i = 0; i < Math.abs(change); i++) {
@@ -211,7 +233,7 @@ public class Match {
         }
     }
 
-    private static String getMinute() {
+    private String getMinute() {
         return minute + (stoppage != 0 ? "+" + stoppage : "") + "' ";
     }
 }

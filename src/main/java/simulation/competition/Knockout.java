@@ -1,5 +1,13 @@
 package simulation.competition;
 
+import static java.util.Collections.shuffle;
+import static simulation.Data.LEAGUES;
+import static simulation.competition.Competition.NATIONAL_CUP;
+import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
+import static simulation.competition.League.EUROPA_LEAGUE_NAME;
+import static simulation.competition.League.continentalCup;
+import static simulation.competition.League.continentalCupResults;
+
 import league.LeagueManager;
 import simulation.match.Fixture;
 import simulation.match.Match;
@@ -12,15 +20,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.shuffle;
-import static simulation.Data.LEAGUES;
-import static simulation.competition.Competition.NATIONAL_CUP;
-import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
-import static simulation.competition.League.EUROPA_LEAGUE_NAME;
-import static simulation.competition.League.continentalCup;
-import static simulation.competition.League.continentalCupResults;
-import static simulation.match.Match.simulate;
 
 public class Knockout {
     public static final Map<String, Club[]> leagueCup = new HashMap<>();
@@ -87,7 +86,7 @@ public class Knockout {
             final Report report = new Report(draw.get(team), draw.get(count - team - 1), type,
                     -1, -1,
                     (games == 1 && (!replay || count < 8)) || count == 2);
-            clubs[team] = knockoutFixture(report, games, replay, results, count);
+            clubs[team] = knockoutFixture(draw, team, games, replay, results, count, type);
         }
 
         results.put(competition + count, results.remove("new"));
@@ -95,15 +94,19 @@ public class Knockout {
         cup.put(competition, Arrays.copyOf(clubs, count / 2));
     }
 
-    private static Club knockoutFixture(final Report report, final int games, final boolean replay,
-                                           final Map<String, String> results, final int teams) {
+    private static Club knockoutFixture(final List<Club> draw, final int team, final int games, final boolean replay,
+                                        final Map<String, String> results, final int teams, final Competition type) {
 
-        final Club first = report.getHome();
-        final Club second = report.getAway();
+        final Club first = draw.get(team);
+        final Club second = draw.get(teams - team - 1);
         int firstGoals = 0;
         int secondGoals = 0;
 
-        simulate(report);
+        final Match match = new Match(first, second, type, -1, -1,
+                (games == 1 && (!replay || teams < 8)) || teams == 2);
+
+        final Report report = match.simulate();
+
         firstGoals += report.getHomeGoals();
         secondGoals += report.getAwayGoals();
 
@@ -113,16 +116,16 @@ public class Knockout {
         report.appendScore(scores, reports);
 
         if ((games == 2 && teams > 2) || (replay && firstGoals == secondGoals)) {
-            final Report report2 = new Report(second, first, report.getCompetition(),
+            final Match reverseMatch = new Match(second, first, report.getCompetition(),
                     replay ? -1 : secondGoals, replay ? -1 : firstGoals, true);
-            simulate(report2);
-            report2.appendScore(scores, reports);
+            final Report reverseMatchReport = reverseMatch.simulate();
+            reverseMatchReport.appendScore(scores, reports);
 
-            secondGoals += report2.getHomeGoals();
-            firstGoals += report2.getAwayGoals();
+            secondGoals += reverseMatchReport.getHomeGoals();
+            firstGoals += reverseMatchReport.getAwayGoals();
 
             if (firstGoals == secondGoals) {
-                if (report.getAwayGoals() < report2.getAwayGoals()) firstGoals++;
+                if (report.getAwayGoals() < reverseMatchReport.getAwayGoals()) firstGoals++;
                 else secondGoals++;
             }
         }

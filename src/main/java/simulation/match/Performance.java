@@ -6,10 +6,8 @@ import simulation.Simulator;
 
 import java.util.List;
 
-import static simulation.match.Match.report;
-
 class Performance {
-    static void goal(final boolean isHome) {
+    static void goal(final Report report, final int minute, final int stoppage, final boolean isHome) {
         if (isHome) report.addHomeGoal();
         else report.addAwayGoal();
 
@@ -45,7 +43,7 @@ class Performance {
                     .getSquad();
             if (opponent.get(footballer).isRedCarded()) footballer = 0;
             opponent.get(footballer).changeRating(-1.5f);
-            report.append(String.valueOf(Match.minute)).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")
+            report.append(String.valueOf(minute)).append(stoppage != 0 ? "+" + stoppage : "")
                     .append("' ").append("Own goal scored by ").append(opponent.get(footballer).getFootballer().getName())
                     .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
         }
@@ -65,7 +63,7 @@ class Performance {
                 }
             }
 
-            report.append(String.valueOf(Match.minute)).append(Match.stoppage != 0 ? "+" + Match.stoppage : "")
+            report.append(String.valueOf(minute)).append(stoppage != 0 ? "+" + stoppage : "")
                     .append("' ").append(goalscorer.getName()).append(assistmaker != null
                     ? " scores after a pass from " + assistmaker.getName() : " scores after a solo run")
                     .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");

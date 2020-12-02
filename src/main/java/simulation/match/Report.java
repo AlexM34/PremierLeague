@@ -1,14 +1,14 @@
 package simulation.match;
 
-import player.MatchStats;
-import player.Statistics;
-import simulation.competition.Competition;
-import team.Club;
-
 import static simulation.Data.USER;
 import static simulation.Data.USER_STYLE;
 import static simulation.match.Match.fans;
 import static simulation.match.Tactics.pickSquad;
+
+import player.MatchStats;
+import player.Statistics;
+import simulation.competition.Competition;
+import team.Club;
 
 public class Report {
     private final Club home;
@@ -27,6 +27,33 @@ public class Report {
     private int momentum;
     private final int style;
     private final StringBuilder report;
+
+    public Report() {
+        this.home = null;
+        this.away = null;
+        this.competition = null;
+        this.last = true;
+        this.homeGoals = 0;
+        this.awayGoals = 0;
+        this.aggregateHomeGoals = 0;
+        this.aggregateAwayGoals = 0;
+        this.report = new StringBuilder();
+
+        this.homeLineup = pickSquad(home);
+        this.awayLineup = pickSquad(away);
+        this.motmPlayer = new MatchStats(null);
+        this.motmRating = 0;
+
+        final int homeAttack = getAttack(true);
+        final int awayAttack = getAttack(false);
+
+        balance = fans + 6 * (homeAttack - awayAttack) / 7  +
+                (home.getSeason().getForm() - away.getSeason().getForm()) / 4 + 50;
+        momentum = balance;
+
+        if (home.getId() == USER || away.getId() == USER) style = (homeAttack + awayAttack) / 10 + USER_STYLE / 2 - 11;
+        else style = (homeAttack + awayAttack) / 10 - 6;
+    }
 
     public Report(final Club home, final Club away, final Competition competition,
                   final int aggregateHomeGoals, final int aggregateAwayGoals, final boolean last) {

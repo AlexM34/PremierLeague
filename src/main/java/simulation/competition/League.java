@@ -1,15 +1,5 @@
 package simulation.competition;
 
-import player.MatchStats;
-import simulation.match.Report;
-import team.Club;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import static simulation.Data.LEAGUES;
 import static simulation.Data.USER;
 import static simulation.Helper.getPerformance;
@@ -18,8 +8,18 @@ import static simulation.competition.Competition.LEAGUE;
 import static simulation.competition.Draw.league;
 import static simulation.competition.Draw.seededKnockout;
 import static simulation.dynamics.Preseason.pickContinentalTeams;
-import static simulation.match.Match.simulate;
 import static simulation.match.Tactics.preMatch;
+
+import player.MatchStats;
+import simulation.match.Match;
+import simulation.match.Report;
+import team.Club;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class League {
 
@@ -86,8 +86,8 @@ public class League {
             if (home == USER) preMatch(league[away], true);
             else if (away == USER) preMatch(league[home], false);
 
-            final Report report = new Report(league[home], league[away], LEAGUE, -1, -1, false);
-            simulate(report);
+            final Match match = new Match(league[home], league[away], LEAGUE, -1, -1, false);
+            final Report report = match.simulate();
             report.appendScore(scores, reports);
         }
 
@@ -130,9 +130,9 @@ public class League {
             for (int game = 0; game < 2; game++) {
                 final int home = draw[round][game][0];
                 final int away = draw[round][game][1];
-                final Report report = new Report(clubs[home], clubs[away], Competition.CHAMPIONS_LEAGUE,
+                final Match match = new Match(clubs[home], clubs[away], Competition.CHAMPIONS_LEAGUE,
                         -1, -1, false);
-                simulate(report);
+                final Report report = match.simulate();
 
                 report.appendScore(scores, reports);
                 final int homeGoals = report.getHomeGoals();
