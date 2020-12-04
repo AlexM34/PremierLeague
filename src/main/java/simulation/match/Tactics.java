@@ -109,8 +109,7 @@ public class Tactics {
         return Formation.F5;
     }
 
-    static void substitute(final Report report, final int minute, final int stoppage, final boolean isHome) {
-        final Lineup lineup = isHome ? report.getHomeLineup() : report.getAwayLineup();
+    static MatchStats substitute(final Lineup lineup, final int minute, final int stoppage, final StringBuilder report) {
         final List<MatchStats> squad = lineup.getSquad();
         final List<MatchStats> bench = lineup.getBench();
         float worst = 10;
@@ -130,15 +129,16 @@ public class Tactics {
             final MatchStats subbedIn = bench.get(player);
             if (subbedIn == null) continue;
             if (subbedOut.getPosition().getRole().equals(subbedIn.getFootballer().getPosition().getRole())) {
-                report.append(String.valueOf(minute)).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
+                report.append(minute).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
                         .append(subbedIn.getFootballer().getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
 
-                report.updateStats(squad.get(flop));
                 subbedIn.setStarted(minute);
                 squad.set(flop, subbedIn);
                 bench.set(player, null);
                 break;
             }
         }
+
+        return squad.get(flop);
     }
 }

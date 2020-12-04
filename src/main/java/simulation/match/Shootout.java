@@ -7,20 +7,18 @@ import java.util.List;
 
 public class Shootout {
 
-    private final Report report;
     private final List<MatchStats> homeSquad;
     private final List<MatchStats> awaySquad;
     private Integer homeGoals;
     private Integer awayGoals;
-    private Integer currentHome ;
-    private Integer currentAway ;
+    private Integer currentHome;
+    private Integer currentAway;
     private int taken;
     private boolean homeTurn;
 
-    Shootout(final Report report) {
-        this.report = report;
-        this.homeSquad = report.getHomeLineup().getSquad();
-        this.awaySquad = report.getAwayLineup().getSquad();
+    Shootout(final Lineup homeSquad, final Lineup awaySquad) {
+        this.homeSquad = homeSquad.getSquad();
+        this.awaySquad = awaySquad.getSquad();
         this.homeGoals = 0;
         this.awayGoals = 0;
         this.currentHome = 0;
@@ -29,26 +27,26 @@ public class Shootout {
         this.homeTurn = true;
     }
 
-    boolean isHomeWin() {
+    boolean isHomeWin(final StringBuilder report) {
         report.append("It's time for the penalty shootout!<br/>");
 
         do {
-            takePenalty();
+            takePenalty(report);
         } while (!isOver());
 
         return homeGoals > awayGoals;
     }
 
-    private void takePenalty() {
-        if (homeTurn) homePenalty();
-        else awayPenalty();
+    private void takePenalty(final StringBuilder report) {
+        if (homeTurn) homePenalty(report);
+        else awayPenalty(report);
 
-        report.append(String.valueOf(homeGoals)).append("-").append(awayGoals).append("<br/>");
+        report.append(homeGoals).append("-").append(awayGoals).append("<br/>");
         taken++;
         homeTurn = !homeTurn;
     }
 
-    private void homePenalty() {
+    private void homePenalty(final StringBuilder report) {
         do {
             currentHome = (currentHome + 10) % 11;
 
@@ -57,7 +55,7 @@ public class Shootout {
         homeGoals += Penalty.take(getNextTaker(homeSquad, currentHome), awaySquad.get(0).getFootballer(), report);
     }
 
-    private void awayPenalty() {
+    private void awayPenalty(final StringBuilder report) {
         do {
             currentAway = (currentAway + 10) % 11;
 

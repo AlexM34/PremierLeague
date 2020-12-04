@@ -12,7 +12,6 @@ import static simulation.match.Tactics.preMatch;
 
 import player.MatchStats;
 import simulation.match.Match;
-import simulation.match.Report;
 import team.Club;
 
 import java.util.ArrayList;
@@ -87,8 +86,8 @@ public class League {
             else if (away == USER) preMatch(league[home], false);
 
             final Match match = new Match(league[home], league[away], LEAGUE, -1, -1, false);
-            final Report report = match.simulate();
-            report.appendScore(scores, reports);
+            match.simulate();
+            match.appendScore(league[home], league[away], scores, reports);
         }
 
         leagueResults.put(league[0].getLeague() + (leagueRound + 1), scores.toString());
@@ -132,11 +131,11 @@ public class League {
                 final int away = draw[round][game][1];
                 final Match match = new Match(clubs[home], clubs[away], Competition.CHAMPIONS_LEAGUE,
                         -1, -1, false);
-                final Report report = match.simulate();
+                match.simulate();
 
-                report.appendScore(scores, reports);
-                final int homeGoals = report.getHomeGoals();
-                final int awayGoals = report.getAwayGoals();
+                match.appendScore(clubs[home], clubs[away], scores, reports);
+                final int homeGoals = match.getHomeGoals();
+                final int awayGoals = match.getAwayGoals();
 
                 clubs[home].getSeason().getContinental().getGroup().addFixture(clubs[away],
                         true, homeGoals, awayGoals);

@@ -1,13 +1,13 @@
 package team;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import player.Footballer;
 import player.Glory;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Club {
 

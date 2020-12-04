@@ -11,7 +11,6 @@ import static simulation.competition.League.continentalCupResults;
 import league.LeagueManager;
 import simulation.match.Fixture;
 import simulation.match.Match;
-import simulation.match.Report;
 import team.Club;
 import team.Cup;
 import team.Season;
@@ -83,9 +82,12 @@ public class Knockout {
 
         if (count == 2) Match.fans = 0;
         for (int team = 0; team < count / 2; team++) {
-            final Report report = new Report(draw.get(team), draw.get(count - team - 1), type,
+
+            final Match match = new Match(draw.get(team), draw.get(count - team - 1), type,
                     -1, -1,
                     (games == 1 && (!replay || count < 8)) || count == 2);
+
+            match.simulate();
             clubs[team] = knockoutFixture(draw, team, games, replay, results, count, type);
         }
 
@@ -95,42 +97,42 @@ public class Knockout {
     }
 
     private static Club knockoutFixture(final List<Club> draw, final int team, final int games, final boolean replay,
-                                        final Map<String, String> results, final int teams, final Competition type) {
+                                        final Map<String, String> results, final int teams, final Competition competition) {
 
         final Club first = draw.get(team);
         final Club second = draw.get(teams - team - 1);
         int firstGoals = 0;
         int secondGoals = 0;
 
-        final Match match = new Match(first, second, type, -1, -1,
+        final Match match = new Match(first, second, competition, -1, -1,
                 (games == 1 && (!replay || teams < 8)) || teams == 2);
 
-        final Report report = match.simulate();
+        match.simulate();
 
-        firstGoals += report.getHomeGoals();
-        secondGoals += report.getAwayGoals();
+        firstGoals += match.getHomeGoals();
+        secondGoals += match.getAwayGoals();
 
         final StringBuilder scores = new StringBuilder(String.valueOf(results.get("new")));
         final StringBuilder reports = new StringBuilder(String.valueOf(results.get("reports: new")));
         if (games == 2 && scores.length() > 0) scores.append("<br/>");
-        report.appendScore(scores, reports);
+        match.appendScore(first, second, scores, reports);
 
         if ((games == 2 && teams > 2) || (replay && firstGoals == secondGoals)) {
-            final Match reverseMatch = new Match(second, first, report.getCompetition(),
+            final Match reverseMatch = new Match(second, first, competition,
                     replay ? -1 : secondGoals, replay ? -1 : firstGoals, true);
-            final Report reverseMatchReport = reverseMatch.simulate();
-            reverseMatchReport.appendScore(scores, reports);
+            reverseMatch.simulate();
+            reverseMatch.appendScore(second, first, scores, reports);
 
-            secondGoals += reverseMatchReport.getHomeGoals();
-            firstGoals += reverseMatchReport.getAwayGoals();
+            secondGoals += reverseMatch.getHomeGoals();
+            firstGoals += reverseMatch.getAwayGoals();
 
             if (firstGoals == secondGoals) {
-                if (report.getAwayGoals() < reverseMatchReport.getAwayGoals()) firstGoals++;
+                if (match.getAwayGoals() < reverseMatch.getAwayGoals()) firstGoals++;
                 else secondGoals++;
             }
         }
 
-        updateFixtures(first, second, firstGoals, secondGoals, report.getCompetition().getType(), teams);
+        updateFixtures(first, second, firstGoals, secondGoals, competition.getType(), teams);
         results.put("new", scores.toString());
         results.put("reports: new", reports.toString());
         return firstGoals > secondGoals ? first : second;
