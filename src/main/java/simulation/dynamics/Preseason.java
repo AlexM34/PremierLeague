@@ -32,7 +32,7 @@ public class Preseason {
     
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
-    public static final List<Footballer> retired = new ArrayList<>();
+    protected static final List<Footballer> retired = new ArrayList<>();
     static int deals;
     private static int academy = 0;
 
@@ -81,33 +81,32 @@ public class Preseason {
 
     static void academy() {
         academy = 0;
+        Arrays.stream(LEAGUES).flatMap(Arrays::stream).forEach(Preseason::promote);
+        STREAM.println(academy + " youngsters promoted");
+    }
+
+    private static void promote(final Club club) {
         int goalkeepers = 0;
         int defenders = 0;
         int midfielders = 0;
         int forwards = 0;
 
-        for (final Club[] league : LEAGUES) {
-            for (final Club club : league) {
-                youngster(club, null);
-                youngster(club, null);
+        youngster(club, null);
+        youngster(club, null);
 
-                for (final Footballer footballer : club.getFootballers()) {
-                    switch (footballer.getPosition().getRole()) {
-                        case GOALKEEPER: goalkeepers++; break;
-                        case DEFENDER: defenders++; break;
-                        case MIDFIELDER: midfielders++; break;
-                        case FORWARD: forwards++; break;
-                    }
-                }
-
-                for (int g = goalkeepers; g < 3; g++) youngster(club, Position.Role.GOALKEEPER);
-                for (int d = defenders; d < 7; d++) youngster(club, Position.Role.DEFENDER);
-                for (int m = midfielders; m < 7; m++) youngster(club, Position.Role.MIDFIELDER);
-                for (int f = forwards; f < 4; f++) youngster(club, Position.Role.FORWARD);
+        for (final Footballer footballer : club.getFootballers()) {
+            switch (footballer.getPosition().getRole()) {
+                case GOALKEEPER: goalkeepers++; break;
+                case DEFENDER: defenders++; break;
+                case MIDFIELDER: midfielders++; break;
+                case FORWARD: forwards++; break;
             }
         }
 
-        STREAM.println(academy + " youngsters promoted");
+        for (int g = goalkeepers; g < 3; g++) youngster(club, Position.Role.GOALKEEPER);
+        for (int d = defenders; d < 7; d++) youngster(club, Position.Role.DEFENDER);
+        for (int m = midfielders; m < 7; m++) youngster(club, Position.Role.MIDFIELDER);
+        for (int f = forwards; f < 4; f++) youngster(club, Position.Role.FORWARD);
     }
 
     public static void youngster(final Club club, Position.Role role) {
@@ -132,7 +131,7 @@ public class Preseason {
         final int overall = 60 + Simulator.getInt(10);
         final int potential = overall + Simulator.getInt(15) + 10;
         final long value = 3;
-        final long wage = 10000 * (1 + Simulator.getInt(5));
+        final long wage = 10000L * (1 + Simulator.getInt(5));
         final Position.Role finalRole = role;
         final Object[] positions = Arrays.stream(Position.values()).filter(p -> p.getRole().equals(finalRole)).toArray();
         final Position position = (Position) positions[Simulator.getInt(positions.length)];
@@ -158,7 +157,15 @@ public class Preseason {
         final List<Map.Entry<Club, Integer>> sorted = new ArrayList<>(teams.entrySet());
         sorted.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
 
-        for (int i = 0; i < 32; i++) STREAM.println(championsLeagueTeams[i] = sorted.get(i).getKey());
-        for (int i = 32; i < 80; i++) STREAM.println(europaLeagueTeams[i - 32] = sorted.get(i).getKey());
+        for (int i = 0; i < 32; i++) {
+            championsLeagueTeams[i] = sorted.get(i).getKey();
+            STREAM.println(championsLeagueTeams[i]);
+        }
+
+        for (int i = 32; i < 80; i++) {
+            europaLeagueTeams[i - 32] = sorted.get(i).getKey();
+            STREAM.println(europaLeagueTeams[i - 32]);
+        }
     }
+
 }

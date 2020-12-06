@@ -8,10 +8,10 @@ import static simulation.competition.Competition.LEAGUE;
 import static simulation.competition.Draw.league;
 import static simulation.competition.Draw.seededKnockout;
 import static simulation.dynamics.Preseason.pickContinentalTeams;
-import static simulation.match.Tactics.preMatch;
 
 import player.MatchStats;
 import simulation.match.Match;
+import simulation.match.Tactics;
 import team.Club;
 
 import java.io.FileDescriptor;
@@ -89,8 +89,16 @@ public class League {
         for (int game = 0; game < league.length / 2; game++) {
             final int home = draw[leagueRound][game][0];
             final int away = draw[leagueRound][game][1];
-            if (home == USER) preMatch(league[away], true);
-            else if (away == USER) preMatch(league[home], false);
+            final Tactics tactics;
+
+            if (home == USER) {
+                tactics = new Tactics(league[home]);
+                tactics.preMatch(league[away], true);
+
+            } else if (away == USER) {
+                tactics = new Tactics(league[away]);
+                tactics.preMatch(league[home], false);
+            }
 
             final Match match = new Match(league[home], league[away], LEAGUE, -1, -1, false);
             match.simulate();

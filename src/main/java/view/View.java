@@ -125,7 +125,7 @@ public class View {
         }
 
         for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-            TableColumn column = table.getColumnModel().getColumn(i);
+            final TableColumn column = table.getColumnModel().getColumn(i);
             column.setPreferredWidth((int)
                     (tablePreferredWidth * (percentages[i] / total)));
         }

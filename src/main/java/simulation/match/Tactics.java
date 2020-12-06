@@ -25,34 +25,36 @@ import java.util.stream.Collectors;
 public class Tactics {
 
     private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
 
-    private Tactics() {
+    private final Club team;
+    private Lineup lineup;
+
+    public Tactics(final Club team) {
+        this.team = team;
     }
 
-    public static void preMatch(final Club opponent, final boolean isHome) {
+    public void preMatch(final Club opponent, final boolean isHome) {
         STREAM.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
         STREAM.println("Pick how offensive the team should be from 0 to 20");
-        while (true) {
-            final int attack = scanner.nextInt();
-            if (attack < 0 || attack > 20) {
-                STREAM.println("Wrong attack value!");
-                continue;
-            }
 
-            userStyle = attack - 10;
-            break;
+        int attack = SCANNER.nextInt();
+        while (attack < 0 || attack > 20) {
+            STREAM.println("Wrong attack value!");
+            attack = SCANNER.nextInt();
         }
+
+        userStyle = attack - 10;
     }
 
-    static Lineup pickSquad(final Club team) {
+    Lineup pickSquad() {
         final List<Footballer> footballers = team.getFootballers().stream()
                 .sorted(Comparator.comparing(Footballer::getOverall).reversed())
                 .collect(Collectors.toList());
 
         refreshDummies();
         final Formation formation = pickFormation(footballers);
-        final Lineup lineup = new Lineup(formation);
+        lineup = new Lineup(formation);
         for (final Footballer footballer : footballers) {
             if (!footballer.canPlay()) {
                 footballer.changeBan(-1);
@@ -66,7 +68,7 @@ public class Tactics {
         return lineup;
     }
 
-    private static void refreshDummies() {
+    private void refreshDummies() {
         GOALKEEPER_1.changeCondition(100);
         DEFENDER_1.changeCondition(100);
         MIDFIELDER_1.changeCondition(100);
@@ -76,7 +78,7 @@ public class Tactics {
         FORWARD_2.changeCondition(100);
     }
 
-    private static Formation pickFormation(final List<Footballer> footballers) {
+    private Formation pickFormation(final List<Footballer> footballers) {
         int defenders = 0;
         int midfielders = 0;
         int forwards = 0;
@@ -87,6 +89,7 @@ public class Tactics {
             }
 
             switch (f.getPosition().getRole()) {
+                case GOALKEEPER: break;
                 case DEFENDER:
                     defenders++;
                     break;
@@ -95,29 +98,37 @@ public class Tactics {
                     break;
                 case FORWARD:
                     forwards++;
-                    break;
             }
 
             if (defenders + midfielders + forwards > 9 &&
                     defenders > 2 && midfielders > 1 && forwards > 0) {
-                for (final Formation formation : Formation.values()) {
-                    if (formation.getDefenders() <= defenders &&
-                            formation.getMidfielders() <= midfielders &&
-                            formation.getForwards() <= forwards) {
-                        return formation;
-                    }
-                }
+
+                final Formation formation = pickFormation(defenders, midfielders, forwards);
+                if (formation != null) return formation;
             }
         }
 
-        STREAM.println("Could not pick appropriate formation");
+        STREAM.printf("Could not pick appropriate formation for %s%n", team);
         for (final Footballer f : footballers) {
             STREAM.println(f.getName() + " " + f.getPosition().getRole() + " " + f.getCondition());
         }
+
         return Formation.F5;
     }
 
-    static MatchStats substitute(final Lineup lineup, final int minute, final int stoppage, final StringBuilder report) {
+    private Formation pickFormation(final int defenders, final int midfielders, final int forwards) {
+        for (final Formation formation : Formation.values()) {
+            if (formation.getDefenders() <= defenders &&
+                    formation.getMidfielders() <= midfielders &&
+                    formation.getForwards() <= forwards) {
+                return formation;
+            }
+        }
+
+        return null;
+    }
+
+    MatchStats substitute(final int minute, final int stoppage, final StringBuilder report) {
         final List<MatchStats> squad = lineup.getSquad();
         final List<MatchStats> bench = lineup.getBench();
         float worst = 10;
@@ -135,10 +146,10 @@ public class Tactics {
         final Footballer subbedOut = squad.get(flop).getFootballer();
         for (int player = 0; player < bench.size(); player++) {
             final MatchStats subbedIn = bench.get(player);
-            if (subbedIn == null) continue;
-            if (subbedOut.getPosition().getRole().equals(subbedIn.getFootballer().getPosition().getRole())) {
+            if (isProperSub(subbedIn, subbedOut)) {
                 report.append(minute).append(stoppage != 0 ? "+" + stoppage : "").append("' ")
-                        .append(subbedIn.getFootballer().getName()).append(" replaces ").append(subbedOut.getName()).append("<br/>");
+                        .append(subbedIn.getFootballer().getName()).append(" replaces ")
+                        .append(subbedOut.getName()).append("<br/>");
 
                 subbedIn.setStarted(minute);
                 squad.set(flop, subbedIn);
@@ -149,4 +160,10 @@ public class Tactics {
 
         return squad.get(flop);
     }
+
+    private boolean isProperSub(final MatchStats subbedIn, final Footballer subbedOut) {
+        return subbedIn != null && subbedOut.getPosition().getRole()
+                .equals(subbedIn.getFootballer().getPosition().getRole());
+    }
 }
+

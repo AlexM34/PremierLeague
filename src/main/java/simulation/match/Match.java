@@ -4,8 +4,6 @@ import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.USER;
 import static simulation.Data.userStyle;
 import static simulation.competition.League.updateLeagueStats;
-import static simulation.match.Tactics.pickSquad;
-import static simulation.match.Tactics.substitute;
 
 import player.Footballer;
 import player.MatchStats;
@@ -40,7 +38,9 @@ public class Match {
     private int awayGoals = 0;
     private int homeSubs = 3;
     private int awaySubs = 3;
+    private final Tactics homeTactics;
     private final Lineup homeLineup;
+    private final Tactics awayTactics;
     private final Lineup awayLineup;
     private MatchStats motmPlayer;
     private float motmRating;
@@ -56,8 +56,10 @@ public class Match {
         this.last = last;
         this.aggregateHomeGoals = aggregateHomeGoals;
         this.aggregateAwayGoals = aggregateAwayGoals;
-        this.homeLineup = pickSquad(home);
-        this.awayLineup = pickSquad(away);
+        this.homeTactics = new Tactics(home);
+        this.homeLineup = homeTactics.pickSquad();
+        this.awayTactics = new Tactics(away);
+        this.awayLineup = awayTactics.pickSquad();
         this.motmPlayer = new MatchStats(null);
         this.motmRating = 0;
 
@@ -132,17 +134,14 @@ public class Match {
         if (r < 10 * momentum) {
             if (r < momentum + style - 41) {
                 goal(true);
-                momentum = balance;
-                updateRatings(3);
             } else if (r < 5 * momentum) {
                 momentum++;
                 updateRatings(1);
             }
+
         } else {
             if (r > 940 + momentum - style) {
                 goal(false);
-                momentum = balance;
-                updateRatings(-3);
             } else if (r > 999 - 5 * momentum) {
                 momentum--;
                 updateRatings(-1);
@@ -153,14 +152,14 @@ public class Match {
         else if (Simulator.isSatisfied(1, 300)) redCardEvent();
 
         if (minute > 60) {
-            if (homeSubs > 0 && Simulator.getInt(10) == 0) {
-                final MatchStats subbedOut = substitute(homeLineup, minute, stoppage, report);
+            if (homeSubs > 0 && Simulator.isSatisfied(10)) {
+                final MatchStats subbedOut = homeTactics.substitute(minute, stoppage, report);
                 updateStats(subbedOut);
                 homeSubs--;
             }
 
             if (awaySubs > 0 && Simulator.isSatisfied(10)) {
-                final MatchStats subbedOut = substitute(awayLineup, minute, stoppage, report);
+                final MatchStats subbedOut = awayTactics.substitute(minute, stoppage, report);
                 updateStats(subbedOut);
                 awaySubs--;
             }
@@ -238,10 +237,10 @@ public class Match {
     }
 
     void updateRatings(final int scale) {
-        final float homeScale = Simulator.getInt(5) + scale * 3 + 1;
+        final float homeScale = Simulator.getInt(5) + scale * 3 + 1f;
         updateRating(homeLineup.getSquad(), homeScale);
 
-        final float awayScale = Simulator.getInt(5) - scale * 3 + 1;
+        final float awayScale = Simulator.getInt(5) - scale * 3 + 1f;
         updateRating(awayLineup.getSquad(), awayScale);
     }
 
@@ -388,12 +387,16 @@ public class Match {
         if (isHome) homeGoals++;
         else awayGoals++;
 
+        individualCredits(isHome);
+
+        momentum = balance;
+        updateRatings(isHome ? 3 : -3);
+    }
+
+    private void individualCredits(final boolean isHome) {
+        final List<MatchStats> squad = (isHome ? homeLineup : awayLineup).getSquad();
         int scoring = 3000;
         int assisting = 10000;
-        Footballer goalscorer = null;
-        Footballer assistmaker = null;
-        final List<MatchStats> squad = (isHome ? homeLineup : awayLineup)
-                .getSquad();
 
         for (int player = 0; player < 11; player++) {
             if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
@@ -401,51 +404,70 @@ public class Match {
             assisting += squad.get(player).getFootballer().getAssistChance();
         }
 
+
+        final Footballer goalscorer = pickGoalscorer(squad, scoring);
+
+        if (goalscorer == null) {
+            final List<MatchStats> opponent = (isHome ? awayLineup : homeLineup)
+                    .getSquad();
+            ownGoal(opponent);
+            return;
+        }
+
+        Footballer assistmaker = pickAssistmaker(squad, assisting, goalscorer);
+
+        report.append(minute).append(stoppage != 0 ? "+" + stoppage : "")
+                .append("' ").append(goalscorer.getName()).append(assistmaker != null
+                ? " scores after a pass from " + assistmaker.getName() : " scores after a solo run")
+                .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
+    }
+
+    private Footballer pickGoalscorer(final List<MatchStats> squad, final int scoring) {
         int r = Simulator.getInt(scoring);
         for (int player = 0; player < 11; player++) {
             if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
             r -= squad.get(player).getFootballer().getScoringChance();
             if (r < 0) {
-                goalscorer = squad.get(player).getFootballer();
                 squad.get(player).addGoal();
-                break;
+                return squad.get(player).getFootballer();
             }
         }
 
-        if (goalscorer == null) {
-            int footballer = ownGoal();
-            final List<MatchStats> opponent = (isHome ? awayLineup : homeLineup)
-                    .getSquad();
-            if (opponent.get(footballer).isRedCarded()) footballer = 0;
-            opponent.get(footballer).changeRating(-1.5f);
-            report.append(minute).append(stoppage != 0 ? "+" + stoppage : "")
-                    .append("' ").append("Own goal scored by ").append(opponent.get(footballer).getFootballer().getName())
-                    .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
-        }
-        else {
-            r = Simulator.getInt(assisting);
-            for (int player = 0; player < 11; player++) {
-                if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
-                r -= squad.get(player).getFootballer().getAssistChance();
-                if (r < 0) {
-                    assistmaker = squad.get(player).getFootballer();
-                    if (assistmaker.equals(goalscorer)) {
-                        assistmaker = null;
-                        squad.get(player).changeRating(0.25f);
-                    } else squad.get(player).addAssist();
-
-                    break;
-                }
-            }
-
-            report.append(minute).append(stoppage != 0 ? "+" + stoppage : "")
-                    .append("' ").append(goalscorer.getName()).append(assistmaker != null
-                    ? " scores after a pass from " + assistmaker.getName() : " scores after a solo run")
-                    .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
-        }
+        return null;
     }
 
-    private static int ownGoal() {
+    private Footballer pickAssistmaker(final List<MatchStats> squad, final int assisting, final Footballer goalscorer) {
+        int r = Simulator.getInt(assisting);
+        for (int player = 0; player < 11; player++) {
+            if (squad.get(player) == null || squad.get(player).isRedCarded()) continue;
+            r -= squad.get(player).getFootballer().getAssistChance();
+
+            if (r < 0) {
+                if (squad.get(player).getFootballer().equals(goalscorer)) {
+                    squad.get(player).changeRating(0.25f);
+                    return null;
+
+                } else {
+                    squad.get(player).addAssist();
+                    return squad.get(player).getFootballer();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void ownGoal(final List<MatchStats> opponent) {
+        int index = pickOwnGoalScorer();
+
+        if (opponent.get(index).isRedCarded()) index = 0;
+        opponent.get(index).changeRating(-1.5f);
+        report.append(minute).append(stoppage != 0 ? "+" + stoppage : "")
+                .append("' ").append("Own goal scored by ").append(opponent.get(index).getFootballer().getName())
+                .append(". ").append(homeGoals).append("-").append(awayGoals).append("<br/>");
+    }
+
+    private int pickOwnGoalScorer() {
         if (Simulator.isSatisfied(20)) return 0;
         if (Simulator.isSatisfied(60)) return 1 + Simulator.getInt(4);
         if (Simulator.isSatisfied(70)) return 5 + Simulator.getInt(3);

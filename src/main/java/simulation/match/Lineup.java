@@ -26,26 +26,26 @@ public class Lineup {
     }
 
     List<MatchStats> getSquad() {
-        return squad.getSelection();
+        return squad.getTeamSheet();
     }
 
     List<MatchStats> getBench() {
-        return bench.getSelection();
+        return bench.getTeamSheet();
     }
 
     MatchStats getStats(final int index) {
-        return this.squad.getSelection().get(index);
+        return this.squad.getTeamSheet().get(index);
     }
 
     void print() {
         STREAM.println();
         STREAM.println("SQUAD");
-        squad.getSelection().forEach(x ->
+        squad.getTeamSheet().forEach(x ->
                 STREAM.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
 
         STREAM.println();
         STREAM.println("BENCH");
-        bench.getSelection().forEach(x ->
+        bench.getTeamSheet().forEach(x ->
                 STREAM.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
         STREAM.println();
     }

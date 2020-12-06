@@ -6,13 +6,13 @@ import player.Position;
 import team.Formation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 public class Selection {
 
-    private final List<MatchStats> selection;
+    private final List<MatchStats> teamSheet;
     private final Map<Position.Role, Integer> available;
 
     Selection(final Formation formation) {
@@ -20,8 +20,8 @@ public class Selection {
     }
 
     Selection(final int defenders, final int midfielders, final int forwards) {
-        this.selection = new ArrayList<>();
-        this.available = new HashMap<>();
+        this.teamSheet = new ArrayList<>();
+        this.available = new EnumMap<>(Position.Role.class);
 
         this.available.put(Position.Role.GOALKEEPER, 1);
         this.available.put(Position.Role.DEFENDER, defenders);
@@ -29,28 +29,28 @@ public class Selection {
         this.available.put(Position.Role.FORWARD, forwards);
     }
 
-    List<MatchStats> getSelection() {
-        return selection;
+    List<MatchStats> getTeamSheet() {
+        return teamSheet;
     }
 
     boolean add(final Footballer footballer) {
         final Position.Role role = footballer.getPosition().getRole();
-        final int available = this.available.get(role);
-        final long count = this.selection.stream()
+        final long alreadySelected = this.teamSheet.stream()
                 .filter(f -> f.getFootballer().getPosition().getRole() == role).count();
 
-        if (available == count) return false;
+        if (this.available.get(role) == alreadySelected) return false;
 
         int index = 0;
-        for (int i = this.selection.size() - 1; i >= 0; i--) {
-            if (this.selection.get(i).getFootballer().getPosition().getAttackingDuty() <=
+        for (int i = this.teamSheet.size() - 1; i >= 0; i--) {
+            if (this.teamSheet.get(i).getFootballer().getPosition().getAttackingDuty() <=
                     footballer.getPosition().getAttackingDuty()) {
                 index = i + 1;
                 break;
             }
         }
 
-        this.selection.add(index, new MatchStats(footballer));
+        this.teamSheet.add(index, new MatchStats(footballer));
         return true;
     }
+
 }
