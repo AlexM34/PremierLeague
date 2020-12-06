@@ -8,6 +8,7 @@ import team.Owner;
 import team.Stadium;
 
 public class Germany {
+
     public static final String LEAGUE = "Bundesliga";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
@@ -88,6 +89,9 @@ public class Germany {
     public static final Club[] CLUBS = {BAYERN_MUNICH, BORUSSIA_DORTMUND, RB_LEIPZIG, BAYER_LEVERKUSEN, WERDER_BREMEN,
             BORUSSIA_MONCHENGLADBACH, WOLFSBURG, EINTRACHT_FRANKFURT, HOFFENHEIM, FORTUNA_DUSSELDORF, HERTHA, MAINZ,
             FREIBURG, SCHALKE, AUGSBURG, KOLN, PADERBORN, UNION_BERLIN};
+
+    private Germany() {
+    }
 
     public static String getLeague() {
         return LEAGUE;

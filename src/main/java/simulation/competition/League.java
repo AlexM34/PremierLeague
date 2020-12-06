@@ -14,6 +14,9 @@ import player.MatchStats;
 import simulation.match.Match;
 import team.Club;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,6 +30,7 @@ public class League {
     public static final Club[] CHAMPIONS_LEAGUE = new Club[32];
     public static final Club[] EUROPA_LEAGUE = new Club[48];
 
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     private static final Map<String, int[][][]> leagueDraw = new HashMap<>();
     static final Map<String, int[][][]> continentalDraw = new HashMap<>();
     public static final Map<String, Club[]> continentalCup = new HashMap<>();
@@ -40,6 +44,9 @@ public class League {
     private static int leagueRound;
     private static int championsLeagueRound;
     private static int europaLeagueRound;
+
+    private League() {
+    }
 
     public static void setupLeagues() {
         leagueDraw.clear();
@@ -75,7 +82,7 @@ public class League {
     }
 
     static void leagueRound(final Club[] league) {
-        System.out.println(String.format("Round %d", leagueRound + 1));
+        STREAM.printf("Round %d%n", leagueRound + 1);
         final StringBuilder scores = new StringBuilder();
         final StringBuilder reports = new StringBuilder();
         final int[][][] draw = leagueDraw.get(league[0].getLeague());
@@ -112,7 +119,7 @@ public class League {
         final int[][][] draw = continentalDraw.get(competition);
         for (int group = 0; group < groups; group++) {
             final String letter = String.valueOf((char) ('A' + group));
-            System.out.println("GROUP " + letter);
+            STREAM.println("GROUP " + letter);
 
             final StringBuilder scores = new StringBuilder(continentalCupResults.getOrDefault(
                     competition + letter, ""));
@@ -121,8 +128,8 @@ public class League {
 
             final Club[] clubs = new Club[4];
             for (int team = 0; team < 4; team++) clubs[team] = teams[groups * team + group];
-            System.out.println();
-            System.out.println("Matchday " + (round + 1));
+            STREAM.println();
+            STREAM.println("Matchday " + (round + 1));
             if (scores.length() > 0) scores.append("<br/>");
             if (reports.length() > 0) reports.append("<br/>");
 
@@ -157,7 +164,7 @@ public class League {
 
         final List<Club> thirds = new ArrayList<>();
         for (int group = 0; group < groups; group++) {
-            System.out.println("GROUP " + (char) ('A' + group));
+            STREAM.println("GROUP " + (char) ('A' + group));
 
             final Map<Club, Integer> standing = new LinkedHashMap<>();
             for (int team = 0; team < 4; team++) {
@@ -165,18 +172,18 @@ public class League {
                 standing.put(teams[groups * team + group], getPerformance(groupStats));
             }
 
-            System.out.println();
+            STREAM.println();
             final Map<Club, Integer> sorted = sortMap(standing);
 
-            System.out.println();
-            System.out.println("Standings for group " + (char) ('A' + group));
-            System.out.println("No  Teams                     G  W  D  L  GF:GA  P");
+            STREAM.println();
+            STREAM.println("Standings for group " + (char) ('A' + group));
+            STREAM.println("No  Teams                     G  W  D  L  GF:GA  P");
             final Club[] rankedTeams = sorted.keySet().toArray(new Club[0]);
             for (int team = 0; team < sorted.size(); team++) {
                 final Club club = rankedTeams[team];
                 final team.League groupStats = club.getSeason().getContinental().getGroup();
 
-                System.out.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %2d:%-2d %2d", team + 1, club.getName(),
+                STREAM.println(String.format("%2d. %-25s %-2d %-2d %-2d %-2d %2d:%-2d %2d", team + 1, club.getName(),
                         groupStats.getMatches(), groupStats.getWins(), groupStats.getDraws(), groupStats.getLosses(),
                         groupStats.getScored(), groupStats.getConceded(), groupStats.getPoints()));
 
@@ -188,7 +195,7 @@ public class League {
 
         if (competition.equals(CHAMPIONS_LEAGUE_NAME)) {
             final Club[] europaLeagueTeams = new Club[32];
-            thirds.forEach(t -> System.out.println(t.getName()));
+            thirds.forEach(t -> STREAM.println(t.getName()));
 
             for (int team = 0; team < 8; team++) europaLeagueTeams[team] = thirds.remove(0);
             continentalCup.put(EUROPA_LEAGUE_NAME, europaLeagueTeams);
@@ -197,7 +204,7 @@ public class League {
         } else {
             final Club[] europaLeagueTeams = continentalCup.get(EUROPA_LEAGUE_NAME);
             System.arraycopy(advancing, 0, europaLeagueTeams, 8, 24);
-            for (int team = 0; team < 32; team++) System.out.println(europaLeagueTeams[team].getName());
+            for (int team = 0; team < 32; team++) STREAM.println(europaLeagueTeams[team].getName());
 
             continentalCup.put(EUROPA_LEAGUE_NAME, seededKnockout(europaLeagueTeams));
         }

@@ -23,10 +23,10 @@ public class Selection {
         this.selection = new ArrayList<>();
         this.available = new HashMap<>();
 
-        this.available.put(Position.Role.Goalkeeper, 1);
-        this.available.put(Position.Role.Defender, defenders);
-        this.available.put(Position.Role.Midfielder, midfielders);
-        this.available.put(Position.Role.Forward, forwards);
+        this.available.put(Position.Role.GOALKEEPER, 1);
+        this.available.put(Position.Role.DEFENDER, defenders);
+        this.available.put(Position.Role.MIDFIELDER, midfielders);
+        this.available.put(Position.Role.FORWARD, forwards);
     }
 
     List<MatchStats> getSelection() {

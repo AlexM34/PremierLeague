@@ -1,16 +1,5 @@
 package view;
 
-import league.LeagueManager;
-import team.Club;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.util.Map;
-
 import static java.awt.Font.PLAIN;
 import static league.LeagueManager.getClubs;
 import static simulation.competition.League.CHAMPIONS_LEAGUE_NAME;
@@ -25,7 +14,19 @@ import static view.ViewManager.historicalView;
 import static view.ViewManager.rankedView;
 import static view.ViewManager.seasonalView;
 
+import league.LeagueManager;
+import team.Club;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.util.Map;
+
 class Historical extends View {
+
     private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
     private static final String[] TROPHIES = {"N", "TEAM", "TROPHIES"};
@@ -108,8 +109,7 @@ class Historical extends View {
     static void update() {
         final String nation = String.valueOf(NATION_BOX.getSelectedItem());
         final boolean international = nation.equals(CHAMPIONS_LEAGUE_NAME) || nation.equals(EUROPA_LEAGUE_NAME);
-        if (international) COMPETITION_BOX.setVisible(false);
-        else COMPETITION_BOX.setVisible(true);
+        COMPETITION_BOX.setVisible(!international);
 
         final Club[] league = getClubs(nation);
         int competition;
@@ -123,10 +123,10 @@ class Historical extends View {
         if (international) competition = nation.equals(CHAMPIONS_LEAGUE_NAME) ? 3 : 4;
         final Map<String, Integer> winners = allTime(league, competition);
         int row = 0;
-        for (final String club : winners.keySet()) {
+        for (final Map.Entry<String, Integer> entry : winners.entrySet()) {
             TROPHIES_TABLE.setValueAt(String.valueOf(row + 1), row, 0);
-            TROPHIES_TABLE.setValueAt(club, row, 1);
-            TROPHIES_TABLE.setValueAt(String.valueOf(winners.get(club)), row++, 2);
+            TROPHIES_TABLE.setValueAt(entry.getKey(), row, 1);
+            TROPHIES_TABLE.setValueAt(String.valueOf(entry.getValue()), row++, 2);
         }
 
         for (int i = row; i < 30; i++) {

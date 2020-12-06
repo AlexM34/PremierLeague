@@ -21,10 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Knockout {
+
     public static final Map<String, Club[]> leagueCup = new HashMap<>();
     public static final Map<String, Club[]> nationalCup = new HashMap<>();
     public static final Map<String, String> leagueCupResults = new HashMap<>();
     public static final Map<String, String> nationalCupResults = new HashMap<>();
+
+    private Knockout() {
+    }
 
     public static void setupCups() {
         leagueCup.clear();

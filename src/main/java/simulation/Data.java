@@ -9,15 +9,19 @@ import player.Resume;
 import team.Club;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Data {
 
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     public static final Club[][] LEAGUES = LeagueManager.getAllLeagues();
-    public static Integer USER = -1;
-    public static int USER_STYLE;
+    public static final Integer USER = -1;
+    public static int userStyle;
 
     public static final String[] SURNAMES = {"Johnson", "Smith", "Rodriguez", "Traore", "Taylor",  "Pelle",  "Dembele",
             "Alba",  "Benitez", "Sterling",  "Martinez",  "Suarez",  "Jimenez",  "Muller",  "Gross",  "Cole"};
@@ -46,6 +50,9 @@ public class Data {
     public static final Footballer FORWARD_2 = new Footballer(123468, "Forward 2", 18, "", 60, 60,
             "Dummy", 0, 0, Position.ST, 106, 20, 20, new Resume());
 
+    private Data() {
+    }
+
     static void extractData() {
         final String fileName = "data/data.csv";
         final File data = new File(fileName);
@@ -72,7 +79,7 @@ public class Data {
                 }
             }
         } catch (final Exception e) {
-            System.out.println("Exception thrown while extracting data! " + e);
+            STREAM.println("Exception thrown while extracting data! " + e);
         }
     }
 
@@ -116,7 +123,7 @@ public class Data {
                 }
             }
         } catch (final Exception e) {
-            System.out.println("Exception thrown while building squads! " + e);
+            STREAM.println("Exception thrown while building squads! " + e);
         }
     }
 

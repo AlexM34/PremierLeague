@@ -73,7 +73,6 @@ public class Controller {
                 break;
             case 42:
                 europaLeague();
-                break;
         }
 
         matchday++;

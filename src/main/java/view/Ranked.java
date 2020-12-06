@@ -1,5 +1,12 @@
 package view;
 
+import static java.awt.Font.ITALIC;
+import static java.awt.Font.PLAIN;
+import static simulation.dynamics.Postseason.topPlayers;
+import static view.ViewManager.historicalView;
+import static view.ViewManager.rankedView;
+import static view.ViewManager.seasonalView;
+
 import player.Footballer;
 
 import javax.swing.BorderFactory;
@@ -11,13 +18,6 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.awt.Font.ITALIC;
-import static java.awt.Font.PLAIN;
-import static simulation.dynamics.Postseason.topPlayers;
-import static view.ViewManager.historicalView;
-import static view.ViewManager.rankedView;
-import static view.ViewManager.seasonalView;
 
 class Ranked extends View {
     private static final String[] FOOTBALLERS = {"N", "FOOTBALLER", "AGE", "TEAM", "OVERALL", "POTENTIAL"};

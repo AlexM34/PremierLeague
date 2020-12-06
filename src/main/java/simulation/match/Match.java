@@ -2,7 +2,7 @@ package simulation.match;
 
 import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.USER;
-import static simulation.Data.USER_STYLE;
+import static simulation.Data.userStyle;
 import static simulation.competition.League.updateLeagueStats;
 import static simulation.match.Tactics.pickSquad;
 import static simulation.match.Tactics.substitute;
@@ -15,10 +15,15 @@ import simulation.Simulator;
 import simulation.competition.Competition;
 import team.Club;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
 
 public class Match {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     public static int fans = 3;
     private final Club home;
@@ -63,7 +68,7 @@ public class Match {
                 (home.getSeason().getForm() - away.getSeason().getForm()) / 4 + 50;
         momentum = balance;
 
-        if (home.getId() == USER || away.getId() == USER) style = (homeAttack + awayAttack) / 10 + USER_STYLE / 2 - 11;
+        if (home.getId() == USER || away.getId() == USER) style = (homeAttack + awayAttack) / 10 + userStyle / 2 - 11;
         else style = (homeAttack + awayAttack) / 10 - 6;
 
         report = new StringBuilder();
@@ -106,14 +111,14 @@ public class Match {
 
     void kickoff() {
         for (final Footballer f : home.getFootballers()) {
-            System.out.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
+            STREAM.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
             if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
             else f.changeCondition(12 + Simulator.getInt(3));
         }
 
-        System.out.println();
+        STREAM.println();
         for (final Footballer f : away.getFootballers()) {
-            System.out.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
+            STREAM.println(f.getPosition().getAttackingDuty() + " - " + f.getCondition() + ", " + f.getBan());
             if (f.getPosition() == Position.GK) f.changeCondition(13 + Simulator.getInt(3));
             else f.changeCondition(12 + Simulator.getInt(3));
         }
@@ -282,8 +287,8 @@ public class Match {
         if (competition == Competition.LEAGUE) updateLeague(home, away, homeGoals, awayGoals);
         updateForm();
 
-        System.out.println(String.format("%s - %s %d:%d   --- %s %.2f", home.getName(),
-                away.getName(), homeGoals, awayGoals, motmPlayer.getFootballer().getName(), motmRating));
+        STREAM.printf("%s - %s %d:%d   --- %s %.2f%n", home.getName(),
+                away.getName(), homeGoals, awayGoals, motmPlayer.getFootballer().getName(), motmRating);
     }
 
     private static player.Competition getCompetition(final Statistics season, final int type) {

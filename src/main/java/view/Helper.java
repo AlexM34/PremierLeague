@@ -18,8 +18,12 @@ import static simulation.competition.League.leagueRedCards;
 import static simulation.competition.League.leagueYellowCards;
 
 class Helper {
+
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
     private static int song = 0;
+
+    private Helper() {
+    }
 
     static void playMusic() {
         int r;

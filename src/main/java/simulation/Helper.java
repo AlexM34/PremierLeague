@@ -1,5 +1,8 @@
 package simulation;
 
+import static java.util.stream.Collectors.toMap;
+import static simulation.dynamics.Postseason.offset;
+
 import team.Club;
 import team.League;
 
@@ -9,10 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toMap;
-import static simulation.dynamics.Postseason.offset;
-
 public class Helper {
+
+    private Helper() {
+    }
 
     public static List<Club> sortLeague(final Club[] league, final int type) {
         final Map<Club, Integer> standings = new LinkedHashMap<>();

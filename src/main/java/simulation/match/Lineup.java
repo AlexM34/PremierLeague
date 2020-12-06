@@ -4,9 +4,14 @@ import player.Footballer;
 import player.MatchStats;
 import team.Formation;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 public class Lineup {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     private final Selection squad;
     private final Selection bench;
@@ -33,15 +38,15 @@ public class Lineup {
     }
 
     void print() {
-        System.out.println();
-        System.out.println("SQUAD");
+        STREAM.println();
+        STREAM.println("SQUAD");
         squad.getSelection().forEach(x ->
-                System.out.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
+                STREAM.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
 
-        System.out.println();
-        System.out.println("BENCH");
+        STREAM.println();
+        STREAM.println("BENCH");
         bench.getSelection().forEach(x ->
-                System.out.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
-        System.out.println();
+                STREAM.println(x.getFootballer().getPosition().getAttackingDuty() + ", " + x));
+        STREAM.println();
     }
 }

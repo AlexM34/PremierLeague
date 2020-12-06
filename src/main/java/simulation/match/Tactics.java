@@ -7,32 +7,40 @@ import static simulation.Data.FORWARD_2;
 import static simulation.Data.GOALKEEPER_1;
 import static simulation.Data.MIDFIELDER_1;
 import static simulation.Data.MIDFIELDER_2;
-import static simulation.Data.USER_STYLE;
+import static simulation.Data.userStyle;
 
 import player.Footballer;
 import player.MatchStats;
 import team.Club;
 import team.Formation;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Tactics {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     private static final Scanner scanner = new Scanner(System.in);
 
+    private Tactics() {
+    }
+
     public static void preMatch(final Club opponent, final boolean isHome) {
-        System.out.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
-        System.out.println("Pick how offensive the team should be from 0 to 20");
+        STREAM.println("vs " + opponent.getName() + (isHome ? " Home" : " Away"));
+        STREAM.println("Pick how offensive the team should be from 0 to 20");
         while (true) {
             final int attack = scanner.nextInt();
             if (attack < 0 || attack > 20) {
-                System.out.println("Wrong attack value!");
+                STREAM.println("Wrong attack value!");
                 continue;
             }
 
-            USER_STYLE = attack - 10;
+            userStyle = attack - 10;
             break;
         }
     }
@@ -79,13 +87,13 @@ public class Tactics {
             }
 
             switch (f.getPosition().getRole()) {
-                case Defender:
+                case DEFENDER:
                     defenders++;
                     break;
-                case Midfielder:
+                case MIDFIELDER:
                     midfielders++;
                     break;
-                case Forward:
+                case FORWARD:
                     forwards++;
                     break;
             }
@@ -102,9 +110,9 @@ public class Tactics {
             }
         }
 
-        System.out.println("Could not pick appropriate formation");
+        STREAM.println("Could not pick appropriate formation");
         for (final Footballer f : footballers) {
-            System.out.println(f.getName() + " " + f.getPosition().getRole() + " " + f.getCondition());
+            STREAM.println(f.getName() + " " + f.getPosition().getRole() + " " + f.getCondition());
         }
         return Formation.F5;
     }

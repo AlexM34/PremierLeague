@@ -4,6 +4,9 @@ import java.util.Random;
 
 public class Simulator {
 
+    private Simulator() {
+    }
+
     private static final Random RANDOM = new Random();
 
     public static boolean getBoolean() {

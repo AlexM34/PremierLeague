@@ -13,6 +13,9 @@ import team.Club;
 import team.League;
 import team.Season;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,16 +27,22 @@ import java.util.Map;
 import java.util.Set;
 
 public class Preseason {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
+    
     static final Map<Footballer, Club> transfers = new HashMap<>();
     static final Map<Club, Integer> sold = new HashMap<>();
     public static final List<Footballer> retired = new ArrayList<>();
     static int deals;
     private static int academy = 0;
 
+    private Preseason() {
+    }
+
     public static void prepare(final int year) {
         League.clearLeagueStats();
 
-        System.out.printf("Season %d-%d begins!%n", 2019 + year, 2020 + year);
+        STREAM.printf("Season %d-%d begins!%n", 2019 + year, 2020 + year);
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
                 club.setSeason(new Season(club.getLeague()));
@@ -48,13 +57,13 @@ public class Preseason {
             }
         }
 
-        System.out.println();
+        STREAM.println();
     }
 
     public static void progression() {
         for (final Club[] league : LEAGUES) {
             for (final Club club : league) {
-                System.out.println(club.getName());
+                STREAM.println(club.getName());
                 final Set<Footballer> retiring = new HashSet<>();
                 for (final Footballer footballer : club.getFootballers()) {
                     footballer.incrementAge();
@@ -84,21 +93,21 @@ public class Preseason {
 
                 for (final Footballer footballer : club.getFootballers()) {
                     switch (footballer.getPosition().getRole()) {
-                        case Goalkeeper: goalkeepers++; break;
-                        case Defender: defenders++; break;
-                        case Midfielder: midfielders++; break;
-                        case Forward: forwards++; break;
+                        case GOALKEEPER: goalkeepers++; break;
+                        case DEFENDER: defenders++; break;
+                        case MIDFIELDER: midfielders++; break;
+                        case FORWARD: forwards++; break;
                     }
                 }
 
-                for (int g = goalkeepers; g < 3; g++) youngster(club, Position.Role.Goalkeeper);
-                for (int d = defenders; d < 7; d++) youngster(club, Position.Role.Defender);
-                for (int m = midfielders; m < 7; m++) youngster(club, Position.Role.Midfielder);
-                for (int f = forwards; f < 4; f++) youngster(club, Position.Role.Forward);
+                for (int g = goalkeepers; g < 3; g++) youngster(club, Position.Role.GOALKEEPER);
+                for (int d = defenders; d < 7; d++) youngster(club, Position.Role.DEFENDER);
+                for (int m = midfielders; m < 7; m++) youngster(club, Position.Role.MIDFIELDER);
+                for (int f = forwards; f < 4; f++) youngster(club, Position.Role.FORWARD);
             }
         }
 
-        System.out.println(academy + " youngsters promoted");
+        STREAM.println(academy + " youngsters promoted");
     }
 
     public static void youngster(final Club club, Position.Role role) {
@@ -108,10 +117,10 @@ public class Preseason {
     private static Footballer generateFootballer(final String clubName, Position.Role role) {
         if (role == null) {
             switch (Simulator.getInt(4)) {
-                case 0: role = Position.Role.Goalkeeper; break;
-                case 1: role = Position.Role.Defender; break;
-                case 2: role = Position.Role.Midfielder; break;
-                default: role = Position.Role.Forward; break;
+                case 0: role = Position.Role.GOALKEEPER; break;
+                case 1: role = Position.Role.DEFENDER; break;
+                case 2: role = Position.Role.MIDFIELDER; break;
+                default: role = Position.Role.FORWARD; break;
             }
         }
 
@@ -149,7 +158,7 @@ public class Preseason {
         final List<Map.Entry<Club, Integer>> sorted = new ArrayList<>(teams.entrySet());
         sorted.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
 
-        for (int i = 0; i < 32; i++) System.out.println(championsLeagueTeams[i] = sorted.get(i).getKey());
-        for (int i = 32; i < 80; i++) System.out.println(europaLeagueTeams[i - 32] = sorted.get(i).getKey());
+        for (int i = 0; i < 32; i++) STREAM.println(championsLeagueTeams[i] = sorted.get(i).getKey());
+        for (int i = 32; i < 80; i++) STREAM.println(europaLeagueTeams[i - 32] = sorted.get(i).getKey());
     }
 }

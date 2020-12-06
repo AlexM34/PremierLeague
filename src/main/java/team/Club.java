@@ -5,11 +5,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import player.Footballer;
 import player.Glory;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class Club {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     private final int id;
     private final String name;
@@ -66,7 +71,7 @@ public class Club {
     }
 
     public void changeReputation(final int reputation) {
-        System.out.println("Reputation of " + this.name + " - from " + this.reputation + " with " + (reputation - this.reputation) / 3);
+        STREAM.println("Reputation of " + this.name + " - from " + this.reputation + " with " + (reputation - this.reputation) / 3);
         this.reputation += (reputation - this.reputation) / 3;
     }
 

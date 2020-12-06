@@ -1,28 +1,5 @@
 package view;
 
-import league.LeagueManager;
-import simulation.match.Fixture;
-import team.Club;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.border.TitledBorder;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import static java.awt.Font.ITALIC;
 import static java.awt.Font.PLAIN;
 import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
@@ -50,7 +27,36 @@ import static view.ViewManager.historicalView;
 import static view.ViewManager.rankedView;
 import static view.ViewManager.seasonalView;
 
+import league.LeagueManager;
+import simulation.match.Fixture;
+import team.Club;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.TitledBorder;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 class Seasonal extends View {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
+
     private static final String[] STATS = {"N", "PLAYER", "TEAM", "COUNT"};
     private static final String[] COMPETITIONS = {"League", "League Cup", "National Cup"};
     private static final String[] PHASES = {"Group Stage", "Knockout"};
@@ -270,7 +276,7 @@ class Seasonal extends View {
         final int round = getInteger(String.valueOf(ROUND_BOX.getSelectedItem()));
         RESULTS_LABEL.setText("<html>" + leagueResults.getOrDefault(
                 reportString + leagueName + round, "") + "</html>");
-        System.out.println(leagueResults.get(leagueName));
+        STREAM.println(leagueResults.get(leagueName));
     }
 
     private static void cupView(final Club[] league, final boolean leagueCup, final int teams) {
@@ -280,11 +286,11 @@ class Seasonal extends View {
         if (leagueCup) {
             RESULTS_LABEL.setText("<html>" + leagueCupResults.getOrDefault(
                     reportString + leagueName + teams, "") + "</html>");
-            System.out.println(leagueCupResults.get(leagueName));
+            STREAM.println(leagueCupResults.get(leagueName));
         } else {
             RESULTS_LABEL.setText("<html>" + nationalCupResults.getOrDefault(
                     reportString + leagueName + teams, "") + "</html>");
-            System.out.println(nationalCupResults.get(leagueName));
+            STREAM.println(nationalCupResults.get(leagueName));
         }
     }
 
@@ -318,7 +324,7 @@ class Seasonal extends View {
                     reportString + competition + GROUP_BOX.getSelectedItem(), "") + "</html>");
         }
 
-        System.out.println(continentalCupResults);
+        STREAM.println(continentalCupResults);
         if (competition.equals(CHAMPIONS_LEAGUE_NAME)) playerStats(CHAMPIONS_LEAGUE, 3, true);
         else playerStats(EUROPA_LEAGUE, 4, true);
 

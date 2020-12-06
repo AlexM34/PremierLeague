@@ -4,7 +4,10 @@ import player.Footballer;
 import simulation.Simulator;
 
 public class Penalty {
-    
+
+    private Penalty() {
+    }
+
     public static int take(final Footballer striker, final Footballer goalkeeper, final StringBuilder report) {
         report.append(striker.getName()).append(" steps up to take the penalty against ")
                 .append(goalkeeper.getName()).append("<br/>");

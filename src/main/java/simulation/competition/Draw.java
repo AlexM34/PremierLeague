@@ -4,6 +4,10 @@ import simulation.Simulator;
 import team.Club;
 
 class Draw {
+
+    private Draw() {
+    }
+
     static int[][][] league(final int teams) {
         final int[][][] schedule = new int[teams * 2 - 2][teams / 2][2];
         final int[] draw = new int[teams];
@@ -13,12 +17,10 @@ class Draw {
             int current = 0;
 
             while (true) {
-                if (!drawn[current]) {
-                    if (r-- == 0) {
-                        drawn[current] = true;
-                        draw[team] = current;
-                        break;
-                    }
+                if (!drawn[current] && r-- == 0) {
+                    drawn[current] = true;
+                    draw[team] = current;
+                    break;
                 }
 
                 current++;
@@ -64,12 +66,10 @@ class Draw {
             int current = team % 2 == 0 ? 8 : 0;
 
             while (true) {
-                if (!drawn[current]) {
-                    if (r-- == 0) {
-                        drawn[current] = true;
-                        draw[current] = advancing[team];
-                        break;
-                    }
+                if (!drawn[current] && r-- == 0) {
+                    drawn[current] = true;
+                    draw[current] = advancing[team];
+                    break;
                 }
 
                 current++;

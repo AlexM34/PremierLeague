@@ -8,6 +8,7 @@ import team.Owner;
 import team.Stadium;
 
 public class France {
+
     public static final String LEAGUE = "Ligue 1";
     private static final Stadium STADIUM = new Stadium(1, "", 1900, "", 50000, 100);
     private static final Owner OWNER = new Owner(1, "", "", 100, 100);
@@ -96,6 +97,9 @@ public class France {
     public static final Club[] CLUBS = {LYON, PSG, MARSEILLE, SAINT_ETIENNE, LILLE, MONTPELLIER, NICE, REIMS,
             NIMES, RENNES, STRASBOURG, NANTES, BORDEAUX, ANGERS, AMIENS, TOULOUSE, MONACO,
             DIJON, BREST, METZ};
+
+    private France() {
+    }
 
     public static String getLeague() {
         return LEAGUE;

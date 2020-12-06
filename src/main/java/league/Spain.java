@@ -97,6 +97,9 @@ public class Spain {
             GETAFE, ESPANYOL, REAL_SOCIEDAD, REAL_BETIS, ALAVES, EIBAR, LEGANES, VILLARREAL, LEVANTE, VALLADOLID,
             CELTA_VIGO, OSASUNA, GRANADA, MALLORCA};
 
+    private Spain() {
+    }
+
     public static String getLeague() {
         return LEAGUE;
     }

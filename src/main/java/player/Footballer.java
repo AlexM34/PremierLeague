@@ -2,9 +2,14 @@ package player;
 
 import simulation.Simulator;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Objects;
 
 public class Footballer {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     private final int id;
     private final String name;
@@ -97,7 +102,7 @@ public class Footballer {
     }
 
     private void retire() {
-        System.out.println(name + "(" + age + ") retires at " + team);
+        STREAM.println(name + "(" + age + ") retires at " + team);
         team = "";
     }
 
@@ -130,19 +135,19 @@ public class Footballer {
     }
 
     public long getValue() {
-        float overall = (float) (this.overall - 70) / 3;
-        overall = overall > 1 ? overall * overall : 1;
+        float overallFactor = (float) (this.overall - 70) / 3;
+        overallFactor = overallFactor > 1 ? overallFactor * overallFactor : 1;
 
-        float age = (float) Math.cbrt(Math.abs(28 - this.age) + 1);
-        age = this.age < 28 ? age : 1 / age;
+        float ageFactor = (float) Math.cbrt(Math.abs(28 - this.age) + 1);
+        ageFactor = this.age < 28 ? ageFactor : 1 / ageFactor;
 
-        float position = this.position.getAttackingDuty() + 3;
-        position = (float) Math.sqrt(position);
+        float positionFactor = this.position.getAttackingDuty() + 3;
+        positionFactor = (float) Math.sqrt(positionFactor);
 
-        float potential = (float) (this.potential - this.overall) / 2;
-        potential = potential > 1 ? (float) Math.sqrt(potential) : 1;
+        float potentialFactor = (float) (this.potential - this.overall) / 2;
+        potentialFactor = potentialFactor > 1 ? (float) Math.sqrt(potentialFactor) : 1;
 
-        value = (long) (overall * age * position * potential);
+        value = (long) (overallFactor * ageFactor * positionFactor * potentialFactor);
         return value;
     }
 
@@ -191,28 +196,29 @@ public class Footballer {
     }
 
     public int getScoringChance() {
-        final int overall = Math.max(1, this.overall / 2 - 30);
-        final int finishing = Math.max(1, this.finishing / 3 - 15);
-        final int position = this.position.getAttackingDuty();
+        final int overallFactor = Math.max(1, this.overall / 2 - 30);
+        final int finishingFactor = Math.max(1, this.finishing / 3 - 15);
+        final int positionFactor = this.position.getAttackingDuty();
 
-        return (overall * overall + finishing * finishing + position * position) * position;
+        return (overallFactor * overallFactor + finishingFactor * finishingFactor + positionFactor * positionFactor) * positionFactor;
     }
 
     public int getAssistChance() {
-        final int overall = Math.max(1, this.overall / 2 - 30);
-        final int vision = Math.max(1, this.vision / 3 - 15);
-        final int position;
+        final int overallFactor = Math.max(1, this.overall / 2 - 30);
+        final int visionFactor = Math.max(1, this.vision / 3 - 15);
+
+        final int positionFactor;
         switch (this.position.getAttackingDuty()) {
-            case 0: position = 1; break;
-            case 1: position = 2; break;
-            case 2: position = 5; break;
-            case 3: position = 9; break;
-            case 4: position = 11; break;
-            case 5: position = 8; break;
+            case 0: positionFactor = 1; break;
+            case 1: positionFactor = 2; break;
+            case 2: positionFactor = 5; break;
+            case 3: positionFactor = 9; break;
+            case 4: positionFactor = 11; break;
+            case 5: positionFactor = 8; break;
             default: return 0;
         }
 
-        return (overall * overall + vision * vision + position * position) * position;
+        return (overallFactor * overallFactor + visionFactor * visionFactor + positionFactor * positionFactor) * positionFactor;
     }
 
     @Override

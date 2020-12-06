@@ -10,6 +10,9 @@ import static simulation.competition.League.EUROPA_LEAGUE_NAME;
 
 public class LeagueManager {
 
+    private LeagueManager() {
+    }
+
     public static String[] getLeagues() {
         return new String[]{England.getLeague(), Spain.getLeague(), Germany.getLeague(),
                 Italy.getLeague(), France.getLeague(), CHAMPIONS_LEAGUE_NAME, EUROPA_LEAGUE_NAME};

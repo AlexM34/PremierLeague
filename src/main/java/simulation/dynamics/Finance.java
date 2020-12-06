@@ -3,7 +3,16 @@ package simulation.dynamics;
 import player.Footballer;
 import team.Club;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 public class Finance {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
+
+    private Finance() {
+    }
 
     public static void leaguePrizes(final Club[] league) {
         for (int team = 0; team < league.length; team++) {
@@ -32,9 +41,9 @@ public class Finance {
 
     public static void salaries(final Club[] league) {
         for (final Club club : league) {
-            System.out.println(club.getName() + " has before " + club.getBudget());
+            STREAM.println(club.getName() + " has before " + club.getBudget());
             for (final Footballer footballer : club.getFootballers()) club.changeBudget(-footballer.getWage() / 80000);
-            System.out.println(club.getName() + " has after " + club.getBudget());
+            STREAM.println(club.getName() + " has after " + club.getBudget());
         }
     }
 }

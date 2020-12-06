@@ -1,23 +1,23 @@
 package team;
 
 public enum Formation {
-    F1(541, Type.ParkTheBus),
-    F2(532, Type.Defensive),
-    F3(523, Type.Defensive),
-    F4(451, Type.Defensive),
-    F5(442, Type.Balanced),
-    F6(433, Type.Offensive),
-    F7(424, Type.AllOutAttack),
-    F8(352, Type.Balanced),
-    F9(343, Type.Offensive),
-    F10(334, Type.AllOutAttack);
+    F1(541, Type.PARK_THE_BUS),
+    F2(532, Type.DEFENSIVE),
+    F3(523, Type.DEFENSIVE),
+    F4(451, Type.DEFENSIVE),
+    F5(442, Type.BALANCED),
+    F6(433, Type.OFFENSIVE),
+    F7(424, Type.ALL_OUT_ATTACK),
+    F8(352, Type.BALANCED),
+    F9(343, Type.OFFENSIVE),
+    F10(334, Type.ALL_OUT_ATTACK);
 
     enum Type {
-        ParkTheBus(-3),
-        Defensive(-1),
-        Balanced(0),
-        Offensive(1),
-        AllOutAttack(3);
+        PARK_THE_BUS(-3),
+        DEFENSIVE(-1),
+        BALANCED(0),
+        OFFENSIVE(1),
+        ALL_OUT_ATTACK(3);
 
         private final int style;
 

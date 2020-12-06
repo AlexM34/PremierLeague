@@ -1,13 +1,5 @@
 package simulation.dynamics;
 
-import player.Footballer;
-import player.Position;
-import simulation.Simulator;
-import team.Club;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static simulation.Data.LEAGUES;
 import static simulation.Helper.sortMap;
 import static simulation.dynamics.Preseason.academy;
@@ -15,8 +7,24 @@ import static simulation.dynamics.Preseason.deals;
 import static simulation.dynamics.Preseason.sold;
 import static simulation.dynamics.Preseason.transfers;
 
+import player.Footballer;
+import player.Position;
+import simulation.Simulator;
+import team.Club;
+
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Transfer {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     private static Map<String, Integer> summary = new HashMap<>();
+
+    private Transfer() {
+    }
 
     public static void transfers() {
         summary.clear();
@@ -41,13 +49,13 @@ public class Transfer {
             attempts++;
         }
 
-        System.out.println(deals + " transfers made");
+        STREAM.println(deals + " transfers made");
         transfers.forEach(((footballer, club) -> club.addFootballer(footballer)));
 
         summary = sortMap(summary);
         int row = 0;
         for (final String news : summary.keySet()) {
-            System.out.println(++row + ". " + news);
+            STREAM.println(++row + ". " + news);
             if (row >= 50) break;
         }
 

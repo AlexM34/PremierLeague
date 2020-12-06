@@ -12,7 +12,7 @@ public class FootballerBuilder {
 
     private static final String CLUB_NAME = "Test";
     private static final long VALUE = 50;
-    private static final Position.Role ROLE = Position.Role.Forward;
+    private static final Position.Role ROLE = Position.Role.FORWARD;
     private static final Object[] POSITIONS = Arrays.stream(Position.values())
             .filter(p -> p.getRole().equals(ROLE)).toArray();
 

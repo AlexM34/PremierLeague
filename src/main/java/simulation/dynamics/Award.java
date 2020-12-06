@@ -1,18 +1,26 @@
 package simulation.dynamics;
 
+import static simulation.Helper.sortMap;
+import static simulation.dynamics.Postseason.topTeam;
+
 import player.Footballer;
 import player.Statistics;
 import simulation.Simulator;
 import team.Club;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static simulation.Helper.sortMap;
-import static simulation.dynamics.Postseason.topTeam;
-
 public class Award {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     private static final Map<Footballer, Integer> contenders = new HashMap<>();
+
+    private Award() {
+    }
 
     static void pickTeam(final Map<Footballer, Integer> ratings, final boolean isLeague) {
         topTeam.clear();
@@ -26,16 +34,16 @@ public class Award {
 
         for (int player = 0; player < sorted.size(); player++) {
             switch (sorted.keySet().toArray(new Footballer[0])[player].getPosition().getRole()) {
-                case Goalkeeper:
+                case GOALKEEPER:
                     if (goalkeepers > 0) team[--goalkeepers] = player;
                     break;
-                case Defender:
+                case DEFENDER:
                     if (defenders > 0) team[defenders--] = player;
                     break;
-                case Midfielder:
+                case MIDFIELDER:
                     if (midfielders > 0) team[4 + midfielders--] = player;
                     break;
-                case Forward:
+                case FORWARD:
                     if (forwards > 0) team[7 + forwards--] = player;
                     break;
             }
@@ -43,17 +51,17 @@ public class Award {
             if (goalkeepers + defenders + midfielders + forwards == 0) break;
         }
 
-        System.out.println("TEAM OF THE SEASON");
+        STREAM.println("TEAM OF THE SEASON");
         for (int player = 0; player < 11; player++) {
             Footballer footballer = sorted.keySet().toArray(new Footballer[0])[team[player]];
             int rating = sorted.values().toArray(new Integer[0])[team[player]];
 
-            System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), rating));
+            STREAM.printf("%2d. %-20s %2d%n", player + 1, footballer.getName(), rating);
 
             if (isLeague) topTeam.put(footballer, rating);
         }
 
-        System.out.println();
+        STREAM.println();
     }
 
     static void voting(final Map<Footballer, Integer> contenders) {
@@ -65,7 +73,7 @@ public class Award {
         for (final Map.Entry<Footballer, Integer> entry : contenders.entrySet()) {
             Footballer c = entry.getKey();
             Integer p = entry.getValue();
-            System.out.println(c.getName() + " with " + p);
+            STREAM.println(c.getName() + " with " + p);
 
             players[current] = c;
             chance[current] = Math.max(p - 750, 1);
@@ -88,16 +96,17 @@ public class Award {
 
         final Map<Footballer, Integer> sorted = sortMap(results);
 
-        System.out.println("FOOTBALLER OF THE YEAR");
+        STREAM.println("FOOTBALLER OF THE YEAR");
         for (int player = 0; player < 10; player++) {
             Footballer footballer = sorted.keySet().toArray(new Footballer[0])[player];
             int count = sorted.values().toArray(new Integer[0])[player];
 
-            System.out.println(String.format("%2d. %-20s %2d", player + 1, footballer.getName(), count));
+            STREAM.printf("%2d. %-20s %2d%n", player + 1, footballer.getName(), count);
         }
 
-        System.out.println();
+        STREAM.println();
     }
+
     static void topPlayers(final Club[] clubs) {
         contenders.clear();
 
@@ -132,4 +141,5 @@ public class Award {
                     sorted.values().toArray(new Integer[0])[player]);
         }
     }
+
 }

@@ -1,18 +1,5 @@
 package simulation.dynamics;
 
-import player.Competition;
-import player.Footballer;
-import player.Statistics;
-import team.Club;
-import team.League;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import static player.Position.GK;
 import static simulation.Controller.getMatchday;
 import static simulation.Data.LEAGUES;
@@ -28,7 +15,25 @@ import static simulation.dynamics.Finance.leaguePrizes;
 import static simulation.dynamics.Finance.merchandise;
 import static simulation.dynamics.Finance.salaries;
 
+import player.Competition;
+import player.Footballer;
+import player.Statistics;
+import team.Club;
+import team.League;
+
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Postseason {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     public static Map<Footballer, Integer> ratings = new LinkedHashMap<>();
     public static Map<Footballer, Integer> goals = new LinkedHashMap<>();
     public static Map<Footballer, Integer> assists = new LinkedHashMap<>();
@@ -40,6 +45,9 @@ public class Postseason {
 
     public static int offset;
 
+    private Postseason() {
+    }
+
     public static void standings(final Club[] league) {
         final List<Club> sorted = sortLeague(league, 0);
         printStandings(sorted);
@@ -48,12 +56,12 @@ public class Postseason {
 
     private static void printStandings(final List<Club> league) {
         int position = 1;
-        System.out.println(String.format("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P", ""));
+        STREAM.printf("No  Teams %" + (offset - 3) + "s G  W  D  L   GF:GA  P%n", "");
         for (final Club team : league) {
             final League stats = team.getSeason().getLeague();
-            System.out.println(String.format("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d",
+            STREAM.printf("%2d. %-" + (offset + 3) + "s %-2d %-2d %-2d %-2d %3d:%-3d %-3d%n",
                     position++, team.getName(), stats.getMatches(), stats.getWins(), stats.getDraws(),
-                    stats.getLosses(), stats.getScored(), stats.getConceded(), stats.getPoints()));
+                    stats.getLosses(), stats.getScored(), stats.getConceded(), stats.getPoints());
         }
     }
 
@@ -164,10 +172,10 @@ public class Postseason {
 
         final Map<String, Integer> sorted = sortMap(winners);
 
-        System.out.println();
-        System.out.println("Winners");
+        STREAM.println();
+        STREAM.println("Winners");
         for (int i = 0; i < sorted.size(); i++) {
-            System.out.println(String.format("%2d. %-25s %d", i + 1,
+            STREAM.println(String.format("%2d. %-25s %d", i + 1,
                     sorted.keySet().toArray(new String[0])[i], sorted.values().toArray(new Integer[0])[i]));
         }
 
@@ -216,7 +224,7 @@ public class Postseason {
     }
 
     private static void addLeagueCup(final Club champion) {
-        System.out.println(champion.getName() + " win the League Cup!");
+        STREAM.println(champion.getName() + " win the League Cup!");
         champion.getGlory().addLeagueCup();
         for (final Footballer footballer : champion.getFootballers()) {
             footballer.getResume().getGlory().addLeagueCup();
@@ -224,7 +232,7 @@ public class Postseason {
     }
 
     private static void addNationalCup(final Club champion) {
-        System.out.println(champion.getName() + " win the National Cup!");
+        STREAM.println(champion.getName() + " win the National Cup!");
         champion.getGlory().addNationalCup();
         for (final Footballer footballer : champion.getFootballers()) {
             footballer.getResume().getGlory().addNationalCup();
@@ -232,7 +240,7 @@ public class Postseason {
     }
 
     private static void addChampionsLeague(final Club champion) {
-        System.out.println(champion.getName() + " win the Champions League!");
+        STREAM.println(champion.getName() + " win the Champions League!");
         champion.getGlory().addChampionsLeague();
         for (final Footballer footballer : champion.getFootballers()) {
             footballer.getResume().getGlory().addChampionsLeague();
@@ -240,7 +248,7 @@ public class Postseason {
     }
 
     private static void addEuropaLeague(final Club champion) {
-        System.out.println(champion.getName() + " win the Europa League!");
+        STREAM.println(champion.getName() + " win the Europa League!");
         champion.getGlory().addEuropaLeague();
         for (final Footballer footballer : champion.getFootballers()) {
             footballer.getResume().getGlory().addEuropaLeague();
@@ -248,7 +256,7 @@ public class Postseason {
     }
 
     static void review(final Club club) {
-        System.out.println("Seasonal performance review of " + club.getName());
+        STREAM.println("Seasonal performance review of " + club.getName());
         leagueReview(club);
         nationalCupReview(club);
         leagueCupReview(club);
@@ -256,33 +264,33 @@ public class Postseason {
     }
 
     private static void leagueReview(final Club club) {
-        System.out.println("League");
+        STREAM.println("League");
         club.getSeason().getLeague().getFixtures()
-                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+                .forEach(f -> STREAM.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
     }
 
     private static void nationalCupReview(final Club club) {
-        System.out.println();
-        System.out.println("National Cup");
+        STREAM.println();
+        STREAM.println("National Cup");
         club.getSeason().getNationalCup().getFixtures()
-                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+                .forEach(f -> STREAM.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
     }
 
     private static void leagueCupReview(final Club club) {
-        System.out.println();
-        System.out.println("League Cup");
+        STREAM.println();
+        STREAM.println("League Cup");
         club.getSeason().getLeagueCup().getFixtures()
-                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+                .forEach(f -> STREAM.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
     }
 
     private static void continentalReview(final Club club) {
-        System.out.println();
-        System.out.println("Continental");
+        STREAM.println();
+        STREAM.println("Continental");
         club.getSeason().getContinental().getGroup().getFixtures()
-                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
-        System.out.println();
+                .forEach(f -> STREAM.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+        STREAM.println();
         club.getSeason().getContinental().getKnockout().getFixtures()
-                .forEach(f -> System.out.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
-        System.out.println();
+                .forEach(f -> STREAM.println(f.getOpponent().getName() + Arrays.toString(f.getScore())));
+        STREAM.println();
     }
 }

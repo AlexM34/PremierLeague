@@ -1,5 +1,10 @@
 package view;
 
+import static java.awt.Font.ITALIC;
+import static java.awt.Font.PLAIN;
+import static java.awt.Image.SCALE_SMOOTH;
+import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
+
 import player.Footballer;
 
 import javax.imageio.ImageIO;
@@ -15,16 +20,16 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import static java.awt.Font.ITALIC;
-import static java.awt.Font.PLAIN;
-import static java.awt.Image.SCALE_SMOOTH;
-import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
-
 public class View {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
     static final String FONT_NAME = "Times New Roman";
     static final int FONT_SIZE = 22;
@@ -39,6 +44,9 @@ public class View {
     static int statsHeight;
     static int statsRowHeight;
     static int statsFontSize;
+
+    public View() {
+    }
 
     static JScrollPane createStatsPane(final JTable table, final int x, final int y, final String label) {
         table.setBounds(x, y, statsWidth, statsHeight);
@@ -128,7 +136,7 @@ public class View {
         try {
             image = ImageIO.read(View.class.getResource("/images" + name));
         } catch (IOException e) {
-            System.out.println("Exception thrown while extracting images! " + e);
+            STREAM.println("Exception thrown while extracting images! " + e);
             return null;
         }
 

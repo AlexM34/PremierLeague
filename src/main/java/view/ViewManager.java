@@ -1,16 +1,21 @@
 package view;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.io.IOException;
-
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static simulation.Controller.initialise;
 import static view.Helper.playMusic;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
 public class ViewManager {
+
+    private static final PrintStream STREAM = new PrintStream(new FileOutputStream(FileDescriptor.out));
     private static final JFrame frame = new JFrame("Gladiators");
     static final JPanel seasonalView = new JPanel();
     static final JPanel rankedView = new JPanel();
@@ -46,7 +51,7 @@ public class ViewManager {
         try {
             frame.setIconImage(ImageIO.read(getClass().getResource("/images/ball.jpg")));
         } catch (final IOException e) {
-            System.out.println("Exception thrown while extracting images! " + e);
+            STREAM.println("Exception thrown while extracting images! " + e);
         }
 
         playMusic();
